@@ -641,6 +641,8 @@ pub enum AgentsCreateBodyTemplateName {
     AutoAgentsMdMaintainer,
     #[serde(rename = "autoDocsMaintainer")]
     AutoDocsMaintainer,
+    #[serde(rename = "publicApiReleaseMaintainer")]
+    PublicApiReleaseMaintainer,
     #[serde(rename = "commitOfTheDay")]
     CommitOfTheDay,
     #[serde(rename = "customerHealthMonitoringAgent")]
@@ -718,6 +720,7 @@ impl AgentsCreateBodyTemplateName {
             Self::AddTestCoverageFromJira => "addTestCoverageFromJira",
             Self::AutoAgentsMdMaintainer => "autoAgentsMdMaintainer",
             Self::AutoDocsMaintainer => "autoDocsMaintainer",
+            Self::PublicApiReleaseMaintainer => "publicApiReleaseMaintainer",
             Self::CommitOfTheDay => "commitOfTheDay",
             Self::CustomerHealthMonitoringAgent => "customerHealthMonitoringAgent",
             Self::DeadCodeCleanup => "deadCodeCleanup",
@@ -768,6 +771,7 @@ impl From<&str> for AgentsCreateBodyTemplateName {
             "addTestCoverageFromJira" => Self::AddTestCoverageFromJira,
             "autoAgentsMdMaintainer" => Self::AutoAgentsMdMaintainer,
             "autoDocsMaintainer" => Self::AutoDocsMaintainer,
+            "publicApiReleaseMaintainer" => Self::PublicApiReleaseMaintainer,
             "commitOfTheDay" => Self::CommitOfTheDay,
             "customerHealthMonitoringAgent" => Self::CustomerHealthMonitoringAgent,
             "deadCodeCleanup" => Self::DeadCodeCleanup,

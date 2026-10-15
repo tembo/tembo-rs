@@ -327,7 +327,19 @@ async fn smoke() {
         .await;
         if let Err(error) = result {
             if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "GET /v1/insights"));
+                failures.push(format!("{}: {error}", "GET /v1/insights [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.insights().retrieve().range("1y".to_string()).send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/insights [all params]"));
             }
         }
     }
@@ -366,6 +378,7 @@ async fn smoke() {
                 .list_members()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())
@@ -399,6 +412,7 @@ async fn smoke() {
                 .list_repositories()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())

@@ -615,6 +615,8 @@ pub enum TemplatesListResponseItemName {
     AutoAgentsMdMaintainer,
     #[serde(rename = "autoDocsMaintainer")]
     AutoDocsMaintainer,
+    #[serde(rename = "publicApiReleaseMaintainer")]
+    PublicApiReleaseMaintainer,
     #[serde(rename = "commitOfTheDay")]
     CommitOfTheDay,
     #[serde(rename = "customerHealthMonitoringAgent")]
@@ -692,6 +694,7 @@ impl TemplatesListResponseItemName {
             Self::AddTestCoverageFromJira => "addTestCoverageFromJira",
             Self::AutoAgentsMdMaintainer => "autoAgentsMdMaintainer",
             Self::AutoDocsMaintainer => "autoDocsMaintainer",
+            Self::PublicApiReleaseMaintainer => "publicApiReleaseMaintainer",
             Self::CommitOfTheDay => "commitOfTheDay",
             Self::CustomerHealthMonitoringAgent => "customerHealthMonitoringAgent",
             Self::DeadCodeCleanup => "deadCodeCleanup",
@@ -742,6 +745,7 @@ impl From<&str> for TemplatesListResponseItemName {
             "addTestCoverageFromJira" => Self::AddTestCoverageFromJira,
             "autoAgentsMdMaintainer" => Self::AutoAgentsMdMaintainer,
             "autoDocsMaintainer" => Self::AutoDocsMaintainer,
+            "publicApiReleaseMaintainer" => Self::PublicApiReleaseMaintainer,
             "commitOfTheDay" => Self::CommitOfTheDay,
             "customerHealthMonitoringAgent" => Self::CustomerHealthMonitoringAgent,
             "deadCodeCleanup" => Self::DeadCodeCleanup,
@@ -920,6 +924,8 @@ pub enum TemplatesListResponseNextCursor {
     AutoAgentsMdMaintainer,
     #[serde(rename = "autoDocsMaintainer")]
     AutoDocsMaintainer,
+    #[serde(rename = "publicApiReleaseMaintainer")]
+    PublicApiReleaseMaintainer,
     #[serde(rename = "commitOfTheDay")]
     CommitOfTheDay,
     #[serde(rename = "customerHealthMonitoringAgent")]
@@ -997,6 +1003,7 @@ impl TemplatesListResponseNextCursor {
             Self::AddTestCoverageFromJira => "addTestCoverageFromJira",
             Self::AutoAgentsMdMaintainer => "autoAgentsMdMaintainer",
             Self::AutoDocsMaintainer => "autoDocsMaintainer",
+            Self::PublicApiReleaseMaintainer => "publicApiReleaseMaintainer",
             Self::CommitOfTheDay => "commitOfTheDay",
             Self::CustomerHealthMonitoringAgent => "customerHealthMonitoringAgent",
             Self::DeadCodeCleanup => "deadCodeCleanup",
@@ -1047,6 +1054,7 @@ impl From<&str> for TemplatesListResponseNextCursor {
             "addTestCoverageFromJira" => Self::AddTestCoverageFromJira,
             "autoAgentsMdMaintainer" => Self::AutoAgentsMdMaintainer,
             "autoDocsMaintainer" => Self::AutoDocsMaintainer,
+            "publicApiReleaseMaintainer" => Self::PublicApiReleaseMaintainer,
             "commitOfTheDay" => Self::CommitOfTheDay,
             "customerHealthMonitoringAgent" => Self::CustomerHealthMonitoringAgent,
             "deadCodeCleanup" => Self::DeadCodeCleanup,
@@ -1124,6 +1132,8 @@ pub enum TemplatesRetrieveResponseName {
     AutoAgentsMdMaintainer,
     #[serde(rename = "autoDocsMaintainer")]
     AutoDocsMaintainer,
+    #[serde(rename = "publicApiReleaseMaintainer")]
+    PublicApiReleaseMaintainer,
     #[serde(rename = "commitOfTheDay")]
     CommitOfTheDay,
     #[serde(rename = "customerHealthMonitoringAgent")]
@@ -1201,6 +1211,7 @@ impl TemplatesRetrieveResponseName {
             Self::AddTestCoverageFromJira => "addTestCoverageFromJira",
             Self::AutoAgentsMdMaintainer => "autoAgentsMdMaintainer",
             Self::AutoDocsMaintainer => "autoDocsMaintainer",
+            Self::PublicApiReleaseMaintainer => "publicApiReleaseMaintainer",
             Self::CommitOfTheDay => "commitOfTheDay",
             Self::CustomerHealthMonitoringAgent => "customerHealthMonitoringAgent",
             Self::DeadCodeCleanup => "deadCodeCleanup",
@@ -1251,6 +1262,7 @@ impl From<&str> for TemplatesRetrieveResponseName {
             "addTestCoverageFromJira" => Self::AddTestCoverageFromJira,
             "autoAgentsMdMaintainer" => Self::AutoAgentsMdMaintainer,
             "autoDocsMaintainer" => Self::AutoDocsMaintainer,
+            "publicApiReleaseMaintainer" => Self::PublicApiReleaseMaintainer,
             "commitOfTheDay" => Self::CommitOfTheDay,
             "customerHealthMonitoringAgent" => Self::CustomerHealthMonitoringAgent,
             "deadCodeCleanup" => Self::DeadCodeCleanup,

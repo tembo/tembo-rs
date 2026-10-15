@@ -36,6 +36,7 @@ impl InsightsResource {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct RetrieveRequestBuilder {
     client: crate::client::Tembo,
+    range: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -44,9 +45,16 @@ impl RetrieveRequestBuilder {
     fn new(client: crate::client::Tembo) -> Self {
         Self {
             client,
+            range: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    /// Time range to aggregate: last day, 7 days, 30 days, or year. Defaults to 1y.
+    pub fn range(mut self, value: impl Into<String>) -> Self {
+        self.range = Some(value.into());
+        self
     }
 
     /// Overrides the client's request deadline for this request only.
@@ -79,7 +87,10 @@ impl RetrieveRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::InsightsRetrieveResponse, crate::error::Error> {
         let path = "/v1/insights".to_string();
-        let query: Vec<(String, String)> = Vec::new();
+        let mut query: Vec<(String, String)> = Vec::new();
+        if let Some(value) = &self.range {
+            query.push(("range".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {
@@ -185,6 +196,7 @@ pub struct ListMembersRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    range: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -195,6 +207,7 @@ impl ListMembersRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            range: None,
             timeout: None,
             max_retries: None,
         }
@@ -207,6 +220,12 @@ impl ListMembersRequestBuilder {
 
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
+        self
+    }
+
+    /// Time range to aggregate: last day, 7 days, 30 days, or year. Defaults to 1y.
+    pub fn range(mut self, value: impl Into<String>) -> Self {
+        self.range = Some(value.into());
         self
     }
 
@@ -247,6 +266,9 @@ impl ListMembersRequestBuilder {
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
         }
+        if let Some(value) = &self.range {
+            query.push(("range".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {
@@ -272,6 +294,7 @@ pub struct ListRepositoriesRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    range: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -282,6 +305,7 @@ impl ListRepositoriesRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            range: None,
             timeout: None,
             max_retries: None,
         }
@@ -294,6 +318,12 @@ impl ListRepositoriesRequestBuilder {
 
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
+        self
+    }
+
+    /// Time range to aggregate: last day, 7 days, 30 days, or year. Defaults to 1y.
+    pub fn range(mut self, value: impl Into<String>) -> Self {
+        self.range = Some(value.into());
         self
     }
 
@@ -333,6 +363,9 @@ impl ListRepositoriesRequestBuilder {
         }
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.range {
+            query.push(("range".to_string(), crate::http::scalar_value(value)));
         }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;

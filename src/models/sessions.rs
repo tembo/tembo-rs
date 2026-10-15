@@ -3631,6 +3631,7 @@ pub struct SessionsUpdateBody {
     pub description: Option<String>,
     #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
     pub rich_content: Option<SessionTipTapDocument>,
+    /// Set 0 to archive the session and stop its VM, or 1 to restore it without restarting work. Omit to preserve the current level.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub level: Option<i64>,
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
