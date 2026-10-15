@@ -4009,6 +4009,31 @@ async fn main() {
             error,
         });
     }
+    if selected(&filter, "duplicate", "/v1/projects/{projectId}/duplicate") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.projects().duplicate("example").send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "duplicate".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/projects/{projectId}/duplicate".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
     if selected(&filter, "list", "/v1/projects/{projectId}/environment-variables") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -4735,6 +4760,173 @@ async fn main() {
             operation: "delete".to_string(),
             method: "DELETE".to_string(),
             path: "/v1/projects/{projectId}/schedules/{scheduleId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "list", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "create", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: None,
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "create".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "create", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: Some(PinsCreateBodyPlacement {
+                        target: PinsCreateBodyPlacementTarget {
+                            r#type: PinsCreateBodyPlacementTargetType::Session,
+                            id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        },
+                        position: PinsCreateBodyPlacementPosition::Before,
+                    }),
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "create".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "all params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "update", "/v1/pins/{resourceType}/{resourceId}") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .update(
+                    "session".to_string(),
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    PinsUpdateBody {
+                        placement: PinsUpdateBodyPlacement {
+                            target: PinsUpdateBodyPlacementTarget {
+                                r#type: PinsUpdateBodyPlacementTargetType::Session,
+                                id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                            },
+                            position: PinsUpdateBodyPlacementPosition::Before,
+                        },
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "update".to_string(),
+            method: "PATCH".to_string(),
+            path: "/v1/pins/{resourceType}/{resourceId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "delete", "/v1/pins/{resourceType}/{resourceId}") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .delete("session".to_string(), "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "delete".to_string(),
+            method: "DELETE".to_string(),
+            path: "/v1/pins/{resourceType}/{resourceId}".to_string(),
             label: "".to_string(),
             status: status.to_string(),
             duration_ms,

@@ -2647,3 +2647,455 @@ pub struct ProjectsDeleteResponse {
     pub deleted: bool,
     pub id: String,
 }
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponse {
+    #[serde(rename = "jobIds")]
+    pub job_ids: Vec<String>,
+    pub project: ProjectsDuplicateResponseProject,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProject {
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(default)]
+    pub description: Option<String>,
+    pub id: String,
+    #[serde(rename = "includeDeps")]
+    pub include_deps: bool,
+    #[serde(rename = "includeSkills")]
+    pub include_skills: bool,
+    pub name: String,
+    #[serde(rename = "setupScript", default)]
+    pub setup_script: Option<String>,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "activeSnapshots")]
+    pub active_snapshots: Vec<ProjectsDuplicateResponseProjectActiveSnapshot>,
+    #[serde(rename = "agentInstructions", default)]
+    pub agent_instructions: Option<String>,
+    #[serde(rename = "codeRepositoryIds", default)]
+    pub code_repository_ids: Option<Vec<String>>,
+    pub color: ProjectsDuplicateResponseProjectColor,
+    #[serde(rename = "defaultForSizes")]
+    pub default_for_sizes: Vec<ProjectsDuplicateResponseProjectDefaultForSiz>,
+    pub icon: ProjectsDuplicateResponseProjectIcon,
+    /// True for the project created during onboarding until it is first edited
+    #[serde(rename = "onboardingDefault")]
+    pub onboarding_default: bool,
+    pub sizes: Vec<ProjectsDuplicateResponseProjectSiz>,
+    #[serde(rename = "warmPoolEnabled")]
+    pub warm_pool_enabled: bool,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectActiveSnapshot {
+    pub id: String,
+    pub size: ProjectsDuplicateResponseProjectActiveSnapshotSize,
+    #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
+    pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectActiveSnapshotSize {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "small")]
+    Small,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsDuplicateResponseProjectActiveSnapshotSize {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsDuplicateResponseProjectActiveSnapshotSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsDuplicateResponseProjectActiveSnapshotSize {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "small" => Self::Small,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsDuplicateResponseProjectColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsDuplicateResponseProjectColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsDuplicateResponseProjectColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectDefaultForSiz {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "small")]
+    Small,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsDuplicateResponseProjectDefaultForSiz {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsDuplicateResponseProjectDefaultForSiz {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsDuplicateResponseProjectDefaultForSiz {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "small" => Self::Small,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectIcon {
+    #[serde(rename = "folder")]
+    Folder,
+    #[serde(rename = "code")]
+    Code,
+    #[serde(rename = "terminal")]
+    Terminal,
+    #[serde(rename = "book")]
+    Book,
+    #[serde(rename = "brain")]
+    Brain,
+    #[serde(rename = "bug")]
+    Bug,
+    #[serde(rename = "building")]
+    Building,
+    #[serde(rename = "cloud")]
+    Cloud,
+    #[serde(rename = "globe")]
+    Globe,
+    #[serde(rename = "idea")]
+    Idea,
+    #[serde(rename = "tools")]
+    Tools,
+    #[serde(rename = "magic")]
+    Magic,
+    #[serde(rename = "processor")]
+    Processor,
+    #[serde(rename = "sandbox")]
+    Sandbox,
+    #[serde(rename = "server")]
+    Server,
+    #[serde(rename = "tasks")]
+    Tasks,
+    #[serde(rename = "tactics")]
+    Tactics,
+    #[serde(rename = "images")]
+    Images,
+    #[serde(rename = "database")]
+    Database,
+    #[serde(rename = "api")]
+    Api,
+    #[serde(rename = "mobile")]
+    Mobile,
+    #[serde(rename = "package")]
+    Package,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsDuplicateResponseProjectIcon {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Folder => "folder",
+            Self::Code => "code",
+            Self::Terminal => "terminal",
+            Self::Book => "book",
+            Self::Brain => "brain",
+            Self::Bug => "bug",
+            Self::Building => "building",
+            Self::Cloud => "cloud",
+            Self::Globe => "globe",
+            Self::Idea => "idea",
+            Self::Tools => "tools",
+            Self::Magic => "magic",
+            Self::Processor => "processor",
+            Self::Sandbox => "sandbox",
+            Self::Server => "server",
+            Self::Tasks => "tasks",
+            Self::Tactics => "tactics",
+            Self::Images => "images",
+            Self::Database => "database",
+            Self::Api => "api",
+            Self::Mobile => "mobile",
+            Self::Package => "package",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsDuplicateResponseProjectIcon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsDuplicateResponseProjectIcon {
+    fn from(value: &str) -> Self {
+        match value {
+            "folder" => Self::Folder,
+            "code" => Self::Code,
+            "terminal" => Self::Terminal,
+            "book" => Self::Book,
+            "brain" => Self::Brain,
+            "bug" => Self::Bug,
+            "building" => Self::Building,
+            "cloud" => Self::Cloud,
+            "globe" => Self::Globe,
+            "idea" => Self::Idea,
+            "tools" => Self::Tools,
+            "magic" => Self::Magic,
+            "processor" => Self::Processor,
+            "sandbox" => Self::Sandbox,
+            "server" => Self::Server,
+            "tasks" => Self::Tasks,
+            "tactics" => Self::Tactics,
+            "images" => Self::Images,
+            "database" => Self::Database,
+            "api" => Self::Api,
+            "mobile" => Self::Mobile,
+            "package" => Self::Package,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectSiz {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsDuplicateResponseProjectSiz {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsDuplicateResponseProjectSiz {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsDuplicateResponseProjectSiz {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}

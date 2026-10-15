@@ -703,6 +703,14 @@ Delete a project
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500`
 
+### client.projects().duplicate(…)
+
+Duplicate a project
+
+- HTTP: `POST /v1/projects/{projectId}/duplicate`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409, 500`
+
 ### client.projects().environment_variables().list(…)
 
 List project environment variables
@@ -835,6 +843,40 @@ Delete a project schedule
 - HTTP: `DELETE /v1/projects/{projectId}/schedules/{scheduleId}`
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500`
+
+### client.pins().list()
+
+List pins
+
+- HTTP: `GET /v1/pins`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.pins().create(…)
+
+Create a pin
+
+- HTTP: `POST /v1/pins`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.pins().update(…)
+
+Update a pin
+
+- HTTP: `PATCH /v1/pins/{resourceType}/{resourceId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.pins().delete(…)
+
+Delete a pin
+
+- HTTP: `DELETE /v1/pins/{resourceType}/{resourceId}`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
 
 ### client.pull_requests().list()
 

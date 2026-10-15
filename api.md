@@ -111,6 +111,7 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [Retrieve a project](#retrieve-a-project)
   - [Update a project](#update-a-project)
   - [Delete a project](#delete-a-project)
+  - [Duplicate a project](#duplicate-a-project)
   - [`Projects EnvironmentVariables`](#projects-environmentvariables)
     - [List project environment variables](#list-project-environment-variables)
     - [Create project environment variables](#create-project-environment-variables)
@@ -131,6 +132,11 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Retrieve a project schedule](#retrieve-a-project-schedule)
     - [Update a project schedule](#update-a-project-schedule)
     - [Delete a project schedule](#delete-a-project-schedule)
+- [`Pins`](#pins)
+  - [List pins](#list-pins)
+  - [Create a pin](#create-a-pin)
+  - [Update a pin](#update-a-pin)
+  - [Delete a pin](#delete-a-pin)
 - [`PullRequests`](#pullrequests)
   - [List pull requests](#list-pull-requests)
   - [Retrieve a pull request](#retrieve-a-pull-request)
@@ -1741,6 +1747,18 @@ Delete a project and disable its schedule.
 let response = client.projects().delete("example").send().await?;
 ```
 
+### Duplicate a project
+
+Create a new project with the same configuration, environment variables, and schedule as an existing project. Snapshots are not copied.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`ProjectsDuplicateResponse`](./src/models/projects.rs) |
+
+```rust
+let response = client.projects().duplicate("example").send().await?;
+```
+
 ### `Projects EnvironmentVariables`
 
 #### List project environment variables
@@ -2027,6 +2045,86 @@ let response = client
     .projects()
     .schedules()
     .delete("example", "example")
+    .send()
+    .await?;
+```
+
+## `Pins`
+
+### List pins
+
+List sessions, pull requests, and projects you have pinned, in pin order.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`PinsListResponse`](./src/models/pins.rs) |
+
+```rust
+let response = client.pins().list().send().await?;
+```
+
+### Create a pin
+
+Pin a session, pull request, or project you have permission to access.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`PinsCreateBody`](./src/models/pins.rs) |
+| Response | [`PinsCreateResponse`](./src/models/pins.rs) |
+
+```rust
+let response = client
+    .pins()
+    .create(PinsCreateBody {
+        r#type: PinsCreateBodyType::Session,
+        id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+        placement: None,
+    })
+    .send()
+    .await?;
+```
+
+### Update a pin
+
+Update the placement of a pin.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`PinsUpdateBody`](./src/models/pins.rs) |
+| Response | [`PinsUpdateResponse`](./src/models/pins.rs) |
+
+```rust
+let response = client
+    .pins()
+    .update(
+        "session".to_string(),
+        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        PinsUpdateBody {
+            placement: PinsUpdateBodyPlacement {
+                target: PinsUpdateBodyPlacementTarget {
+                    r#type: PinsUpdateBodyPlacementTargetType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                },
+                position: PinsUpdateBodyPlacementPosition::Before,
+            },
+        },
+    )
+    .send()
+    .await?;
+```
+
+### Delete a pin
+
+Unpin a session, pull request, or project.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`PinsDeleteResponse`](./src/models/pins.rs) |
+
+```rust
+let response = client
+    .pins()
+    .delete("session".to_string(), "7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
