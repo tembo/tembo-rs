@@ -37,10 +37,12 @@ impl PinsResource {
     }
 }
 
-/// List sessions, pull requests, and projects you have pinned, in pin order.
+/// List your pinned resources in pin order.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ListRequestBuilder {
     client: crate::client::Tembo,
+    cursor: Option<String>,
+    limit: Option<i64>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -49,9 +51,23 @@ impl ListRequestBuilder {
     fn new(client: crate::client::Tembo) -> Self {
         Self {
             client,
+            cursor: None,
+            limit: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    /// Continue after this pin. Restart listing if it was removed or reordered.
+    pub fn cursor(mut self, value: impl Into<String>) -> Self {
+        self.cursor = Some(value.into());
+        self
+    }
+
+    /// Maximum number of pins returned per page.
+    pub fn limit(mut self, value: i64) -> Self {
+        self.limit = Some(value);
+        self
     }
 
     /// Overrides the client's request deadline for this request only.
@@ -84,7 +100,13 @@ impl ListRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::PinsListResponse, crate::error::Error> {
         let path = "/v1/pins".to_string();
-        let query: Vec<(String, String)> = Vec::new();
+        let mut query: Vec<(String, String)> = Vec::new();
+        if let Some(value) = &self.cursor {
+            query.push(("cursor".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.limit {
+            query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {

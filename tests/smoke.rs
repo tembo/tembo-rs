@@ -49,7 +49,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .api_keys()
-                .create(ApiKeysCreateBody { name: None })
+                .create(ApiKeysCreateBody {
+                    expires_at: None,
+                    name: None,
+                })
                 .send()
                 .await?;
             Ok(())
@@ -66,6 +69,7 @@ async fn smoke() {
             let _ = client
                 .api_keys()
                 .create(ApiKeysCreateBody {
+                    expires_at: Some(chrono::Utc::now().fixed_offset()),
                     name: Some("x".to_string()),
                 })
                 .send()
@@ -3032,7 +3036,19 @@ async fn smoke() {
         .await;
         if let Err(error) = result {
             if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "GET /v1/pins"));
+                failures.push(format!("{}: {error}", "GET /v1/pins [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().cursor("example").limit(50).send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/pins [all params]"));
             }
         }
     }

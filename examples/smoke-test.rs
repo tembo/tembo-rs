@@ -115,7 +115,10 @@ async fn main() {
         let result: Result<(), Error> = async {
             let _ = client
                 .api_keys()
-                .create(ApiKeysCreateBody { name: None })
+                .create(ApiKeysCreateBody {
+                    expires_at: None,
+                    name: None,
+                })
                 .send()
                 .await?;
             Ok(())
@@ -145,6 +148,7 @@ async fn main() {
             let _ = client
                 .api_keys()
                 .create(ApiKeysCreateBody {
+                    expires_at: Some(chrono::Utc::now().fixed_offset()),
                     name: Some("x".to_string()),
                 })
                 .send()
@@ -4785,7 +4789,32 @@ async fn main() {
             operation: "list".to_string(),
             method: "GET".to_string(),
             path: "/v1/pins".to_string(),
-            label: "".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "list", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().cursor("example").limit(50).send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "all params".to_string(),
             status: status.to_string(),
             duration_ms,
             error,

@@ -232,7 +232,7 @@ let response = client.api_keys().list().send().await?;
 
 ### Create an API key
 
-Create an API key for the current organization. The complete token is returned only by this operation.
+Create an API key for the current organization. Optionally set `expiresAt` to a future timestamp after which the key stops authenticating requests. The complete token is returned only by this operation.
 
 | Direction | Type |
 | --- | --- |
@@ -242,7 +242,10 @@ Create an API key for the current organization. The complete token is returned o
 ```rust
 let response = client
     .api_keys()
-    .create(ApiKeysCreateBody { name: None })
+    .create(ApiKeysCreateBody {
+        expires_at: None,
+        name: None,
+    })
     .send()
     .await?;
 ```
@@ -2053,7 +2056,7 @@ let response = client
 
 ### List pins
 
-List sessions, pull requests, and projects you have pinned, in pin order.
+List your pinned resources in pin order.
 
 | Direction | Type |
 | --- | --- |

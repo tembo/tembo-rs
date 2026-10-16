@@ -128,7 +128,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create an API key for the current organization. The complete token is returned only by this operation.
+/// Create an API key for the current organization. Optionally set `expiresAt` to a future timestamp after which the key stops authenticating requests. The complete token is returned only by this operation.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,

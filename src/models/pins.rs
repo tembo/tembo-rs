@@ -11,7 +11,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponse {
+    /// Accessible pinned resources in pin order.
     pub resources: Vec<PinsListResponseResource>,
+    /// Cursor for the next page, even when resources is empty; null at the end.
+    #[serde(rename = "nextCursor", default)]
+    pub next_cursor: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1609,8 +1613,11 @@ impl From<&str> for PinsCreateResponseVariant3ResourceColor {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsCreateBody {
+    /// Type of the pinned resource.
     pub r#type: PinsCreateBodyType,
+    /// ID of the pinned resource.
     pub id: String,
+    /// Placement for a new pin; omit to add it first. Existing pins keep their position.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub placement: Option<PinsCreateBodyPlacement>,
 }
@@ -1678,13 +1685,17 @@ impl From<&str> for PinsCreateBodyType {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsCreateBodyPlacement {
+    /// Existing pin to place this pin next to.
     pub target: PinsCreateBodyPlacementTarget,
+    /// Whether to place this pin before or after the target.
     pub position: PinsCreateBodyPlacementPosition,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsCreateBodyPlacementTarget {
+    /// Type of the pinned resource.
     pub r#type: PinsCreateBodyPlacementTargetType,
+    /// ID of the pinned resource.
     pub id: String,
 }
 
@@ -1789,18 +1800,23 @@ pub struct PinsUpdateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsUpdateBody {
+    /// New position of the pin relative to another pin.
     pub placement: PinsUpdateBodyPlacement,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsUpdateBodyPlacement {
+    /// Existing pin to place this pin next to.
     pub target: PinsUpdateBodyPlacementTarget,
+    /// Whether to place this pin before or after the target.
     pub position: PinsUpdateBodyPlacementPosition,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsUpdateBodyPlacementTarget {
+    /// Type of the pinned resource.
     pub r#type: PinsUpdateBodyPlacementTargetType,
+    /// ID of the pinned resource.
     pub id: String,
 }
 
@@ -1900,7 +1916,9 @@ impl From<&str> for PinsUpdateBodyPlacementPosition {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsDeleteResponse {
+    /// Type of the pinned resource.
     pub r#type: PinsDeleteResponseType,
+    /// ID of the pinned resource.
     pub id: String,
     pub deleted: bool,
 }

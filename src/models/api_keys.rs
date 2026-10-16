@@ -24,6 +24,12 @@ pub struct ApiKeysListResponse {
 pub struct ApiKeysListResponseItem {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "expiresAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     pub id: String,
     #[serde(
         rename = "lastUsedAt",
@@ -49,6 +55,12 @@ pub struct ApiKeysListResponseItem {
 pub struct ApiKeysCreateResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "expiresAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     pub id: String,
     #[serde(
         rename = "lastUsedAt",
@@ -69,6 +81,13 @@ pub struct ApiKeysCreateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ApiKeysCreateBody {
+    #[serde(
+        rename = "expiresAt",
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
@@ -81,6 +100,12 @@ pub struct ApiKeysCreateBody {
 pub struct ApiKeysRetrieveResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "expiresAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     pub id: String,
     #[serde(
         rename = "lastUsedAt",
@@ -106,6 +131,12 @@ pub struct ApiKeysRetrieveResponse {
 pub struct ApiKeysUpdateResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "expiresAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     pub id: String,
     #[serde(
         rename = "lastUsedAt",
