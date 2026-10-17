@@ -66,21 +66,25 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Filter messages belonging to this session.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
         self
     }
 
+    /// Filter messages belonging to this thread.
     pub fn thread_id(mut self, value: impl Into<String>) -> Self {
         self.thread_id = Some(value.into());
         self
@@ -148,7 +152,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create a user message for a session and submit it to the session agent.
+/// Send a task or follow-up message to an existing session, resume work, or steer an active agent turn using deliveryMode.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,

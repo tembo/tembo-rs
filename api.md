@@ -758,7 +758,7 @@ let response = client.organizations().settings().retrieve("example").send().awai
 
 #### Update organization settings
 
-Update one or more organization settings.
+Configure organization defaults for agent/model, VM size and keep-alive; inference credentials; agent prompts and commit/PR instructions; bot feedback, signing, reports, and insights. Only supplied settings are changed.
 
 | Direction | Type |
 | --- | --- |
@@ -801,6 +801,7 @@ let response = client
             max_bot_reviews: None,
             max_solutions: None,
             openai_api_key: None,
+            xai_api_key: None,
             openrouter_api_key: None,
             pg_stat_statements_reset_frequency: None,
             pm_system_prompt: None,
@@ -885,7 +886,7 @@ let response = client.mcp_connections().list().send().await?;
 
 ### Create an MCP connection
 
-Create a new stdio or Streamable HTTP MCP connection. Remote connections support OAuth, client credentials, or static headers and begin authorization when required; stdio commands are stored but never executed by this API.
+Create a new stdio or Streamable HTTP MCP connection. Remote connections support OAuth, Client Credentials (M2M), or static headers and begin authorization when required; stdio commands are stored but never executed by this API.
 
 | Direction | Type |
 | --- | --- |
@@ -910,7 +911,7 @@ let response = client
 
 ### Update an MCP connection
 
-Update MCP configuration. Header and environment objects merge write-only values by key, null values remove individual keys, and a null environment clears all variables. Hidden credentials are preserved unless explicitly changed or authentication is replaced; changing a remote server URL clears credentials for the old server. Call authorize explicitly after changing the server or authentication to reconnect.
+Update MCP configuration, including OAuth, Client Credentials (M2M), or static-header authentication. Supplied headers merge by key only for unchanged-server static_headers authentication; otherwise they are replaced. Environment values merge by key, null values remove individual keys, and a null environment clears all variables. Hidden credentials are preserved unless explicitly changed or authentication is replaced; changing a remote server URL clears credentials for the old server. Call authorize explicitly after changing the server or authentication to reconnect.
 
 | Direction | Type |
 | --- | --- |
@@ -1036,7 +1037,7 @@ let response = client.messages().list().send().await?;
 
 ### Create a message
 
-Create a user message for a session and submit it to the session agent.
+Send a task or follow-up message to an existing session, resume work, or steer an active agent turn using deliveryMode.
 
 | Direction | Type |
 | --- | --- |
@@ -1231,7 +1232,7 @@ let response = client.users().settings().retrieve("example").send().await?;
 
 #### Update user settings
 
-Merge user preference updates while preserving unrelated settings.
+Configure personal agent/model and project defaults, system instructions, follow-up queue/steer behavior, VM restart, commit signing/attribution, notifications, themes, and review layout. Updates preserve unrelated settings.
 
 | Direction | Type |
 | --- | --- |
@@ -1251,6 +1252,8 @@ let response = client
             include_tembo_commit_attribution: None,
             desktop_notifications_enabled: None,
             desktop_notification_preferences: None,
+            has_desktop_app: None,
+            open_links_in_desktop_app: None,
             appearance_preferences: None,
             app_sidebar_preferences: None,
             diff_preferences: None,
@@ -1388,7 +1391,7 @@ let response = client.users().profile_picture().delete("example").send().await?;
 
 ### List sessions
 
-List sessions you have permission to access, with cursor pagination.
+List and search sessions, including active or archived sessions, with repository, project, creator, and source filters and cursor pagination.
 
 | Direction | Type |
 | --- | --- |
@@ -1400,7 +1403,7 @@ let response = client.sessions().list().send().await?;
 
 ### Create a session
 
-Create a session for a task. Provide the initial prompt in description and optionally configure its repositories and agent.
+Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, Build (normal) or Plan (planning) mode, and private or workspace visibility.
 
 | Direction | Type |
 | --- | --- |
@@ -1451,7 +1454,7 @@ let response = client
 
 ### Update a session
 
-Update the configuration of a session you have permission to access.
+Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions.
 
 | Direction | Type |
 | --- | --- |
@@ -1486,7 +1489,7 @@ let response = client
 
 ### Delete a session
 
-Delete a session you have permission to access.
+Archive a session and stop its VM without permanently deleting it. Equivalent to updateSession with level=0; restore with updateSession and level=1.
 
 | Direction | Type |
 | --- | --- |
@@ -1526,7 +1529,7 @@ let response = client
 
 ### Stop a session
 
-Interrupt active session work and continue with the next queued message.
+Interrupt active session work without archiving it. Continue with the next queued message, or set cancelQueued=true to cancel pending messages too.
 
 | Direction | Type |
 | --- | --- |
@@ -1705,7 +1708,7 @@ let response = client.projects().retrieve("example").send().await?;
 
 ### Update a project
 
-Update project configuration fields.
+Update project repositories, setup script, agent instructions, environment variables, VM sizes and defaults; enable or pause scheduled builds or the warm pool; rename or customize its appearance.
 
 | Direction | Type |
 | --- | --- |
@@ -1740,7 +1743,7 @@ let response = client
 
 ### Delete a project
 
-Delete a project and disable its schedule.
+Archive a project, remove its default VM-size assignments, and disable its build schedule. This does not permanently delete the project record.
 
 | Direction | Type |
 | --- | --- |
@@ -2089,7 +2092,7 @@ let response = client
 
 ### Update a pin
 
-Update the placement of a pin.
+Reorder a pinned session, pull request, or project before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
 
 | Direction | Type |
 | --- | --- |
@@ -2118,7 +2121,7 @@ let response = client
 
 ### Delete a pin
 
-Unpin a session, pull request, or project.
+Unpin a session, pull request, or project for the authenticated user without deleting or archiving the resource.
 
 | Direction | Type |
 | --- | --- |
@@ -2225,7 +2228,7 @@ let response = client
 
 ### Update an agent
 
-Update agent configuration. Supply expectedUpdatedAt to reject an update if the agent changed since it was retrieved. Enabling or archiving an agent also updates its schedules and triggers.
+Update agent instructions, model, workspace, repositories, or persistent state; enable or pause the agent; archive or restore it. enabled and archived also control its schedules and triggers. Supply expectedUpdatedAt to reject concurrent changes.
 
 | Direction | Type |
 | --- | --- |
@@ -2262,7 +2265,7 @@ let response = client
 
 ### Delete an agent
 
-Delete an agent and disable its scheduled and triggered jobs.
+Archive an agent and disable its scheduled and triggered jobs without permanently deleting it. Restore with updateAgent and archived=false.
 
 | Direction | Type |
 | --- | --- |
@@ -2364,7 +2367,7 @@ let response = client
 
 #### Update an agent schedule
 
-Update an agent schedule, including its cron expression or enabled state.
+Change an agent schedule cron expression. Use updateAgent with enabled to enable or pause the agent and its schedules.
 
 | Direction | Type |
 | --- | --- |
@@ -2471,7 +2474,7 @@ let response = client
 
 #### Update an agent trigger
 
-Update an agent trigger configuration or enabled state.
+Change an agent trigger event, integration, or filters. Use updateAgent with enabled to enable or pause the agent and its triggers.
 
 | Direction | Type |
 | --- | --- |
@@ -2702,7 +2705,7 @@ let response = client.integrations().list().send().await?;
 
 ### Create an integration
 
-Create an integration that does not require an OAuth callback.
+Connect AWS, BigQuery, GitLab, PostgreSQL, Snyk, OpenConnect VPN, or Tailscale using provider credentials. For browser-authorized providers, use listIntegrationProviders and authorizeIntegration instead.
 
 | Direction | Type |
 | --- | --- |
@@ -2727,7 +2730,7 @@ let response = client
 
 ### Update an integration
 
-Update provider settings or an editable configuration.
+Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; set or remove Atlassian service-account credentials.
 
 | Direction | Type |
 | --- | --- |

@@ -76,21 +76,25 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Filter by whether the MCP connection has completed connection or authorization.
     pub fn connected(mut self, value: bool) -> Self {
         self.connected = Some(value);
         self
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Search MCP connection names or server URLs.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
@@ -158,7 +162,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create a new stdio or Streamable HTTP MCP connection. Remote connections support OAuth, client credentials, or static headers and begin authorization when required; stdio commands are stored but never executed by this API.
+/// Create a new stdio or Streamable HTTP MCP connection. Remote connections support OAuth, Client Credentials (M2M), or static headers and begin authorization when required; stdio commands are stored but never executed by this API.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
@@ -310,7 +314,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update MCP configuration. Header and environment objects merge write-only values by key, null values remove individual keys, and a null environment clears all variables. Hidden credentials are preserved unless explicitly changed or authentication is replaced; changing a remote server URL clears credentials for the old server. Call authorize explicitly after changing the server or authentication to reconnect.
+/// Update MCP configuration, including OAuth, Client Credentials (M2M), or static-header authentication. Supplied headers merge by key only for unchanged-server static_headers authentication; otherwise they are replaced. Environment values merge by key, null values remove individual keys, and a null environment clears all variables. Hidden credentials are preserved unless explicitly changed or authentication is replaced; changing a remote server URL clears credentials for the old server. Call authorize explicitly after changing the server or authentication to reconnect.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,

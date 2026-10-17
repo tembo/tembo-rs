@@ -58,7 +58,7 @@ impl ListRequestBuilder {
         }
     }
 
-    /// Continue after this pin. Restart listing if it was removed or reordered.
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
@@ -206,7 +206,7 @@ impl CreateRequestBuilder {
             .await
     }
 }
-/// Update the placement of a pin.
+/// Reorder a pinned session, pull request, or project before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -299,7 +299,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Unpin a session, pull request, or project.
+/// Unpin a session, pull request, or project for the authenticated user without deleting or archiving the resource.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,

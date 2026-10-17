@@ -112,16 +112,19 @@ impl ListUsageRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Filter billing usage to this session.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
         self

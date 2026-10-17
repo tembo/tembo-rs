@@ -147,10 +147,13 @@ pub struct RepositoriesUpdateResponseProvider {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct RepositoriesUpdateBody {
+    /// Enable or disable this repository for Tembo. Disabled by default on creation.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// Default Git branch to start sessions from. Null clears the override.
     #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
     pub base_branch: Option<String>,
+    /// Default target branch for agent-created pull requests. Null clears the override.
     #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
     pub target_branch: Option<String>,
 }

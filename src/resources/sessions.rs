@@ -64,7 +64,7 @@ impl SessionsResource {
     }
 }
 
-/// List sessions you have permission to access, with cursor pagination.
+/// List and search sessions, including active or archived sessions, with repository, project, creator, and source filters and cursor pagination.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ListRequestBuilder {
     client: crate::client::Tembo,
@@ -121,101 +121,121 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Filter sessions created by this automation agent.
     pub fn agent_id(mut self, value: impl Into<String>) -> Self {
         self.agent_id = Some(value.into());
         self
     }
 
+    /// Filter by creator IDs, supplied as a comma-separated list.
     pub fn created_by(mut self, value: Vec<String>) -> Self {
         self.created_by = Some(value);
         self
     }
 
+    /// Only sessions created after this ISO 8601 timestamp.
     pub fn created_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.created_after = Some(value);
         self
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Exclude sessions pinned by the authenticated user.
     pub fn exclude_pinned(mut self, value: bool) -> Self {
         self.exclude_pinned = Some(value);
         self
     }
 
+    /// Filter by external source IDs, supplied as a comma-separated list.
     pub fn external_ids(mut self, value: Vec<String>) -> Self {
         self.external_ids = Some(value);
         self
     }
 
+    /// Filter by whether a session has an assigned project.
     pub fn has_project(mut self, value: bool) -> Self {
         self.has_project = Some(value);
         self
     }
 
+    /// Include archived sessions in the all-state view. Defaults to true; state=archived explicitly selects archived sessions.
     pub fn include_archived(mut self, value: bool) -> Self {
         self.include_archived = Some(value);
         self
     }
 
+    /// Include totalCount. Not supported with state=active.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
         self
     }
 
+    /// Filter by participant IDs, supplied as a comma-separated list.
     pub fn participant(mut self, value: Vec<String>) -> Self {
         self.participant = Some(value);
         self
     }
 
+    /// Filter by pending reviewer keys, supplied as a comma-separated list.
     pub fn pending_reviewer_keys(mut self, value: Vec<String>) -> Self {
         self.pending_reviewer_keys = Some(value);
         self
     }
 
+    /// Filter by project IDs, supplied as a comma-separated list.
     pub fn project_ids(mut self, value: Vec<String>) -> Self {
         self.project_ids = Some(value);
         self
     }
 
+    /// Filter by linked pull request statuses: open, merged, or closed, supplied as a comma-separated list.
     pub fn pull_request_statuses(mut self, value: Vec<String>) -> Self {
         self.pull_request_statuses = Some(value);
         self
     }
 
+    /// Filter by repository IDs, supplied as a comma-separated list.
     pub fn repository_ids(mut self, value: Vec<String>) -> Self {
         self.repository_ids = Some(value);
         self
     }
 
+    /// Search session titles, task prompts, kinds, and source names or types.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// Timestamp used to sort sessions, newest first.
     pub fn sort_by(mut self, value: impl Into<String>) -> Self {
         self.sort_by = Some(value.into());
         self
     }
 
+    /// Filter by session source IDs, supplied as a comma-separated list.
     pub fn source_ids(mut self, value: Vec<String>) -> Self {
         self.source_ids = Some(value);
         self
     }
 
+    /// Filter by session source types, supplied as a comma-separated list.
     pub fn source_types(mut self, value: Vec<String>) -> Self {
         self.source_types = Some(value);
         self
     }
 
+    /// Select all sessions, currently active work, or archived sessions. Use archived to find sessions to restore.
     pub fn state(mut self, value: impl Into<String>) -> Self {
         self.state = Some(value.into());
         self
@@ -349,7 +369,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create a session for a task. Provide the initial prompt in description and optionally configure its repositories and agent.
+/// Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, Build (normal) or Plan (planning) mode, and private or workspace visibility.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
@@ -498,7 +518,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update the configuration of a session you have permission to access.
+/// Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -580,7 +600,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Delete a session you have permission to access.
+/// Archive a session and stop its VM without permanently deleting it. Equivalent to updateSession with level=0; restore with updateSession and level=1.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,
@@ -742,7 +762,7 @@ impl ForkRequestBuilder {
             .await
     }
 }
-/// Interrupt active session work and continue with the next queued message.
+/// Interrupt active session work without archiving it. Continue with the next queued message, or set cancelQueued=true to cancel pending messages too.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct StopRequestBuilder {
     client: crate::client::Tembo,
@@ -765,6 +785,7 @@ impl StopRequestBuilder {
         }
     }
 
+    /// Also cancel pending queued messages instead of continuing with the next queued message. Does not archive the session.
     pub fn cancel_queued(mut self, value: bool) -> Self {
         self.cancel_queued = Some(value);
         self
@@ -859,11 +880,13 @@ impl ListEventsRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: serde_json::Value) -> Self {
         self.cursor = Some(value);
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self

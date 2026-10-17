@@ -74,41 +74,49 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Filter by exact skill names.
     pub fn names(mut self, value: Vec<String>) -> Self {
         self.names = Some(value);
         self
     }
 
+    /// Repository IDs to search for checked-in skills, supplied as a comma-separated list.
     pub fn repository_ids(mut self, value: Vec<String>) -> Self {
         self.repository_ids = Some(value);
         self
     }
 
+    /// Project whose repositories to search for checked-in skills.
     pub fn project_id(mut self, value: impl Into<String>) -> Self {
         self.project_id = Some(value.into());
         self
     }
 
+    /// Session whose repositories to search for checked-in skills.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
         self
     }
 
+    /// Search skills by name, description, or keywords.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// organization lists saved organization skills; repository lists checked-in skills from the selected repositories, project, or session.
     pub fn source(mut self, value: impl Into<String>) -> Self {
         self.source = Some(value.into());
         self

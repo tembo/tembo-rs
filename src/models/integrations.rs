@@ -115,36 +115,50 @@ pub enum IntegrationsCreateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant1 {
+    /// Display label for the AWS environment.
     pub environment: String,
+    /// AWS IAM role ARN to assume for account access.
     #[serde(rename = "roleArn")]
     pub role_arn: String,
+    /// Create an AWS account integration.
     pub r#type: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant2 {
+    /// Google Cloud project ID for BigQuery.
     #[serde(rename = "projectId")]
     pub project_id: String,
+    /// Google Cloud service-account JSON credentials for BigQuery.
     #[serde(rename = "serviceAccountJson")]
     pub service_account_json: String,
+    /// Create a BigQuery integration.
     pub r#type: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant3 {
+    /// GitLab access token used to connect the integration.
     #[serde(rename = "accessToken")]
     pub access_token: String,
+    /// Create a GitLab integration.
     pub r#type: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant4 {
+    /// VPN gateway hostname or URL for OpenConnect.
     pub gateway: String,
+    /// Display name for the VPN connection.
     #[serde(rename = "instanceName")]
     pub instance_name: String,
+    /// VPN login password.
     pub password: String,
+    /// OpenConnect VPN protocol supported by the gateway.
     pub protocol: IntegrationsCreateBodyVariant4Protocol,
+    /// Create an OpenConnect VPN integration.
     pub r#type: String,
+    /// VPN login username.
     pub username: String,
 }
 
@@ -201,12 +215,16 @@ impl From<&str> for IntegrationsCreateBodyVariant4Protocol {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant5 {
+    /// Optional CA certificate for the PostgreSQL TLS connection.
     #[serde(rename = "caCertificate", default, skip_serializing_if = "Option::is_none")]
     pub ca_certificate: Option<String>,
+    /// PostgreSQL connection URI, including credentials. Stored as secret configuration.
     #[serde(rename = "connectionString")]
     pub connection_string: String,
+    /// Display name for the PostgreSQL instance.
     #[serde(rename = "instanceName")]
     pub instance_name: String,
+    /// Create a PostgreSQL integration.
     pub r#type: String,
 }
 
@@ -231,14 +249,19 @@ impl IntegrationsCreateBodyVariant5 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant6 {
+    /// Snyk service-account client ID.
     #[serde(rename = "clientId")]
     pub client_id: String,
+    /// Snyk service-account client secret.
     #[serde(rename = "clientSecret")]
     pub client_secret: String,
+    /// Snyk organization ID, not a Tembo organization ID. Discover choices with discoverSnykOrganizations.
     #[serde(rename = "organizationId")]
     pub organization_id: String,
+    /// Optional display name for the Snyk organization.
     #[serde(rename = "organizationName", default, skip_serializing_if = "Option::is_none")]
     pub organization_name: Option<String>,
+    /// Create a Snyk integration.
     pub r#type: String,
 }
 
@@ -265,15 +288,21 @@ impl IntegrationsCreateBodyVariant6 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsCreateBodyVariant7 {
+    /// Display name for the Tailscale connection.
     #[serde(rename = "instanceName")]
     pub instance_name: String,
+    /// Tailscale OAuth client ID authorized to create tagged devices.
     #[serde(rename = "oauthClientId")]
     pub oauth_client_id: String,
+    /// Tailscale OAuth client secret.
     #[serde(rename = "oauthClientSecret")]
     pub oauth_client_secret: String,
+    /// Tags to assign to connected devices, such as tag:tembo. Must be authorized for the OAuth client.
     pub tags: Vec<String>,
+    /// Tailnet name. The default - uses the OAuth client tailnet.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tailnet: Option<String>,
+    /// Create a Tailscale private-network integration.
     pub r#type: String,
 }
 
@@ -383,6 +412,7 @@ pub enum IntegrationsUpdateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant1 {
+    /// Update integration settings, preserving unspecified settings.
     pub settings: IntegrationsUpdateBodyVariant1Settings,
 }
 
@@ -404,27 +434,34 @@ pub struct IntegrationsUpdateBodyVariant1Settings {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant2 {
+    /// Replace AWS environment and assumed-role configuration.
     pub aws: IntegrationsUpdateBodyVariant2Aws,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant2Aws {
+    /// Display label for the AWS environment.
     pub environment: String,
+    /// AWS IAM role ARN to assume for account access.
     #[serde(rename = "roleArn")]
     pub role_arn: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant3 {
+    /// Replace PostgreSQL connection configuration.
     pub postgres: IntegrationsUpdateBodyVariant3Postgres,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant3Postgres {
+    /// Optional CA certificate for the PostgreSQL TLS connection.
     #[serde(rename = "caCertificate", default, skip_serializing_if = "Option::is_none")]
     pub ca_certificate: Option<String>,
+    /// PostgreSQL connection URI, including credentials. Stored as secret configuration.
     #[serde(rename = "connectionString")]
     pub connection_string: String,
+    /// Display name for the PostgreSQL instance.
     #[serde(rename = "instanceName")]
     pub instance_name: String,
 }
@@ -452,6 +489,7 @@ impl IntegrationsUpdateBodyVariant3Postgres {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant4 {
+    /// Set Atlassian service-account OAuth credentials for triggers, or null to remove them.
     #[serde(rename = "atlassianServiceAccount", default)]
     pub atlassian_service_account: Option<IntegrationsUpdateBodyVariant4AtlassianServiceAccount>,
 }
@@ -552,6 +590,7 @@ impl From<&str> for IntegrationsSyncResponseMode {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsSyncBody {
+    /// queued schedules a background integration sync; immediate performs the sync in this request.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<IntegrationsSyncBodyMode>,
 }

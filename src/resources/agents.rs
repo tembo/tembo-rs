@@ -92,46 +92,55 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Filter by agent IDs, supplied as a comma-separated list.
     pub fn ids(mut self, value: impl Into<String>) -> Self {
         self.ids = Some(value.into());
         self
     }
 
+    /// Search agent names.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// true lists archived agents; false or omitted lists unarchived agents. Use this to find agents to restore.
     pub fn archived(mut self, value: bool) -> Self {
         self.archived = Some(value);
         self
     }
 
+    /// Sort agents by latest run or run count.
     pub fn sort(mut self, value: impl Into<String>) -> Self {
         self.sort = Some(value.into());
         self
     }
 
+    /// Filter by enabled (running) or paused status, supplied as a comma-separated list; this is not individual run execution status.
     pub fn status(mut self, value: impl Into<String>) -> Self {
         self.status = Some(value.into());
         self
     }
 
+    /// Filter by integration provider types, supplied as a comma-separated list.
     pub fn integration(mut self, value: impl Into<String>) -> Self {
         self.integration = Some(value.into());
         self
     }
 
+    /// Filter by creator user IDs, supplied as a comma-separated list.
     pub fn author(mut self, value: impl Into<String>) -> Self {
         self.author = Some(value.into());
         self
@@ -363,7 +372,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update agent configuration. Supply expectedUpdatedAt to reject an update if the agent changed since it was retrieved. Enabling or archiving an agent also updates its schedules and triggers.
+/// Update agent instructions, model, workspace, repositories, or persistent state; enable or pause the agent; archive or restore it. enabled and archived also control its schedules and triggers. Supply expectedUpdatedAt to reject concurrent changes.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -445,7 +454,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Delete an agent and disable its scheduled and triggered jobs.
+/// Archive an agent and disable its scheduled and triggered jobs without permanently deleting it. Restore with updateAgent and archived=false.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,

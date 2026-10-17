@@ -223,12 +223,16 @@ pub struct ProvidersDiscoverSnykOrganizationsResponseItem {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProvidersDiscoverSnykOrganizationsBody {
+    /// Snyk service-account client ID to validate and use for organization discovery.
     #[serde(rename = "clientId")]
     pub client_id: String,
+    /// Snyk service-account client secret. Used for discovery without saving an integration.
     #[serde(rename = "clientSecret")]
     pub client_secret: String,
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
 }

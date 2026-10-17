@@ -11,8 +11,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateDefaultsResponse {
+    /// Project to make the organization default, or null to clear the default.
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
+    /// Default workspace VM size for the organization.
     #[serde(rename = "sandboxSize")]
     pub sandbox_size: ProjectsUpdateDefaultsResponseSandboxSize,
 }
@@ -86,8 +88,10 @@ impl From<&str> for ProjectsUpdateDefaultsResponseSandboxSize {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateDefaultsBody {
+    /// Project to make the organization default, or null to clear the default.
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
+    /// Default workspace VM size for the organization.
     #[serde(rename = "sandboxSize")]
     pub sandbox_size: ProjectsUpdateDefaultsBodySandboxSize,
 }
@@ -1067,29 +1071,42 @@ impl From<&str> for ProjectsCreateResponseProjectSiz {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsCreateBody {
+    /// Short project description, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Include project dependencies when building the environment. Defaults to true on creation.
     #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
     pub include_deps: Option<bool>,
+    /// Include skills in the project environment. Defaults to true on creation.
     #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
     pub include_skills: Option<bool>,
+    /// Project display name.
     pub name: String,
+    /// Setup script to run while building the environment, or null to clear it.
     #[serde(rename = "setupScript", default, skip_serializing_if = "Option::is_none")]
     pub setup_script: Option<String>,
+    /// Repository IDs included in the project environment. On update, replaces the repository selection.
     #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub code_repository_ids: Option<Vec<String>>,
+    /// Instructions supplied to agents using this project, or null to clear them.
     #[serde(rename = "agentInstructions", default, skip_serializing_if = "Option::is_none")]
     pub agent_instructions: Option<String>,
+    /// Project display color.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<ProjectsCreateBodyColor>,
+    /// Project display icon.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<ProjectsCreateBodyIcon>,
+    /// Make this project the onboarding default for the organization.
     #[serde(rename = "onboardingDefault", default, skip_serializing_if = "Option::is_none")]
     pub onboarding_default: Option<bool>,
+    /// Queue initial snapshot builds immediately when a build host is available. Defaults to false.
     #[serde(rename = "runNow", default, skip_serializing_if = "Option::is_none")]
     pub run_now: Option<bool>,
+    /// Recurring schedule for rebuilding the project environment.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsCreateBodySchedule>,
+    /// Workspace VM sizes to build for this project.
     pub sizes: Vec<ProjectsCreateBodySiz>,
 }
 
@@ -1313,7 +1330,9 @@ impl From<&str> for ProjectsCreateBodyIcon {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsCreateBodySchedule {
+    /// Cron expression for recurring project snapshot builds.
     pub cron: String,
+    /// Timezone for the cron schedule. Defaults to UTC.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
 }
@@ -2278,32 +2297,46 @@ impl From<&str> for ProjectsUpdateResponseSiz {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateBody {
+    /// Short project description, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Include project dependencies when building the environment. Defaults to true on creation.
     #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
     pub include_deps: Option<bool>,
+    /// Include skills in the project environment. Defaults to true on creation.
     #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
     pub include_skills: Option<bool>,
+    /// Project display name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Setup script to run while building the environment, or null to clear it.
     #[serde(rename = "setupScript", default, skip_serializing_if = "Option::is_none")]
     pub setup_script: Option<String>,
+    /// Repository IDs included in the project environment. On update, replaces the repository selection.
     #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub code_repository_ids: Option<Vec<String>>,
+    /// Instructions supplied to agents using this project, or null to clear them.
     #[serde(rename = "agentInstructions", default, skip_serializing_if = "Option::is_none")]
     pub agent_instructions: Option<String>,
+    /// Project display color.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<ProjectsUpdateBodyColor>,
+    /// Project display icon.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<ProjectsUpdateBodyIcon>,
+    /// VM sizes for which this project is the organization default. An empty array removes its default assignments.
     #[serde(rename = "defaultForSizes", default, skip_serializing_if = "Option::is_none")]
     pub default_for_sizes: Option<Vec<ProjectsUpdateBodyDefaultForSiz>>,
+    /// Replace the complete environment-variable map. Use createProjectEnvironmentVariables to add or replace individual keys instead.
     #[serde(rename = "environmentVariables", default, skip_serializing_if = "Option::is_none")]
     pub environment_variables: Option<std::collections::HashMap<String, String>>,
+    /// Change the project build schedule, including enabling or pausing it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsUpdateBodySchedule>,
+    /// Replace the workspace VM sizes built for this project.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsUpdateBodySiz>>,
+    /// Enable or disable prewarmed VMs for this project.
     #[serde(rename = "warmPoolEnabled", default, skip_serializing_if = "Option::is_none")]
     pub warm_pool_enabled: Option<bool>,
 }
@@ -2567,10 +2600,13 @@ impl From<&str> for ProjectsUpdateBodyDefaultForSiz {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateBodySchedule {
+    /// Replace the recurring project build cron expression.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cron: Option<String>,
+    /// Enable or pause scheduled project builds.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// Timezone for the cron schedule, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
 }

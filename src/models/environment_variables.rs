@@ -43,12 +43,15 @@ pub struct EnvironmentVariablesCreateResponseItem {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EnvironmentVariablesCreateBody {
+    /// Environment variables to add or replace by key, preserving other keys. Values are encrypted and not returned by list operations.
     pub secrets: Vec<EnvironmentVariablesCreateBodySecret>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EnvironmentVariablesCreateBodySecret {
+    /// Environment-variable name.
     pub key: String,
+    /// Secret environment-variable value; stored encrypted and not returned by list operations.
     pub value: String,
 }
 

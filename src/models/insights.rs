@@ -399,6 +399,7 @@ pub struct InsightsUpdateResponseDataTimeSery {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InsightsUpdateBody {
+    /// Enable or disable pull request contribution insight collection. Enabling starts the initial refresh when needed.
     pub enabled: bool,
 }
 

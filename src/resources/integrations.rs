@@ -130,51 +130,61 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Filter by whether integrations are enabled.
     pub fn enabled(mut self, value: bool) -> Self {
         self.enabled = Some(value);
         self
     }
 
+    /// Filter by whether integrations have enabled repositories.
     pub fn has_enabled_repositories(mut self, value: bool) -> Self {
         self.has_enabled_repositories = Some(value);
         self
     }
 
+    /// Filter by integration IDs, supplied as a comma-separated list.
     pub fn ids(mut self, value: Vec<String>) -> Self {
         self.ids = Some(value);
         self
     }
 
+    /// Search integration provider types and external IDs.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// Filter provider types, supplied as a comma-separated list.
     pub fn r#type(mut self, value: Vec<String>) -> Self {
         self.r#type = Some(value);
         self
     }
 
+    /// Only integrations created after this ISO 8601 timestamp.
     pub fn created_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.created_after = Some(value);
         self
     }
 
+    /// Exclude integrations belonging to the named organization within the caller access scope.
     pub fn exclude_organization_name(mut self, value: impl Into<String>) -> Self {
         self.exclude_organization_name = Some(value.into());
         self
     }
 
+    /// Include totalCount for matching integrations.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
         self
@@ -264,7 +274,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create an integration that does not require an OAuth callback.
+/// Connect AWS, BigQuery, GitLab, PostgreSQL, Snyk, OpenConnect VPN, or Tailscale using provider credentials. For browser-authorized providers, use listIntegrationProviders and authorizeIntegration instead.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
@@ -416,7 +426,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update provider settings or an editable configuration.
+/// Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; set or remove Atlassian service-account credentials.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -609,11 +619,13 @@ impl AuthorizeRequestBuilder {
         }
     }
 
+    /// URL to return to after provider authorization. Must use HTTPS or localhost HTTP.
     pub fn return_url(mut self, value: impl Into<String>) -> Self {
         self.return_url = Some(value.into());
         self
     }
 
+    /// Request authorization for Confluence automation triggers instead of the default integration capability.
     pub fn capability(mut self, value: impl Into<String>) -> Self {
         self.capability = Some(value.into());
         self
@@ -1097,11 +1109,13 @@ impl ListSentryEnvironmentsRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
@@ -1191,16 +1205,19 @@ impl ListSlackChannelsRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Search Slack channel names.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self

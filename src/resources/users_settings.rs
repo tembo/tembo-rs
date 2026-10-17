@@ -91,7 +91,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Merge user preference updates while preserving unrelated settings.
+/// Configure personal agent/model and project defaults, system instructions, follow-up queue/steer behavior, VM restart, commit signing/attribution, notifications, themes, and review layout. Updates preserve unrelated settings.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,

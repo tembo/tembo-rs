@@ -101,14 +101,19 @@ pub struct SkillsCreateResponseFile {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SkillsCreateBody {
+    /// Summary of what the skill does and when to use it.
     pub description: String,
+    /// Display name of the skill.
     pub name: String,
+    /// Complete file set, including a required SKILL.md. On update, replaces all existing files rather than merging them.
     pub files: Vec<SkillsCreateBodyFile>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SkillsCreateBodyFile {
+    /// Complete text content of the skill file.
     pub content: String,
+    /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
 }
 
@@ -168,17 +173,22 @@ pub struct SkillsUpdateResponseFile {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SkillsUpdateBody {
+    /// Summary of what the skill does and when to use it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Display name of the skill.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Complete file set, including a required SKILL.md. On update, replaces all existing files rather than merging them.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub files: Option<Vec<SkillsUpdateBodyFile>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SkillsUpdateBodyFile {
+    /// Complete text content of the skill file.
     pub content: String,
+    /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
 }
 

@@ -75,91 +75,109 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Filter authors by comma-separated provider:identifier values, such as github:octocat.
     pub fn author_ids(mut self, value: Vec<String>) -> Self {
         self.author_ids = Some(value);
         self
     }
 
+    /// Only pull requests created after this ISO 8601 timestamp.
     pub fn created_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.created_after = Some(value);
         self
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Exclude authors by comma-separated provider:identifier values.
     pub fn exclude_author_ids(mut self, value: Vec<String>) -> Self {
         self.exclude_author_ids = Some(value);
         self
     }
 
+    /// Exclude pull requests from the named organization within the caller access scope.
     pub fn exclude_organization_name(mut self, value: impl Into<String>) -> Self {
         self.exclude_organization_name = Some(value.into());
         self
     }
 
+    /// Exclude returned pull requests by these comma-separated provider:identifier author values.
     pub fn exclude_returned_author_ids(mut self, value: Vec<String>) -> Self {
         self.exclude_returned_author_ids = Some(value);
         self
     }
 
+    /// Exclude pull requests assigned to these comma-separated reviewer identifiers.
     pub fn exclude_reviewer_ids(mut self, value: Vec<String>) -> Self {
         self.exclude_reviewer_ids = Some(value);
         self
     }
 
+    /// When true, only return pull requests with a linked Tembo session.
     pub fn has_tembo_session(mut self, value: bool) -> Self {
         self.has_tembo_session = Some(value);
         self
     }
 
+    /// Request author filter options. Public responses do not include organization-wide author options.
     pub fn include_authors(mut self, value: bool) -> Self {
         self.include_authors = Some(value);
         self
     }
 
+    /// Include the total count of matching pull requests.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
         self
     }
 
+    /// Filter by repository IDs, supplied as a comma-separated list.
     pub fn repository_ids(mut self, value: Vec<String>) -> Self {
         self.repository_ids = Some(value);
         self
     }
 
+    /// Filter by assigned reviewer identifiers, supplied as a comma-separated list.
     pub fn reviewer_ids(mut self, value: Vec<String>) -> Self {
         self.reviewer_ids = Some(value);
         self
     }
 
+    /// Only pull requests merged after this ISO 8601 timestamp.
     pub fn merged_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.merged_after = Some(value);
         self
     }
 
+    /// Search pull requests.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// Sort by creation time or last update time.
     pub fn sort_by(mut self, value: impl Into<String>) -> Self {
         self.sort_by = Some(value.into());
         self
     }
 
+    /// Filter by lifecycle or review state, including open, returned, approved, needs review, draft, merged, or closed.
     pub fn state(mut self, value: impl Into<String>) -> Self {
         self.state = Some(value.into());
         self
     }
 
+    /// Only pull requests updated after this ISO 8601 timestamp.
     pub fn updated_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.updated_after = Some(value);
         self

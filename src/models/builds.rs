@@ -258,8 +258,10 @@ pub struct BuildsCreateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct BuildsCreateBody {
+    /// VM sizes to build. Omit to use the project sizes. Cannot be combined with snapshotId.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<BuildsCreateBodySiz>>,
+    /// Rebuild one existing snapshot instead of building project sizes. Cannot be combined with sizes.
     #[serde(rename = "snapshotId", default, skip_serializing_if = "Option::is_none")]
     pub snapshot_id: Option<String>,
 }

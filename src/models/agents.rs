@@ -426,32 +426,43 @@ pub struct AgentsCreateResponseLastRun {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct AgentsCreateBody {
+    /// Agent display name. Required when creating from scratch.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Instructions for the agent as a rich-text document. Mentions can reference integrations used by the agent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub instructions: Option<TipTapDocument>,
+    /// MCP server or connection IDs available to agent runs.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
+    /// Coding agent and model key used for runs. Omit to use the default.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
-    /// Execution settings for the selected agent runtime, including provider-specific options.
+    /// Agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptionsInput>,
+    /// Workspace VM size used for agent runs.
     #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub sandbox_size: Option<AgentsCreateBodySandboxSize>,
+    /// Project environment used for agent runs.
     #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
     pub project_id: Option<AgentsCreateBodyProjectId>,
+    /// Artifact type produced by this agent.
     #[serde(rename = "artifactType", default, skip_serializing_if = "Option::is_none")]
     pub artifact_type: Option<AgentsCreateBodyArtifactType>,
+    /// Repository IDs available to agent runs.
     #[serde(rename = "repositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub repository_ids: Option<Vec<String>>,
+    /// Integration events that automatically start agent runs.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub triggers: Option<Vec<AgentsCreateBodyTrigger>>,
+    /// Recurring cron schedules that automatically start agent runs.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedules: Option<Vec<AgentsCreateBodySchedule>>,
+    /// Create from a template discovered with listAgentTemplates. Only name and triggers may also be supplied.
     #[serde(rename = "templateName", default, skip_serializing_if = "Option::is_none")]
     pub template_name: Option<AgentsCreateBodyTemplateName>,
+    /// Duplicate an existing agent. Must be the only field; cannot be combined with templateName or overrides.
     #[serde(rename = "sourceAgentId", default, skip_serializing_if = "Option::is_none")]
     pub source_agent_id: Option<String>,
 }
@@ -596,12 +607,15 @@ impl From<&str> for AgentsCreateBodyArtifactType {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AgentsCreateBodyTrigger {
+    /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
+    /// Provider type for the trigger, such as github or slack.
     #[serde(rename = "integrationType", default, skip_serializing_if = "Option::is_none")]
     pub integration_type: Option<String>,
+    /// Connected integration that supplies trigger events.
     #[serde(rename = "integrationId", default, skip_serializing_if = "Option::is_none")]
     pub integration_id: Option<String>,
-    /// Conditions that determine whether the selected integration event starts the agent. Available fields depend on the integration and event type.
+    /// Event-specific trigger filters. Use retrieveIntegrationTrigger and listIntegrationTriggerFilterOptions to discover supported fields and values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filters: Option<TriggerFilters>,
 }
@@ -623,6 +637,7 @@ impl AgentsCreateBodyTrigger {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AgentsCreateBodySchedule {
+    /// Cron expression for recurring agent runs. Agent enabled and archived state controls whether the schedule runs.
     pub cron: String,
 }
 
@@ -1297,37 +1312,49 @@ pub struct AgentsUpdateBody {
         deserialize_with = "crate::datetime::option::deserialize"
     )]
     pub expected_updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    /// Rename the agent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Change the agent lookup key, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
-    /// Instructions for the agent as a rich-text document. Mentions can reference integrations used by the agent.
+    /// Replace the agent instruction document, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub instructions: Option<TipTapDocument>,
+    /// Replace the MCP server or connection IDs. An empty array clears the selection.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
+    /// Change the coding agent and model key. Null clears the override.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
-    /// Execution settings for the selected agent runtime, including provider-specific options.
+    /// Change agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptionsInput>,
-    /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
+    /// Replace the user-managed persistent agent state.
     #[serde(rename = "userState", default, skip_serializing_if = "Option::is_none")]
     pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// Change the workspace VM size. Null clears the override.
     #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub sandbox_size: Option<AgentsUpdateBodySandboxSize>,
+    /// Change the project environment for runs. Null clears the override.
     #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
     pub project_id: Option<AgentsUpdateBodyProjectId>,
+    /// Change the associated agent template identifier, or null to clear it.
     #[serde(rename = "templateId", default, skip_serializing_if = "Option::is_none")]
     pub template_id: Option<String>,
+    /// Replace the agent script, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub script: Option<String>,
+    /// Change the artifact type produced by the agent, or null to clear it.
     #[serde(rename = "artifactType", default, skip_serializing_if = "Option::is_none")]
     pub artifact_type: Option<AgentsUpdateBodyArtifactType>,
+    /// Replace repository associations. An empty array removes all associations.
     #[serde(rename = "repositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub repository_ids: Option<Vec<String>>,
+    /// Enable or pause the agent and its schedules and triggers. Archived agents remain paused until restored.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// Archive with true or restore with false. Archiving disables schedules and triggers; restoring follows the agent enabled state.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub archived: Option<bool>,
 }

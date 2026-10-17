@@ -81,6 +81,7 @@ pub struct ApiKeysCreateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ApiKeysCreateBody {
+    /// Future ISO 8601 expiration timestamp. Omit or use null for a key that does not expire.
     #[serde(
         rename = "expiresAt",
         default,
@@ -88,6 +89,7 @@ pub struct ApiKeysCreateBody {
         deserialize_with = "crate::datetime::option::deserialize"
     )]
     pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    /// Display name for identifying this API key.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
@@ -156,6 +158,7 @@ pub struct ApiKeysUpdateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApiKeysUpdateBody {
+    /// New display name for the API key. This does not rotate its token.
     pub name: String,
 }
 

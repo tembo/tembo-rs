@@ -172,21 +172,25 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Only projects configured as defaults for at least one VM size.
     pub fn default_only(mut self, value: impl Into<String>) -> Self {
         self.default_only = Some(value.into());
         self
     }
 
+    /// Search project names.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
@@ -403,7 +407,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update project configuration fields.
+/// Update project repositories, setup script, agent instructions, environment variables, VM sizes and defaults; enable or pause scheduled builds or the warm pool; rename or customize its appearance.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -485,7 +489,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Delete a project and disable its schedule.
+/// Archive a project, remove its default VM-size assignments, and disable its build schedule. This does not permanently delete the project record.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,

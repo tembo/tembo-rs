@@ -293,6 +293,8 @@ impl From<&str>
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourcePullRequest {
     pub status: PinsListResponseResourceVariant1ResourcePullRequestStatus,
+    #[serde(rename = "isDraft")]
+    pub is_draft: bool,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsListResponseResourceVariant1ResourcePullRequestDiffSummary>,
 }
@@ -1089,6 +1091,8 @@ impl From<&str>
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourcePullRequest {
     pub status: PinsCreateResponseVariant1ResourcePullRequestStatus,
+    #[serde(rename = "isDraft")]
+    pub is_draft: bool,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsCreateResponseVariant1ResourcePullRequestDiffSummary>,
 }
@@ -1613,11 +1617,11 @@ impl From<&str> for PinsCreateResponseVariant3ResourceColor {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsCreateBody {
-    /// Type of the pinned resource.
+    /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsCreateBodyType,
-    /// ID of the pinned resource.
+    /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
-    /// Placement for a new pin; omit to add it first. Existing pins keep their position.
+    /// Position of a new pin relative to another pin. Omit to add it first. Ignored if the resource is already pinned; use updatePin to reorder.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub placement: Option<PinsCreateBodyPlacement>,
 }
@@ -1693,9 +1697,9 @@ pub struct PinsCreateBodyPlacement {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsCreateBodyPlacementTarget {
-    /// Type of the pinned resource.
+    /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsCreateBodyPlacementTargetType,
-    /// ID of the pinned resource.
+    /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
 }
 
@@ -1800,7 +1804,7 @@ pub struct PinsUpdateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsUpdateBody {
-    /// New position of the pin relative to another pin.
+    /// Reorder an existing pin before or after another pin. Use createPin to pin a resource and deletePin to unpin it.
     pub placement: PinsUpdateBodyPlacement,
 }
 
@@ -1814,9 +1818,9 @@ pub struct PinsUpdateBodyPlacement {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PinsUpdateBodyPlacementTarget {
-    /// Type of the pinned resource.
+    /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsUpdateBodyPlacementTargetType,
-    /// ID of the pinned resource.
+    /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
 }
 
@@ -1916,9 +1920,9 @@ impl From<&str> for PinsUpdateBodyPlacementPosition {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsDeleteResponse {
-    /// Type of the pinned resource.
+    /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsDeleteResponseType,
-    /// ID of the pinned resource.
+    /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
     pub deleted: bool,
 }
