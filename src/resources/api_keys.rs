@@ -62,11 +62,13 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
@@ -128,7 +130,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create an API key for the current organization. The complete token is returned only by this operation.
+/// Create an API key for the current organization. Optionally set `expiresAt` to a future timestamp after which the key stops authenticating requests. The complete token is returned only by this operation.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,

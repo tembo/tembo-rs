@@ -80,12 +80,15 @@ pub struct TriggersCreateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TriggersCreateBody {
+    /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
+    /// Provider type for the trigger, such as github or slack.
     #[serde(rename = "integrationType", default, skip_serializing_if = "Option::is_none")]
     pub integration_type: Option<String>,
+    /// Connected integration that supplies trigger events.
     #[serde(rename = "integrationId", default, skip_serializing_if = "Option::is_none")]
     pub integration_id: Option<String>,
-    /// Conditions that determine whether the selected integration event starts the agent. Available fields depend on the integration and event type.
+    /// Event-specific trigger filters. Use retrieveIntegrationTrigger and listIntegrationTriggerFilterOptions to discover supported fields and values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filters: Option<TriggerFilters>,
 }
@@ -169,10 +172,12 @@ pub struct TriggersUpdateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TriggersUpdateBody {
+    /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
+    /// Connected integration that supplies trigger events.
     #[serde(rename = "integrationId", default, skip_serializing_if = "Option::is_none")]
     pub integration_id: Option<String>,
-    /// Conditions that determine whether the selected integration event starts the agent. Available fields depend on the integration and event type.
+    /// Event-specific trigger filters. Use retrieveIntegrationTrigger and listIntegrationTriggerFilterOptions to discover supported fields and values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filters: Option<TriggerFilters>,
 }

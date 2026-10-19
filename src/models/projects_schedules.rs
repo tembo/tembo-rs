@@ -90,7 +90,9 @@ pub struct SchedulesCreateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SchedulesCreateBody {
+    /// Cron expression for recurring project snapshot builds.
     pub cron: String,
+    /// Timezone for the cron schedule. Defaults to UTC.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
 }
@@ -182,10 +184,13 @@ pub struct SchedulesUpdateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SchedulesUpdateBody {
+    /// Replace the recurring project build cron expression.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cron: Option<String>,
+    /// Enable or pause scheduled project builds.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// Timezone for the cron schedule, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
 }

@@ -240,8 +240,10 @@ impl From<&str> for MembersCreateResponseStatus {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MembersCreateBody {
+    /// Email address of the user to add or invite.
     #[serde(rename = "emailAddress")]
     pub email_address: String,
+    /// Organization role to grant: org:admin or org:member.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<MembersCreateBodyRole>,
 }
@@ -526,6 +528,7 @@ impl From<&str> for MembersUpdateResponseStatus {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MembersUpdateBody {
+    /// New organization role: org:admin or org:member.
     pub role: MembersUpdateBodyRole,
 }
 

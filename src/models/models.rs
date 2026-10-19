@@ -2209,8 +2209,10 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessOpenRouterVariant
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ModelsUpdateBody {
+    /// Enable or disable this model for the organization.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// Select the inference provider used to run this model. Use listModels to discover available provider access.
     #[serde(rename = "inferenceProvider", default, skip_serializing_if = "Option::is_none")]
     pub inference_provider: Option<ModelsUpdateBodyInferenceProvider>,
 }

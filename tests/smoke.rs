@@ -49,7 +49,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .api_keys()
-                .create(ApiKeysCreateBody { name: None })
+                .create(ApiKeysCreateBody {
+                    expires_at: None,
+                    name: None,
+                })
                 .send()
                 .await?;
             Ok(())
@@ -66,6 +69,7 @@ async fn smoke() {
             let _ = client
                 .api_keys()
                 .create(ApiKeysCreateBody {
+                    expires_at: Some(chrono::Utc::now().fixed_offset()),
                     name: Some("x".to_string()),
                 })
                 .send()
@@ -327,7 +331,19 @@ async fn smoke() {
         .await;
         if let Err(error) = result {
             if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "GET /v1/insights"));
+                failures.push(format!("{}: {error}", "GET /v1/insights [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.insights().retrieve().range("1y".to_string()).send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/insights [all params]"));
             }
         }
     }
@@ -366,6 +382,7 @@ async fn smoke() {
                 .list_members()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())
@@ -399,6 +416,7 @@ async fn smoke() {
                 .list_repositories()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())
@@ -888,6 +906,7 @@ async fn smoke() {
                         max_bot_reviews: None,
                         max_solutions: None,
                         openai_api_key: None,
+                        xai_api_key: None,
                         openrouter_api_key: None,
                         pg_stat_statements_reset_frequency: None,
                         pm_system_prompt: None,
@@ -951,6 +970,7 @@ async fn smoke() {
                         max_bot_reviews: Some(0),
                         max_solutions: Some(0),
                         openai_api_key: Some("".to_string()),
+                        xai_api_key: Some("".to_string()),
                         openrouter_api_key: Some("".to_string()),
                         pg_stat_statements_reset_frequency: Some("".to_string()),
                         pm_system_prompt: Some("".to_string()),
@@ -1556,6 +1576,8 @@ async fn smoke() {
                         include_tembo_commit_attribution: None,
                         desktop_notifications_enabled: None,
                         desktop_notification_preferences: None,
+                        has_desktop_app: None,
+                        open_links_in_desktop_app: None,
                         appearance_preferences: None,
                         app_sidebar_preferences: None,
                         diff_preferences: None,
@@ -1601,6 +1623,8 @@ async fn smoke() {
                             pull_request_opened: None,
                             pull_request_review_requested: None,
                         }),
+                        has_desktop_app: Some(false),
+                        open_links_in_desktop_app: Some(false),
                         appearance_preferences: Some(SettingsUpdateBody2AppearancePreferences {
                             app_theme: None,
                             accent_theme: None,
@@ -2505,6 +2529,18 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
+            let _ = client.projects().duplicate("example").send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/projects/{projectId}/duplicate"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
             let _ = client.projects().environment_variables().list("example").send().await?;
             Ok(())
         }
@@ -2995,6 +3031,120 @@ async fn smoke() {
                     "{}: {error}",
                     "DELETE /v1/projects/{projectId}/schedules/{scheduleId}"
                 ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/pins [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().cursor("example").limit(50).send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/pins [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: None,
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/pins [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: Some(PinsCreateBodyPlacement {
+                        target: PinsCreateBodyPlacementTarget {
+                            r#type: PinsCreateBodyPlacementTargetType::Session,
+                            id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        },
+                        position: PinsCreateBodyPlacementPosition::Before,
+                    }),
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/pins [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .update(
+                    "session".to_string(),
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    PinsUpdateBody {
+                        placement: PinsUpdateBodyPlacement {
+                            target: PinsUpdateBodyPlacementTarget {
+                                r#type: PinsUpdateBodyPlacementTargetType::Session,
+                                id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                            },
+                            position: PinsUpdateBodyPlacementPosition::Before,
+                        },
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "PATCH /v1/pins/{resourceType}/{resourceId}"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .delete("session".to_string(), "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "DELETE /v1/pins/{resourceType}/{resourceId}"));
             }
         }
     }

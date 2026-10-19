@@ -62,6 +62,7 @@ pub struct UsersDeleteResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct UsersDeleteBody {
+    /// Optional account-deletion feedback. Account deletion is queued regardless of whether feedback is supplied.
     #[serde(rename = "deletionQuestionnaire", default, skip_serializing_if = "Option::is_none")]
     pub deletion_questionnaire: Option<UsersDeleteBodyDeletionQuestionnaire>,
 }

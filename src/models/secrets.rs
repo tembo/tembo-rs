@@ -46,7 +46,9 @@ pub struct SecretsCreateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SecretsCreateBody {
+    /// Secret name used to reference it in the organization.
     pub key: String,
+    /// Secret plaintext value to encrypt and store. Retrieve and list operations return redacted summaries, not this value.
     pub value: String,
 }
 
@@ -80,8 +82,10 @@ pub struct SecretsUpdateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SecretsUpdateBody {
+    /// Secret name used to reference it in the organization.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
+    /// Secret plaintext value to encrypt and store. Retrieve and list operations return redacted summaries, not this value.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub value: Option<String>,
 }

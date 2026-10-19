@@ -21,10 +21,13 @@ pub mod marketplace;
 pub mod mcp_connections;
 pub mod members;
 pub mod messages;
+// `models::models` mirrors the API `models` resource; keep the generated path.
+#[allow(clippy::module_inception)]
 pub mod models;
 pub mod organizations;
 pub mod organizations_settings;
 pub mod organizations_subscriptions;
+pub mod pins;
 pub mod profile_picture;
 pub mod projects;
 pub mod projects_schedules;
@@ -67,6 +70,7 @@ pub use models::*;
 pub use organizations::*;
 pub use organizations_settings::*;
 pub use organizations_subscriptions::*;
+pub use pins::*;
 pub use profile_picture::*;
 pub use projects::*;
 pub use projects_schedules::*;

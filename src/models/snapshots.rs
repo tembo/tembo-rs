@@ -573,8 +573,10 @@ impl From<&str> for SnapshotsUpdateResponseTrigger {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SnapshotsUpdateBody {
+    /// Rename the snapshot, or null to clear its name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Pin the snapshot with true to retain it, or unpin with false. This is separate from user sidebar resource pins.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pinned: Option<bool>,
 }

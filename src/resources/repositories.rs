@@ -64,41 +64,49 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Select enabled repositories, disabled repositories, or all. The public API defaults to enabled repositories.
     pub fn enabled(mut self, value: impl Into<String>) -> Self {
         self.enabled = Some(value.into());
         self
     }
 
+    /// Filter by repository IDs, supplied as a comma-separated list.
     pub fn ids(mut self, value: Vec<String>) -> Self {
         self.ids = Some(value);
         self
     }
 
+    /// Filter repositories belonging to this integration.
     pub fn integration_id(mut self, value: impl Into<String>) -> Self {
         self.integration_id = Some(value.into());
         self
     }
 
+    /// Sort direction: ascending or descending.
     pub fn order(mut self, value: impl Into<String>) -> Self {
         self.order = Some(value.into());
         self
     }
 
+    /// Search repository names and owners.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
     }
 
+    /// Sort by creation time, integration, name, pull request count, or update time.
     pub fn sort(mut self, value: impl Into<String>) -> Self {
         self.sort = Some(value.into());
         self

@@ -9,8 +9,10 @@ use serde::{Deserialize, Serialize};
 pub struct AgentOptions {
     #[serde(rename = "reasoningLevel", default, skip_serializing_if = "Option::is_none")]
     pub reasoning_level: Option<String>,
+    /// Use Build (normal) to execute work or Plan (planning) to plan before writing code.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<AgentOptionsMode>,
+    /// Preferred execution speed when supported by the selected runtime.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub speed: Option<AgentOptionsSpeed>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1574,39 +1576,54 @@ impl From<&str> for SessionsCreateResponseStateCurrent {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SessionsCreateBody {
+    /// Agent and model key to run, such as claudeCode:claude-fable-5-1. Omit to use the default.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    /// Git branch to start work from. Omit or use null for the repository default.
     #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
     pub base_branch: Option<String>,
+    /// MCP server or connection IDs to enable for the session.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
+    /// Project environment to use for the workspace. Omit or use null for the default.
     #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
     pub project_id: Option<String>,
+    /// VM size for the session workspace.
     #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub sandbox_size: Option<SessionsCreateBodySandboxSize>,
+    /// Default target branch for pull requests created by the session.
     #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
     pub target_branch: Option<String>,
+    /// Session visibility: private or visible to workspace (public).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<SessionsCreateBodyVisibility>,
+    /// Agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptions>,
+    /// Git branch for this session. Omit or use null to generate a branch name.
     #[serde(rename = "branchName", default, skip_serializing_if = "Option::is_none")]
     pub branch_name: Option<String>,
+    /// Repository IDs to make available in the session workspace.
     #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub code_repository_ids: Option<Vec<String>>,
     /// Initial task or prompt for the session.
     pub description: String,
+    /// Optional caller-supplied session UUID. Omit to generate one.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     /// Optional rich-text representation of the initial task. Provide description separately.
     #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
     pub rich_content: Option<SessionTipTapDocument>,
+    /// Pull request to associate with the session. Requires richContent.
     #[serde(rename = "pullRequestId", default, skip_serializing_if = "Option::is_none")]
     pub pull_request_id: Option<String>,
+    /// Whether to queue the initial task immediately instead of only creating the session.
     #[serde(rename = "queueRightAway", default, skip_serializing_if = "Option::is_none")]
     pub queue_right_away: Option<bool>,
+    /// Whether to create a chat session or a terminal session.
     #[serde(rename = "sessionMode", default, skip_serializing_if = "Option::is_none")]
     pub session_mode: Option<SessionsCreateBodySessionMode>,
+    /// Coding agent to start in a terminal session.
     #[serde(rename = "startupAgent", default, skip_serializing_if = "Option::is_none")]
     pub startup_agent: Option<SessionsCreateBodyStartupAgent>,
 }
@@ -3619,32 +3636,46 @@ impl From<&str> for SessionsUpdateResponseStateCurrent {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SessionsUpdateBody {
+    /// Change the agent and model key. Null clears the session override.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    /// Change agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptions>,
+    /// Change the starting Git branch. Null clears the session override.
     #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
     pub base_branch: Option<String>,
+    /// Change the session Git branch name. Null clears the stored name.
     #[serde(rename = "branchName", default, skip_serializing_if = "Option::is_none")]
     pub branch_name: Option<String>,
+    /// Replace the initial task prompt; only the session creator can change it. Use createMessage to send a follow-up task.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Replace the initial prompt rich-text document, or null to clear it. Only the session creator can change it.
     #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
     pub rich_content: Option<SessionTipTapDocument>,
+    /// Archive or restore the session and set its priority: 0 archives and stops its VM; 1 restores without restarting work; 2–100 also keep it unarchived and set its priority level. Omit to preserve the current level.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub level: Option<i64>,
+    /// Replace the enabled MCP server or connection IDs. An empty array clears the selection.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
+    /// Switch between Build (normal) and Plan (planning) modes.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<SessionsUpdateBodyMode>,
+    /// Change the project environment used for the workspace. Null clears the session override.
     #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
     pub project_id: Option<String>,
+    /// Change the workspace VM size. Null clears the session override.
     #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub sandbox_size: Option<SessionsUpdateBodySandboxSize>,
+    /// Change the default pull request target branch. Null clears the session override.
     #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
     pub target_branch: Option<String>,
+    /// Rename the session.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Change session visibility: private or visible to workspace (public). Only the session creator can change it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<SessionsUpdateBodyVisibility>,
 }
@@ -4697,8 +4728,10 @@ impl From<&str> for SessionsForkResponseStateCurrent {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SessionsForkBody {
+    /// Optional first task for the independent fork. Existing messages are not replayed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prompt: Option<String>,
+    /// Display title for the forked session.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     /// Start the supplied prompt immediately. Without a prompt, the fork waits for a new message.

@@ -894,7 +894,9 @@ impl From<&str> for SubscriptionsResetResponseOutcome {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SubscriptionsResetBody {
+    /// Unique UUID for this reset attempt. Reuse the same UUID when retrying to avoid redeeming another reset credit.
     #[serde(rename = "idempotencyKey")]
     pub idempotency_key: String,
+    /// Subscription provider whose rate-limit reset credit to redeem. Currently only chatgpt is supported.
     pub provider: String,
 }

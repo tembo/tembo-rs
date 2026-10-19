@@ -31,7 +31,9 @@ pub struct OrganizationsCreateResponse {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OrganizationsCreateBody {
+    /// Organization display name.
     pub name: String,
+    /// Unique organization URL slug using lowercase letters, numbers, and single hyphens.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub slug: Option<String>,
 }
@@ -99,10 +101,13 @@ pub struct OrganizationsUpdateResponse {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct OrganizationsUpdateBody {
+    /// Organization display name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Unique organization URL slug using lowercase letters, numbers, and single hyphens.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub slug: Option<String>,
+    /// Mark organization onboarding as completed or incomplete.
     #[serde(rename = "onboardingCompleted", default, skip_serializing_if = "Option::is_none")]
     pub onboarding_completed: Option<bool>,
 }

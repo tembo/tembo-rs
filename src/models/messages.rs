@@ -660,23 +660,30 @@ pub struct MessagesCreateResponseSession {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MessagesCreateBody {
+    /// Artifact to associate with this message.
     #[serde(rename = "artifactId", default, skip_serializing_if = "Option::is_none")]
     pub artifact_id: Option<String>,
+    /// Text of the task, follow-up, or steering instruction to send to the session agent.
     pub content: String,
+    /// MCP server or connection IDs selected for this message.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
+    /// Pull request to associate with this message.
     #[serde(rename = "pullRequestId", default, skip_serializing_if = "Option::is_none")]
     pub pull_request_id: Option<String>,
+    /// Session to receive this message. Use this operation to continue work in an existing session.
     #[serde(rename = "sessionId")]
     pub session_id: String,
-    /// Execution settings for the selected agent runtime, including provider-specific options.
+    /// Agent-specific runtime options for this message, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptionsInput>,
+    /// queue adds a follow-up task; steer sends guidance to an active agent turn when supported.
     #[serde(rename = "deliveryMode", default, skip_serializing_if = "Option::is_none")]
     pub delivery_mode: Option<MessagesCreateBodyDeliveryMode>,
     /// Optional rich-text representation of the message. Provide the required text content separately.
     #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
     pub rich_content: Option<TipTapDocument>,
+    /// Structured slash command to execute with this message.
     #[serde(rename = "slashCommand", default, skip_serializing_if = "Option::is_none")]
     pub slash_command: Option<MessagesCreateBodySlashCommand>,
 }
@@ -956,9 +963,10 @@ pub struct MessagesUpdateResponseSlashCommand {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct MessagesUpdateBody {
+    /// Replace the text of a queued message before processing starts.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content: Option<String>,
-    /// Rich-text document containing text, formatting, images, and mentions. A document typically has a "doc" root with nested content nodes.
+    /// Replace the queued message rich-text document, or null to clear it.
     #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
     pub rich_content: Option<TipTapDocument>,
 }

@@ -115,7 +115,10 @@ async fn main() {
         let result: Result<(), Error> = async {
             let _ = client
                 .api_keys()
-                .create(ApiKeysCreateBody { name: None })
+                .create(ApiKeysCreateBody {
+                    expires_at: None,
+                    name: None,
+                })
                 .send()
                 .await?;
             Ok(())
@@ -145,6 +148,7 @@ async fn main() {
             let _ = client
                 .api_keys()
                 .create(ApiKeysCreateBody {
+                    expires_at: Some(chrono::Utc::now().fixed_offset()),
                     name: Some("x".to_string()),
                 })
                 .send()
@@ -598,7 +602,32 @@ async fn main() {
             operation: "retrieve".to_string(),
             method: "GET".to_string(),
             path: "/v1/insights".to_string(),
-            label: "".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "retrieve", "/v1/insights") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.insights().retrieve().range("1y".to_string()).send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "retrieve".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/insights".to_string(),
+            label: "all params".to_string(),
             status: status.to_string(),
             duration_ms,
             error,
@@ -666,6 +695,7 @@ async fn main() {
                 .list_members()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())
@@ -722,6 +752,7 @@ async fn main() {
                 .list_repositories()
                 .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .limit(50)
+                .range("1y".to_string())
                 .send()
                 .await?;
             Ok(())
@@ -1474,6 +1505,7 @@ async fn main() {
                         max_bot_reviews: None,
                         max_solutions: None,
                         openai_api_key: None,
+                        xai_api_key: None,
                         openrouter_api_key: None,
                         pg_stat_statements_reset_frequency: None,
                         pm_system_prompt: None,
@@ -1547,6 +1579,7 @@ async fn main() {
                         max_bot_reviews: Some(0),
                         max_solutions: Some(0),
                         openai_api_key: Some("".to_string()),
+                        xai_api_key: Some("".to_string()),
                         openrouter_api_key: Some("".to_string()),
                         pg_stat_statements_reset_frequency: Some("".to_string()),
                         pm_system_prompt: Some("".to_string()),
@@ -2554,6 +2587,8 @@ async fn main() {
                         include_tembo_commit_attribution: None,
                         desktop_notifications_enabled: None,
                         desktop_notification_preferences: None,
+                        has_desktop_app: None,
+                        open_links_in_desktop_app: None,
                         appearance_preferences: None,
                         app_sidebar_preferences: None,
                         diff_preferences: None,
@@ -2609,6 +2644,8 @@ async fn main() {
                             pull_request_opened: None,
                             pull_request_review_requested: None,
                         }),
+                        has_desktop_app: Some(false),
+                        open_links_in_desktop_app: Some(false),
                         appearance_preferences: Some(SettingsUpdateBody2AppearancePreferences {
                             app_theme: None,
                             accent_theme: None,
@@ -3982,6 +4019,31 @@ async fn main() {
             error,
         });
     }
+    if selected(&filter, "duplicate", "/v1/projects/{projectId}/duplicate") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.projects().duplicate("example").send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "duplicate".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/projects/{projectId}/duplicate".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
     if selected(&filter, "list", "/v1/projects/{projectId}/environment-variables") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -4708,6 +4770,198 @@ async fn main() {
             operation: "delete".to_string(),
             method: "DELETE".to_string(),
             path: "/v1/projects/{projectId}/schedules/{scheduleId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "list", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "list", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.pins().list().cursor("example").limit(50).send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "all params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "create", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: None,
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "create".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "create", "/v1/pins") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .create(PinsCreateBody {
+                    r#type: PinsCreateBodyType::Session,
+                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    placement: Some(PinsCreateBodyPlacement {
+                        target: PinsCreateBodyPlacementTarget {
+                            r#type: PinsCreateBodyPlacementTargetType::Session,
+                            id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        },
+                        position: PinsCreateBodyPlacementPosition::Before,
+                    }),
+                })
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "create".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/pins".to_string(),
+            label: "all params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "update", "/v1/pins/{resourceType}/{resourceId}") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .update(
+                    "session".to_string(),
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    PinsUpdateBody {
+                        placement: PinsUpdateBodyPlacement {
+                            target: PinsUpdateBodyPlacementTarget {
+                                r#type: PinsUpdateBodyPlacementTargetType::Session,
+                                id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                            },
+                            position: PinsUpdateBodyPlacementPosition::Before,
+                        },
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "update".to_string(),
+            method: "PATCH".to_string(),
+            path: "/v1/pins/{resourceType}/{resourceId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "delete", "/v1/pins/{resourceType}/{resourceId}") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .pins()
+                .delete("session".to_string(), "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "delete".to_string(),
+            method: "DELETE".to_string(),
+            path: "/v1/pins/{resourceType}/{resourceId}".to_string(),
             label: "".to_string(),
             status: status.to_string(),
             duration_ms,

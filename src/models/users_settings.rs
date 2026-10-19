@@ -35,6 +35,10 @@ pub struct SettingsRetrieveResponse2 {
         skip_serializing_if = "Option::is_none"
     )]
     pub desktop_notification_preferences: Option<SettingsRetrieveResponse2DesktopNotificationPreferences>,
+    #[serde(rename = "hasDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub has_desktop_app: Option<bool>,
+    #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub open_links_in_desktop_app: Option<bool>,
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsRetrieveResponse2AppearancePreferences>,
     #[serde(rename = "appSidebarPreferences", default, skip_serializing_if = "Option::is_none")]
@@ -869,6 +873,10 @@ pub struct SettingsUpdateResponse2 {
         skip_serializing_if = "Option::is_none"
     )]
     pub desktop_notification_preferences: Option<SettingsUpdateResponse2DesktopNotificationPreferences>,
+    #[serde(rename = "hasDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub has_desktop_app: Option<bool>,
+    #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub open_links_in_desktop_app: Option<bool>,
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsUpdateResponse2AppearancePreferences>,
     #[serde(rename = "appSidebarPreferences", default, skip_serializing_if = "Option::is_none")]
@@ -1675,50 +1683,73 @@ impl From<&str> for SettingsUpdateResponse2FollowUpBehavior {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SettingsUpdateBody2 {
+    /// Automatically restart a session VM when needed.
     #[serde(rename = "autoRestartVm", default, skip_serializing_if = "Option::is_none")]
     pub auto_restart_vm: Option<bool>,
+    /// Default project environment for new sessions, or null to clear the preference.
     #[serde(rename = "defaultProjectId", default, skip_serializing_if = "Option::is_none")]
     pub default_project_id: Option<String>,
+    /// GPG signing key configuration. This value is returned by retrieveUserSettings.
     #[serde(rename = "gpgKey", default, skip_serializing_if = "Option::is_none")]
     pub gpg_key: Option<String>,
+    /// Include Tembo attribution in agent-created commits.
     #[serde(
         rename = "includeTemboCommitAttribution",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub include_tembo_commit_attribution: Option<bool>,
+    /// Enable or disable desktop notifications.
     #[serde(
         rename = "desktopNotificationsEnabled",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub desktop_notifications_enabled: Option<bool>,
+    /// Notification types to show on the desktop.
     #[serde(
         rename = "desktopNotificationPreferences",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub desktop_notification_preferences: Option<SettingsUpdateBody2DesktopNotificationPreferences>,
+    /// Whether the user has signed in to the Tembo desktop app.
+    #[serde(rename = "hasDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub has_desktop_app: Option<bool>,
+    /// Open Tembo links from the browser in the desktop app when it is installed.
+    #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
+    pub open_links_in_desktop_app: Option<bool>,
+    /// Theme, accent, and appearance preferences. Nested updates preserve unrelated preferences.
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsUpdateBody2AppearancePreferences>,
+    /// Application sidebar layout preferences.
     #[serde(rename = "appSidebarPreferences", default, skip_serializing_if = "Option::is_none")]
     pub app_sidebar_preferences: Option<SettingsUpdateBody2AppSidebarPreferences>,
+    /// Diff display and comparison preferences.
     #[serde(rename = "diffPreferences", default, skip_serializing_if = "Option::is_none")]
     pub diff_preferences: Option<SettingsUpdateBody2DiffPreferences>,
+    /// Dashboard task-filter preferences.
     #[serde(rename = "dashboardPreferences", default, skip_serializing_if = "Option::is_none")]
     pub dashboard_preferences: Option<SettingsUpdateBody2DashboardPreferences>,
+    /// Message composer preferences, including selected repositories.
     #[serde(rename = "composerPreferences", default, skip_serializing_if = "Option::is_none")]
     pub composer_preferences: Option<SettingsUpdateBody2ComposerPreferences>,
+    /// Code review file sorting, exclusions, bot comment visibility, and layout preferences.
     #[serde(rename = "reviewPreferences", default, skip_serializing_if = "Option::is_none")]
     pub review_preferences: Option<SettingsUpdateBody2ReviewPreferences>,
+    /// Diff syntax theme for light mode.
     #[serde(rename = "diffLightTheme", default, skip_serializing_if = "Option::is_none")]
     pub diff_light_theme: Option<String>,
+    /// Diff syntax theme for dark mode.
     #[serde(rename = "diffDarkTheme", default, skip_serializing_if = "Option::is_none")]
     pub diff_dark_theme: Option<String>,
+    /// Default coding agent and model key. Null clears the preference.
     #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
+    /// Default follow-up delivery: queue a new turn or steer an active turn.
     #[serde(rename = "followUpBehavior", default, skip_serializing_if = "Option::is_none")]
     pub follow_up_behavior: Option<SettingsUpdateBody2FollowUpBehavior>,
+    /// Personal system instructions supplied to agents.
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
 }

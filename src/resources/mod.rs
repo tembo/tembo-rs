@@ -24,6 +24,7 @@ pub mod models;
 pub mod organizations;
 pub mod organizations_settings;
 pub mod organizations_subscriptions;
+pub mod pins;
 pub mod profile_picture;
 pub mod projects;
 pub mod projects_schedules;
@@ -89,6 +90,10 @@ impl crate::client::Tembo {
 
     pub fn projects(&self) -> crate::resources::projects::ProjectsResource {
         crate::resources::projects::ProjectsResource::new(self.clone())
+    }
+
+    pub fn pins(&self) -> crate::resources::pins::PinsResource {
+        crate::resources::pins::PinsResource::new(self.clone())
     }
 
     pub fn pull_requests(&self) -> crate::resources::pull_requests::PullRequestsResource {

@@ -91,9 +91,61 @@ impl From<&str> for InsightsRetrieveResponseStatus {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseData {
+    pub range: InsightsRetrieveResponseDataRange,
     pub summary: InsightsRetrieveResponseDataSummary,
     #[serde(rename = "timeSeries")]
     pub time_series: Vec<InsightsRetrieveResponseDataTimeSery>,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum InsightsRetrieveResponseDataRange {
+    #[serde(rename = "1d")]
+    _1d,
+    #[serde(rename = "7d")]
+    _7d,
+    #[serde(rename = "30d")]
+    _30d,
+    #[serde(rename = "1y")]
+    _1y,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl InsightsRetrieveResponseDataRange {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::_1d => "1d",
+            Self::_7d => "7d",
+            Self::_30d => "30d",
+            Self::_1y => "1y",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for InsightsRetrieveResponseDataRange {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for InsightsRetrieveResponseDataRange {
+    fn from(value: &str) -> Self {
+        match value {
+            "1d" => Self::_1d,
+            "7d" => Self::_7d,
+            "30d" => Self::_30d,
+            "1y" => Self::_1y,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 ///
@@ -135,6 +187,7 @@ pub struct InsightsRetrieveResponseDataSummaryChanges {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseDataTimeSery {
+    /// Bucket key: YYYY-MM for 1y, YYYY-MM-DD (UTC) for 7d and 30d, and an ISO 8601 hour start for 1d.
     pub month: String,
     #[serde(rename = "prsWithTembo")]
     pub prs_with_tembo: i64,
@@ -234,9 +287,61 @@ impl From<&str> for InsightsUpdateResponseStatus {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseData {
+    pub range: InsightsUpdateResponseDataRange,
     pub summary: InsightsUpdateResponseDataSummary,
     #[serde(rename = "timeSeries")]
     pub time_series: Vec<InsightsUpdateResponseDataTimeSery>,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum InsightsUpdateResponseDataRange {
+    #[serde(rename = "1d")]
+    _1d,
+    #[serde(rename = "7d")]
+    _7d,
+    #[serde(rename = "30d")]
+    _30d,
+    #[serde(rename = "1y")]
+    _1y,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl InsightsUpdateResponseDataRange {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::_1d => "1d",
+            Self::_7d => "7d",
+            Self::_30d => "30d",
+            Self::_1y => "1y",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for InsightsUpdateResponseDataRange {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for InsightsUpdateResponseDataRange {
+    fn from(value: &str) -> Self {
+        match value {
+            "1d" => Self::_1d,
+            "7d" => Self::_7d,
+            "30d" => Self::_30d,
+            "1y" => Self::_1y,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 ///
@@ -278,6 +383,7 @@ pub struct InsightsUpdateResponseDataSummaryChanges {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseDataTimeSery {
+    /// Bucket key: YYYY-MM for 1y, YYYY-MM-DD (UTC) for 7d and 30d, and an ISO 8601 hour start for 1d.
     pub month: String,
     #[serde(rename = "prsWithTembo")]
     pub prs_with_tembo: i64,
@@ -293,6 +399,7 @@ pub struct InsightsUpdateResponseDataTimeSery {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InsightsUpdateBody {
+    /// Enable or disable pull request contribution insight collection. Enabling starts the initial refresh when needed.
     pub enabled: bool,
 }
 

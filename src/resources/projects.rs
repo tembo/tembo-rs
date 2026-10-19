@@ -45,6 +45,11 @@ impl ProjectsResource {
         DeleteRequestBuilder::new(self.client.clone(), project_id.into())
     }
 
+    /// Duplicate a project
+    pub fn duplicate(&self, project_id: impl Into<String>) -> DuplicateRequestBuilder {
+        DuplicateRequestBuilder::new(self.client.clone(), project_id.into())
+    }
+
     pub fn environment_variables(&self) -> crate::resources::environment_variables::EnvironmentVariablesResource {
         crate::resources::environment_variables::EnvironmentVariablesResource::new(self.client.clone())
     }
@@ -167,21 +172,25 @@ impl ListRequestBuilder {
         }
     }
 
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
     pub fn cursor(mut self, value: impl Into<String>) -> Self {
         self.cursor = Some(value.into());
         self
     }
 
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
         self
     }
 
+    /// Only projects configured as defaults for at least one VM size.
     pub fn default_only(mut self, value: impl Into<String>) -> Self {
         self.default_only = Some(value.into());
         self
     }
 
+    /// Search project names.
     pub fn search(mut self, value: impl Into<String>) -> Self {
         self.search = Some(value.into());
         self
@@ -398,7 +407,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update project configuration fields.
+/// Update project repositories, setup script, agent instructions, environment variables, VM sizes and defaults; enable or pause scheduled builds or the warm pool; rename or customize its appearance.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -480,7 +489,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Delete a project and disable its schedule.
+/// Archive a project, remove its default VM-size assignments, and disable its build schedule. This does not permanently delete the project record.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,
@@ -550,6 +559,89 @@ impl DeleteRequestBuilder {
         self.client
             .send::<crate::models::ProjectsDeleteResponse, _>(
                 http::Method::DELETE,
+                &path,
+                &query,
+                &headers,
+                body,
+                true,
+                overrides,
+            )
+            .await
+    }
+}
+/// Create a new project with the same configuration, environment variables, and schedule as an existing project. Snapshots are not copied.
+#[must_use = "a request builder does nothing until `.send().await` is called"]
+pub struct DuplicateRequestBuilder {
+    client: crate::client::Tembo,
+    project_id: String,
+    idempotency_key: Option<String>,
+    timeout: Option<std::time::Duration>,
+    max_retries: Option<u32>,
+}
+
+impl DuplicateRequestBuilder {
+    fn new(client: crate::client::Tembo, project_id: String) -> Self {
+        Self {
+            client,
+            project_id,
+            idempotency_key: None,
+            timeout: None,
+            max_retries: None,
+        }
+    }
+
+    /// Sets an idempotency key so this request can be safely retried.
+    pub fn idempotency_key(mut self, value: impl Into<String>) -> Self {
+        self.idempotency_key = Some(value.into());
+        self
+    }
+
+    /// Overrides the client's request deadline for this request only.
+    /// It bounds each attempt up to response headers, then the buffered
+    /// body read, so total wall time can exceed the value set here. A
+    /// streamed body is never deadline-killed; see `ClientBuilder::timeout`.
+    pub fn timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.timeout = Some(timeout);
+        self
+    }
+
+    /// Overrides the client's maximum retry attempts for this request only.
+    pub fn max_retries(mut self, max_retries: u32) -> Self {
+        self.max_retries = Some(max_retries);
+        self
+    }
+
+    /// Sends the request and returns the decoded response.
+    ///
+    /// # Errors
+    ///
+    /// - [`Error::Api`](crate::error::Error::Api) — the server answered with a
+    ///   non-success status; the status, headers, request id, and decoded body are
+    ///   preserved on the [`ApiError`](crate::error::ApiError).
+    /// - [`Error::Transport`](crate::error::Error::Transport) — the request never
+    ///   produced a response (connection failure, or the deadline elapsed).
+    /// - [`Error::Config`](crate::error::Error::Config) — a parameter value could not
+    ///   be rendered into the request.
+    /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
+    ///   match the generated model.
+    pub async fn send(self) -> Result<crate::models::ProjectsDuplicateResponse, crate::error::Error> {
+        let path = format!(
+            "/v1/projects/{}/duplicate",
+            crate::http::encode_path_param(&self.project_id)
+        );
+        let query: Vec<(String, String)> = Vec::new();
+        let mut headers: Vec<(String, String)> = Vec::new();
+        if let Some(key) = self.idempotency_key {
+            headers.push(("Idempotency-Key".to_string(), key));
+        }
+        let body: Option<&serde_json::Value> = None;
+        let overrides = crate::client::RequestOverrides {
+            timeout: self.timeout,
+            max_retries: self.max_retries,
+        };
+        self.client
+            .send::<crate::models::ProjectsDuplicateResponse, _>(
+                http::Method::POST,
                 &path,
                 &query,
                 &headers,

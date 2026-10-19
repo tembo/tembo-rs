@@ -22,60 +22,87 @@ pub struct SettingsRetrieveResponse {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponseSettings {
+    /// Git clone history depth used for repositories.
     #[serde(rename = "cloneDepth")]
     pub clone_depth: i64,
+    /// Organization instructions for agent commit messages.
     #[serde(rename = "commitInstructions")]
     pub commit_instructions: String,
+    /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt")]
     pub custom_system_prompt: String,
+    /// Default coding agent and model key for the organization.
     #[serde(rename = "defaultAgent")]
     pub default_agent: String,
+    /// Default VM keep-alive duration in minutes. 0 preserves built-in per-source durations.
     #[serde(rename = "defaultKeepAliveMinutes")]
     pub default_keep_alive_minutes: i64,
+    /// Default VM size for organization sessions.
     #[serde(rename = "defaultSandboxSize")]
     pub default_sandbox_size: SettingsRetrieveResponseSettingsDefaultSandboxSize,
+    /// Delete agent-created branches when their pull requests close.
     #[serde(rename = "deleteBranchWhenPrClosed")]
     pub delete_branch_when_pr_closed: bool,
+    /// Create agent pull requests as drafts by default.
     #[serde(rename = "draftPrs")]
     pub draft_prs: bool,
+    /// Enable handling of CodeRabbit bot feedback.
     #[serde(rename = "enableCoderabbitBot")]
     pub enable_coderabbit_bot: bool,
+    /// Enable handling of Cursor bot feedback.
     #[serde(rename = "enableCursorBot")]
     pub enable_cursor_bot: bool,
+    /// Enable handling of Gemini Code Assist bot feedback.
     #[serde(rename = "enableGeminiCodeAssistBot")]
     pub enable_gemini_code_assist_bot: bool,
+    /// Enable handling of GitHub Actions bot feedback.
     #[serde(rename = "enableGithubActionsBot")]
     pub enable_github_actions_bot: bool,
+    /// Enable handling of Graphite bot feedback.
     #[serde(rename = "enableGraphiteBot")]
     pub enable_graphite_bot: bool,
+    /// Enable handling of Greptile bot feedback.
     #[serde(rename = "enableGreptileBot")]
     pub enable_greptile_bot: bool,
+    /// Enable experimental MCP features for the organization.
     #[serde(rename = "experimentalMcp")]
     pub experimental_mcp: bool,
+    /// Enable mentioning the author in supported integration responses.
     #[serde(rename = "featureMentionAuthor")]
     pub feature_mention_author: bool,
+    /// Maximum number of bot review iterations.
     #[serde(rename = "maxBotReviews")]
     pub max_bot_reviews: i64,
+    /// Maximum number of generated solutions.
     #[serde(rename = "maxSolutions")]
     pub max_solutions: i64,
     #[serde(rename = "onDemandMaxCreditUsage", serialize_with = "crate::number::serialize")]
     pub on_demand_max_credit_usage: f64,
+    /// Reset frequency for PostgreSQL pg_stat_statements collection.
     #[serde(rename = "pgStatStatementsResetFrequency")]
     pub pg_stat_statements_reset_frequency: String,
+    /// Custom system instructions for the project-management agent.
     #[serde(rename = "pmSystemPrompt")]
     pub pm_system_prompt: String,
+    /// Organization instructions for agent pull request titles.
     #[serde(rename = "prTitleInstructions")]
     pub pr_title_instructions: String,
+    /// Enable or disable pull request contribution insight collection.
     #[serde(rename = "pullRequestInsightsEnabled")]
     pub pull_request_insights_enabled: bool,
+    /// Sign agent-created commits when signing credentials are configured.
     #[serde(rename = "shouldSignCommits")]
     pub should_sign_commits: bool,
+    /// Use Tembo review links in Slack review notifications.
     #[serde(rename = "slackReviewOnTembo")]
     pub slack_review_on_tembo: bool,
+    /// Threshold in milliseconds for identifying slow database queries.
     #[serde(rename = "slowQueryThresholdMs", serialize_with = "crate::number::serialize")]
     pub slow_query_threshold_ms: f64,
+    /// SSH public keys authorized for organization workspace access.
     #[serde(rename = "sshPublicKeys")]
     pub ssh_public_keys: String,
+    /// Enable or disable the organization weekly report.
     #[serde(rename = "weeklyReportEnabled")]
     pub weekly_report_enabled: bool,
 }
@@ -164,60 +191,87 @@ pub struct SettingsUpdateResponse {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponseSettings {
+    /// Git clone history depth used for repositories.
     #[serde(rename = "cloneDepth")]
     pub clone_depth: i64,
+    /// Organization instructions for agent commit messages.
     #[serde(rename = "commitInstructions")]
     pub commit_instructions: String,
+    /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt")]
     pub custom_system_prompt: String,
+    /// Default coding agent and model key for the organization.
     #[serde(rename = "defaultAgent")]
     pub default_agent: String,
+    /// Default VM keep-alive duration in minutes. 0 preserves built-in per-source durations.
     #[serde(rename = "defaultKeepAliveMinutes")]
     pub default_keep_alive_minutes: i64,
+    /// Default VM size for organization sessions.
     #[serde(rename = "defaultSandboxSize")]
     pub default_sandbox_size: SettingsUpdateResponseSettingsDefaultSandboxSize,
+    /// Delete agent-created branches when their pull requests close.
     #[serde(rename = "deleteBranchWhenPrClosed")]
     pub delete_branch_when_pr_closed: bool,
+    /// Create agent pull requests as drafts by default.
     #[serde(rename = "draftPrs")]
     pub draft_prs: bool,
+    /// Enable handling of CodeRabbit bot feedback.
     #[serde(rename = "enableCoderabbitBot")]
     pub enable_coderabbit_bot: bool,
+    /// Enable handling of Cursor bot feedback.
     #[serde(rename = "enableCursorBot")]
     pub enable_cursor_bot: bool,
+    /// Enable handling of Gemini Code Assist bot feedback.
     #[serde(rename = "enableGeminiCodeAssistBot")]
     pub enable_gemini_code_assist_bot: bool,
+    /// Enable handling of GitHub Actions bot feedback.
     #[serde(rename = "enableGithubActionsBot")]
     pub enable_github_actions_bot: bool,
+    /// Enable handling of Graphite bot feedback.
     #[serde(rename = "enableGraphiteBot")]
     pub enable_graphite_bot: bool,
+    /// Enable handling of Greptile bot feedback.
     #[serde(rename = "enableGreptileBot")]
     pub enable_greptile_bot: bool,
+    /// Enable experimental MCP features for the organization.
     #[serde(rename = "experimentalMcp")]
     pub experimental_mcp: bool,
+    /// Enable mentioning the author in supported integration responses.
     #[serde(rename = "featureMentionAuthor")]
     pub feature_mention_author: bool,
+    /// Maximum number of bot review iterations.
     #[serde(rename = "maxBotReviews")]
     pub max_bot_reviews: i64,
+    /// Maximum number of generated solutions.
     #[serde(rename = "maxSolutions")]
     pub max_solutions: i64,
     #[serde(rename = "onDemandMaxCreditUsage", serialize_with = "crate::number::serialize")]
     pub on_demand_max_credit_usage: f64,
+    /// Reset frequency for PostgreSQL pg_stat_statements collection.
     #[serde(rename = "pgStatStatementsResetFrequency")]
     pub pg_stat_statements_reset_frequency: String,
+    /// Custom system instructions for the project-management agent.
     #[serde(rename = "pmSystemPrompt")]
     pub pm_system_prompt: String,
+    /// Organization instructions for agent pull request titles.
     #[serde(rename = "prTitleInstructions")]
     pub pr_title_instructions: String,
+    /// Enable or disable pull request contribution insight collection.
     #[serde(rename = "pullRequestInsightsEnabled")]
     pub pull_request_insights_enabled: bool,
+    /// Sign agent-created commits when signing credentials are configured.
     #[serde(rename = "shouldSignCommits")]
     pub should_sign_commits: bool,
+    /// Use Tembo review links in Slack review notifications.
     #[serde(rename = "slackReviewOnTembo")]
     pub slack_review_on_tembo: bool,
+    /// Threshold in milliseconds for identifying slow database queries.
     #[serde(rename = "slowQueryThresholdMs", serialize_with = "crate::number::serialize")]
     pub slow_query_threshold_ms: f64,
+    /// SSH public keys authorized for organization workspace access.
     #[serde(rename = "sshPublicKeys")]
     pub ssh_public_keys: String,
+    /// Enable or disable the organization weekly report.
     #[serde(rename = "weeklyReportEnabled")]
     pub weekly_report_enabled: bool,
 }
@@ -291,102 +345,142 @@ impl From<&str> for SettingsUpdateResponseSettingsDefaultSandboxSize {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SettingsUpdateBody {
+    /// API key for Amp agent access.
     #[serde(rename = "ampApiKey", default, skip_serializing_if = "Option::is_none")]
     pub amp_api_key: Option<String>,
+    /// Anthropic API key for organization-provided inference.
     #[serde(rename = "anthropicApiKey", default, skip_serializing_if = "Option::is_none")]
     pub anthropic_api_key: Option<String>,
+    /// AWS access key ID for Bedrock inference.
     #[serde(rename = "awsBedrockAccessKeyId", default, skip_serializing_if = "Option::is_none")]
     pub aws_bedrock_access_key_id: Option<String>,
+    /// AWS region for Bedrock inference.
     #[serde(rename = "awsBedrockRegion", default, skip_serializing_if = "Option::is_none")]
     pub aws_bedrock_region: Option<String>,
+    /// AWS secret access key for Bedrock inference.
     #[serde(
         rename = "awsBedrockSecretAccessKey",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub aws_bedrock_secret_access_key: Option<String>,
+    /// Git clone history depth used for repositories.
     #[serde(rename = "cloneDepth", default, skip_serializing_if = "Option::is_none")]
     pub clone_depth: Option<i64>,
+    /// Organization instructions for agent commit messages.
     #[serde(rename = "commitInstructions", default, skip_serializing_if = "Option::is_none")]
     pub commit_instructions: Option<String>,
+    /// API key for Cursor agent access.
     #[serde(rename = "cursorApiKey", default, skip_serializing_if = "Option::is_none")]
     pub cursor_api_key: Option<String>,
+    /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
+    /// Default coding agent and model key for the organization.
     #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
+    /// Default VM keep-alive duration in minutes. 0 preserves built-in per-source durations.
     #[serde(rename = "defaultKeepAliveMinutes", default, skip_serializing_if = "Option::is_none")]
     pub default_keep_alive_minutes: Option<i64>,
+    /// Default VM size for organization sessions.
     #[serde(rename = "defaultSandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub default_sandbox_size: Option<SettingsUpdateBodyDefaultSandboxSize>,
+    /// Delete agent-created branches when their pull requests close.
     #[serde(
         rename = "deleteBranchWhenPrClosed",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub delete_branch_when_pr_closed: Option<bool>,
+    /// Create agent pull requests as drafts by default.
     #[serde(rename = "draftPrs", default, skip_serializing_if = "Option::is_none")]
     pub draft_prs: Option<bool>,
+    /// Enable handling of CodeRabbit bot feedback.
     #[serde(rename = "enableCoderabbitBot", default, skip_serializing_if = "Option::is_none")]
     pub enable_coderabbit_bot: Option<bool>,
+    /// Enable handling of Cursor bot feedback.
     #[serde(rename = "enableCursorBot", default, skip_serializing_if = "Option::is_none")]
     pub enable_cursor_bot: Option<bool>,
+    /// Enable handling of Gemini Code Assist bot feedback.
     #[serde(
         rename = "enableGeminiCodeAssistBot",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub enable_gemini_code_assist_bot: Option<bool>,
+    /// Enable handling of GitHub Actions bot feedback.
     #[serde(rename = "enableGithubActionsBot", default, skip_serializing_if = "Option::is_none")]
     pub enable_github_actions_bot: Option<bool>,
+    /// Enable handling of Graphite bot feedback.
     #[serde(rename = "enableGraphiteBot", default, skip_serializing_if = "Option::is_none")]
     pub enable_graphite_bot: Option<bool>,
+    /// Enable handling of Greptile bot feedback.
     #[serde(rename = "enableGreptileBot", default, skip_serializing_if = "Option::is_none")]
     pub enable_greptile_bot: Option<bool>,
+    /// Enable experimental MCP features for the organization.
     #[serde(rename = "experimentalMcp", default, skip_serializing_if = "Option::is_none")]
     pub experimental_mcp: Option<bool>,
+    /// Enable mentioning the author in supported integration responses.
     #[serde(rename = "featureMentionAuthor", default, skip_serializing_if = "Option::is_none")]
     pub feature_mention_author: Option<bool>,
+    /// Google Cloud location for Vertex AI inference.
     #[serde(rename = "gcpVertexAiLocation", default, skip_serializing_if = "Option::is_none")]
     pub gcp_vertex_ai_location: Option<String>,
+    /// Google Cloud project for Vertex AI inference.
     #[serde(rename = "gcpVertexAiProject", default, skip_serializing_if = "Option::is_none")]
     pub gcp_vertex_ai_project: Option<String>,
+    /// Service-account JSON credentials for Vertex AI inference.
     #[serde(
         rename = "gcpVertexAiServiceAccountJson",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub gcp_vertex_ai_service_account_json: Option<String>,
+    /// API key for Kernel browser access.
     #[serde(rename = "kernelApiKey", default, skip_serializing_if = "Option::is_none")]
     pub kernel_api_key: Option<String>,
+    /// Maximum number of bot review iterations.
     #[serde(rename = "maxBotReviews", default, skip_serializing_if = "Option::is_none")]
     pub max_bot_reviews: Option<i64>,
+    /// Maximum number of generated solutions.
     #[serde(rename = "maxSolutions", default, skip_serializing_if = "Option::is_none")]
     pub max_solutions: Option<i64>,
+    /// OpenAI API key for organization-provided inference.
     #[serde(rename = "openaiApiKey", default, skip_serializing_if = "Option::is_none")]
     pub openai_api_key: Option<String>,
+    /// xAI API key for organization-provided inference.
+    #[serde(rename = "xaiApiKey", default, skip_serializing_if = "Option::is_none")]
+    pub xai_api_key: Option<String>,
+    /// OpenRouter API key for organization-provided inference.
     #[serde(rename = "openrouterApiKey", default, skip_serializing_if = "Option::is_none")]
     pub openrouter_api_key: Option<String>,
+    /// Reset frequency for PostgreSQL pg_stat_statements collection.
     #[serde(
         rename = "pgStatStatementsResetFrequency",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub pg_stat_statements_reset_frequency: Option<String>,
+    /// Custom system instructions for the project-management agent.
     #[serde(rename = "pmSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub pm_system_prompt: Option<String>,
+    /// Organization instructions for agent pull request titles.
     #[serde(rename = "prTitleInstructions", default, skip_serializing_if = "Option::is_none")]
     pub pr_title_instructions: Option<String>,
+    /// Enable or disable pull request contribution insight collection.
     #[serde(
         rename = "pullRequestInsightsEnabled",
         default,
         skip_serializing_if = "Option::is_none"
     )]
     pub pull_request_insights_enabled: Option<bool>,
+    /// Sign agent-created commits when signing credentials are configured.
     #[serde(rename = "shouldSignCommits", default, skip_serializing_if = "Option::is_none")]
     pub should_sign_commits: Option<bool>,
+    /// Use Tembo review links in Slack review notifications.
     #[serde(rename = "slackReviewOnTembo", default, skip_serializing_if = "Option::is_none")]
     pub slack_review_on_tembo: Option<bool>,
+    /// Threshold in milliseconds for identifying slow database queries.
     #[serde(
         rename = "slowQueryThresholdMs",
         default,
@@ -394,8 +488,10 @@ pub struct SettingsUpdateBody {
         serialize_with = "crate::number::option::serialize"
     )]
     pub slow_query_threshold_ms: Option<f64>,
+    /// SSH public keys authorized for organization workspace access.
     #[serde(rename = "sshPublicKeys", default, skip_serializing_if = "Option::is_none")]
     pub ssh_public_keys: Option<String>,
+    /// Enable or disable the organization weekly report.
     #[serde(rename = "weeklyReportEnabled", default, skip_serializing_if = "Option::is_none")]
     pub weekly_report_enabled: Option<bool>,
 }
@@ -481,11 +577,12 @@ pub struct SettingsValidateCredentialsResponse {
 #[serde(untagged)]
 #[non_exhaustive]
 pub enum SettingsValidateCredentialsBody {
-    SettingsValidateCredentialsBodyVariant4(SettingsValidateCredentialsBodyVariant4),
     SettingsValidateCredentialsBodyVariant5(SettingsValidateCredentialsBodyVariant5),
+    SettingsValidateCredentialsBodyVariant6(SettingsValidateCredentialsBodyVariant6),
     SettingsValidateCredentialsBodyVariant1(SettingsValidateCredentialsBodyVariant1),
     SettingsValidateCredentialsBodyVariant2(SettingsValidateCredentialsBodyVariant2),
     SettingsValidateCredentialsBodyVariant3(SettingsValidateCredentialsBodyVariant3),
+    SettingsValidateCredentialsBodyVariant4(SettingsValidateCredentialsBodyVariant4),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -497,6 +594,7 @@ pub enum SettingsValidateCredentialsBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SettingsValidateCredentialsBodyVariant1 {
+    /// Validate Anthropic API credentials without saving them.
     pub provider: String,
     /// The Anthropic API key.
     #[serde(rename = "apiKey")]
@@ -505,6 +603,7 @@ pub struct SettingsValidateCredentialsBodyVariant1 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SettingsValidateCredentialsBodyVariant2 {
+    /// Validate OpenAI API credentials without saving them.
     pub provider: String,
     /// The OpenAI API key.
     #[serde(rename = "apiKey")]
@@ -513,6 +612,16 @@ pub struct SettingsValidateCredentialsBodyVariant2 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SettingsValidateCredentialsBodyVariant3 {
+    /// Validate xAI API credentials without saving them.
+    pub provider: String,
+    /// The xAI API key.
+    #[serde(rename = "apiKey")]
+    pub api_key: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SettingsValidateCredentialsBodyVariant4 {
+    /// Validate OpenRouter API credentials without saving them.
     pub provider: String,
     /// The OpenRouter API key.
     #[serde(rename = "apiKey")]
@@ -520,7 +629,8 @@ pub struct SettingsValidateCredentialsBodyVariant3 {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SettingsValidateCredentialsBodyVariant4 {
+pub struct SettingsValidateCredentialsBodyVariant5 {
+    /// Validate AWS Bedrock credentials without saving them.
     pub provider: String,
     /// The AWS access key ID.
     #[serde(rename = "accessKeyId")]
@@ -533,7 +643,8 @@ pub struct SettingsValidateCredentialsBodyVariant4 {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SettingsValidateCredentialsBodyVariant5 {
+pub struct SettingsValidateCredentialsBodyVariant6 {
+    /// Validate Google Cloud Vertex AI credentials without saving them.
     pub provider: String,
     /// The GCP service account JSON.
     #[serde(rename = "serviceAccountJson")]

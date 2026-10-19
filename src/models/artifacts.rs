@@ -718,6 +718,7 @@ pub struct ArtifactsCreateBody {
     /// URLs of pull requests related to this artifact.
     #[serde(rename = "relatedPullRequestUrls", default, skip_serializing_if = "Option::is_none")]
     pub related_pull_request_urls: Option<Vec<String>>,
+    /// Session to attach the artifact to.
     #[serde(rename = "sessionId")]
     pub session_id: String,
 }

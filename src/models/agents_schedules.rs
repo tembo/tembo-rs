@@ -86,6 +86,7 @@ pub struct SchedulesCreateResponse2 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SchedulesCreateBody2 {
+    /// Cron expression for recurring agent runs. Agent enabled and archived state controls whether the schedule runs.
     pub cron: String,
 }
 
@@ -159,6 +160,7 @@ pub struct SchedulesUpdateResponse2 {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SchedulesUpdateBody2 {
+    /// Cron expression for recurring agent runs. Agent enabled and archived state controls whether the schedule runs.
     pub cron: String,
 }
 

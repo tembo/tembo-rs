@@ -33,6 +33,7 @@ pub struct McpConnectionsListResponseItem {
     #[serde(rename = "serverUrl", default)]
     pub server_url: Option<String>,
     pub r#type: McpConnectionsListResponseItemType,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsListResponseItemVisibility,
 }
 
@@ -150,9 +151,12 @@ pub struct McpConnectionsCreateResponseConnection {
     #[serde(rename = "serverUrl", default)]
     pub server_url: Option<String>,
     pub r#type: McpConnectionsCreateResponseConnectionType,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsCreateResponseConnectionVisibility,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default)]
     pub args: Option<Vec<String>>,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default)]
     pub auth_type: Option<McpConnectionsCreateResponseConnectionAuthType>,
     #[serde(default)]
@@ -317,13 +321,19 @@ pub enum McpConnectionsCreateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct McpConnectionsCreateBodyVariant1 {
+    /// Display name for the MCP connection.
     pub name: String,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub args: Option<Vec<String>>,
+    /// Executable for the stdio MCP server. This API stores the command but never executes it.
     pub command: String,
+    /// Environment variables for the stdio command. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub env: Option<std::collections::HashMap<String, String>>,
+    /// Use stdio for a command-based MCP server.
     pub r#type: String,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<McpConnectionsCreateBodyVariant1Visibility>,
 }
@@ -390,23 +400,33 @@ impl From<&str> for McpConnectionsCreateBodyVariant1Visibility {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct McpConnectionsCreateBodyVariant2 {
+    /// Display name for the MCP connection.
     pub name: String,
+    /// HTTP or HTTPS MCP server endpoint. Changing it requires an explicit authType, clears old credentials, and requires authorization to reconnect.
     #[serde(rename = "serverUrl")]
     pub server_url: String,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default, skip_serializing_if = "Option::is_none")]
     pub auth_type: Option<McpConnectionsCreateBodyVariant2AuthType>,
+    /// OAuth client ID. Required for client_credentials or pre_registered OAuth.
     #[serde(rename = "clientId", default, skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
+    /// Write-only OAuth client secret. Required for client_credentials; optional for pre_registered OAuth.
     #[serde(rename = "clientSecret", default, skip_serializing_if = "Option::is_none")]
     pub client_secret: Option<String>,
+    /// Request headers for static-header or automatic OAuth authentication. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::HashMap<String, String>>,
+    /// Register an OAuth client automatically or use pre-registered clientId and optional clientSecret.
     #[serde(rename = "oauthRegistration", default, skip_serializing_if = "Option::is_none")]
     pub oauth_registration: Option<McpConnectionsCreateBodyVariant2OauthRegistration>,
+    /// OAuth scopes requested for client credentials or pre-registered OAuth.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scope: Option<String>,
+    /// Use remote for a Streamable HTTP MCP server.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<McpConnectionsCreateBodyVariant2Visibility>,
 }
@@ -582,9 +602,12 @@ pub struct McpConnectionsRetrieveResponse {
     #[serde(rename = "serverUrl", default)]
     pub server_url: Option<String>,
     pub r#type: McpConnectionsRetrieveResponseType,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsRetrieveResponseVisibility,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default)]
     pub args: Option<Vec<String>>,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default)]
     pub auth_type: Option<McpConnectionsRetrieveResponseAuthType>,
     #[serde(default)]
@@ -749,9 +772,12 @@ pub struct McpConnectionsUpdateResponse {
     #[serde(rename = "serverUrl", default)]
     pub server_url: Option<String>,
     pub r#type: McpConnectionsUpdateResponseType,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsUpdateResponseVisibility,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default)]
     pub args: Option<Vec<String>>,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default)]
     pub auth_type: Option<McpConnectionsUpdateResponseAuthType>,
     #[serde(default)]
@@ -916,21 +942,30 @@ pub enum McpConnectionsUpdateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct McpConnectionsUpdateBodyVariant1 {
+    /// Display name for the MCP connection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// HTTP or HTTPS MCP server endpoint. Changing it requires an explicit authType, clears old credentials, and requires authorization to reconnect.
     #[serde(rename = "serverUrl", default, skip_serializing_if = "Option::is_none")]
     pub server_url: Option<String>,
+    /// Connection type must remain remote; transport type cannot be changed by update.
     pub r#type: String,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default, skip_serializing_if = "Option::is_none")]
     pub auth_type: Option<McpConnectionsUpdateBodyVariant1AuthType>,
+    /// OAuth client ID when replacing authentication. Requires authType; required for client_credentials or pre_registered OAuth.
     #[serde(rename = "clientId", default, skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
+    /// Write-only client secret when replacing authentication. Requires authType; required for client_credentials.
     #[serde(rename = "clientSecret", default, skip_serializing_if = "Option::is_none")]
     pub client_secret: Option<String>,
+    /// Requires authType. Merges by key only when keeping static_headers authentication and the same server URL; otherwise replaces stored headers. Null values remove keys; static_headers requires at least one header. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::HashMap<String, Option<String>>>,
+    /// Register an OAuth client automatically or use pre-registered clientId and optional clientSecret.
     #[serde(rename = "oauthRegistration", default, skip_serializing_if = "Option::is_none")]
     pub oauth_registration: Option<McpConnectionsUpdateBodyVariant1OauthRegistration>,
+    /// OAuth scopes when replacing authentication. Requires authType.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scope: Option<String>,
 }
@@ -1047,13 +1082,18 @@ impl From<&str> for McpConnectionsUpdateBodyVariant1OauthRegistration {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct McpConnectionsUpdateBodyVariant2 {
+    /// Replace the stored stdio server executable. This API never executes it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
+    /// Display name for the MCP connection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Connection type must remain stdio; transport type cannot be changed by update.
     pub r#type: String,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub args: Option<Vec<String>>,
+    /// Merge write-only environment variables by key. A null value removes a key; null for the entire env field clears all variables.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub env: Option<std::collections::HashMap<String, Option<String>>>,
 }
@@ -1112,9 +1152,12 @@ pub struct McpConnectionsAuthorizeResponseConnection {
     #[serde(rename = "serverUrl", default)]
     pub server_url: Option<String>,
     pub r#type: McpConnectionsAuthorizeResponseConnectionType,
+    /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsAuthorizeResponseConnectionVisibility,
+    /// Command-line arguments for the stdio server. Stored here, not executed by this API.
     #[serde(default)]
     pub args: Option<Vec<String>>,
+    /// Authentication method: OAuth user authorization (oauth), Client Credentials (M2M) using client_credentials, or static request headers (static_headers).
     #[serde(rename = "authType", default)]
     pub auth_type: Option<McpConnectionsAuthorizeResponseConnectionAuthType>,
     #[serde(default)]

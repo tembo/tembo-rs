@@ -79,6 +79,8 @@ pub enum MarketplaceRetrieveResponseSource {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MarketplaceRetrieveResponseFile {
+    /// Complete text content of the skill file.
     pub content: String,
+    /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
 }
