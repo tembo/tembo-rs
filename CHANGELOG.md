@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/tembo/tembo-rs/compare/v0.2.0...v0.2.1) (2026-10-20)
+
+
+### Chores
+
+* **api:** regenerate SDK ([7d4120a](https://github.com/tembo/tembo-rs/commit/7d4120a2b8b74f7aaa68eb5d0da76ed7917a9f67))
+
 ## [0.2.0](https://github.com/tembo/tembo-rs/compare/v0.1.0...v0.2.0) (2026-10-19)
 
 
