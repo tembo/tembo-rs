@@ -493,6 +493,9 @@ pub struct RuntimesListResponseItemCompatibleModel {
     pub name: RuntimesListResponseItemCompatibleModelName,
     pub label: String,
     pub provider: String,
+    /// Selected subscription, API provider, or CLI API billing source for this runtime and model.
+    #[serde(rename = "inferenceSource", default)]
+    pub inference_source: Option<String>,
     #[serde(rename = "isDefault")]
     pub is_default: bool,
     #[serde(rename = "isPlatformDefault")]

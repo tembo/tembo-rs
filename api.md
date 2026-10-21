@@ -183,7 +183,7 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [Test an integration](#test-an-integration)
   - [Sync an integration](#sync-an-integration)
   - [Sync eligible integrations](#sync-eligible-integrations)
-  - [Retrieve eligible integration sync status](#retrieve-eligible-integration-sync-status)
+  - [Retrieve integration sync status](#retrieve-integration-sync-status)
   - [Retrieve an integration rate limit](#retrieve-an-integration-rate-limit)
   - [List Sentry environments](#list-sentry-environments)
   - [List Slack channels](#list-slack-channels)
@@ -2822,9 +2822,9 @@ let response = client
     .await?;
 ```
 
-### Retrieve eligible integration sync status
+### Retrieve integration sync status
 
-Count active sync jobs for integrations with enabled repositories.
+Count active sync jobs for an integration or eligible integrations.
 
 | Direction | Type |
 | --- | --- |

@@ -64,7 +64,7 @@ impl IntegrationsResource {
         SyncAllRequestBuilder::new(self.client.clone(), body)
     }
 
-    /// Retrieve eligible integration sync status
+    /// Retrieve integration sync status
     pub fn retrieve_sync_status(&self) -> RetrieveSyncStatusRequestBuilder {
         RetrieveSyncStatusRequestBuilder::new(self.client.clone())
     }
@@ -947,10 +947,11 @@ impl SyncAllRequestBuilder {
             .await
     }
 }
-/// Count active sync jobs for integrations with enabled repositories.
+/// Count active sync jobs for an integration or eligible integrations.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct RetrieveSyncStatusRequestBuilder {
     client: crate::client::Tembo,
+    integration_id: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -959,9 +960,15 @@ impl RetrieveSyncStatusRequestBuilder {
     fn new(client: crate::client::Tembo) -> Self {
         Self {
             client,
+            integration_id: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn integration_id(mut self, value: impl Into<String>) -> Self {
+        self.integration_id = Some(value.into());
+        self
     }
 
     /// Overrides the client's request deadline for this request only.
@@ -994,7 +1001,10 @@ impl RetrieveSyncStatusRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::IntegrationsRetrieveSyncStatusResponse, crate::error::Error> {
         let path = "/v1/integrations/sync/status".to_string();
-        let query: Vec<(String, String)> = Vec::new();
+        let mut query: Vec<(String, String)> = Vec::new();
+        if let Some(value) = &self.integration_id {
+            query.push(("integrationId".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {
