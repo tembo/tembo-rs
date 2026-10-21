@@ -104,6 +104,13 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [`Sessions Diffs`](#sessions-diffs)
     - [List session diffs](#list-session-diffs)
     - [Retrieve a session diff](#retrieve-a-session-diff)
+  - [`Sessions Inputs`](#sessions-inputs)
+    - [List session inputs](#list-session-inputs)
+    - [Update a session input](#update-a-session-input)
+  - [`Sessions Queue`](#sessions-queue)
+    - [Update a session queue](#update-a-session-queue)
+  - [`Sessions Commands`](#sessions-commands)
+    - [List session commands](#list-session-commands)
 - [`Projects`](#projects)
   - [Update project defaults](#update-project-defaults)
   - [List projects](#list-projects)
@@ -1625,6 +1632,93 @@ let response = client
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
     )
+    .send()
+    .await?;
+```
+
+### `Sessions Inputs`
+
+#### List session inputs
+
+List pending questions for the active session agent.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`InputsListResponse`](./src/models/inputs.rs) |
+
+```rust
+let response = client
+    .sessions()
+    .inputs()
+    .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+    .send()
+    .await?;
+```
+
+#### Update a session input
+
+Answer a pending session question.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`InputsUpdateBody`](./src/models/inputs.rs) |
+| Response | [`InputsUpdateResponse`](./src/models/inputs.rs) |
+
+```rust
+let response = client
+    .sessions()
+    .inputs()
+    .update(
+        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "example",
+        InputsUpdateBody {
+            answers: std::collections::HashMap::new(),
+        },
+    )
+    .send()
+    .await?;
+```
+
+### `Sessions Queue`
+
+#### Update a session queue
+
+Replace the order of messages waiting in a session queue.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`QueueUpdateBody`](./src/models/queue.rs) |
+| Response | [`QueueUpdateResponse`](./src/models/queue.rs) |
+
+```rust
+let response = client
+    .sessions()
+    .queue()
+    .update(
+        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        QueueUpdateBody {
+            message_ids: vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()],
+        },
+    )
+    .send()
+    .await?;
+```
+
+### `Sessions Commands`
+
+#### List session commands
+
+List slash commands available to the session runtime.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`CommandsListResponse`](./src/models/commands.rs) |
+
+```rust
+let response = client
+    .sessions()
+    .commands()
+    .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
