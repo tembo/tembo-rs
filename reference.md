@@ -652,6 +652,40 @@ Retrieve a session diff
 - Response body: `application/json`
 - Errors: `400, 401, 403, 404, 409, 500, 502`
 
+### client.sessions().inputs().list(…)
+
+List session inputs
+
+- HTTP: `GET /v1/sessions/{sessionId}/inputs`
+- Response body: `application/json`
+- Errors: `400, 401, 403, 404, 409, 500, 502`
+
+### client.sessions().inputs().update(…)
+
+Update a session input
+
+- HTTP: `PATCH /v1/sessions/{sessionId}/inputs/{inputId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 401, 403, 404, 409, 500, 502`
+
+### client.sessions().queue().update(…)
+
+Update a session queue
+
+- HTTP: `PUT /v1/sessions/{sessionId}/queue`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 401, 403, 404, 409, 500, 502`
+
+### client.sessions().commands().list(…)
+
+List session commands
+
+- HTTP: `GET /v1/sessions/{sessionId}/commands`
+- Response body: `application/json`
+- Errors: `400, 401, 403, 404, 409, 500, 502`
+
 ### client.projects().update_defaults(…)
 
 Update project defaults
@@ -1189,7 +1223,7 @@ Sync eligible integrations
 
 ### client.integrations().retrieve_sync_status()
 
-Retrieve eligible integration sync status
+Retrieve integration sync status
 
 - HTTP: `GET /v1/integrations/sync/status`
 - Response body: `application/json`

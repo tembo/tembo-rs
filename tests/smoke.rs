@@ -2298,6 +2298,88 @@ async fn smoke() {
     {
         let result: Result<(), Error> = async {
             let _ = client
+                .sessions()
+                .inputs()
+                .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/sessions/{sessionId}/inputs"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .inputs()
+                .update(
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "example",
+                    InputsUpdateBody {
+                        answers: std::collections::HashMap::new(),
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "PATCH /v1/sessions/{sessionId}/inputs/{inputId}"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .queue()
+                .update(
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    QueueUpdateBody {
+                        message_ids: vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()],
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "PUT /v1/sessions/{sessionId}/queue"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .commands()
+                .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/sessions/{sessionId}/commands"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
                 .projects()
                 .update_defaults(ProjectsUpdateDefaultsBody {
                     project_id: None,
@@ -4249,7 +4331,27 @@ async fn smoke() {
         .await;
         if let Err(error) = result {
             if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "GET /v1/integrations/sync/status"));
+                failures.push(format!(
+                    "{}: {error}",
+                    "GET /v1/integrations/sync/status [required params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .integrations()
+                .retrieve_sync_status()
+                .integration_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/integrations/sync/status [all params]"));
             }
         }
     }
