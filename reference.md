@@ -1189,7 +1189,7 @@ Sync eligible integrations
 
 ### client.integrations().retrieve_sync_status()
 
-Retrieve eligible integration sync status
+Retrieve integration sync status
 
 - HTTP: `GET /v1/integrations/sync/status`
 - Response body: `application/json`

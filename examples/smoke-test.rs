@@ -6681,7 +6681,37 @@ async fn main() {
             operation: "retrieveSyncStatus".to_string(),
             method: "GET".to_string(),
             path: "/v1/integrations/sync/status".to_string(),
-            label: "".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "retrieveSyncStatus", "/v1/integrations/sync/status") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .integrations()
+                .retrieve_sync_status()
+                .integration_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "retrieveSyncStatus".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/integrations/sync/status".to_string(),
+            label: "all params".to_string(),
             status: status.to_string(),
             duration_ms,
             error,
