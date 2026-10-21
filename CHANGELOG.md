@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/tembo/tembo-rs/compare/v0.2.1...v0.3.0) (2026-10-21)
+
+
+### Features
+
+* **api:** add operation sessions.inputs.list (+3 more changes) ([aacd725](https://github.com/tembo/tembo-rs/commit/aacd7252b5d3edfded22f1f6f728c7e20416e7f5))
+* **api:** update SDK surface (1 change) ([1a602e1](https://github.com/tembo/tembo-rs/commit/1a602e13e58672b05dc8af2659ed187670f045fa))
+
 ## [0.2.1](https://github.com/tembo/tembo-rs/compare/v0.2.0...v0.2.1) (2026-10-20)
 
 
