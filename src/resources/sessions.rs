@@ -62,6 +62,18 @@ impl SessionsResource {
     pub fn diffs(&self) -> crate::resources::diffs::DiffsResource {
         crate::resources::diffs::DiffsResource::new(self.client.clone())
     }
+
+    pub fn inputs(&self) -> crate::resources::inputs::InputsResource {
+        crate::resources::inputs::InputsResource::new(self.client.clone())
+    }
+
+    pub fn queue(&self) -> crate::resources::queue::QueueResource {
+        crate::resources::queue::QueueResource::new(self.client.clone())
+    }
+
+    pub fn commands(&self) -> crate::resources::commands::CommandsResource {
+        crate::resources::commands::CommandsResource::new(self.client.clone())
+    }
 }
 
 /// List and search sessions, including active or archived sessions, with repository, project, creator, and source filters and cursor pagination.

@@ -3660,6 +3660,137 @@ async fn main() {
             error,
         });
     }
+    if selected(&filter, "list", "/v1/sessions/{sessionId}/inputs") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .inputs()
+                .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/sessions/{sessionId}/inputs".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "update", "/v1/sessions/{sessionId}/inputs/{inputId}") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .inputs()
+                .update(
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "example",
+                    InputsUpdateBody {
+                        answers: std::collections::HashMap::new(),
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "update".to_string(),
+            method: "PATCH".to_string(),
+            path: "/v1/sessions/{sessionId}/inputs/{inputId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "update", "/v1/sessions/{sessionId}/queue") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .queue()
+                .update(
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    QueueUpdateBody {
+                        message_ids: vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()],
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "update".to_string(),
+            method: "PUT".to_string(),
+            path: "/v1/sessions/{sessionId}/queue".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "list", "/v1/sessions/{sessionId}/commands") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .commands()
+                .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/sessions/{sessionId}/commands".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
     if selected(&filter, "updateDefaults", "/v1/projects/defaults") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
