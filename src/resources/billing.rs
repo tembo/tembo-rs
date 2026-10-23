@@ -96,6 +96,10 @@ pub struct ListUsageRequestBuilder {
     cursor: Option<String>,
     limit: Option<i64>,
     session_id: Option<String>,
+    created_after: Option<chrono::DateTime<chrono::FixedOffset>>,
+    created_before: Option<chrono::DateTime<chrono::FixedOffset>>,
+    created_by: Option<Vec<String>>,
+    models: Option<Vec<String>>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -107,6 +111,10 @@ impl ListUsageRequestBuilder {
             cursor: None,
             limit: None,
             session_id: None,
+            created_after: None,
+            created_before: None,
+            created_by: None,
+            models: None,
             timeout: None,
             max_retries: None,
         }
@@ -127,6 +135,30 @@ impl ListUsageRequestBuilder {
     /// Filter billing usage to this session.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
+        self
+    }
+
+    /// Only sessions created at or after this ISO 8601 timestamp.
+    pub fn created_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
+        self.created_after = Some(value);
+        self
+    }
+
+    /// Only sessions created before this ISO 8601 timestamp.
+    pub fn created_before(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
+        self.created_before = Some(value);
+        self
+    }
+
+    /// Filter by creator IDs, supplied as a comma-separated list.
+    pub fn created_by(mut self, value: Vec<String>) -> Self {
+        self.created_by = Some(value);
+        self
+    }
+
+    /// Filter by model names, supplied as a comma-separated list.
+    pub fn models(mut self, value: Vec<String>) -> Self {
+        self.models = Some(value);
         self
     }
 
@@ -169,6 +201,22 @@ impl ListUsageRequestBuilder {
         }
         if let Some(value) = &self.session_id {
             query.push(("sessionId".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.created_after {
+            query.push(("createdAfter".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.created_before {
+            query.push(("createdBefore".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(values) = &self.created_by {
+            for item in values {
+                query.push(("createdBy".to_string(), crate::http::scalar_value(item)));
+            }
+        }
+        if let Some(values) = &self.models {
+            for item in values {
+                query.push(("models".to_string(), crate::http::scalar_value(item)));
+            }
         }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;

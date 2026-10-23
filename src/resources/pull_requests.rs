@@ -37,6 +37,7 @@ pub struct ListRequestBuilder {
     has_tembo_session: Option<bool>,
     include_authors: Option<bool>,
     include_total: Option<bool>,
+    include_stacks: Option<bool>,
     repository_ids: Option<Vec<String>>,
     reviewer_ids: Option<Vec<String>>,
     merged_after: Option<chrono::DateTime<chrono::FixedOffset>>,
@@ -63,6 +64,7 @@ impl ListRequestBuilder {
             has_tembo_session: None,
             include_authors: None,
             include_total: None,
+            include_stacks: None,
             repository_ids: None,
             reviewer_ids: None,
             merged_after: None,
@@ -138,6 +140,12 @@ impl ListRequestBuilder {
     /// Include the total count of matching pull requests.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
+        self
+    }
+
+    /// Include each open pull request's position in its stack of dependent pull requests. Public responses do not include stacks.
+    pub fn include_stacks(mut self, value: bool) -> Self {
+        self.include_stacks = Some(value);
         self
     }
 
@@ -254,6 +262,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.include_total {
             query.push(("includeTotal".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.include_stacks {
+            query.push(("includeStacks".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.repository_ids {
             for item in values {
