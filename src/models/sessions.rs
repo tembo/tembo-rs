@@ -17,6 +17,9 @@ pub struct AgentOptions {
     pub speed: Option<AgentOptionsSpeed>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub goal: Option<AgentOptionsGoal>,
+    /// Whether the agent orchestrates multi-agent workflows for every task when supported by the selected runtime and model.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ultracode: Option<bool>,
 }
 
 pub type SessionTipTapDocument = serde_json::Value;

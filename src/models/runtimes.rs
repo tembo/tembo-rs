@@ -314,6 +314,9 @@ pub struct RuntimesListResponseItemRunCapabilities {
     pub speeds: Vec<RuntimesListResponseItemRunCapabilitiesSpeed>,
     #[serde(rename = "supportsGoals")]
     pub supports_goals: bool,
+    /// Models that support ultracode workflow orchestration.
+    #[serde(rename = "ultracodeModels")]
+    pub ultracode_models: Vec<String>,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

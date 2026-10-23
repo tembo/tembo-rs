@@ -3087,6 +3087,7 @@ async fn main() {
                         mode: None,
                         speed: None,
                         goal: None,
+                        ultracode: None,
                     }),
                     branch_name: Some("x".to_string()),
                     code_repository_ids: Some(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
@@ -3211,6 +3212,7 @@ async fn main() {
                             mode: None,
                             speed: None,
                             goal: None,
+                            ultracode: None,
                         }),
                         base_branch: Some("x".to_string()),
                         branch_name: Some("x".to_string()),
@@ -5141,6 +5143,7 @@ async fn main() {
                 .has_tembo_session(true)
                 .include_authors(true)
                 .include_total(true)
+                .include_stacks(true)
                 .repository_ids(vec!["repositoryId".to_string()])
                 .reviewer_ids(vec!["reviewerId".to_string()])
                 .merged_after(chrono::Utc::now().fixed_offset())
@@ -7375,6 +7378,10 @@ async fn main() {
                 .cursor("example")
                 .limit(50)
                 .session_id("example")
+                .created_after(chrono::Utc::now().fixed_offset())
+                .created_before(chrono::Utc::now().fixed_offset())
+                .created_by(vec!["createdBy".to_string()])
+                .models(vec!["model".to_string()])
                 .send()
                 .await?;
             Ok(())
