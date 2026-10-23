@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/tembo/tembo-rs/compare/v0.3.0...v0.4.0) (2026-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** Schema `agent_options_input` shape changed.
+
+### Features
+
+* **api:** update schema agent_options_input (+7 more changes) ([ded6917](https://github.com/tembo/tembo-rs/commit/ded69178d849bcbbd107d3a32803c5564ed58dd6))
+
 ## [0.3.0](https://github.com/tembo/tembo-rs/compare/v0.2.1...v0.3.0) (2026-10-21)
 
 
