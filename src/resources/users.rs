@@ -33,6 +33,12 @@ impl UsersResource {
         crate::resources::users_subscriptions::UsersSubscriptionsResource::new(self.client.clone())
     }
 
+    pub fn environment_variables(
+        &self,
+    ) -> crate::resources::users_environment_variables::UsersEnvironmentVariablesResource {
+        crate::resources::users_environment_variables::UsersEnvironmentVariablesResource::new(self.client.clone())
+    }
+
     pub fn profile_picture(&self) -> crate::resources::profile_picture::ProfilePictureResource {
         crate::resources::profile_picture::ProfilePictureResource::new(self.client.clone())
     }

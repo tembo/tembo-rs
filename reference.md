@@ -502,6 +502,31 @@ Retrieve user subscriptions
 - Response body: `application/json`
 - Errors: `400, 403, 404, 500, 502`
 
+### client.users().environment_variables().list(…)
+
+List personal environment variables
+
+- HTTP: `GET /v1/users/{userId}/environment-variables`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 500`
+
+### client.users().environment_variables().create(…)
+
+Create a personal environment variable
+
+- HTTP: `POST /v1/users/{userId}/environment-variables`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409, 500`
+
+### client.users().environment_variables().delete(…)
+
+Delete a personal environment variable
+
+- HTTP: `DELETE /v1/users/{userId}/environment-variables/{environmentVariableId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 500`
+
 ### client.users().profile_picture().retrieve(…)
 
 Retrieve a user profile picture

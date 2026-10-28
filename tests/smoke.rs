@@ -1678,6 +1678,61 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
+            let _ = client.users().environment_variables().list("example").send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/users/{userId}/environment-variables"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .users()
+                .environment_variables()
+                .create(
+                    "example",
+                    EnvironmentVariablesCreateBody {
+                        key: "x".to_string(),
+                        value: "x".to_string(),
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/users/{userId}/environment-variables"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .users()
+                .environment_variables()
+                .delete("example", "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "DELETE /v1/users/{userId}/environment-variables/{environmentVariableId}"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
             client.users().profile_picture().retrieve("example").send().await?;
             Ok(())
         }
@@ -2565,8 +2620,8 @@ async fn smoke() {
                 .environment_variables()
                 .create(
                     "example",
-                    EnvironmentVariablesCreateBody {
-                        secrets: vec![EnvironmentVariablesCreateBodySecret {
+                    EnvironmentVariablesCreateBody2 {
+                        secrets: vec![EnvironmentVariablesCreateBody2Secret {
                             key: "".to_string(),
                             value: "x".to_string(),
                         }],
