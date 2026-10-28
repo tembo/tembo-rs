@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.0](https://github.com/tembo/tembo-rs/compare/v0.4.0...v0.5.0) (2026-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** 3 breaking changes to the SDK surface.
+    - Removed operation `organizations.subscriptions.reset` (`POST /v1/organizations/{organizationId}/subscriptions/reset`).
+    - Removed operation `users.delete` (`DELETE /v1/users/{userId}`).
+    - Removed operation `users.subscriptions.reset` (`POST /v1/users/{userId}/subscriptions/reset`).
+
+### Features
+
+* **api:** update SDK surface (10 changes) ([2dfaad6](https://github.com/tembo/tembo-rs/commit/2dfaad6c6bb8bd666fcf456b89ce890dd1f70f1f))
+* **api:** update SDK surface (3 changes) ([cf4faea](https://github.com/tembo/tembo-rs/commit/cf4faeab1c3f3f3dc0d493f565e549825dde03a5))
+
+
+### Bug Fixes
+
+* **models:** allow clearing warmPoolSchedule, select resourceSettings variants ([d88c321](https://github.com/tembo/tembo-rs/commit/d88c321a1a32d697a56a227e88f0d2aad7b95de3))
+* **models:** allow clearing warmPoolSchedule, select resourceSettings variants ([02d56d8](https://github.com/tembo/tembo-rs/commit/02d56d8c1fe3678e9724298d84b406f7c2383d28))
+
 ## [0.4.0](https://github.com/tembo/tembo-rs/compare/v0.3.0...v0.4.0) (2026-10-23)
 
 
