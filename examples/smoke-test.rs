@@ -2716,6 +2716,101 @@ async fn main() {
             error,
         });
     }
+    if selected(&filter, "list", "/v1/users/{userId}/environment-variables") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client.users().environment_variables().list("example").send().await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "list".to_string(),
+            method: "GET".to_string(),
+            path: "/v1/users/{userId}/environment-variables".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "create", "/v1/users/{userId}/environment-variables") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .users()
+                .environment_variables()
+                .create(
+                    "example",
+                    EnvironmentVariablesCreateBody {
+                        key: "x".to_string(),
+                        value: "x".to_string(),
+                    },
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "create".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/users/{userId}/environment-variables".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(
+        &filter,
+        "delete",
+        "/v1/users/{userId}/environment-variables/{environmentVariableId}",
+    ) {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .users()
+                .environment_variables()
+                .delete("example", "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "delete".to_string(),
+            method: "DELETE".to_string(),
+            path: "/v1/users/{userId}/environment-variables/{environmentVariableId}".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
     if selected(&filter, "retrieve", "/v1/users/{userId}/profile-picture") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -4077,8 +4172,8 @@ async fn main() {
                 .environment_variables()
                 .create(
                     "example",
-                    EnvironmentVariablesCreateBody {
-                        secrets: vec![EnvironmentVariablesCreateBodySecret {
+                    EnvironmentVariablesCreateBody2 {
+                        secrets: vec![EnvironmentVariablesCreateBody2Secret {
                             key: "".to_string(),
                             value: "x".to_string(),
                         }],

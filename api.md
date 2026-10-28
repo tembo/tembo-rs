@@ -82,6 +82,10 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Retrieve a user connected account](#retrieve-a-user-connected-account)
   - [`Users Subscriptions`](#users-subscriptions)
     - [Retrieve user subscriptions](#retrieve-user-subscriptions)
+  - [`Users EnvironmentVariables`](#users-environmentvariables)
+    - [List personal environment variables](#list-personal-environment-variables)
+    - [Create a personal environment variable](#create-a-personal-environment-variable)
+    - [Delete a personal environment variable](#delete-a-personal-environment-variable)
   - [`Users ProfilePicture`](#users-profilepicture)
     - [Retrieve a user profile picture](#retrieve-a-user-profile-picture)
     - [Update your profile picture](#update-your-profile-picture)
@@ -1274,6 +1278,61 @@ Retrieve connection statuses and available ChatGPT and Claude usage. Provider us
 let response = client.users().subscriptions().retrieve("example").send().await?;
 ```
 
+### `Users EnvironmentVariables`
+
+#### List personal environment variables
+
+List your personal environment variables in the current organization. Values are never returned.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`EnvironmentVariablesListResponse`](./src/models/users_environment_variables.rs) |
+
+```rust
+let response = client.users().environment_variables().list("example").send().await?;
+```
+
+#### Create a personal environment variable
+
+Store an encrypted environment variable that is injected into every session you start in the current organization.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`EnvironmentVariablesCreateBody`](./src/models/users_environment_variables.rs) |
+| Response | [`EnvironmentVariablesCreateResponse`](./src/models/users_environment_variables.rs) |
+
+```rust
+let response = client
+    .users()
+    .environment_variables()
+    .create(
+        "example",
+        EnvironmentVariablesCreateBody {
+            key: "x".to_string(),
+            value: "x".to_string(),
+        },
+    )
+    .send()
+    .await?;
+```
+
+#### Delete a personal environment variable
+
+Permanently delete a personal environment variable. Sessions started afterwards no longer receive it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`EnvironmentVariablesDeleteResponse`](./src/models/users_environment_variables.rs) |
+
+```rust
+let response = client
+    .users()
+    .environment_variables()
+    .delete("example", "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+    .send()
+    .await?;
+```
+
 ### `Users ProfilePicture`
 
 #### Retrieve a user profile picture
@@ -1799,7 +1858,7 @@ List environment-variable names without exposing values.
 
 | Direction | Type |
 | --- | --- |
-| Response | [`EnvironmentVariablesListResponse`](./src/models/environment_variables.rs) |
+| Response | [`EnvironmentVariablesListResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client.projects().environment_variables().list("example").send().await?;
@@ -1811,8 +1870,8 @@ Create one or more encrypted project environment variables.
 
 | Direction | Type |
 | --- | --- |
-| Request | [`EnvironmentVariablesCreateBody`](./src/models/environment_variables.rs) |
-| Response | [`EnvironmentVariablesCreateResponse`](./src/models/environment_variables.rs) |
+| Request | [`EnvironmentVariablesCreateBody2`](./src/models/projects_environment_variables.rs) |
+| Response | [`EnvironmentVariablesCreateResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client
@@ -1820,8 +1879,8 @@ let response = client
     .environment_variables()
     .create(
         "example",
-        EnvironmentVariablesCreateBody {
-            secrets: vec![EnvironmentVariablesCreateBodySecret {
+        EnvironmentVariablesCreateBody2 {
+            secrets: vec![EnvironmentVariablesCreateBody2Secret {
                 key: "".to_string(),
                 value: "x".to_string(),
             }],
@@ -1837,7 +1896,7 @@ Delete one encrypted project environment variable.
 
 | Direction | Type |
 | --- | --- |
-| Response | [`EnvironmentVariablesDeleteResponse`](./src/models/environment_variables.rs) |
+| Response | [`EnvironmentVariablesDeleteResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client
