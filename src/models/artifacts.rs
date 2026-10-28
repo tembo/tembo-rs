@@ -32,6 +32,8 @@ pub struct ArtifactsListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "assetId", default)]
     pub asset_id: Option<String>,
+    #[serde(rename = "assetUrl", default)]
+    pub asset_url: Option<String>,
     #[serde(default)]
     pub category: Option<ArtifactsListResponseItemCategory>,
     #[serde(rename = "contentType", default)]

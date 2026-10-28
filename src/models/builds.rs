@@ -25,6 +25,8 @@ pub struct BuildsListResponseItem {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(
         rename = "completedAt",
         default,
@@ -35,10 +37,6 @@ pub struct BuildsListResponseItem {
     pub duration_ms: Option<i64>,
     #[serde(default)]
     pub failure: Option<String>,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]
@@ -338,6 +336,8 @@ pub struct BuildsRetrieveResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(
         rename = "completedAt",
         default,
@@ -348,10 +348,6 @@ pub struct BuildsRetrieveResponse {
     pub duration_ms: Option<i64>,
     #[serde(default)]
     pub failure: Option<String>,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]

@@ -89,12 +89,13 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// List session usage with cursor pagination.
+/// List session usage by default, or include warm pool compute with the type filter. Uses cursor pagination.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ListUsageRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    r#type: Option<String>,
     session_id: Option<String>,
     created_after: Option<chrono::DateTime<chrono::FixedOffset>>,
     created_before: Option<chrono::DateTime<chrono::FixedOffset>>,
@@ -110,6 +111,7 @@ impl ListUsageRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            r#type: None,
             session_id: None,
             created_after: None,
             created_before: None,
@@ -132,19 +134,25 @@ impl ListUsageRequestBuilder {
         self
     }
 
+    /// Usage types to include. Defaults to sessions for backwards compatibility.
+    pub fn r#type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+
     /// Filter billing usage to this session.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
         self
     }
 
-    /// Only sessions created at or after this ISO 8601 timestamp.
+    /// Include sessions created or warm pool runtime at or after this ISO 8601 timestamp.
     pub fn created_after(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.created_after = Some(value);
         self
     }
 
-    /// Only sessions created before this ISO 8601 timestamp.
+    /// Include sessions created or warm pool runtime before this ISO 8601 timestamp.
     pub fn created_before(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
         self.created_before = Some(value);
         self
@@ -198,6 +206,9 @@ impl ListUsageRequestBuilder {
         }
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.r#type {
+            query.push(("type".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(value) = &self.session_id {
             query.push(("sessionId".to_string(), crate::http::scalar_value(value)));

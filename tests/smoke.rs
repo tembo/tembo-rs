@@ -1019,32 +1019,6 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .organizations()
-                .subscriptions()
-                .reset(
-                    "example",
-                    SubscriptionsResetBody {
-                        idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                        provider: "chatgpt".to_string(),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        if let Err(error) = result {
-            if is_smoke_failure(&error) {
-                failures.push(format!(
-                    "{}: {error}",
-                    "POST /v1/organizations/{organizationId}/subscriptions/reset"
-                ));
-            }
-        }
-    }
-    {
-        let result: Result<(), Error> = async {
             let _ = client.mcp_connections().list().send().await?;
             Ok(())
         }
@@ -1506,52 +1480,6 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .delete(
-                    "example",
-                    UsersDeleteBody {
-                        deletion_questionnaire: None,
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        if let Err(error) = result {
-            if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "DELETE /v1/users/{userId} [required params]"));
-            }
-        }
-    }
-    {
-        let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .delete(
-                    "example",
-                    UsersDeleteBody {
-                        deletion_questionnaire: Some(UsersDeleteBodyDeletionQuestionnaire {
-                            reasons: vec!["x".to_string()],
-                            other_reason: None,
-                            submitted_at: chrono::Utc::now().fixed_offset(),
-                        }),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        if let Err(error) = result {
-            if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "DELETE /v1/users/{userId} [all params]"));
-            }
-        }
-    }
-    {
-        let result: Result<(), Error> = async {
             let _ = client.users().settings().retrieve("example").send().await?;
             Ok(())
         }
@@ -1750,29 +1678,6 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .subscriptions()
-                .reset(
-                    "example",
-                    SubscriptionsResetBody2 {
-                        idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                        provider: "chatgpt".to_string(),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        if let Err(error) = result {
-            if is_smoke_failure(&error) {
-                failures.push(format!("{}: {error}", "POST /v1/users/{userId}/subscriptions/reset"));
-            }
-        }
-    }
-    {
-        let result: Result<(), Error> = async {
             client.users().profile_picture().retrieve("example").send().await?;
             Ok(())
         }
@@ -1884,6 +1789,7 @@ async fn smoke() {
                     rich_content: None,
                     pull_request_id: None,
                     queue_right_away: None,
+                    automatic_sizing: None,
                     session_mode: None,
                     startup_agent: None,
                 })
@@ -1924,6 +1830,7 @@ async fn smoke() {
                     rich_content: None,
                     pull_request_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
                     queue_right_away: Some(false),
+                    automatic_sizing: Some(false),
                     session_mode: Some(SessionsCreateBodySessionMode::Chat),
                     startup_agent: Some(SessionsCreateBodyStartupAgent::ClaudeCode),
                 })
@@ -1961,6 +1868,7 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     SessionsUpdateBody {
+                        memory_mb: None,
                         agent: None,
                         agent_options: None,
                         base_branch: None,
@@ -1998,6 +1906,7 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     SessionsUpdateBody {
+                        memory_mb: Some(1024),
                         agent: Some("x".to_string()),
                         agent_options: Some(AgentOptions {
                             reasoning_level: None,
@@ -2455,18 +2364,19 @@ async fn smoke() {
                 .projects()
                 .create(ProjectsCreateBody {
                     description: None,
-                    include_deps: None,
-                    include_skills: None,
                     name: "x".to_string(),
                     setup_script: None,
                     code_repository_ids: None,
                     agent_instructions: None,
                     color: None,
                     icon: None,
+                    include_deps: None,
+                    include_skills: None,
                     onboarding_default: None,
                     run_now: None,
                     schedule: None,
-                    sizes: vec![ProjectsCreateBodySiz::Nano],
+                    sizes: None,
+                    resource_settings: None,
                 })
                 .send()
                 .await?;
@@ -2485,21 +2395,22 @@ async fn smoke() {
                 .projects()
                 .create(ProjectsCreateBody {
                     description: Some("".to_string()),
-                    include_deps: Some(false),
-                    include_skills: Some(false),
                     name: "x".to_string(),
                     setup_script: Some("".to_string()),
                     code_repository_ids: Some(vec!["x".to_string()]),
                     agent_instructions: Some("".to_string()),
                     color: Some(ProjectsCreateBodyColor::Neutral),
                     icon: Some(ProjectsCreateBodyIcon::Folder),
+                    include_deps: Some(false),
+                    include_skills: Some(false),
                     onboarding_default: Some(false),
                     run_now: Some(false),
                     schedule: Some(ProjectsCreateBodySchedule {
                         cron: "x".to_string(),
                         timezone: None,
                     }),
-                    sizes: vec![ProjectsCreateBodySiz::Nano],
+                    sizes: Some(vec![ProjectsCreateBodySiz::Medium]),
+                    resource_settings: None,
                 })
                 .send()
                 .await?;
@@ -2532,18 +2443,20 @@ async fn smoke() {
                     "example",
                     ProjectsUpdateBody {
                         description: None,
-                        include_deps: None,
-                        include_skills: None,
                         name: None,
                         setup_script: None,
                         code_repository_ids: None,
                         agent_instructions: None,
                         color: None,
                         icon: None,
+                        include_deps: None,
+                        include_skills: None,
+                        resource_settings: None,
                         default_for_sizes: None,
                         environment_variables: None,
                         schedule: None,
                         sizes: None,
+                        warm_pool_schedule: None,
                         warm_pool_enabled: None,
                     },
                 )
@@ -2569,14 +2482,15 @@ async fn smoke() {
                     "example",
                     ProjectsUpdateBody {
                         description: Some("".to_string()),
-                        include_deps: Some(false),
-                        include_skills: Some(false),
                         name: Some("x".to_string()),
                         setup_script: Some("".to_string()),
                         code_repository_ids: Some(vec!["x".to_string()]),
                         agent_instructions: Some("".to_string()),
                         color: Some(ProjectsUpdateBodyColor::Neutral),
                         icon: Some(ProjectsUpdateBodyIcon::Folder),
+                        include_deps: Some(false),
+                        include_skills: Some(false),
+                        resource_settings: None,
                         default_for_sizes: Some(vec![ProjectsUpdateBodyDefaultForSiz::Nano]),
                         environment_variables: Some(std::collections::HashMap::new()),
                         schedule: Some(ProjectsUpdateBodySchedule {
@@ -2585,6 +2499,12 @@ async fn smoke() {
                             timezone: None,
                         }),
                         sizes: Some(vec![ProjectsUpdateBodySiz::Nano]),
+                        warm_pool_schedule: Some(ProjectsUpdateBodyWarmPoolSchedule {
+                            timezone: "x".to_string(),
+                            days: vec![0],
+                            start_time: "".to_string(),
+                            end_time: "".to_string(),
+                        }),
                         warm_pool_enabled: Some(false),
                     },
                 )
@@ -4668,6 +4588,7 @@ async fn smoke() {
                 .list_usage()
                 .cursor("example")
                 .limit(50)
+                .r#type("all".to_string())
                 .session_id("example")
                 .created_after(chrono::Utc::now().fixed_offset())
                 .created_before(chrono::Utc::now().fixed_offset())

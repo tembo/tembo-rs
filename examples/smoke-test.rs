@@ -1645,46 +1645,6 @@ async fn main() {
             error,
         });
     }
-    if selected(
-        &filter,
-        "reset",
-        "/v1/organizations/{organizationId}/subscriptions/reset",
-    ) {
-        let started = std::time::Instant::now();
-        let result: Result<(), Error> = async {
-            let _ = client
-                .organizations()
-                .subscriptions()
-                .reset(
-                    "example",
-                    SubscriptionsResetBody {
-                        idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                        provider: "chatgpt".to_string(),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        let duration_ms = started.elapsed().as_millis() as i64;
-        let (status, error) = match result {
-            Ok(()) => ("passed", String::new()),
-            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
-            // A response came back (API error or decode mismatch): the request
-            // reached the server, which is what this smoke verifies.
-            Err(_) => ("passed", String::new()),
-        };
-        results.push(SmokeResult {
-            operation: "reset".to_string(),
-            method: "POST".to_string(),
-            path: "/v1/organizations/{organizationId}/subscriptions/reset".to_string(),
-            label: "".to_string(),
-            status: status.to_string(),
-            duration_ms,
-            error,
-        });
-    }
     if selected(&filter, "list", "/v1/mcp-connections") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -2475,78 +2435,6 @@ async fn main() {
             error,
         });
     }
-    if selected(&filter, "delete", "/v1/users/{userId}") {
-        let started = std::time::Instant::now();
-        let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .delete(
-                    "example",
-                    UsersDeleteBody {
-                        deletion_questionnaire: None,
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        let duration_ms = started.elapsed().as_millis() as i64;
-        let (status, error) = match result {
-            Ok(()) => ("passed", String::new()),
-            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
-            // A response came back (API error or decode mismatch): the request
-            // reached the server, which is what this smoke verifies.
-            Err(_) => ("passed", String::new()),
-        };
-        results.push(SmokeResult {
-            operation: "delete".to_string(),
-            method: "DELETE".to_string(),
-            path: "/v1/users/{userId}".to_string(),
-            label: "required params".to_string(),
-            status: status.to_string(),
-            duration_ms,
-            error,
-        });
-    }
-    if selected(&filter, "delete", "/v1/users/{userId}") {
-        let started = std::time::Instant::now();
-        let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .delete(
-                    "example",
-                    UsersDeleteBody {
-                        deletion_questionnaire: Some(UsersDeleteBodyDeletionQuestionnaire {
-                            reasons: vec!["x".to_string()],
-                            other_reason: None,
-                            submitted_at: chrono::Utc::now().fixed_offset(),
-                        }),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        let duration_ms = started.elapsed().as_millis() as i64;
-        let (status, error) = match result {
-            Ok(()) => ("passed", String::new()),
-            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
-            // A response came back (API error or decode mismatch): the request
-            // reached the server, which is what this smoke verifies.
-            Err(_) => ("passed", String::new()),
-        };
-        results.push(SmokeResult {
-            operation: "delete".to_string(),
-            method: "DELETE".to_string(),
-            path: "/v1/users/{userId}".to_string(),
-            label: "all params".to_string(),
-            status: status.to_string(),
-            duration_ms,
-            error,
-        });
-    }
     if selected(&filter, "retrieve", "/v1/users/{userId}/settings") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -2828,42 +2716,6 @@ async fn main() {
             error,
         });
     }
-    if selected(&filter, "reset", "/v1/users/{userId}/subscriptions/reset") {
-        let started = std::time::Instant::now();
-        let result: Result<(), Error> = async {
-            let _ = client
-                .users()
-                .subscriptions()
-                .reset(
-                    "example",
-                    SubscriptionsResetBody2 {
-                        idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                        provider: "chatgpt".to_string(),
-                    },
-                )
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        let duration_ms = started.elapsed().as_millis() as i64;
-        let (status, error) = match result {
-            Ok(()) => ("passed", String::new()),
-            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
-            // A response came back (API error or decode mismatch): the request
-            // reached the server, which is what this smoke verifies.
-            Err(_) => ("passed", String::new()),
-        };
-        results.push(SmokeResult {
-            operation: "reset".to_string(),
-            method: "POST".to_string(),
-            path: "/v1/users/{userId}/subscriptions/reset".to_string(),
-            label: "".to_string(),
-            status: status.to_string(),
-            duration_ms,
-            error,
-        });
-    }
     if selected(&filter, "retrieve", "/v1/users/{userId}/profile-picture") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
@@ -3043,6 +2895,7 @@ async fn main() {
                     rich_content: None,
                     pull_request_id: None,
                     queue_right_away: None,
+                    automatic_sizing: None,
                     session_mode: None,
                     startup_agent: None,
                 })
@@ -3096,6 +2949,7 @@ async fn main() {
                     rich_content: None,
                     pull_request_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
                     queue_right_away: Some(false),
+                    automatic_sizing: Some(false),
                     session_mode: Some(SessionsCreateBodySessionMode::Chat),
                     startup_agent: Some(SessionsCreateBodyStartupAgent::ClaudeCode),
                 })
@@ -3159,6 +3013,7 @@ async fn main() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     SessionsUpdateBody {
+                        memory_mb: None,
                         agent: None,
                         agent_options: None,
                         base_branch: None,
@@ -3206,6 +3061,7 @@ async fn main() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     SessionsUpdateBody {
+                        memory_mb: Some(1024),
                         agent: Some("x".to_string()),
                         agent_options: Some(AgentOptions {
                             reasoning_level: None,
@@ -3922,18 +3778,19 @@ async fn main() {
                 .projects()
                 .create(ProjectsCreateBody {
                     description: None,
-                    include_deps: None,
-                    include_skills: None,
                     name: "x".to_string(),
                     setup_script: None,
                     code_repository_ids: None,
                     agent_instructions: None,
                     color: None,
                     icon: None,
+                    include_deps: None,
+                    include_skills: None,
                     onboarding_default: None,
                     run_now: None,
                     schedule: None,
-                    sizes: vec![ProjectsCreateBodySiz::Nano],
+                    sizes: None,
+                    resource_settings: None,
                 })
                 .send()
                 .await?;
@@ -3965,21 +3822,22 @@ async fn main() {
                 .projects()
                 .create(ProjectsCreateBody {
                     description: Some("".to_string()),
-                    include_deps: Some(false),
-                    include_skills: Some(false),
                     name: "x".to_string(),
                     setup_script: Some("".to_string()),
                     code_repository_ids: Some(vec!["x".to_string()]),
                     agent_instructions: Some("".to_string()),
                     color: Some(ProjectsCreateBodyColor::Neutral),
                     icon: Some(ProjectsCreateBodyIcon::Folder),
+                    include_deps: Some(false),
+                    include_skills: Some(false),
                     onboarding_default: Some(false),
                     run_now: Some(false),
                     schedule: Some(ProjectsCreateBodySchedule {
                         cron: "x".to_string(),
                         timezone: None,
                     }),
-                    sizes: vec![ProjectsCreateBodySiz::Nano],
+                    sizes: Some(vec![ProjectsCreateBodySiz::Medium]),
+                    resource_settings: None,
                 })
                 .send()
                 .await?;
@@ -4038,18 +3896,20 @@ async fn main() {
                     "example",
                     ProjectsUpdateBody {
                         description: None,
-                        include_deps: None,
-                        include_skills: None,
                         name: None,
                         setup_script: None,
                         code_repository_ids: None,
                         agent_instructions: None,
                         color: None,
                         icon: None,
+                        include_deps: None,
+                        include_skills: None,
+                        resource_settings: None,
                         default_for_sizes: None,
                         environment_variables: None,
                         schedule: None,
                         sizes: None,
+                        warm_pool_schedule: None,
                         warm_pool_enabled: None,
                     },
                 )
@@ -4085,14 +3945,15 @@ async fn main() {
                     "example",
                     ProjectsUpdateBody {
                         description: Some("".to_string()),
-                        include_deps: Some(false),
-                        include_skills: Some(false),
                         name: Some("x".to_string()),
                         setup_script: Some("".to_string()),
                         code_repository_ids: Some(vec!["x".to_string()]),
                         agent_instructions: Some("".to_string()),
                         color: Some(ProjectsUpdateBodyColor::Neutral),
                         icon: Some(ProjectsUpdateBodyIcon::Folder),
+                        include_deps: Some(false),
+                        include_skills: Some(false),
+                        resource_settings: None,
                         default_for_sizes: Some(vec![ProjectsUpdateBodyDefaultForSiz::Nano]),
                         environment_variables: Some(std::collections::HashMap::new()),
                         schedule: Some(ProjectsUpdateBodySchedule {
@@ -4101,6 +3962,12 @@ async fn main() {
                             timezone: None,
                         }),
                         sizes: Some(vec![ProjectsUpdateBodySiz::Nano]),
+                        warm_pool_schedule: Some(ProjectsUpdateBodyWarmPoolSchedule {
+                            timezone: "x".to_string(),
+                            days: vec![0],
+                            start_time: "".to_string(),
+                            end_time: "".to_string(),
+                        }),
                         warm_pool_enabled: Some(false),
                     },
                 )
@@ -7377,6 +7244,7 @@ async fn main() {
                 .list_usage()
                 .cursor("example")
                 .limit(50)
+                .r#type("all".to_string())
                 .session_id("example")
                 .created_after(chrono::Utc::now().fixed_offset())
                 .created_before(chrono::Utc::now().fixed_offset())
