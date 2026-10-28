@@ -741,6 +741,9 @@ pub struct SessionsCreateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     pub visibility: SessionsCreateResponseVisibility,
     pub artifacts: Vec<SessionsCreateResponseArtifact>,
+    /// Whether the session VM is sized automatically.
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(default)]
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
@@ -1623,6 +1626,9 @@ pub struct SessionsCreateBody {
     /// Whether to queue the initial task immediately instead of only creating the session.
     #[serde(rename = "queueRightAway", default, skip_serializing_if = "Option::is_none")]
     pub queue_right_away: Option<bool>,
+    /// Size the VM automatically. Only for sessions created without a project (projectId "tembo").
+    #[serde(rename = "automaticSizing", default, skip_serializing_if = "Option::is_none")]
+    pub automatic_sizing: Option<bool>,
     /// Whether to create a chat session or a terminal session.
     #[serde(rename = "sessionMode", default, skip_serializing_if = "Option::is_none")]
     pub session_mode: Option<SessionsCreateBodySessionMode>,
@@ -1653,6 +1659,7 @@ impl SessionsCreateBody {
             rich_content: None,
             pull_request_id: None,
             queue_right_away: None,
+            automatic_sizing: None,
             session_mode: None,
             startup_agent: None,
         }
@@ -1918,6 +1925,9 @@ pub struct SessionsRetrieveResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     pub visibility: SessionsRetrieveResponseVisibility,
     pub artifacts: Vec<SessionsRetrieveResponseArtifact>,
+    /// Whether the session VM is sized automatically.
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(default)]
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
@@ -2801,6 +2811,9 @@ pub struct SessionsUpdateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     pub visibility: SessionsUpdateResponseVisibility,
     pub artifacts: Vec<SessionsUpdateResponseArtifact>,
+    /// Whether the session VM is sized automatically.
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(default)]
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
@@ -3639,6 +3652,9 @@ impl From<&str> for SessionsUpdateResponseStateCurrent {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SessionsUpdateBody {
+    /// Request in-place memory growth for a running adaptive sandbox, within project limits. Submit separately from other session changes. Returns the session while the resize runs asynchronously; sandbox metrics report its progress.
+    #[serde(rename = "memoryMb", default, skip_serializing_if = "Option::is_none")]
+    pub memory_mb: Option<i64>,
     /// Change the agent and model key. Null clears the session override.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
@@ -3893,6 +3909,9 @@ pub struct SessionsForkResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     pub visibility: SessionsForkResponseVisibility,
     pub artifacts: Vec<SessionsForkResponseArtifact>,
+    /// Whether the session VM is sized automatically.
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(default)]
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]

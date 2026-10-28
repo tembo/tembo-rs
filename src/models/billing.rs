@@ -347,12 +347,27 @@ pub struct BillingListUsageResponse {
     pub as_of: chrono::DateTime<chrono::FixedOffset>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum BillingListUsageResponseItem {
+    BillingListUsageResponseItemVariant1(BillingListUsageResponseItemVariant1),
+    BillingListUsageResponseItemVariant2(BillingListUsageResponseItemVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
 ///
 /// Response-only model, marked `#[non_exhaustive]`: fields may be added
 /// additively in future versions without a breaking release.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct BillingListUsageResponseItem {
+pub struct BillingListUsageResponseItemVariant1 {
     #[serde(default)]
     pub agent: Option<String>,
     pub id: String,
@@ -366,4 +381,33 @@ pub struct BillingListUsageResponseItem {
     pub compute_credits: f64,
     #[serde(rename = "totalCredits", serialize_with = "crate::number::serialize")]
     pub total_credits: f64,
+    pub r#type: String,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct BillingListUsageResponseItemVariant2 {
+    pub id: String,
+    #[serde(rename = "virtualMachineId")]
+    pub virtual_machine_id: String,
+    #[serde(rename = "startedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub started_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "endedAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub ended_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    #[serde(rename = "runtimeMs", serialize_with = "crate::number::serialize")]
+    pub runtime_ms: f64,
+    #[serde(serialize_with = "crate::number::serialize")]
+    pub cpu: f64,
+    #[serde(rename = "memoryMb", serialize_with = "crate::number::serialize")]
+    pub memory_mb: f64,
+    #[serde(rename = "computeCredits", serialize_with = "crate::number::serialize")]
+    pub compute_credits: f64,
+    pub r#type: String,
 }

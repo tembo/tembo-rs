@@ -187,10 +187,6 @@ pub struct ProjectsListResponseItem {
     #[serde(default)]
     pub description: Option<String>,
     pub id: String,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     pub name: String,
     #[serde(rename = "setupScript", default)]
     pub setup_script: Option<String>,
@@ -198,6 +194,8 @@ pub struct ProjectsListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "activeSnapshots")]
     pub active_snapshots: Vec<ProjectsListResponseItemActiveSnapshot>,
+    #[serde(rename = "resourceSettings", default)]
+    pub resource_settings: Option<ProjectsListResponseItemResourceSettings>,
     #[serde(rename = "agentInstructions", default)]
     pub agent_instructions: Option<String>,
     #[serde(rename = "codeRepositoryIds", default)]
@@ -212,6 +210,8 @@ pub struct ProjectsListResponseItem {
     pub sizes: Vec<ProjectsListResponseItemSiz>,
     #[serde(rename = "warmPoolEnabled")]
     pub warm_pool_enabled: bool,
+    #[serde(rename = "warmPoolSchedule", default)]
+    pub warm_pool_schedule: Option<ProjectsListResponseItemWarmPoolSchedule>,
 }
 
 ///
@@ -291,6 +291,81 @@ impl From<&str> for ProjectsListResponseItemActiveSnapshotSize {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsListResponseItemResourceSettings {
+    ProjectsListResponseItemResourceSettingsVariant1(ProjectsListResponseItemResourceSettingsVariant1),
+    ProjectsListResponseItemResourceSettingsVariant2(ProjectsListResponseItemResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsListResponseItemResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant1Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsListResponseItemResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsListResponseItemResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant2Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsListResponseItemResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -622,6 +697,20 @@ impl From<&str> for ProjectsListResponseItemSiz {
 /// additively in future versions without a breaking release.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
+pub struct ProjectsListResponseItemWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateResponse {
     #[serde(rename = "jobIds")]
     pub job_ids: Vec<String>,
@@ -639,10 +728,6 @@ pub struct ProjectsCreateResponseProject {
     #[serde(default)]
     pub description: Option<String>,
     pub id: String,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     pub name: String,
     #[serde(rename = "setupScript", default)]
     pub setup_script: Option<String>,
@@ -650,6 +735,8 @@ pub struct ProjectsCreateResponseProject {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "activeSnapshots")]
     pub active_snapshots: Vec<ProjectsCreateResponseProjectActiveSnapshot>,
+    #[serde(rename = "resourceSettings", default)]
+    pub resource_settings: Option<ProjectsCreateResponseProjectResourceSettings>,
     #[serde(rename = "agentInstructions", default)]
     pub agent_instructions: Option<String>,
     #[serde(rename = "codeRepositoryIds", default)]
@@ -664,6 +751,8 @@ pub struct ProjectsCreateResponseProject {
     pub sizes: Vec<ProjectsCreateResponseProjectSiz>,
     #[serde(rename = "warmPoolEnabled")]
     pub warm_pool_enabled: bool,
+    #[serde(rename = "warmPoolSchedule", default)]
+    pub warm_pool_schedule: Option<ProjectsCreateResponseProjectWarmPoolSchedule>,
 }
 
 ///
@@ -743,6 +832,81 @@ impl From<&str> for ProjectsCreateResponseProjectActiveSnapshotSize {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsCreateResponseProjectResourceSettings {
+    ProjectsCreateResponseProjectResourceSettingsVariant1(ProjectsCreateResponseProjectResourceSettingsVariant1),
+    ProjectsCreateResponseProjectResourceSettingsVariant2(ProjectsCreateResponseProjectResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsCreateResponseProjectResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant1Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsCreateResponseProjectResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsCreateResponseProjectResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant2Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsCreateResponseProjectResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1069,17 +1233,25 @@ impl From<&str> for ProjectsCreateResponseProjectSiz {
     }
 }
 
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsCreateResponseProjectWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsCreateBody {
     /// Short project description, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    /// Include project dependencies when building the environment. Defaults to true on creation.
-    #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
-    pub include_deps: Option<bool>,
-    /// Include skills in the project environment. Defaults to true on creation.
-    #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
-    pub include_skills: Option<bool>,
     /// Project display name.
     pub name: String,
     /// Setup script to run while building the environment, or null to clear it.
@@ -1097,6 +1269,12 @@ pub struct ProjectsCreateBody {
     /// Project display icon.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<ProjectsCreateBodyIcon>,
+    /// Deprecated and ignored. Project builds always install dependencies.
+    #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
+    pub include_deps: Option<bool>,
+    /// Deprecated and ignored. Project builds always include skills.
+    #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
+    pub include_skills: Option<bool>,
     /// Make this project the onboarding default for the organization.
     #[serde(rename = "onboardingDefault", default, skip_serializing_if = "Option::is_none")]
     pub onboarding_default: Option<bool>,
@@ -1107,29 +1285,33 @@ pub struct ProjectsCreateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsCreateBodySchedule>,
     /// Workspace VM sizes to build for this project.
-    pub sizes: Vec<ProjectsCreateBodySiz>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sizes: Option<Vec<ProjectsCreateBodySiz>>,
+    #[serde(rename = "resourceSettings", default, skip_serializing_if = "Option::is_none")]
+    pub resource_settings: Option<ProjectsCreateBodyResourceSettings>,
 }
 
 impl ProjectsCreateBody {
     /// Creates a new `ProjectsCreateBody` from its required fields, leaving every optional one unset.
     ///
     /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ProjectsCreateBody { description: Some(…), ..ProjectsCreateBody::new(name, sizes) }`.
-    pub fn new(name: impl Into<String>, sizes: Vec<ProjectsCreateBodySiz>) -> Self {
+    /// `ProjectsCreateBody { description: Some(…), ..ProjectsCreateBody::new(name) }`.
+    pub fn new(name: impl Into<String>) -> Self {
         Self {
             description: None,
-            include_deps: None,
-            include_skills: None,
             name: name.into(),
             setup_script: None,
             code_repository_ids: None,
             agent_instructions: None,
             color: None,
             icon: None,
+            include_deps: None,
+            include_skills: None,
             onboarding_default: None,
             run_now: None,
             schedule: None,
-            sizes,
+            sizes: None,
+            resource_settings: None,
         }
     }
 }
@@ -1413,6 +1595,151 @@ impl From<&str> for ProjectsCreateBodySiz {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsCreateBodyResourceSettings {
+    ProjectsCreateBodyResourceSettingsVariant1(ProjectsCreateBodyResourceSettingsVariant1),
+    ProjectsCreateBodyResourceSettingsVariant2(ProjectsCreateBodyResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsCreateBodyResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsCreateBodyResourceSettingsVariant1Allocation>,
+}
+
+impl ProjectsCreateBodyResourceSettingsVariant1 {
+    /// Creates a new `ProjectsCreateBodyResourceSettingsVariant1` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsCreateBodyResourceSettingsVariant1 {
+    ///     allocation: Some(…),
+    ///     ..ProjectsCreateBodyResourceSettingsVariant1::new(automatic_sizing)
+    /// }
+    /// ```
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsCreateBodyResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+impl ProjectsCreateBodyResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsCreateBodyResourceSettingsVariant1Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsCreateBodyResourceSettingsVariant1Allocation {
+    ///     cpu_min: Some(…),
+    ///     ..ProjectsCreateBodyResourceSettingsVariant1Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
+    /// }
+    /// ```
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsCreateBodyResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsCreateBodyResourceSettingsVariant2Allocation>,
+}
+
+impl ProjectsCreateBodyResourceSettingsVariant2 {
+    /// Creates a new `ProjectsCreateBodyResourceSettingsVariant2` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsCreateBodyResourceSettingsVariant2 {
+    ///     allocation: Some(…),
+    ///     ..ProjectsCreateBodyResourceSettingsVariant2::new(automatic_sizing)
+    /// }
+    /// ```
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsCreateBodyResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+impl ProjectsCreateBodyResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsCreateBodyResourceSettingsVariant2Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsCreateBodyResourceSettingsVariant2Allocation {
+    ///     cpu_min: Some(…),
+    ///     ..ProjectsCreateBodyResourceSettingsVariant2Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
+    /// }
+    /// ```
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+}
+
 ///
 /// Response-only model, marked `#[non_exhaustive]`: fields may be added
 /// additively in future versions without a breaking release.
@@ -1424,10 +1751,6 @@ pub struct ProjectsRetrieveResponse {
     #[serde(default)]
     pub description: Option<String>,
     pub id: String,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     pub name: String,
     #[serde(rename = "setupScript", default)]
     pub setup_script: Option<String>,
@@ -1435,6 +1758,8 @@ pub struct ProjectsRetrieveResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "activeSnapshots")]
     pub active_snapshots: Vec<ProjectsRetrieveResponseActiveSnapshot>,
+    #[serde(rename = "resourceSettings", default)]
+    pub resource_settings: Option<ProjectsRetrieveResponseResourceSettings>,
     #[serde(rename = "agentInstructions", default)]
     pub agent_instructions: Option<String>,
     #[serde(rename = "codeRepositoryIds", default)]
@@ -1449,6 +1774,8 @@ pub struct ProjectsRetrieveResponse {
     pub sizes: Vec<ProjectsRetrieveResponseSiz>,
     #[serde(rename = "warmPoolEnabled")]
     pub warm_pool_enabled: bool,
+    #[serde(rename = "warmPoolSchedule", default)]
+    pub warm_pool_schedule: Option<ProjectsRetrieveResponseWarmPoolSchedule>,
 }
 
 ///
@@ -1528,6 +1855,81 @@ impl From<&str> for ProjectsRetrieveResponseActiveSnapshotSize {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsRetrieveResponseResourceSettings {
+    ProjectsRetrieveResponseResourceSettingsVariant1(ProjectsRetrieveResponseResourceSettingsVariant1),
+    ProjectsRetrieveResponseResourceSettingsVariant2(ProjectsRetrieveResponseResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsRetrieveResponseResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant1Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsRetrieveResponseResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsRetrieveResponseResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant2Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsRetrieveResponseResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1859,16 +2261,26 @@ impl From<&str> for ProjectsRetrieveResponseSiz {
 /// additively in future versions without a breaking release.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
+pub struct ProjectsRetrieveResponseWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(default)]
     pub description: Option<String>,
     pub id: String,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     pub name: String,
     #[serde(rename = "setupScript", default)]
     pub setup_script: Option<String>,
@@ -1876,6 +2288,8 @@ pub struct ProjectsUpdateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "activeSnapshots")]
     pub active_snapshots: Vec<ProjectsUpdateResponseActiveSnapshot>,
+    #[serde(rename = "resourceSettings", default)]
+    pub resource_settings: Option<ProjectsUpdateResponseResourceSettings>,
     #[serde(rename = "agentInstructions", default)]
     pub agent_instructions: Option<String>,
     #[serde(rename = "codeRepositoryIds", default)]
@@ -1890,6 +2304,8 @@ pub struct ProjectsUpdateResponse {
     pub sizes: Vec<ProjectsUpdateResponseSiz>,
     #[serde(rename = "warmPoolEnabled")]
     pub warm_pool_enabled: bool,
+    #[serde(rename = "warmPoolSchedule", default)]
+    pub warm_pool_schedule: Option<ProjectsUpdateResponseWarmPoolSchedule>,
 }
 
 ///
@@ -1969,6 +2385,81 @@ impl From<&str> for ProjectsUpdateResponseActiveSnapshotSize {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsUpdateResponseResourceSettings {
+    ProjectsUpdateResponseResourceSettingsVariant1(ProjectsUpdateResponseResourceSettingsVariant1),
+    ProjectsUpdateResponseResourceSettingsVariant2(ProjectsUpdateResponseResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsUpdateResponseResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant1Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsUpdateResponseResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsUpdateResponseResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant2Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsUpdateResponseResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2295,17 +2786,25 @@ impl From<&str> for ProjectsUpdateResponseSiz {
     }
 }
 
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsUpdateResponseWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateBody {
     /// Short project description, or null to clear it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    /// Include project dependencies when building the environment. Defaults to true on creation.
-    #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
-    pub include_deps: Option<bool>,
-    /// Include skills in the project environment. Defaults to true on creation.
-    #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
-    pub include_skills: Option<bool>,
     /// Project display name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -2324,6 +2823,14 @@ pub struct ProjectsUpdateBody {
     /// Project display icon.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<ProjectsUpdateBodyIcon>,
+    /// Deprecated and ignored. Project builds always install dependencies.
+    #[serde(rename = "includeDeps", default, skip_serializing_if = "Option::is_none")]
+    pub include_deps: Option<bool>,
+    /// Deprecated and ignored. Project builds always include skills.
+    #[serde(rename = "includeSkills", default, skip_serializing_if = "Option::is_none")]
+    pub include_skills: Option<bool>,
+    #[serde(rename = "resourceSettings", default, skip_serializing_if = "Option::is_none")]
+    pub resource_settings: Option<ProjectsUpdateBodyResourceSettings>,
     /// VM sizes for which this project is the organization default. An empty array removes its default assignments.
     #[serde(rename = "defaultForSizes", default, skip_serializing_if = "Option::is_none")]
     pub default_for_sizes: Option<Vec<ProjectsUpdateBodyDefaultForSiz>>,
@@ -2336,6 +2843,9 @@ pub struct ProjectsUpdateBody {
     /// Replace the workspace VM sizes built for this project.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsUpdateBodySiz>>,
+    /// Weekly availability for prewarmed VMs. Null means always on; days use 0=Sunday. Overnight windows end the following day.
+    #[serde(rename = "warmPoolSchedule", default, skip_serializing_if = "Option::is_none")]
+    pub warm_pool_schedule: Option<ProjectsUpdateBodyWarmPoolSchedule>,
     /// Enable or disable prewarmed VMs for this project.
     #[serde(rename = "warmPoolEnabled", default, skip_serializing_if = "Option::is_none")]
     pub warm_pool_enabled: Option<bool>,
@@ -2535,6 +3045,151 @@ impl From<&str> for ProjectsUpdateBodyIcon {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsUpdateBodyResourceSettings {
+    ProjectsUpdateBodyResourceSettingsVariant1(ProjectsUpdateBodyResourceSettingsVariant1),
+    ProjectsUpdateBodyResourceSettingsVariant2(ProjectsUpdateBodyResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsUpdateBodyResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsUpdateBodyResourceSettingsVariant1Allocation>,
+}
+
+impl ProjectsUpdateBodyResourceSettingsVariant1 {
+    /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant1` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsUpdateBodyResourceSettingsVariant1 {
+    ///     allocation: Some(…),
+    ///     ..ProjectsUpdateBodyResourceSettingsVariant1::new(automatic_sizing)
+    /// }
+    /// ```
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsUpdateBodyResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+impl ProjectsUpdateBodyResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant1Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsUpdateBodyResourceSettingsVariant1Allocation {
+    ///     cpu_min: Some(…),
+    ///     ..ProjectsUpdateBodyResourceSettingsVariant1Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
+    /// }
+    /// ```
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsUpdateBodyResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsUpdateBodyResourceSettingsVariant2Allocation>,
+}
+
+impl ProjectsUpdateBodyResourceSettingsVariant2 {
+    /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant2` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsUpdateBodyResourceSettingsVariant2 {
+    ///     allocation: Some(…),
+    ///     ..ProjectsUpdateBodyResourceSettingsVariant2::new(automatic_sizing)
+    /// }
+    /// ```
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsUpdateBodyResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+impl ProjectsUpdateBodyResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant2Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    ///
+    /// ```text
+    /// ProjectsUpdateBodyResourceSettingsVariant2Allocation {
+    ///     cpu_min: Some(…),
+    ///     ..ProjectsUpdateBodyResourceSettingsVariant2Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
+    /// }
+    /// ```
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+}
+
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
 /// this SDK version does not know. Matching `Unknown(_)` directly is an
 /// anti-pattern: that arm silently stops matching once a future SDK release
@@ -2674,6 +3329,16 @@ impl From<&str> for ProjectsUpdateBodySiz {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ProjectsUpdateBodyWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
+}
+
 ///
 /// Response-only model, marked `#[non_exhaustive]`: fields may be added
 /// additively in future versions without a breaking release.
@@ -2706,10 +3371,6 @@ pub struct ProjectsDuplicateResponseProject {
     #[serde(default)]
     pub description: Option<String>,
     pub id: String,
-    #[serde(rename = "includeDeps")]
-    pub include_deps: bool,
-    #[serde(rename = "includeSkills")]
-    pub include_skills: bool,
     pub name: String,
     #[serde(rename = "setupScript", default)]
     pub setup_script: Option<String>,
@@ -2717,6 +3378,8 @@ pub struct ProjectsDuplicateResponseProject {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "activeSnapshots")]
     pub active_snapshots: Vec<ProjectsDuplicateResponseProjectActiveSnapshot>,
+    #[serde(rename = "resourceSettings", default)]
+    pub resource_settings: Option<ProjectsDuplicateResponseProjectResourceSettings>,
     #[serde(rename = "agentInstructions", default)]
     pub agent_instructions: Option<String>,
     #[serde(rename = "codeRepositoryIds", default)]
@@ -2731,6 +3394,8 @@ pub struct ProjectsDuplicateResponseProject {
     pub sizes: Vec<ProjectsDuplicateResponseProjectSiz>,
     #[serde(rename = "warmPoolEnabled")]
     pub warm_pool_enabled: bool,
+    #[serde(rename = "warmPoolSchedule", default)]
+    pub warm_pool_schedule: Option<ProjectsDuplicateResponseProjectWarmPoolSchedule>,
 }
 
 ///
@@ -2810,6 +3475,81 @@ impl From<&str> for ProjectsDuplicateResponseProjectActiveSnapshotSize {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum ProjectsDuplicateResponseProjectResourceSettings {
+    ProjectsDuplicateResponseProjectResourceSettingsVariant1(ProjectsDuplicateResponseProjectResourceSettingsVariant1),
+    ProjectsDuplicateResponseProjectResourceSettingsVariant2(ProjectsDuplicateResponseProjectResourceSettingsVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2 {
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation>,
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation {
+    #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_min: Option<i64>,
+    #[serde(rename = "cpuMax", default, skip_serializing_if = "Option::is_none")]
+    pub cpu_max: Option<i64>,
+    #[serde(rename = "memoryMinMb")]
+    pub memory_min_mb: i64,
+    #[serde(rename = "memoryMaxMb")]
+    pub memory_max_mb: i64,
+    #[serde(rename = "diskSizeGb")]
+    pub disk_size_gb: i64,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3134,4 +3874,18 @@ impl From<&str> for ProjectsDuplicateResponseProjectSiz {
             other => Self::Unknown(other.to_owned()),
         }
     }
+}
+
+///
+/// Response-only model, marked `#[non_exhaustive]`: fields may be added
+/// additively in future versions without a breaking release.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsDuplicateResponseProjectWarmPoolSchedule {
+    pub timezone: String,
+    pub days: Vec<i64>,
+    #[serde(rename = "startTime")]
+    pub start_time: String,
+    #[serde(rename = "endTime")]
+    pub end_time: String,
 }

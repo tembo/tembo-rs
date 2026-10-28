@@ -37,6 +37,8 @@ pub struct SnapshotsListResponseItem {
     pub pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(
         rename = "buildDurationMs",
         default,
@@ -51,14 +53,12 @@ pub struct SnapshotsListResponseItem {
     pub built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(default)]
     pub cpu: Option<i64>,
+    #[serde(rename = "diskSizeGb", default, serialize_with = "crate::number::option::serialize")]
+    pub disk_size_gb: Option<f64>,
     #[serde(rename = "hasSetupScript", default)]
     pub has_setup_script: Option<bool>,
-    #[serde(rename = "includesDeps", default)]
-    pub includes_deps: Option<bool>,
     #[serde(rename = "includesRepos", default)]
     pub includes_repos: Option<bool>,
-    #[serde(rename = "includesSkills", default)]
-    pub includes_skills: Option<bool>,
     #[serde(rename = "isKvm", default)]
     pub is_kvm: Option<bool>,
     #[serde(rename = "memoryMb", default)]
@@ -222,6 +222,8 @@ pub struct SnapshotsRetrieveResponse {
     pub pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(
         rename = "buildDurationMs",
         default,
@@ -236,14 +238,12 @@ pub struct SnapshotsRetrieveResponse {
     pub built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(default)]
     pub cpu: Option<i64>,
+    #[serde(rename = "diskSizeGb", default, serialize_with = "crate::number::option::serialize")]
+    pub disk_size_gb: Option<f64>,
     #[serde(rename = "hasSetupScript", default)]
     pub has_setup_script: Option<bool>,
-    #[serde(rename = "includesDeps", default)]
-    pub includes_deps: Option<bool>,
     #[serde(rename = "includesRepos", default)]
     pub includes_repos: Option<bool>,
-    #[serde(rename = "includesSkills", default)]
-    pub includes_skills: Option<bool>,
     #[serde(rename = "isKvm", default)]
     pub is_kvm: Option<bool>,
     #[serde(rename = "memoryMb", default)]
@@ -407,6 +407,8 @@ pub struct SnapshotsUpdateResponse {
     pub pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
     #[serde(
         rename = "buildDurationMs",
         default,
@@ -421,14 +423,12 @@ pub struct SnapshotsUpdateResponse {
     pub built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(default)]
     pub cpu: Option<i64>,
+    #[serde(rename = "diskSizeGb", default, serialize_with = "crate::number::option::serialize")]
+    pub disk_size_gb: Option<f64>,
     #[serde(rename = "hasSetupScript", default)]
     pub has_setup_script: Option<bool>,
-    #[serde(rename = "includesDeps", default)]
-    pub includes_deps: Option<bool>,
     #[serde(rename = "includesRepos", default)]
     pub includes_repos: Option<bool>,
-    #[serde(rename = "includesSkills", default)]
-    pub includes_skills: Option<bool>,
     #[serde(rename = "isKvm", default)]
     pub is_kvm: Option<bool>,
     #[serde(rename = "memoryMb", default)]
