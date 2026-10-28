@@ -50,8 +50,10 @@ impl ProjectsResource {
         DuplicateRequestBuilder::new(self.client.clone(), project_id.into())
     }
 
-    pub fn environment_variables(&self) -> crate::resources::environment_variables::EnvironmentVariablesResource {
-        crate::resources::environment_variables::EnvironmentVariablesResource::new(self.client.clone())
+    pub fn environment_variables(
+        &self,
+    ) -> crate::resources::projects_environment_variables::ProjectsEnvironmentVariablesResource {
+        crate::resources::projects_environment_variables::ProjectsEnvironmentVariablesResource::new(self.client.clone())
     }
 
     pub fn snapshots(&self) -> crate::resources::snapshots::SnapshotsResource {

@@ -2,49 +2,53 @@
 //! The `environmentVariables` resource.
 
 #[derive(Clone)]
-pub struct EnvironmentVariablesResource {
+pub struct UsersEnvironmentVariablesResource {
     client: crate::client::Tembo,
 }
 
-impl EnvironmentVariablesResource {
+impl UsersEnvironmentVariablesResource {
     pub(crate) fn new(client: crate::client::Tembo) -> Self {
         Self { client }
     }
 
-    /// List project environment variables
-    pub fn list(&self, project_id: impl Into<String>) -> ListRequestBuilder {
-        ListRequestBuilder::new(self.client.clone(), project_id.into())
+    /// List personal environment variables
+    pub fn list(&self, user_id: impl Into<String>) -> ListRequestBuilder {
+        ListRequestBuilder::new(self.client.clone(), user_id.into())
     }
 
-    /// Create project environment variables
+    /// Create a personal environment variable
     pub fn create(
         &self,
-        project_id: impl Into<String>,
+        user_id: impl Into<String>,
         body: crate::models::EnvironmentVariablesCreateBody,
     ) -> CreateRequestBuilder {
-        CreateRequestBuilder::new(self.client.clone(), project_id.into(), body)
+        CreateRequestBuilder::new(self.client.clone(), user_id.into(), body)
     }
 
-    /// Delete a project environment variable
-    pub fn delete(&self, project_id: impl Into<String>, key: impl Into<String>) -> DeleteRequestBuilder {
-        DeleteRequestBuilder::new(self.client.clone(), project_id.into(), key.into())
+    /// Delete a personal environment variable
+    pub fn delete(
+        &self,
+        user_id: impl Into<String>,
+        environment_variable_id: impl Into<String>,
+    ) -> DeleteRequestBuilder {
+        DeleteRequestBuilder::new(self.client.clone(), user_id.into(), environment_variable_id.into())
     }
 }
 
-/// List environment-variable names without exposing values.
+/// List your personal environment variables in the current organization. Values are never returned.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ListRequestBuilder {
     client: crate::client::Tembo,
-    project_id: String,
+    user_id: String,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl ListRequestBuilder {
-    fn new(client: crate::client::Tembo, project_id: String) -> Self {
+    fn new(client: crate::client::Tembo, user_id: String) -> Self {
         Self {
             client,
-            project_id,
+            user_id,
             timeout: None,
             max_retries: None,
         }
@@ -80,8 +84,8 @@ impl ListRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesListResponse, crate::error::Error> {
         let path = format!(
-            "/v1/projects/{}/environment-variables",
-            crate::http::encode_path_param(&self.project_id)
+            "/v1/users/{}/environment-variables",
+            crate::http::encode_path_param(&self.user_id)
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -103,11 +107,11 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create one or more encrypted project environment variables.
+/// Store an encrypted environment variable that is injected into every session you start in the current organization.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
-    project_id: String,
+    user_id: String,
     body: crate::models::EnvironmentVariablesCreateBody,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
@@ -115,14 +119,10 @@ pub struct CreateRequestBuilder {
 }
 
 impl CreateRequestBuilder {
-    fn new(
-        client: crate::client::Tembo,
-        project_id: String,
-        body: crate::models::EnvironmentVariablesCreateBody,
-    ) -> Self {
+    fn new(client: crate::client::Tembo, user_id: String, body: crate::models::EnvironmentVariablesCreateBody) -> Self {
         Self {
             client,
-            project_id,
+            user_id,
             body,
             idempotency_key: None,
             timeout: None,
@@ -166,8 +166,8 @@ impl CreateRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesCreateResponse, crate::error::Error> {
         let path = format!(
-            "/v1/projects/{}/environment-variables",
-            crate::http::encode_path_param(&self.project_id)
+            "/v1/users/{}/environment-variables",
+            crate::http::encode_path_param(&self.user_id)
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -192,23 +192,23 @@ impl CreateRequestBuilder {
             .await
     }
 }
-/// Delete one encrypted project environment variable.
+/// Permanently delete a personal environment variable. Sessions started afterwards no longer receive it.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,
-    project_id: String,
-    key: String,
+    user_id: String,
+    environment_variable_id: String,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl DeleteRequestBuilder {
-    fn new(client: crate::client::Tembo, project_id: String, key: String) -> Self {
+    fn new(client: crate::client::Tembo, user_id: String, environment_variable_id: String) -> Self {
         Self {
             client,
-            project_id,
-            key,
+            user_id,
+            environment_variable_id,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
@@ -251,9 +251,9 @@ impl DeleteRequestBuilder {
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesDeleteResponse, crate::error::Error> {
         let path = format!(
-            "/v1/projects/{}/environment-variables/{}",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.key)
+            "/v1/users/{}/environment-variables/{}",
+            crate::http::encode_path_param(&self.user_id),
+            crate::http::encode_path_param(&self.environment_variable_id)
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

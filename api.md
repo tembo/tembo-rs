@@ -47,7 +47,6 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Validate organization provider credentials](#validate-organization-provider-credentials)
   - [`Organizations Subscriptions`](#organizations-subscriptions)
     - [Retrieve organization subscriptions](#retrieve-organization-subscriptions)
-    - [Reset organization subscription usage](#reset-organization-subscription-usage)
 - [`McpConnections`](#mcpconnections)
   - [List MCP connections](#list-mcp-connections)
   - [Create an MCP connection](#create-an-mcp-connection)
@@ -75,7 +74,6 @@ Complete reference of every operation, grouped by resource. See [the README](./R
 - [`Users`](#users)
   - [Retrieve the current user](#retrieve-the-current-user)
   - [Retrieve a user](#retrieve-a-user)
-  - [Delete a user](#delete-a-user)
   - [`Users Settings`](#users-settings)
     - [Retrieve user settings](#retrieve-user-settings)
     - [Update user settings](#update-user-settings)
@@ -84,7 +82,10 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Retrieve a user connected account](#retrieve-a-user-connected-account)
   - [`Users Subscriptions`](#users-subscriptions)
     - [Retrieve user subscriptions](#retrieve-user-subscriptions)
-    - [Reset user subscription usage](#reset-user-subscription-usage)
+  - [`Users EnvironmentVariables`](#users-environmentvariables)
+    - [List personal environment variables](#list-personal-environment-variables)
+    - [Create a personal environment variable](#create-a-personal-environment-variable)
+    - [Delete a personal environment variable](#delete-a-personal-environment-variable)
   - [`Users ProfilePicture`](#users-profilepicture)
     - [Retrieve a user profile picture](#retrieve-a-user-profile-picture)
     - [Update your profile picture](#update-your-profile-picture)
@@ -853,30 +854,6 @@ let response = client
     .await?;
 ```
 
-#### Reset organization subscription usage
-
-Redeem an earned ChatGPT rate-limit reset.
-
-| Direction | Type |
-| --- | --- |
-| Request | [`SubscriptionsResetBody`](./src/models/organizations_subscriptions.rs) |
-| Response | [`SubscriptionsResetResponse`](./src/models/organizations_subscriptions.rs) |
-
-```rust
-let response = client
-    .organizations()
-    .subscriptions()
-    .reset(
-        "example",
-        SubscriptionsResetBody {
-            idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-            provider: "chatgpt".to_string(),
-        },
-    )
-    .send()
-    .await?;
-```
-
 ## `McpConnections`
 
 ### List MCP connections
@@ -1201,28 +1178,6 @@ Retrieve a user profile visible to the caller.
 let response = client.users().retrieve("example").send().await?;
 ```
 
-### Delete a user
-
-Queue permanent deletion of your user account.
-
-| Direction | Type |
-| --- | --- |
-| Request | [`UsersDeleteBody`](./src/models/users.rs) |
-| Response | [`UsersDeleteResponse`](./src/models/users.rs) |
-
-```rust
-let response = client
-    .users()
-    .delete(
-        "example",
-        UsersDeleteBody {
-            deletion_questionnaire: None,
-        },
-    )
-    .send()
-    .await?;
-```
-
 ### `Users Settings`
 
 #### Retrieve user settings
@@ -1323,26 +1278,57 @@ Retrieve connection statuses and available ChatGPT and Claude usage. Provider us
 let response = client.users().subscriptions().retrieve("example").send().await?;
 ```
 
-#### Reset user subscription usage
+### `Users EnvironmentVariables`
 
-Redeem an earned ChatGPT rate-limit reset.
+#### List personal environment variables
+
+List your personal environment variables in the current organization. Values are never returned.
 
 | Direction | Type |
 | --- | --- |
-| Request | [`SubscriptionsResetBody2`](./src/models/users_subscriptions.rs) |
-| Response | [`SubscriptionsResetResponse2`](./src/models/users_subscriptions.rs) |
+| Response | [`EnvironmentVariablesListResponse`](./src/models/users_environment_variables.rs) |
+
+```rust
+let response = client.users().environment_variables().list("example").send().await?;
+```
+
+#### Create a personal environment variable
+
+Store an encrypted environment variable that is injected into every session you start in the current organization.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`EnvironmentVariablesCreateBody`](./src/models/users_environment_variables.rs) |
+| Response | [`EnvironmentVariablesCreateResponse`](./src/models/users_environment_variables.rs) |
 
 ```rust
 let response = client
     .users()
-    .subscriptions()
-    .reset(
+    .environment_variables()
+    .create(
         "example",
-        SubscriptionsResetBody2 {
-            idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-            provider: "chatgpt".to_string(),
+        EnvironmentVariablesCreateBody {
+            key: "x".to_string(),
+            value: "x".to_string(),
         },
     )
+    .send()
+    .await?;
+```
+
+#### Delete a personal environment variable
+
+Permanently delete a personal environment variable. Sessions started afterwards no longer receive it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`EnvironmentVariablesDeleteResponse`](./src/models/users_environment_variables.rs) |
+
+```rust
+let response = client
+    .users()
+    .environment_variables()
+    .delete("example", "7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
@@ -1436,6 +1422,7 @@ let response = client
         rich_content: None,
         pull_request_id: None,
         queue_right_away: None,
+        automatic_sizing: None,
         session_mode: None,
         startup_agent: None,
     })
@@ -1461,7 +1448,7 @@ let response = client
 
 ### Update a session
 
-Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions.
+Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions. Submit memoryMb alone to request asynchronous memory growth for a running adaptive sandbox within project limits; sandbox metrics report progress.
 
 | Direction | Type |
 | --- | --- |
@@ -1474,6 +1461,7 @@ let response = client
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         SessionsUpdateBody {
+            memory_mb: None,
             agent: None,
             agent_options: None,
             base_branch: None,
@@ -1771,18 +1759,19 @@ let response = client
     .projects()
     .create(ProjectsCreateBody {
         description: None,
-        include_deps: None,
-        include_skills: None,
         name: "x".to_string(),
         setup_script: None,
         code_repository_ids: None,
         agent_instructions: None,
         color: None,
         icon: None,
+        include_deps: None,
+        include_skills: None,
         onboarding_default: None,
         run_now: None,
         schedule: None,
-        sizes: vec![ProjectsCreateBodySiz::Nano],
+        sizes: None,
+        resource_settings: None,
     })
     .send()
     .await?;
@@ -1816,18 +1805,20 @@ let response = client
         "example",
         ProjectsUpdateBody {
             description: None,
-            include_deps: None,
-            include_skills: None,
             name: None,
             setup_script: None,
             code_repository_ids: None,
             agent_instructions: None,
             color: None,
             icon: None,
+            include_deps: None,
+            include_skills: None,
+            resource_settings: None,
             default_for_sizes: None,
             environment_variables: None,
             schedule: None,
             sizes: None,
+            warm_pool_schedule: None,
             warm_pool_enabled: None,
         },
     )
@@ -1867,7 +1858,7 @@ List environment-variable names without exposing values.
 
 | Direction | Type |
 | --- | --- |
-| Response | [`EnvironmentVariablesListResponse`](./src/models/environment_variables.rs) |
+| Response | [`EnvironmentVariablesListResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client.projects().environment_variables().list("example").send().await?;
@@ -1879,8 +1870,8 @@ Create one or more encrypted project environment variables.
 
 | Direction | Type |
 | --- | --- |
-| Request | [`EnvironmentVariablesCreateBody`](./src/models/environment_variables.rs) |
-| Response | [`EnvironmentVariablesCreateResponse`](./src/models/environment_variables.rs) |
+| Request | [`EnvironmentVariablesCreateBody2`](./src/models/projects_environment_variables.rs) |
+| Response | [`EnvironmentVariablesCreateResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client
@@ -1888,8 +1879,8 @@ let response = client
     .environment_variables()
     .create(
         "example",
-        EnvironmentVariablesCreateBody {
-            secrets: vec![EnvironmentVariablesCreateBodySecret {
+        EnvironmentVariablesCreateBody2 {
+            secrets: vec![EnvironmentVariablesCreateBody2Secret {
                 key: "".to_string(),
                 value: "x".to_string(),
             }],
@@ -1905,7 +1896,7 @@ Delete one encrypted project environment variable.
 
 | Direction | Type |
 | --- | --- |
-| Response | [`EnvironmentVariablesDeleteResponse`](./src/models/environment_variables.rs) |
+| Response | [`EnvironmentVariablesDeleteResponse2`](./src/models/projects_environment_variables.rs) |
 
 ```rust
 let response = client
@@ -3077,7 +3068,7 @@ let response = client.billing().retrieve().send().await?;
 
 ### List billing usage
 
-List session usage with cursor pagination.
+List session usage by default, or include warm pool compute with the type filter. Uses cursor pagination.
 
 | Direction | Type |
 | --- | --- |

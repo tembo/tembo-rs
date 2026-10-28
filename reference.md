@@ -287,15 +287,6 @@ Retrieve organization subscriptions
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500, 502, 503`
 
-### client.organizations().subscriptions().reset(…)
-
-Reset organization subscription usage
-
-- HTTP: `POST /v1/organizations/{organizationId}/subscriptions/reset`
-- Request body: `application/json`
-- Response body: `application/json`
-- Errors: `400, 403, 404, 409, 500, 502, 503`
-
 ### client.mcp_connections().list()
 
 List MCP connections
@@ -470,15 +461,6 @@ Retrieve a user
 - Response body: `application/json`
 - Errors: `400, 403, 404, 500`
 
-### client.users().delete(…)
-
-Delete a user
-
-- HTTP: `DELETE /v1/users/{userId}`
-- Request body: `application/json`
-- Response body: `application/json`
-- Errors: `400, 403, 404, 500`
-
 ### client.users().settings().retrieve(…)
 
 Retrieve user settings
@@ -520,14 +502,30 @@ Retrieve user subscriptions
 - Response body: `application/json`
 - Errors: `400, 403, 404, 500, 502`
 
-### client.users().subscriptions().reset(…)
+### client.users().environment_variables().list(…)
 
-Reset user subscription usage
+List personal environment variables
 
-- HTTP: `POST /v1/users/{userId}/subscriptions/reset`
+- HTTP: `GET /v1/users/{userId}/environment-variables`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 500`
+
+### client.users().environment_variables().create(…)
+
+Create a personal environment variable
+
+- HTTP: `POST /v1/users/{userId}/environment-variables`
 - Request body: `application/json`
 - Response body: `application/json`
-- Errors: `400, 403, 404, 409, 500, 502`
+- Errors: `400, 403, 404, 409, 500`
+
+### client.users().environment_variables().delete(…)
+
+Delete a personal environment variable
+
+- HTTP: `DELETE /v1/users/{userId}/environment-variables/{environmentVariableId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 500`
 
 ### client.users().profile_picture().retrieve(…)
 
