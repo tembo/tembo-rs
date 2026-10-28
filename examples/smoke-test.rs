@@ -4057,12 +4057,12 @@ async fn main() {
                             timezone: None,
                         }),
                         sizes: Some(vec![ProjectsUpdateBodySiz::Nano]),
-                        warm_pool_schedule: Some(ProjectsUpdateBodyWarmPoolSchedule {
+                        warm_pool_schedule: Some(Some(ProjectsUpdateBodyWarmPoolSchedule {
                             timezone: "x".to_string(),
                             days: vec![0],
                             start_time: "".to_string(),
                             end_time: "".to_string(),
-                        }),
+                        })),
                         warm_pool_enabled: Some(false),
                     },
                 )

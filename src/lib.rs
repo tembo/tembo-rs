@@ -3,6 +3,7 @@
 #![recursion_limit = "512"]
 
 pub mod client;
+mod custom;
 #[doc(hidden)]
 pub mod datetime;
 pub mod error;

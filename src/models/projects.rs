@@ -314,7 +314,7 @@ pub enum ProjectsListResponseItemResourceSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant1Allocation>,
@@ -344,7 +344,7 @@ pub struct ProjectsListResponseItemResourceSettingsVariant1Allocation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant2Allocation>,
@@ -855,7 +855,7 @@ pub enum ProjectsCreateResponseProjectResourceSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant1Allocation>,
@@ -885,7 +885,7 @@ pub struct ProjectsCreateResponseProjectResourceSettingsVariant1Allocation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant2Allocation>,
@@ -1612,7 +1612,7 @@ pub enum ProjectsCreateBodyResourceSettings {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsCreateBodyResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsCreateBodyResourceSettingsVariant1Allocation>,
@@ -1677,7 +1677,7 @@ impl ProjectsCreateBodyResourceSettingsVariant1Allocation {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsCreateBodyResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsCreateBodyResourceSettingsVariant2Allocation>,
@@ -1878,7 +1878,7 @@ pub enum ProjectsRetrieveResponseResourceSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant1Allocation>,
@@ -1908,7 +1908,7 @@ pub struct ProjectsRetrieveResponseResourceSettingsVariant1Allocation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant2Allocation>,
@@ -2408,7 +2408,7 @@ pub enum ProjectsUpdateResponseResourceSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant1Allocation>,
@@ -2438,7 +2438,7 @@ pub struct ProjectsUpdateResponseResourceSettingsVariant1Allocation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant2Allocation>,
@@ -2844,8 +2844,14 @@ pub struct ProjectsUpdateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsUpdateBodySiz>>,
     /// Weekly availability for prewarmed VMs. Null means always on; days use 0=Sunday. Overnight windows end the following day.
-    #[serde(rename = "warmPoolSchedule", default, skip_serializing_if = "Option::is_none")]
-    pub warm_pool_schedule: Option<ProjectsUpdateBodyWarmPoolSchedule>,
+    /// `Some(None)` sends `null` to clear the schedule; `None` leaves it unchanged.
+    #[serde(
+        rename = "warmPoolSchedule",
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::custom::nullable"
+    )]
+    pub warm_pool_schedule: Option<Option<ProjectsUpdateBodyWarmPoolSchedule>>,
     /// Enable or disable prewarmed VMs for this project.
     #[serde(rename = "warmPoolEnabled", default, skip_serializing_if = "Option::is_none")]
     pub warm_pool_enabled: Option<bool>,
@@ -3062,7 +3068,7 @@ pub enum ProjectsUpdateBodyResourceSettings {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateBodyResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsUpdateBodyResourceSettingsVariant1Allocation>,
@@ -3127,7 +3133,7 @@ impl ProjectsUpdateBodyResourceSettingsVariant1Allocation {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectsUpdateBodyResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsUpdateBodyResourceSettingsVariant2Allocation>,
@@ -3498,7 +3504,7 @@ pub enum ProjectsDuplicateResponseProjectResourceSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_true")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation>,
@@ -3528,7 +3534,7 @@ pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2 {
-    #[serde(rename = "automaticSizing")]
+    #[serde(rename = "automaticSizing", deserialize_with = "crate::custom::literal_false")]
     pub automatic_sizing: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation>,
