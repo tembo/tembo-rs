@@ -67,6 +67,9 @@ pub struct SettingsRetrieveResponseSettings {
     /// Enable experimental MCP features for the organization.
     #[serde(rename = "experimentalMcp")]
     pub experimental_mcp: bool,
+    /// Use the API key or Tembo inference when every connected subscription is out of usage.
+    #[serde(rename = "fallbackToApiOnSubscriptionLimit")]
+    pub fallback_to_api_on_subscription_limit: bool,
     /// Enable mentioning the author in supported integration responses.
     #[serde(rename = "featureMentionAuthor")]
     pub feature_mention_author: bool,
@@ -236,6 +239,9 @@ pub struct SettingsUpdateResponseSettings {
     /// Enable experimental MCP features for the organization.
     #[serde(rename = "experimentalMcp")]
     pub experimental_mcp: bool,
+    /// Use the API key or Tembo inference when every connected subscription is out of usage.
+    #[serde(rename = "fallbackToApiOnSubscriptionLimit")]
+    pub fallback_to_api_on_subscription_limit: bool,
     /// Enable mentioning the author in supported integration responses.
     #[serde(rename = "featureMentionAuthor")]
     pub feature_mention_author: bool,

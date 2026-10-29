@@ -692,7 +692,7 @@ impl DeleteRequestBuilder {
             .await
     }
 }
-/// Create an independent session from a fresh workspace snapshot, or the latest saved snapshot when stopped, without replaying messages or adding context.
+/// Create an independent session from a fresh workspace snapshot, or the latest saved snapshot when stopped, without replaying messages or adding context. The fork returns right away and its messages queue until its workspace finishes booting.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ForkRequestBuilder {
     client: crate::client::Tembo,

@@ -132,6 +132,8 @@ pub enum RuntimesListResponseItemDefaultModelName {
     Claude45Haiku,
     #[serde(rename = "gpt-6.1-sol")]
     Gpt61Sol,
+    #[serde(rename = "gpt-6.1-terra")]
+    Gpt61Terra,
     #[serde(rename = "gpt-6-astra")]
     Gpt6Astra,
     #[serde(rename = "gpt-6-sol")]
@@ -213,6 +215,7 @@ impl RuntimesListResponseItemDefaultModelName {
             Self::ClaudeOpus45 => "claude-opus-4-5",
             Self::Claude45Haiku => "claude-4-5-haiku",
             Self::Gpt61Sol => "gpt-6.1-sol",
+            Self::Gpt61Terra => "gpt-6.1-terra",
             Self::Gpt6Astra => "gpt-6-astra",
             Self::Gpt6Sol => "gpt-6-sol",
             Self::Gpt6Luna => "gpt-6-luna",
@@ -269,6 +272,7 @@ impl From<&str> for RuntimesListResponseItemDefaultModelName {
             "claude-opus-4-5" => Self::ClaudeOpus45,
             "claude-4-5-haiku" => Self::Claude45Haiku,
             "gpt-6.1-sol" => Self::Gpt61Sol,
+            "gpt-6.1-terra" => Self::Gpt61Terra,
             "gpt-6-astra" => Self::Gpt6Astra,
             "gpt-6-sol" => Self::Gpt6Sol,
             "gpt-6-luna" => Self::Gpt6Luna,
@@ -539,6 +543,8 @@ pub enum RuntimesListResponseItemCompatibleModelName {
     Claude45Haiku,
     #[serde(rename = "gpt-6.1-sol")]
     Gpt61Sol,
+    #[serde(rename = "gpt-6.1-terra")]
+    Gpt61Terra,
     #[serde(rename = "gpt-6-astra")]
     Gpt6Astra,
     #[serde(rename = "gpt-6-sol")]
@@ -620,6 +626,7 @@ impl RuntimesListResponseItemCompatibleModelName {
             Self::ClaudeOpus45 => "claude-opus-4-5",
             Self::Claude45Haiku => "claude-4-5-haiku",
             Self::Gpt61Sol => "gpt-6.1-sol",
+            Self::Gpt61Terra => "gpt-6.1-terra",
             Self::Gpt6Astra => "gpt-6-astra",
             Self::Gpt6Sol => "gpt-6-sol",
             Self::Gpt6Luna => "gpt-6-luna",
@@ -676,6 +683,7 @@ impl From<&str> for RuntimesListResponseItemCompatibleModelName {
             "claude-opus-4-5" => Self::ClaudeOpus45,
             "claude-4-5-haiku" => Self::Claude45Haiku,
             "gpt-6.1-sol" => Self::Gpt61Sol,
+            "gpt-6.1-terra" => Self::Gpt61Terra,
             "gpt-6-astra" => Self::Gpt6Astra,
             "gpt-6-sol" => Self::Gpt6Sol,
             "gpt-6-luna" => Self::Gpt6Luna,
