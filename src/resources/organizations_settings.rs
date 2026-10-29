@@ -107,7 +107,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Configure organization defaults for agent/model, VM size and keep-alive; inference credentials; agent prompts and commit/PR instructions; bot feedback, signing, reports, and insights. Only supplied settings are changed.
+/// Configure organization defaults for agent/model, VM size and keep-alive; inference credentials and subscription fallback; agent prompts and commit/PR instructions; bot feedback, signing, reports, and insights. Only supplied settings are changed.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
