@@ -766,7 +766,7 @@ let response = client.organizations().settings().retrieve("example").send().awai
 
 #### Update organization settings
 
-Configure organization defaults for agent/model, VM size and keep-alive; inference credentials; agent prompts and commit/PR instructions; bot feedback, signing, reports, and insights. Only supplied settings are changed.
+Configure organization defaults for agent/model, VM size and keep-alive; inference credentials and subscription fallback; agent prompts and commit/PR instructions; bot feedback, signing, reports, and insights. Only supplied settings are changed.
 
 | Direction | Type |
 | --- | --- |
@@ -1500,7 +1500,7 @@ let response = client
 
 ### Fork a session
 
-Create an independent session from a fresh workspace snapshot, or the latest saved snapshot when stopped, without replaying messages or adding context.
+Create an independent session from a fresh workspace snapshot, or the latest saved snapshot when stopped, without replaying messages or adding context. The fork returns right away and its messages queue until its workspace finishes booting.
 
 | Direction | Type |
 | --- | --- |
