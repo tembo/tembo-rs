@@ -82,6 +82,9 @@ pub struct PinsListResponseResourceVariant1Resource {
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsListResponseResourceVariant1ResourceDiffSummary>,
     pub state: PinsListResponseResourceVariant1ResourceState,
+    /// Whether the latest turn finished after the caller last viewed the session.
+    #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
+    pub is_unread: Option<bool>,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -881,6 +884,9 @@ pub struct PinsCreateResponseVariant1Resource {
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsCreateResponseVariant1ResourceDiffSummary>,
     pub state: PinsCreateResponseVariant1ResourceState,
+    /// Whether the latest turn finished after the caller last viewed the session.
+    #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
+    pub is_unread: Option<bool>,
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

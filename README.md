@@ -10,7 +10,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-tembo-rs = "0.5.0" # x-release-please-version
+tembo-rs = "0.5.1" # x-release-please-version
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 ```
 
