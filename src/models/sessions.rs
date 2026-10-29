@@ -728,6 +728,9 @@ pub struct SessionsCreateResponse {
     pub last_seen_at: chrono::DateTime<chrono::FixedOffset>,
     pub level: i64,
     pub mode: SessionsCreateResponseMode,
+    /// The session whose agent created this session.
+    #[serde(rename = "parentSessionId", default)]
+    pub parent_session_id: Option<String>,
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     #[serde(rename = "sandboxSize", default)]
@@ -1912,6 +1915,9 @@ pub struct SessionsRetrieveResponse {
     pub last_seen_at: chrono::DateTime<chrono::FixedOffset>,
     pub level: i64,
     pub mode: SessionsRetrieveResponseMode,
+    /// The session whose agent created this session.
+    #[serde(rename = "parentSessionId", default)]
+    pub parent_session_id: Option<String>,
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     #[serde(rename = "sandboxSize", default)]
@@ -2798,6 +2804,9 @@ pub struct SessionsUpdateResponse {
     pub last_seen_at: chrono::DateTime<chrono::FixedOffset>,
     pub level: i64,
     pub mode: SessionsUpdateResponseMode,
+    /// The session whose agent created this session.
+    #[serde(rename = "parentSessionId", default)]
+    pub parent_session_id: Option<String>,
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     #[serde(rename = "sandboxSize", default)]
@@ -3896,6 +3905,9 @@ pub struct SessionsForkResponse {
     pub last_seen_at: chrono::DateTime<chrono::FixedOffset>,
     pub level: i64,
     pub mode: SessionsForkResponseMode,
+    /// The session whose agent created this session.
+    #[serde(rename = "parentSessionId", default)]
+    pub parent_session_id: Option<String>,
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     #[serde(rename = "sandboxSize", default)]

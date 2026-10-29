@@ -90,6 +90,7 @@ pub struct ListRequestBuilder {
     has_project: Option<bool>,
     include_archived: Option<bool>,
     include_total: Option<bool>,
+    parent_session_id: Option<String>,
     participant: Option<Vec<String>>,
     pending_reviewer_keys: Option<Vec<String>>,
     project_ids: Option<Vec<String>>,
@@ -118,6 +119,7 @@ impl ListRequestBuilder {
             has_project: None,
             include_archived: None,
             include_total: None,
+            parent_session_id: None,
             participant: None,
             pending_reviewer_keys: None,
             project_ids: None,
@@ -190,6 +192,12 @@ impl ListRequestBuilder {
     /// Include totalCount. Not supported with state=active.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
+        self
+    }
+
+    /// Filter sessions created by this session.
+    pub fn parent_session_id(mut self, value: impl Into<String>) -> Self {
+        self.parent_session_id = Some(value.into());
         self
     }
 
@@ -317,6 +325,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.include_total {
             query.push(("includeTotal".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.parent_session_id {
+            query.push(("parentSessionId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.participant {
             for item in values {

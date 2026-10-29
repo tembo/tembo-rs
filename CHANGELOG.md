@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/tembo/tembo-rs/compare/v0.5.1...v0.6.0) (2026-10-29)
+
+
+### Features
+
+* **api:** add query param parentSessionId on sessions.list ([0a81dc8](https://github.com/tembo/tembo-rs/commit/0a81dc83615cd4362dd65ec2302f4c1606c3970b))
+
 ## [0.5.1](https://github.com/tembo/tembo-rs/compare/v0.5.0...v0.5.1) (2026-10-29)
 
 
