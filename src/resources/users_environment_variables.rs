@@ -85,7 +85,7 @@ impl ListRequestBuilder {
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesListResponse, crate::error::Error> {
         let path = format!(
             "/v1/users/{}/environment-variables",
-            crate::http::encode_path_param(&self.user_id)
+            crate::http::path_param(&self.user_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -167,7 +167,7 @@ impl CreateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesCreateResponse, crate::error::Error> {
         let path = format!(
             "/v1/users/{}/environment-variables",
-            crate::http::encode_path_param(&self.user_id)
+            crate::http::path_param(&self.user_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -252,8 +252,8 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::EnvironmentVariablesDeleteResponse, crate::error::Error> {
         let path = format!(
             "/v1/users/{}/environment-variables/{}",
-            crate::http::encode_path_param(&self.user_id),
-            crate::http::encode_path_param(&self.environment_variable_id)
+            crate::http::path_param(&self.user_id)?,
+            crate::http::path_param(&self.environment_variable_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

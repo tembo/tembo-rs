@@ -94,10 +94,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::DiffsListResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/sessions/{}/diffs",
-            crate::http::encode_path_param(&self.session_id)
-        );
+        let path = format!("/v1/sessions/{}/diffs", crate::http::path_param(&self.session_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -179,8 +176,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::DiffsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/sessions/{}/diffs/{}",
-            crate::http::encode_path_param(&self.session_id),
-            crate::http::encode_path_param(&self.diff_id)
+            crate::http::path_param(&self.session_id)?,
+            crate::http::path_param(&self.diff_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();

@@ -273,8 +273,8 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::PinsUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/pins/{}/{}",
-            crate::http::encode_path_param(&self.resource_type),
-            crate::http::encode_path_param(&self.resource_id)
+            crate::http::path_param(&self.resource_type)?,
+            crate::http::path_param(&self.resource_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -359,8 +359,8 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::PinsDeleteResponse, crate::error::Error> {
         let path = format!(
             "/v1/pins/{}/{}",
-            crate::http::encode_path_param(&self.resource_type),
-            crate::http::encode_path_param(&self.resource_id)
+            crate::http::path_param(&self.resource_type)?,
+            crate::http::path_param(&self.resource_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

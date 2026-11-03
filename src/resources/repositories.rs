@@ -236,10 +236,7 @@ impl RetrieveRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::RepositoriesRetrieveResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/repositories/{}",
-            crate::http::encode_path_param(&self.repository_id)
-        );
+        let path = format!("/v1/repositories/{}", crate::http::path_param(&self.repository_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
@@ -318,10 +315,7 @@ impl UpdateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::RepositoriesUpdateResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/repositories/{}",
-            crate::http::encode_path_param(&self.repository_id)
-        );
+        let path = format!("/v1/repositories/{}", crate::http::path_param(&self.repository_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {

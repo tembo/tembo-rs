@@ -18,12 +18,19 @@ const DEFAULT_MAX_RETRIES: u32 = 2;
 // default the caller never chose must not kill a streaming upload of
 // unknown size — nor a multipart form, which buffers file parts of
 // unbounded size. In `body_deadline` it bounds reading a buffered response
-// body, but only one small by construction, never a binary download.
+// body, but only one small by construction, never a binary download. It
+// also bounds a WebSocket handshake and a streaming error body.
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(60);
 const USER_AGENT: &str = concat!("tembo-rs/", env!("CARGO_PKG_VERSION"));
 // Default `Accept` for the JSON APIs that make up almost every operation.
 // A static `HeaderValue` so the insert costs no allocation and can never fail.
 const JSON_ACCEPT: http::HeaderValue = http::HeaderValue::from_static("application/json");
+/// Where this API's auth schemes put credentials: what a redirect to another
+/// origin must not carry (see `crate::http::send_following_redirects`).
+const CREDENTIAL_PLACEMENT: crate::http::CredentialPlacement = crate::http::CredentialPlacement {
+    headers: &[],
+    query: &[],
+};
 const IDEMPOTENCY_HEADER: &str = "Idempotency-Key";
 
 /// A named API environment with a preset base URL.
@@ -142,7 +149,7 @@ impl Tembo {
 impl std::fmt::Debug for Tembo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Tembo")
-            .field("base_url", &self.inner.base_url.as_str())
+            .field("base_url", &crate::error::redact_url(self.inner.base_url.as_str()))
             .field("max_retries", &self.inner.max_retries)
             .field("timeout", &self.inner.deadline)
             .finish_non_exhaustive()
@@ -404,7 +411,8 @@ impl Tembo {
                 .map_err(|_| Error::Config(format!("invalid value for header {:?}", name.as_str())))?;
             ws_headers.push((name.as_str().to_string(), value.to_string()));
         }
-        crate::websocket::connect::<Tx, Rx>(url, ws_headers).await
+        let deadline = self.inner.deadline.unwrap_or(DEFAULT_TIMEOUT);
+        crate::websocket::connect::<Tx, Rx>(url, ws_headers, &*self.inner.sleep, deadline).await
     }
 
     /// Assembles a request (URL, query, headers, body, auth) and sends it with retries.
@@ -518,13 +526,14 @@ impl Tembo {
             .timeout
             .or(self.inner.deadline)
             .or_else(|| (default_deadline_eligible && request.body().as_bytes().is_some()).then_some(DEFAULT_TIMEOUT));
-        crate::http::send_with_retries(
+        crate::http::send_following_redirects(
             &*self.inner.transport,
             &*self.inner.sleep,
             request,
             max_retries,
             deadline,
             keyed,
+            CREDENTIAL_PLACEMENT,
         )
         .await
     }
@@ -573,7 +582,9 @@ impl TemboBuilder {
     /// default) is the bundled `ReqwestTransport`. Bring your own backend
     /// by implementing [`crate::transport::Transport`]; with
     /// `default-features = false` a transport must be supplied here or
-    /// [`build`](Self::build) returns a configuration error.
+    /// [`build`](Self::build) returns a configuration error. The transport
+    /// must return redirects as is rather than follow them: the client
+    /// follows them itself so it can drop credentials across origins.
     pub fn transport(mut self, transport: impl Transport + 'static) -> Self {
         self.transport = Some(Arc::new(transport));
         self
@@ -681,8 +692,13 @@ impl TemboBuilder {
     }
 
     /// Supplies a preconfigured `reqwest::Client` (proxies, custom TLS, etc.).
+    ///
+    /// The client must be built with `.redirect(reqwest::redirect::Policy::none())`:
+    /// it is used as configured, and a reqwest client that follows redirects
+    /// re-sends a header-placed API key to whatever host the API redirects
+    /// to. `ReqwestTransport::from_builder` turns them off for you.
     #[cfg(feature = "reqwest")]
-    #[deprecated(note = "use transport(ReqwestTransport::from_client(client)) instead")]
+    #[deprecated(note = "use transport(ReqwestTransport::from_builder(builder)?) instead")]
     pub fn http_client(mut self, http_client: reqwest::Client) -> Self {
         self.transport = Some(Arc::new(crate::transport::ReqwestTransport::from_client(http_client)));
         self
@@ -761,7 +777,7 @@ impl TemboBuilder {
 impl std::fmt::Debug for TemboBuilder {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("TemboBuilder")
-            .field("base_url", &self.base_url)
+            .field("base_url", &self.base_url.as_deref().map(crate::error::redact_url))
             .field("environment", &self.environment)
             .field("timeout", &self.timeout)
             .field("max_retries", &self.max_retries)

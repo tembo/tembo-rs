@@ -341,6 +341,7 @@ let response = client
         name: "x".to_string(),
         files: vec![SkillsCreateBodyFile {
             content: "".to_string(),
+            encoding: None,
             filename: "x".to_string(),
         }],
     })
@@ -1128,7 +1129,7 @@ Enable or disable an organization model, or select its inference provider.
 let response = client
     .models()
     .update(
-        "claude-opus-5-5".to_string(),
+        "example",
         ModelsUpdateBody {
             enabled: None,
             inference_provider: None,
@@ -2815,7 +2816,7 @@ let response = client
 
 ### Update an integration
 
-Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; set or remove Atlassian service-account credentials.
+Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; rotate GitLab service account access tokens; set or remove Atlassian service-account credentials.
 
 | Direction | Type |
 | --- | --- |

@@ -336,6 +336,7 @@ async fn main() {
                     name: "x".to_string(),
                     files: vec![SkillsCreateBodyFile {
                         content: "".to_string(),
+                        encoding: None,
                         filename: "x".to_string(),
                     }],
                 })
@@ -439,6 +440,7 @@ async fn main() {
                         name: Some("x".to_string()),
                         files: Some(vec![SkillsUpdateBodyFile {
                             content: "".to_string(),
+                            encoding: None,
                             filename: "x".to_string(),
                         }]),
                     },
@@ -2231,13 +2233,7 @@ async fn main() {
     if selected(&filter, "list", "/v1/models") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
-            let _ = client
-                .models()
-                .list()
-                .cursor("claude-opus-5-5".to_string())
-                .limit(50)
-                .send()
-                .await?;
+            let _ = client.models().list().cursor("example").limit(50).send().await?;
             Ok(())
         }
         .await;
@@ -2265,7 +2261,7 @@ async fn main() {
             let _ = client
                 .models()
                 .update(
-                    "claude-opus-5-5".to_string(),
+                    "example",
                     ModelsUpdateBody {
                         enabled: None,
                         inference_provider: None,
@@ -2300,7 +2296,7 @@ async fn main() {
             let _ = client
                 .models()
                 .update(
-                    "claude-opus-5-5".to_string(),
+                    "example",
                     ModelsUpdateBody {
                         enabled: Some(false),
                         inference_provider: Some(ModelsUpdateBodyInferenceProvider::TemboManagedInference),
@@ -2544,6 +2540,7 @@ async fn main() {
                             session_sort_by: None,
                             session_organization: None,
                             show_archived_sessions: None,
+                            show_activity: None,
                             width: None,
                             right_sidebar: None,
                         }),

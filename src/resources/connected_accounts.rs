@@ -92,7 +92,7 @@ impl ListRequestBuilder {
     pub async fn send(self) -> Result<crate::models::ConnectedAccountsListResponse, crate::error::Error> {
         let path = format!(
             "/v1/users/{}/connected-accounts",
-            crate::http::encode_path_param(&self.user_id)
+            crate::http::path_param(&self.user_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
@@ -172,8 +172,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::ConnectedAccountsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/users/{}/connected-accounts/{}",
-            crate::http::encode_path_param(&self.user_id),
-            crate::http::encode_path_param(&self.connected_account_id)
+            crate::http::path_param(&self.user_id)?,
+            crate::http::path_param(&self.connected_account_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();

@@ -98,7 +98,7 @@ impl ListRequestBuilder {
     pub async fn send(self) -> Result<crate::models::ContentRevisionsListResponse, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/content-revisions",
-            crate::http::encode_path_param(&self.agent_id)
+            crate::http::path_param(&self.agent_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
@@ -178,8 +178,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::ContentRevisionsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/content-revisions/{}",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&crate::http::scalar_value(&self.version))
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&crate::http::scalar_value(&self.version))?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -268,8 +268,8 @@ impl RestoreRequestBuilder {
     pub async fn send(self) -> Result<crate::models::ContentRevisionsRestoreResponse, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/content-revisions/{}/restore",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&crate::http::scalar_value(&self.version))
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&crate::http::scalar_value(&self.version))?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

@@ -128,7 +128,7 @@ impl ListRequestBuilder {
     pub async fn send(self) -> Result<crate::models::MembersListResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/members",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
@@ -222,7 +222,7 @@ impl CreateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::MembersCreateResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/members",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -299,8 +299,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::MembersRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/members/{}",
-            crate::http::encode_path_param(&self.organization_id),
-            crate::http::encode_path_param(&self.member_id)
+            crate::http::path_param(&self.organization_id)?,
+            crate::http::path_param(&self.member_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -389,8 +389,8 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::MembersUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/members/{}",
-            crate::http::encode_path_param(&self.organization_id),
-            crate::http::encode_path_param(&self.member_id)
+            crate::http::path_param(&self.organization_id)?,
+            crate::http::path_param(&self.member_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -475,8 +475,8 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::MembersDeleteResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/members/{}",
-            crate::http::encode_path_param(&self.organization_id),
-            crate::http::encode_path_param(&self.member_id)
+            crate::http::path_param(&self.organization_id)?,
+            crate::http::path_param(&self.member_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

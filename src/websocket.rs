@@ -148,13 +148,37 @@ where
     }
 }
 
-/// Performs the WebSocket handshake and returns a typed connection.
+/// Performs the WebSocket handshake within `deadline` and returns a typed
+/// connection.
 ///
 /// `url` is the fully-resolved `ws`/`wss` endpoint with path, query, and any
 /// query-based credentials already applied; `headers` carries header-based
 /// credentials plus the operation's own headers. Header names/values that
 /// cannot be encoded surface as [`Error::WebSocket`] rather than panicking.
+///
+/// The deadline covers the TCP connect, TLS, and the upgrade response: a
+/// server that accepts the connection and never answers the upgrade would
+/// otherwise hang `open()` forever. The timer is the client's own sleeper, the
+/// same one every HTTP deadline uses. Once open, the connection is unbounded.
 pub(crate) async fn connect<Tx, Rx>(
+    url: url::Url,
+    headers: Vec<(String, String)>,
+    sleep: &dyn crate::transport::Sleep,
+    deadline: std::time::Duration,
+) -> Result<WebSocketConnection<Tx, Rx>, Error> {
+    let handshake = std::pin::pin!(handshake::<Tx, Rx>(url, headers));
+    match futures_util::future::select(handshake, sleep.sleep(deadline)).await {
+        futures_util::future::Either::Left((result, _timer)) => result,
+        // Dropping the losing handshake future closes its socket.
+        futures_util::future::Either::Right(((), _handshake)) => Err(Error::WebSocket {
+            message: format!("the WebSocket handshake did not complete within {deadline:?}"),
+            response: None,
+        }),
+    }
+}
+
+/// The unbounded handshake [`connect`] races against its deadline.
+async fn handshake<Tx, Rx>(
     url: url::Url,
     headers: Vec<(String, String)>,
 ) -> Result<WebSocketConnection<Tx, Rx>, Error> {
@@ -165,8 +189,75 @@ pub(crate) async fn connect<Tx, Rx>(
         // `append` (not `insert`) so multiple credentials of the same header name survive.
         request.headers_mut().append(header_name, header_value);
     }
-    let (socket, _response) = tokio_tungstenite::connect_async(request).await.map_err(ws_error)?;
+    // Only `wss://` needs the connector: a plain `ws://` handshake must not fail
+    // (or read the CA store) on a host with no CA certificates installed.
+    let connector = if url.scheme() == "wss" {
+        Some(tls_connector()?)
+    } else {
+        None
+    };
+    let (socket, _response) = tokio_tungstenite::connect_async_tls_with_config(request, None, false, connector)
+        .await
+        .map_err(ws_error)?;
     Ok(WebSocketConnection::new(socket))
+}
+
+/// Returns the rustls connector every `wss://` handshake uses, built once per
+/// process.
+///
+/// Certificates are checked by `rustls-platform-verifier`, the verifier the
+/// bundled reqwest transport uses for HTTP by default, so out of the box a
+/// WebSocket trusts what an HTTP call to the same host trusts: the operating
+/// system's verifier and trust store on macOS, iOS, Windows, and Android, and
+/// the system CA bundle on other Unix systems. Extra roots added to a custom
+/// HTTP client do not carry over; this config is not configurable. Left to
+/// itself, tokio-tungstenite would build a fresh config on every connect and
+/// load roots on its own, either from a bundled copy of the Mozilla roots or by
+/// probing CA files that iOS and Android do not have.
+///
+/// On Android the platform verifier reads the app's JNI context, so the
+/// application must call one of `rustls_platform_verifier::android`'s `init_*`
+/// functions before the first `wss://` open; without it the verifier panics
+/// during the handshake. An app whose HTTP calls go through reqwest's rustls
+/// backend already has to do this, but a WebSocket-only or reqwest-free app
+/// does not otherwise meet the requirement.
+///
+/// The crypto provider is picked the way reqwest picks it: the process default
+/// when the application installed one, otherwise aws-lc-rs, which the crate's
+/// `rustls` feature compiles in. Without that feature (a native-tls or
+/// reqwest-free build) the crate forces no provider on the application, so an
+/// uninstalled one is reported as an error rather than guessed. Asking
+/// `ClientConfig::builder()` instead would panic when no default is installed
+/// and zero or several providers are compiled in. A failed build is not cached,
+/// so the next connect retries.
+fn tls_connector() -> Result<tokio_tungstenite::Connector, Error> {
+    use rustls_platform_verifier::BuilderVerifierExt;
+    use std::sync::{Arc, OnceLock};
+
+    static CONFIG: OnceLock<Arc<rustls::ClientConfig>> = OnceLock::new();
+    if let Some(config) = CONFIG.get() {
+        return Ok(tokio_tungstenite::Connector::Rustls(Arc::clone(config)));
+    }
+    let provider = match rustls::crypto::CryptoProvider::get_default() {
+        Some(provider) => Arc::clone(provider),
+        #[cfg(feature = "rustls")]
+        None => Arc::new(rustls::crypto::aws_lc_rs::default_provider()),
+        #[cfg(not(feature = "rustls"))]
+        None => {
+            return Err(ws_message(
+                "no rustls crypto provider for wss://: enable the `rustls` feature or install one with \
+                 `rustls::crypto::CryptoProvider::install_default`",
+            ));
+        }
+    };
+    let config = rustls::ClientConfig::builder_with_provider(provider)
+        .with_safe_default_protocol_versions()
+        .map_err(ws_message)?
+        .with_platform_verifier()
+        .map_err(ws_message)?
+        .with_no_client_auth();
+    let config = CONFIG.get_or_init(|| Arc::new(config));
+    Ok(tokio_tungstenite::Connector::Rustls(Arc::clone(config)))
 }
 
 /// Maps a `tungstenite` failure into the crate's [`Error::WebSocket`] variant.
@@ -204,7 +295,8 @@ fn ws_error(error: tokio_tungstenite::tungstenite::Error) -> Error {
 }
 
 /// Maps a non-`tungstenite` handshake failure (an unencodable header name or
-/// value) into [`Error::WebSocket`]; there is no response to carry.
+/// value, or a TLS configuration the connector could not build) into
+/// [`Error::WebSocket`]; there is no response to carry.
 fn ws_message(error: impl std::fmt::Display) -> Error {
     Error::WebSocket {
         message: error.to_string(),
