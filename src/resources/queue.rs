@@ -75,10 +75,7 @@ impl UpdateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::QueueUpdateResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/sessions/{}/queue",
-            crate::http::encode_path_param(&self.session_id)
-        );
+        let path = format!("/v1/sessions/{}/queue", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {

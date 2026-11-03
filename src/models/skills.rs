@@ -95,8 +95,52 @@ pub struct SkillsCreateResponse {
 #[non_exhaustive]
 pub struct SkillsCreateResponseFile {
     pub content: String,
+    pub encoding: SkillsCreateResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SkillsCreateResponseFileEncoding {
+    #[serde(rename = "utf8")]
+    Utf8,
+    #[serde(rename = "base64")]
+    Base64,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SkillsCreateResponseFileEncoding {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Utf8 => "utf8",
+            Self::Base64 => "base64",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SkillsCreateResponseFileEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SkillsCreateResponseFileEncoding {
+    fn from(value: &str) -> Self {
+        match value {
+            "utf8" => Self::Utf8,
+            "base64" => Self::Base64,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -111,10 +155,70 @@ pub struct SkillsCreateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SkillsCreateBodyFile {
-    /// Complete text content of the skill file.
+    /// Complete file content: plain text, or base64 when encoding is base64.
     pub content: String,
+    /// utf8 for text files; base64 for binary files such as images.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub encoding: Option<SkillsCreateBodyFileEncoding>,
     /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
+}
+
+impl SkillsCreateBodyFile {
+    /// Creates a new `SkillsCreateBodyFile` from its required fields, leaving every optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// `SkillsCreateBodyFile { encoding: Some(…), ..SkillsCreateBodyFile::new(content, filename) }`.
+    pub fn new(content: impl Into<String>, filename: impl Into<String>) -> Self {
+        Self {
+            content: content.into(),
+            encoding: None,
+            filename: filename.into(),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SkillsCreateBodyFileEncoding {
+    #[serde(rename = "utf8")]
+    Utf8,
+    #[serde(rename = "base64")]
+    Base64,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SkillsCreateBodyFileEncoding {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Utf8 => "utf8",
+            Self::Base64 => "base64",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SkillsCreateBodyFileEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SkillsCreateBodyFileEncoding {
+    fn from(value: &str) -> Self {
+        match value {
+            "utf8" => Self::Utf8,
+            "base64" => Self::Base64,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 ///
@@ -140,8 +244,52 @@ pub struct SkillsRetrieveResponse {
 #[non_exhaustive]
 pub struct SkillsRetrieveResponseFile {
     pub content: String,
+    pub encoding: SkillsRetrieveResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SkillsRetrieveResponseFileEncoding {
+    #[serde(rename = "utf8")]
+    Utf8,
+    #[serde(rename = "base64")]
+    Base64,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SkillsRetrieveResponseFileEncoding {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Utf8 => "utf8",
+            Self::Base64 => "base64",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SkillsRetrieveResponseFileEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SkillsRetrieveResponseFileEncoding {
+    fn from(value: &str) -> Self {
+        match value {
+            "utf8" => Self::Utf8,
+            "base64" => Self::Base64,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 ///
@@ -167,8 +315,52 @@ pub struct SkillsUpdateResponse {
 #[non_exhaustive]
 pub struct SkillsUpdateResponseFile {
     pub content: String,
+    pub encoding: SkillsUpdateResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SkillsUpdateResponseFileEncoding {
+    #[serde(rename = "utf8")]
+    Utf8,
+    #[serde(rename = "base64")]
+    Base64,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SkillsUpdateResponseFileEncoding {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Utf8 => "utf8",
+            Self::Base64 => "base64",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SkillsUpdateResponseFileEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SkillsUpdateResponseFileEncoding {
+    fn from(value: &str) -> Self {
+        match value {
+            "utf8" => Self::Utf8,
+            "base64" => Self::Base64,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -186,10 +378,70 @@ pub struct SkillsUpdateBody {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SkillsUpdateBodyFile {
-    /// Complete text content of the skill file.
+    /// Complete file content: plain text, or base64 when encoding is base64.
     pub content: String,
+    /// utf8 for text files; base64 for binary files such as images.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub encoding: Option<SkillsUpdateBodyFileEncoding>,
     /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
+}
+
+impl SkillsUpdateBodyFile {
+    /// Creates a new `SkillsUpdateBodyFile` from its required fields, leaving every optional one unset.
+    ///
+    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// `SkillsUpdateBodyFile { encoding: Some(…), ..SkillsUpdateBodyFile::new(content, filename) }`.
+    pub fn new(content: impl Into<String>, filename: impl Into<String>) -> Self {
+        Self {
+            content: content.into(),
+            encoding: None,
+            filename: filename.into(),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SkillsUpdateBodyFileEncoding {
+    #[serde(rename = "utf8")]
+    Utf8,
+    #[serde(rename = "base64")]
+    Base64,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SkillsUpdateBodyFileEncoding {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Utf8 => "utf8",
+            Self::Base64 => "base64",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SkillsUpdateBodyFileEncoding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SkillsUpdateBodyFileEncoding {
+    fn from(value: &str) -> Self {
+        match value {
+            "utf8" => Self::Utf8,
+            "base64" => Self::Base64,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
 }
 
 ///

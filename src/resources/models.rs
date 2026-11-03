@@ -169,7 +169,7 @@ impl UpdateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::ModelsUpdateResponse, crate::error::Error> {
-        let path = format!("/v1/models/{}", crate::http::encode_path_param(&self.model_name));
+        let path = format!("/v1/models/{}", crate::http::path_param(&self.model_name)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {

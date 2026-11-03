@@ -91,7 +91,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::RunsListResponse, crate::error::Error> {
-        let path = format!("/v1/agents/{}/runs", crate::http::encode_path_param(&self.agent_id));
+        let path = format!("/v1/agents/{}/runs", crate::http::path_param(&self.agent_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -181,7 +181,7 @@ impl CreateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::RunsCreateResponse, crate::error::Error> {
-        let path = format!("/v1/agents/{}/runs", crate::http::encode_path_param(&self.agent_id));
+        let path = format!("/v1/agents/{}/runs", crate::http::path_param(&self.agent_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -257,8 +257,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::RunsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/runs/{}",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&self.run_id)
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&self.run_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();

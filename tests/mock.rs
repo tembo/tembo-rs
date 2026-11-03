@@ -36,7 +36,7 @@ async fn authenticates_requests_with_configured_credentials() {
     let mock = MockTransport::new();
     mock.enqueue(200, RESPONSE_BODY);
     let client = Tembo::builder()
-        .base_url("http://mock.invalid")
+        .base_url("https://mock.invalid")
         .transport(mock.clone())
         .sleeper(InstantSleep)
         .max_retries(0)
@@ -67,7 +67,7 @@ async fn multipart_upload_sends_file_parts_with_metadata() {
     let mock = MockTransport::new();
     mock.enqueue(200, "{\"userId\":\"example\",\"url\":\"example\"}");
     let client = Tembo::builder()
-        .base_url("http://mock.invalid")
+        .base_url("https://mock.invalid")
         .transport(mock.clone())
         .sleeper(InstantSleep)
         .max_retries(0)
@@ -122,7 +122,7 @@ async fn retries_transient_429_and_succeeds() {
     mock.enqueue(429, "{}");
     mock.enqueue(200, RESPONSE_BODY);
     let client = Tembo::builder()
-        .base_url("http://mock.invalid")
+        .base_url("https://mock.invalid")
         .transport(mock.clone())
         .sleeper(InstantSleep)
         .max_retries(1)
@@ -167,7 +167,7 @@ async fn decodes_typed_response_from_queued_body() {
     let mock = MockTransport::new();
     mock.enqueue(200, RESPONSE_BODY);
     let client = Tembo::builder()
-        .base_url("http://mock.invalid")
+        .base_url("https://mock.invalid")
         .transport(mock.clone())
         .sleeper(InstantSleep)
         .max_retries(0)
@@ -189,7 +189,7 @@ async fn oversized_response_is_rejected() {
     let mock = MockTransport::new();
     mock.enqueue(200, RESPONSE_BODY);
     let client = Tembo::builder()
-        .base_url("http://mock.invalid")
+        .base_url("https://mock.invalid")
         .transport(mock.clone())
         .sleeper(InstantSleep)
         .max_retries(0)

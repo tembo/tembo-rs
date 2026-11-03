@@ -179,6 +179,7 @@ async fn smoke() {
                     name: "x".to_string(),
                     files: vec![SkillsCreateBodyFile {
                         content: "".to_string(),
+                        encoding: None,
                         filename: "x".to_string(),
                     }],
                 })
@@ -243,6 +244,7 @@ async fn smoke() {
                         name: Some("x".to_string()),
                         files: Some(vec![SkillsUpdateBodyFile {
                             content: "".to_string(),
+                            encoding: None,
                             filename: "x".to_string(),
                         }]),
                     },
@@ -1364,13 +1366,7 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .models()
-                .list()
-                .cursor("claude-opus-5-5".to_string())
-                .limit(50)
-                .send()
-                .await?;
+            let _ = client.models().list().cursor("example").limit(50).send().await?;
             Ok(())
         }
         .await;
@@ -1385,7 +1381,7 @@ async fn smoke() {
             let _ = client
                 .models()
                 .update(
-                    "claude-opus-5-5".to_string(),
+                    "example",
                     ModelsUpdateBody {
                         enabled: None,
                         inference_provider: None,
@@ -1407,7 +1403,7 @@ async fn smoke() {
             let _ = client
                 .models()
                 .update(
-                    "claude-opus-5-5".to_string(),
+                    "example",
                     ModelsUpdateBody {
                         enabled: Some(false),
                         inference_provider: Some(ModelsUpdateBodyInferenceProvider::TemboManagedInference),
@@ -1563,6 +1559,7 @@ async fn smoke() {
                             session_sort_by: None,
                             session_organization: None,
                             show_archived_sessions: None,
+                            show_activity: None,
                             width: None,
                             right_sidebar: None,
                         }),

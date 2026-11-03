@@ -172,10 +172,7 @@ impl RetrieveRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::MarketplaceRetrieveResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/skills/marketplace/{}",
-            crate::http::encode_path_param(&self.skill_id)
-        );
+        let path = format!("/v1/skills/marketplace/{}", crate::http::path_param(&self.skill_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         let value = &self.source;
         query.push(("source".to_string(), crate::http::scalar_value(value)));

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/tembo/tembo-rs/compare/v0.6.0...v0.7.0) (2026-11-03)
+
+
+### Features
+
+* **api:** add 403 error response on agents.runs.create (+1 more change) ([7a9e059](https://github.com/tembo/tembo-rs/commit/7a9e059605a197a37eb35e50468d5f87234b2a4b))
+
 ## [0.6.0](https://github.com/tembo/tembo-rs/compare/v0.5.1...v0.6.0) (2026-10-29)
 
 

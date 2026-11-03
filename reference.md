@@ -1083,7 +1083,7 @@ Create an agent run
 - HTTP: `POST /v1/agents/{agentId}/runs`
 - Request body: `application/json`
 - Response body: `application/json`
-- Errors: `400, 404, 409, 500`
+- Errors: `400, 403, 404, 409, 500`
 
 ### client.agents().runs().retrieve(…)
 

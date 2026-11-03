@@ -75,10 +75,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::InputsListResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/sessions/{}/inputs",
-            crate::http::encode_path_param(&self.session_id)
-        );
+        let path = format!("/v1/sessions/{}/inputs", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
@@ -166,8 +163,8 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::InputsUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/sessions/{}/inputs/{}",
-            crate::http::encode_path_param(&self.session_id),
-            crate::http::encode_path_param(&self.input_id)
+            crate::http::path_param(&self.session_id)?,
+            crate::http::path_param(&self.input_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
