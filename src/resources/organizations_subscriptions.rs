@@ -67,7 +67,7 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SubscriptionsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/subscriptions",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();

@@ -94,20 +94,29 @@ body that was not JSON — nothing about a failed response is discarded.
 Every request flows through the `transport::Transport` trait — one
 `execute` method over `http::Request<SdkBody>`. The default backend is
 `reqwest`; to tune it (proxies, connection pools, TLS settings), pass a
-configured client:
+configured client builder:
 
 ```rust,no_run
 use tembo_rs::Tembo;
 use tembo_rs::transport::ReqwestTransport;
 
 fn configure() -> Result<(), Box<dyn std::error::Error>> {
-    let http_client = reqwest::Client::builder().build()?;
+    let http_client = reqwest::Client::builder().pool_max_idle_per_host(8);
     let client = Tembo::builder()
-        .transport(ReqwestTransport::from_client(http_client))
+        .transport(ReqwestTransport::from_builder(http_client)?)
         .build()?;
     Ok(())
 }
 ```
+
+`from_builder` turns reqwest's own redirect following off; the SDK client
+follows redirects itself (see [Untrusted input](#untrusted-input)).
+`ReqwestTransport::from_client` takes an already-built `reqwest::Client` and
+uses it as is, so build that client with
+`.redirect(reqwest::redirect::Policy::none())`. reqwest follows redirects by
+default, and on a hop to another host it drops `Authorization` and cookies
+but keeps other headers, so a header-placed API key goes wherever the
+redirect names.
 
 To replace reqwest entirely, implement `Transport` for your backend and
 drop the default features:
@@ -193,13 +202,12 @@ than API, and may change in any release.
 | `rustls` | yes | TLS for the bundled backend via `rustls`. |
 | `native-tls` | no | TLS for the bundled backend via the platform's own stack. |
 | `multipart` | yes | The vendored `multipart/form-data` encoder for file uploads. |
-| `websocket` | yes | The WebSocket upgrade surface (`tokio-tungstenite`). |
+| `websocket` | yes | The WebSocket upgrade surface (`tokio-tungstenite`). `wss://` needs the `rustls` feature, or a rustls crypto provider the application installs. On Android, call `rustls_platform_verifier::android::init_*` before the first `wss://` open, or the handshake panics. |
 | `mock` | no | `MockTransport` and `InstantSleep` for network-free tests. |
 | `tracing` | no | `debug`-level request instrumentation via the `tracing` facade. |
 
-Features are additive: no combination is rejected, and none changes the
-behavior of another. Dropping the defaults yields a `reqwest`-free crate for
-a bring-your-own-transport build.
+Features are additive: no combination is rejected. Dropping the defaults
+yields a `reqwest`-free crate for a bring-your-own-transport build.
 
 ## Minimum supported Rust version
 
@@ -240,9 +248,19 @@ Response bodies are untrusted, so the runtime bounds them by default:
   server that sends headers and then stalls cannot hang the call. The default
   skips streamed and multipart uploads and the body of a binary download, and
   streaming responses are always exempt.
-- The bundled backend follows **no** redirects: a followed redirect can
-  re-send credentials to a host the caller never chose. A next-page link that
-  points at another origin is refused for the same reason.
+- Redirects (301, 302, 303, 307, 308) are followed by the client, not the
+  HTTP backend, at most 20 per request. A redirect to another origin (scheme,
+  host, or port) drops `Authorization`, `Cookie`, `Proxy-Authorization`, and
+  every credential header for the rest of the chain, and the client adds no
+  query credential to it (a `Location` the server wrote is followed as given);
+  an https→http downgrade or a non-HTTP target is refused. A 303, or a 301/302
+  answering a POST, continues as a GET without the body; other redirects
+  resend the body and are refused when it was a one-shot stream. A next-page
+  link that points at another origin is refused outright.
+- A path parameter that is empty, or fills a whole segment and is `.` or
+  `..`, is refused with `Error::Config` before anything is sent, and so is a
+  `.` or `..` segment that parameters sharing it form: each would address a
+  different endpoint on the same host.
 - Header values are never logged, URLs are logged with their query string
   redacted, and request/response bodies are never logged.
 

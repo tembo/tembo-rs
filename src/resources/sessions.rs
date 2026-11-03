@@ -520,7 +520,7 @@ impl RetrieveRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsRetrieveResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}", crate::http::encode_path_param(&self.session_id));
+        let path = format!("/v1/sessions/{}", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
@@ -599,7 +599,7 @@ impl UpdateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsUpdateResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}", crate::http::encode_path_param(&self.session_id));
+        let path = format!("/v1/sessions/{}", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -679,7 +679,7 @@ impl DeleteRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsDeleteResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}", crate::http::encode_path_param(&self.session_id));
+        let path = format!("/v1/sessions/{}", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -761,7 +761,7 @@ impl ForkRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsForkResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}/fork", crate::http::encode_path_param(&self.session_id));
+        let path = format!("/v1/sessions/{}/fork", crate::http::path_param(&self.session_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -849,7 +849,7 @@ impl StopRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsStopResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}/stop", crate::http::encode_path_param(&self.session_id));
+        let path = format!("/v1/sessions/{}/stop", crate::http::path_param(&self.session_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cancel_queued {
             query.push(("cancelQueued".to_string(), crate::http::scalar_value(value)));
@@ -956,10 +956,7 @@ impl ListEventsRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SessionsListEventsResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/sessions/{}/events",
-            crate::http::encode_path_param(&self.session_id)
-        );
+        let path = format!("/v1/sessions/{}/events", crate::http::path_param(&self.session_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));

@@ -401,6 +401,7 @@ pub enum IntegrationsUpdateBody {
     IntegrationsUpdateBodyVariant2(IntegrationsUpdateBodyVariant2),
     IntegrationsUpdateBodyVariant3(IntegrationsUpdateBodyVariant3),
     IntegrationsUpdateBodyVariant4(IntegrationsUpdateBodyVariant4),
+    IntegrationsUpdateBodyVariant5(IntegrationsUpdateBodyVariant5),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -489,13 +490,26 @@ impl IntegrationsUpdateBodyVariant3Postgres {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntegrationsUpdateBodyVariant4 {
-    /// Set Atlassian service-account OAuth credentials for triggers, or null to remove them.
-    #[serde(rename = "atlassianServiceAccount", default)]
-    pub atlassian_service_account: Option<IntegrationsUpdateBodyVariant4AtlassianServiceAccount>,
+    /// Replace GitLab credentials with a service account access token, keeping repositories and projects connected.
+    pub gitlab: IntegrationsUpdateBodyVariant4Gitlab,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct IntegrationsUpdateBodyVariant4AtlassianServiceAccount {
+pub struct IntegrationsUpdateBodyVariant4Gitlab {
+    /// GitLab access token used to connect the integration.
+    #[serde(rename = "accessToken")]
+    pub access_token: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct IntegrationsUpdateBodyVariant5 {
+    /// Set Atlassian service-account OAuth credentials for triggers, or null to remove them.
+    #[serde(rename = "atlassianServiceAccount", default)]
+    pub atlassian_service_account: Option<IntegrationsUpdateBodyVariant5AtlassianServiceAccount>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct IntegrationsUpdateBodyVariant5AtlassianServiceAccount {
     #[serde(rename = "clientId")]
     pub client_id: String,
     #[serde(rename = "clientSecret")]

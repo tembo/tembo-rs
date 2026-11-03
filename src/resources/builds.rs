@@ -96,10 +96,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::BuildsListResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/projects/{}/builds",
-            crate::http::encode_path_param(&self.project_id)
-        );
+        let path = format!("/v1/projects/{}/builds", crate::http::path_param(&self.project_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -184,10 +181,7 @@ impl CreateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::BuildsCreateResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/projects/{}/builds",
-            crate::http::encode_path_param(&self.project_id)
-        );
+        let path = format!("/v1/projects/{}/builds", crate::http::path_param(&self.project_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -263,8 +257,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::BuildsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/projects/{}/builds/{}",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.build_id)
+            crate::http::path_param(&self.project_id)?,
+            crate::http::path_param(&self.build_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -346,8 +340,8 @@ impl CancelRequestBuilder {
     pub async fn send(self) -> Result<crate::models::BuildsCancelResponse, crate::error::Error> {
         let path = format!(
             "/v1/projects/{}/builds/{}/cancel",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.build_id)
+            crate::http::path_param(&self.project_id)?,
+            crate::http::path_param(&self.build_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

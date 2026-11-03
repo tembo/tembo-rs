@@ -110,10 +110,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SchedulesListResponse2, crate::error::Error> {
-        let path = format!(
-            "/v1/agents/{}/schedules",
-            crate::http::encode_path_param(&self.agent_id)
-        );
+        let path = format!("/v1/agents/{}/schedules", crate::http::path_param(&self.agent_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -198,10 +195,7 @@ impl CreateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SchedulesCreateResponse2, crate::error::Error> {
-        let path = format!(
-            "/v1/agents/{}/schedules",
-            crate::http::encode_path_param(&self.agent_id)
-        );
+        let path = format!("/v1/agents/{}/schedules", crate::http::path_param(&self.agent_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -277,8 +271,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SchedulesRetrieveResponse2, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/schedules/{}",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&self.schedule_id)
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&self.schedule_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -367,8 +361,8 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SchedulesUpdateResponse2, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/schedules/{}",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&self.schedule_id)
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&self.schedule_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -453,8 +447,8 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SchedulesDeleteResponse2, crate::error::Error> {
         let path = format!(
             "/v1/agents/{}/schedules/{}",
-            crate::http::encode_path_param(&self.agent_id),
-            crate::http::encode_path_param(&self.schedule_id)
+            crate::http::path_param(&self.agent_id)?,
+            crate::http::path_param(&self.schedule_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

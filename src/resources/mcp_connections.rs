@@ -292,7 +292,7 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::McpConnectionsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/mcp-connections/{}",
-            crate::http::encode_path_param(&self.mcp_connection_id)
+            crate::http::path_param(&self.mcp_connection_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -378,7 +378,7 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::McpConnectionsUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/mcp-connections/{}",
-            crate::http::encode_path_param(&self.mcp_connection_id)
+            crate::http::path_param(&self.mcp_connection_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -461,7 +461,7 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::McpConnectionsDeleteResponse, crate::error::Error> {
         let path = format!(
             "/v1/mcp-connections/{}",
-            crate::http::encode_path_param(&self.mcp_connection_id)
+            crate::http::path_param(&self.mcp_connection_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -544,7 +544,7 @@ impl AuthorizeRequestBuilder {
     pub async fn send(self) -> Result<crate::models::McpConnectionsAuthorizeResponse, crate::error::Error> {
         let path = format!(
             "/v1/mcp-connections/{}/authorize",
-            crate::http::encode_path_param(&self.mcp_connection_id)
+            crate::http::path_param(&self.mcp_connection_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -627,7 +627,7 @@ impl TestRequestBuilder {
     pub async fn send(self) -> Result<crate::models::McpConnectionsTestResponse, crate::error::Error> {
         let path = format!(
             "/v1/mcp-connections/{}/test",
-            crate::http::encode_path_param(&self.mcp_connection_id)
+            crate::http::path_param(&self.mcp_connection_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

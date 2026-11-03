@@ -358,10 +358,7 @@ impl RetrieveRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::PullRequestsRetrieveResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/pull-requests/{}",
-            crate::http::encode_path_param(&self.pull_request_id)
-        );
+        let path = format!("/v1/pull-requests/{}", crate::http::path_param(&self.pull_request_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;

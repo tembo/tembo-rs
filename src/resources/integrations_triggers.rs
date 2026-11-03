@@ -182,8 +182,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::TriggersRetrieveResponse2, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/triggers/{}",
-            crate::http::encode_path_param(&self.integration_id),
-            crate::http::encode_path_param(&self.trigger_name)
+            crate::http::path_param(&self.integration_id)?,
+            crate::http::path_param(&self.trigger_name)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -283,9 +283,9 @@ impl ListFilterOptionsRequestBuilder {
     pub async fn send(self) -> Result<crate::models::TriggersListFilterOptionsResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/triggers/{}/filter-options/{}",
-            crate::http::encode_path_param(&self.integration_id),
-            crate::http::encode_path_param(&self.trigger_name),
-            crate::http::encode_path_param(&self.field)
+            crate::http::path_param(&self.integration_id)?,
+            crate::http::path_param(&self.trigger_name)?,
+            crate::http::path_param(&self.field)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {

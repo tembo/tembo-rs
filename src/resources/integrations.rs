@@ -402,10 +402,7 @@ impl RetrieveRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::IntegrationsRetrieveResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/integrations/{}",
-            crate::http::encode_path_param(&self.integration_id)
-        );
+        let path = format!("/v1/integrations/{}", crate::http::path_param(&self.integration_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
@@ -426,7 +423,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; set or remove Atlassian service-account credentials.
+/// Update integration settings such as the default repository, Slack channel restrictions, automatic solving, or Sentry environments; replace AWS or PostgreSQL configuration; rotate GitLab service account access tokens; set or remove Atlassian service-account credentials.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -484,10 +481,7 @@ impl UpdateRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::IntegrationsUpdateResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/integrations/{}",
-            crate::http::encode_path_param(&self.integration_id)
-        );
+        let path = format!("/v1/integrations/{}", crate::http::path_param(&self.integration_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -567,10 +561,7 @@ impl DeleteRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::IntegrationsDeleteResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/integrations/{}",
-            crate::http::encode_path_param(&self.integration_id)
-        );
+        let path = format!("/v1/integrations/{}", crate::http::path_param(&self.integration_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -668,7 +659,7 @@ impl AuthorizeRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsAuthorizeResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/authorize",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.return_url {
@@ -757,7 +748,7 @@ impl TestRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsTestResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/test",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -842,7 +833,7 @@ impl SyncRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsSyncResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/sync",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -1074,7 +1065,7 @@ impl RetrieveRateLimitRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsRetrieveRateLimitResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/rate-limit",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -1162,7 +1153,7 @@ impl ListSentryEnvironmentsRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsListSentryEnvironmentsResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/sentry-environments",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
@@ -1264,7 +1255,7 @@ impl ListSlackChannelsRequestBuilder {
     pub async fn send(self) -> Result<crate::models::IntegrationsListSlackChannelsResponse, crate::error::Error> {
         let path = format!(
             "/v1/integrations/{}/slack-channels",
-            crate::http::encode_path_param(&self.integration_id)
+            crate::http::path_param(&self.integration_id)?
         );
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {

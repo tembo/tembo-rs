@@ -101,10 +101,7 @@ impl ListRequestBuilder {
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
     pub async fn send(self) -> Result<crate::models::SnapshotsListResponse, crate::error::Error> {
-        let path = format!(
-            "/v1/projects/{}/snapshots",
-            crate::http::encode_path_param(&self.project_id)
-        );
+        let path = format!("/v1/projects/{}/snapshots", crate::http::path_param(&self.project_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -183,8 +180,8 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SnapshotsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/projects/{}/snapshots/{}",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.snapshot_id)
+            crate::http::path_param(&self.project_id)?,
+            crate::http::path_param(&self.snapshot_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -273,8 +270,8 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SnapshotsUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/projects/{}/snapshots/{}",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.snapshot_id)
+            crate::http::path_param(&self.project_id)?,
+            crate::http::path_param(&self.snapshot_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -359,8 +356,8 @@ impl DeleteRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SnapshotsDeleteResponse, crate::error::Error> {
         let path = format!(
             "/v1/projects/{}/snapshots/{}",
-            crate::http::encode_path_param(&self.project_id),
-            crate::http::encode_path_param(&self.snapshot_id)
+            crate::http::path_param(&self.project_id)?,
+            crate::http::path_param(&self.snapshot_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

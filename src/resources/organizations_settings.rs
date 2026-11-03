@@ -85,7 +85,7 @@ impl RetrieveRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SettingsRetrieveResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/settings",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let headers: Vec<(String, String)> = Vec::new();
@@ -167,7 +167,7 @@ impl UpdateRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SettingsUpdateResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/settings",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
@@ -256,7 +256,7 @@ impl ValidateCredentialsRequestBuilder {
     pub async fn send(self) -> Result<crate::models::SettingsValidateCredentialsResponse, crate::error::Error> {
         let path = format!(
             "/v1/organizations/{}/settings/validate-credentials",
-            crate::http::encode_path_param(&self.organization_id)
+            crate::http::path_param(&self.organization_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();

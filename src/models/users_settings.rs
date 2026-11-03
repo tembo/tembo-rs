@@ -181,6 +181,8 @@ pub struct SettingsRetrieveResponse2AppSidebarPreferences {
     pub session_organization: Option<SettingsRetrieveResponse2AppSidebarPreferencesSessionOrganization>,
     #[serde(rename = "showArchivedSessions", default, skip_serializing_if = "Option::is_none")]
     pub show_archived_sessions: Option<bool>,
+    #[serde(rename = "showActivity", default, skip_serializing_if = "Option::is_none")]
+    pub show_activity: Option<bool>,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
@@ -1019,6 +1021,8 @@ pub struct SettingsUpdateResponse2AppSidebarPreferences {
     pub session_organization: Option<SettingsUpdateResponse2AppSidebarPreferencesSessionOrganization>,
     #[serde(rename = "showArchivedSessions", default, skip_serializing_if = "Option::is_none")]
     pub show_archived_sessions: Option<bool>,
+    #[serde(rename = "showActivity", default, skip_serializing_if = "Option::is_none")]
+    pub show_activity: Option<bool>,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
@@ -1856,6 +1860,8 @@ pub struct SettingsUpdateBody2AppSidebarPreferences {
     pub session_organization: Option<SettingsUpdateBody2AppSidebarPreferencesSessionOrganization>,
     #[serde(rename = "showArchivedSessions", default, skip_serializing_if = "Option::is_none")]
     pub show_archived_sessions: Option<bool>,
+    #[serde(rename = "showActivity", default, skip_serializing_if = "Option::is_none")]
+    pub show_activity: Option<bool>,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
