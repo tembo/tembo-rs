@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsListResponse {
@@ -18,9 +18,32 @@ pub struct IntegrationsListResponse {
     pub total_count: Option<i64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsListResponse {
+    /// Creates a new `IntegrationsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsListResponse::new(items, next_cursor).with_total_count(…)`.
+    pub fn new(items: Vec<IntegrationsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self {
+            items,
+            next_cursor,
+            total_count: None,
+        }
+    }
+
+    /// Sets `total_count`, which `new` leaves unset.
+    pub fn with_total_count(mut self, value: i64) -> Self {
+        self.total_count = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsListResponseItem {
@@ -50,9 +73,40 @@ pub struct IntegrationsListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsListResponseItem {
+    /// Creates a new `IntegrationsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        display_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        repository_count: i64,
+        source_count: i64,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            display_name: display_name.into(),
+            enabled_at,
+            id: id.into(),
+            last_synced_at,
+            repository_count,
+            source_count,
+            r#type: r#type.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsCreateResponse {
@@ -61,9 +115,22 @@ pub struct IntegrationsCreateResponse {
     pub session_source_id: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsCreateResponse {
+    /// Creates a new `IntegrationsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(integration: IntegrationsCreateResponseIntegration, session_source_id: Option<String>) -> Self {
+        Self {
+            integration,
+            session_source_id,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateResponseIntegration::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsCreateResponseIntegration {
@@ -93,6 +160,38 @@ pub struct IntegrationsCreateResponseIntegration {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
+impl IntegrationsCreateResponseIntegration {
+    /// Creates a new `IntegrationsCreateResponseIntegration` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        display_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        repository_count: i64,
+        source_count: i64,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            display_name: display_name.into(),
+            enabled_at,
+            id: id.into(),
+            last_synced_at,
+            repository_count,
+            source_count,
+            r#type: r#type.into(),
+            updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]
@@ -113,7 +212,11 @@ pub enum IntegrationsCreateBody {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant1 {
     /// Display label for the AWS environment.
     pub environment: String,
@@ -124,7 +227,25 @@ pub struct IntegrationsCreateBodyVariant1 {
     pub r#type: String,
 }
 
+impl IntegrationsCreateBodyVariant1 {
+    /// Creates a new `IntegrationsCreateBodyVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(environment: impl Into<String>, role_arn: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            environment: environment.into(),
+            role_arn: role_arn.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant2 {
     /// Google Cloud project ID for BigQuery.
     #[serde(rename = "projectId")]
@@ -136,7 +257,29 @@ pub struct IntegrationsCreateBodyVariant2 {
     pub r#type: String,
 }
 
+impl IntegrationsCreateBodyVariant2 {
+    /// Creates a new `IntegrationsCreateBodyVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        project_id: impl Into<String>,
+        service_account_json: impl Into<String>,
+        r#type: impl Into<String>,
+    ) -> Self {
+        Self {
+            project_id: project_id.into(),
+            service_account_json: service_account_json.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant3 {
     /// GitLab access token used to connect the integration.
     #[serde(rename = "accessToken")]
@@ -145,7 +288,24 @@ pub struct IntegrationsCreateBodyVariant3 {
     pub r#type: String,
 }
 
+impl IntegrationsCreateBodyVariant3 {
+    /// Creates a new `IntegrationsCreateBodyVariant3` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(access_token: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            access_token: access_token.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant4 {
     /// VPN gateway hostname or URL for OpenConnect.
     pub gateway: String,
@@ -160,6 +320,30 @@ pub struct IntegrationsCreateBodyVariant4 {
     pub r#type: String,
     /// VPN login username.
     pub username: String,
+}
+
+impl IntegrationsCreateBodyVariant4 {
+    /// Creates a new `IntegrationsCreateBodyVariant4` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        gateway: impl Into<String>,
+        instance_name: impl Into<String>,
+        password: impl Into<String>,
+        protocol: IntegrationsCreateBodyVariant4Protocol,
+        r#type: impl Into<String>,
+        username: impl Into<String>,
+    ) -> Self {
+        Self {
+            gateway: gateway.into(),
+            instance_name: instance_name.into(),
+            password: password.into(),
+            protocol,
+            r#type: r#type.into(),
+            username: username.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -213,7 +397,11 @@ impl From<&str> for IntegrationsCreateBodyVariant4Protocol {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant5::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant5 {
     /// Optional CA certificate for the PostgreSQL TLS connection.
     #[serde(rename = "caCertificate", default, skip_serializing_if = "Option::is_none")]
@@ -231,8 +419,11 @@ pub struct IntegrationsCreateBodyVariant5 {
 impl IntegrationsCreateBodyVariant5 {
     /// Creates a new `IntegrationsCreateBodyVariant5` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `IntegrationsCreateBodyVariant5 { ca_certificate: Some(…), ..IntegrationsCreateBodyVariant5::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsCreateBodyVariant5::new(connection_string, instance_name, r#type).with_ca_certificate(…)`.
     pub fn new(
         connection_string: impl Into<String>,
         instance_name: impl Into<String>,
@@ -245,9 +436,19 @@ impl IntegrationsCreateBodyVariant5 {
             r#type: r#type.into(),
         }
     }
+
+    /// Sets `ca_certificate`, which `new` leaves unset.
+    pub fn with_ca_certificate(mut self, value: impl Into<String>) -> Self {
+        self.ca_certificate = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant6::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant6 {
     /// Snyk service-account client ID.
     #[serde(rename = "clientId")]
@@ -268,8 +469,11 @@ pub struct IntegrationsCreateBodyVariant6 {
 impl IntegrationsCreateBodyVariant6 {
     /// Creates a new `IntegrationsCreateBodyVariant6` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `IntegrationsCreateBodyVariant6 { organization_name: Some(…), ..IntegrationsCreateBodyVariant6::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsCreateBodyVariant6::new(…).with_organization_name(…)`.
     pub fn new(
         client_id: impl Into<String>,
         client_secret: impl Into<String>,
@@ -284,9 +488,19 @@ impl IntegrationsCreateBodyVariant6 {
             r#type: r#type.into(),
         }
     }
+
+    /// Sets `organization_name`, which `new` leaves unset.
+    pub fn with_organization_name(mut self, value: impl Into<String>) -> Self {
+        self.organization_name = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant7::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant7 {
     /// Display name for the Tailscale connection.
     #[serde(rename = "instanceName")]
@@ -309,8 +523,11 @@ pub struct IntegrationsCreateBodyVariant7 {
 impl IntegrationsCreateBodyVariant7 {
     /// Creates a new `IntegrationsCreateBodyVariant7` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `IntegrationsCreateBodyVariant7 { tailnet: Some(…), ..IntegrationsCreateBodyVariant7::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsCreateBodyVariant7::new(…).with_tailnet(…)`.
     pub fn new(
         instance_name: impl Into<String>,
         oauth_client_id: impl Into<String>,
@@ -327,11 +544,17 @@ impl IntegrationsCreateBodyVariant7 {
             r#type: r#type.into(),
         }
     }
+
+    /// Sets `tailnet`, which `new` leaves unset.
+    pub fn with_tailnet(mut self, value: impl Into<String>) -> Self {
+        self.tailnet = Some(value.into());
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveResponse {
@@ -361,9 +584,40 @@ pub struct IntegrationsRetrieveResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveResponse {
+    /// Creates a new `IntegrationsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        display_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        repository_count: i64,
+        source_count: i64,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            display_name: display_name.into(),
+            enabled_at,
+            id: id.into(),
+            last_synced_at,
+            repository_count,
+            source_count,
+            r#type: r#type.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsUpdateResponse {
@@ -393,6 +647,37 @@ pub struct IntegrationsUpdateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
+impl IntegrationsUpdateResponse {
+    /// Creates a new `IntegrationsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        display_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        repository_count: i64,
+        source_count: i64,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            display_name: display_name.into(),
+            enabled_at,
+            id: id.into(),
+            last_synced_at,
+            repository_count,
+            source_count,
+            r#type: r#type.into(),
+            updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]
@@ -411,16 +696,39 @@ pub enum IntegrationsUpdateBody {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant1 {
     /// Update integration settings, preserving unspecified settings.
     pub settings: IntegrationsUpdateBodyVariant1Settings,
 }
 
+impl IntegrationsUpdateBodyVariant1 {
+    /// Creates a new `IntegrationsUpdateBodyVariant1` from its required fields, leaving every optional one unset.
+    pub fn new(settings: IntegrationsUpdateBodyVariant1Settings) -> Self {
+        Self { settings }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant1Settings::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant1Settings {
-    #[serde(rename = "defaultRepositoryId", default, skip_serializing_if = "Option::is_none")]
-    pub default_repository_id: Option<String>,
+    #[serde(
+        rename = "defaultRepositoryId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub default_repository_id: Option<Option<String>>,
     #[serde(
         rename = "disallowedSlackChannelIds",
         default,
@@ -433,13 +741,70 @@ pub struct IntegrationsUpdateBodyVariant1Settings {
     pub sentry_environments: Option<Vec<String>>,
 }
 
+impl IntegrationsUpdateBodyVariant1Settings {
+    /// Creates a new `IntegrationsUpdateBodyVariant1Settings` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsUpdateBodyVariant1Settings::new().with_default_repository_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            default_repository_id: None,
+            disallowed_slack_channel_ids: None,
+            instant_solve: None,
+            sentry_environments: None,
+        }
+    }
+
+    /// Sets `default_repository_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `default_repository_id = Some(None)` on the built value.
+    pub fn with_default_repository_id(mut self, value: impl Into<String>) -> Self {
+        self.default_repository_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `disallowed_slack_channel_ids`, which `new` leaves unset.
+    pub fn with_disallowed_slack_channel_ids(mut self, value: Vec<String>) -> Self {
+        self.disallowed_slack_channel_ids = Some(value);
+        self
+    }
+
+    /// Sets `instant_solve`, which `new` leaves unset.
+    pub fn with_instant_solve(mut self, value: bool) -> Self {
+        self.instant_solve = Some(value);
+        self
+    }
+
+    /// Sets `sentry_environments`, which `new` leaves unset.
+    pub fn with_sentry_environments(mut self, value: Vec<String>) -> Self {
+        self.sentry_environments = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant2 {
     /// Replace AWS environment and assumed-role configuration.
     pub aws: IntegrationsUpdateBodyVariant2Aws,
 }
 
+impl IntegrationsUpdateBodyVariant2 {
+    /// Creates a new `IntegrationsUpdateBodyVariant2` from its required fields, leaving every optional one unset.
+    pub fn new(aws: IntegrationsUpdateBodyVariant2Aws) -> Self {
+        Self { aws }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant2Aws::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant2Aws {
     /// Display label for the AWS environment.
     pub environment: String,
@@ -448,13 +813,41 @@ pub struct IntegrationsUpdateBodyVariant2Aws {
     pub role_arn: String,
 }
 
+impl IntegrationsUpdateBodyVariant2Aws {
+    /// Creates a new `IntegrationsUpdateBodyVariant2Aws` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(environment: impl Into<String>, role_arn: impl Into<String>) -> Self {
+        Self {
+            environment: environment.into(),
+            role_arn: role_arn.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant3 {
     /// Replace PostgreSQL connection configuration.
     pub postgres: IntegrationsUpdateBodyVariant3Postgres,
 }
 
+impl IntegrationsUpdateBodyVariant3 {
+    /// Creates a new `IntegrationsUpdateBodyVariant3` from its required fields, leaving every optional one unset.
+    pub fn new(postgres: IntegrationsUpdateBodyVariant3Postgres) -> Self {
+        Self { postgres }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant3Postgres::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant3Postgres {
     /// Optional CA certificate for the PostgreSQL TLS connection.
     #[serde(rename = "caCertificate", default, skip_serializing_if = "Option::is_none")]
@@ -471,14 +864,11 @@ impl IntegrationsUpdateBodyVariant3Postgres {
     /// Creates a new `IntegrationsUpdateBodyVariant3Postgres` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
     ///
-    /// ```text
-    /// IntegrationsUpdateBodyVariant3Postgres {
-    ///     ca_certificate: Some(…),
-    ///     ..IntegrationsUpdateBodyVariant3Postgres::new(connection_string, instance_name)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsUpdateBodyVariant3Postgres::new(connection_string, instance_name).with_ca_certificate(…)`.
     pub fn new(connection_string: impl Into<String>, instance_name: impl Into<String>) -> Self {
         Self {
             ca_certificate: None,
@@ -486,29 +876,76 @@ impl IntegrationsUpdateBodyVariant3Postgres {
             instance_name: instance_name.into(),
         }
     }
+
+    /// Sets `ca_certificate`, which `new` leaves unset.
+    pub fn with_ca_certificate(mut self, value: impl Into<String>) -> Self {
+        self.ca_certificate = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant4 {
     /// Replace GitLab credentials with a service account access token, keeping repositories and projects connected.
     pub gitlab: IntegrationsUpdateBodyVariant4Gitlab,
 }
 
+impl IntegrationsUpdateBodyVariant4 {
+    /// Creates a new `IntegrationsUpdateBodyVariant4` from its required fields, leaving every optional one unset.
+    pub fn new(gitlab: IntegrationsUpdateBodyVariant4Gitlab) -> Self {
+        Self { gitlab }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant4Gitlab::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant4Gitlab {
     /// GitLab access token used to connect the integration.
     #[serde(rename = "accessToken")]
     pub access_token: String,
 }
 
+impl IntegrationsUpdateBodyVariant4Gitlab {
+    /// Creates a new `IntegrationsUpdateBodyVariant4Gitlab` from its required fields, leaving every optional one unset.
+    pub fn new(access_token: impl Into<String>) -> Self {
+        Self {
+            access_token: access_token.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant5::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant5 {
     /// Set Atlassian service-account OAuth credentials for triggers, or null to remove them.
     #[serde(rename = "atlassianServiceAccount", default)]
     pub atlassian_service_account: Option<IntegrationsUpdateBodyVariant5AtlassianServiceAccount>,
 }
 
+impl IntegrationsUpdateBodyVariant5 {
+    /// Creates a new `IntegrationsUpdateBodyVariant5` from its required fields, leaving every optional one unset.
+    pub fn new(atlassian_service_account: Option<IntegrationsUpdateBodyVariant5AtlassianServiceAccount>) -> Self {
+        Self {
+            atlassian_service_account,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsUpdateBodyVariant5AtlassianServiceAccount::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsUpdateBodyVariant5AtlassianServiceAccount {
     #[serde(rename = "clientId")]
     pub client_id: String,
@@ -516,9 +953,23 @@ pub struct IntegrationsUpdateBodyVariant5AtlassianServiceAccount {
     pub client_secret: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsUpdateBodyVariant5AtlassianServiceAccount {
+    /// Creates a new `IntegrationsUpdateBodyVariant5AtlassianServiceAccount` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(client_id: impl Into<String>, client_secret: impl Into<String>) -> Self {
+        Self {
+            client_id: client_id.into(),
+            client_secret: client_secret.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsDeleteResponse {
@@ -526,9 +977,19 @@ pub struct IntegrationsDeleteResponse {
     pub deleted: bool,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsDeleteResponse {
+    /// Creates a new `IntegrationsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, deleted: bool) -> Self {
+        Self { id: id.into(), deleted }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsAuthorizeResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsAuthorizeResponse {
@@ -536,9 +997,18 @@ pub struct IntegrationsAuthorizeResponse {
     pub authorization_url: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsAuthorizeResponse {
+    /// Creates a new `IntegrationsAuthorizeResponse` from its required fields, leaving every optional one unset.
+    pub fn new(authorization_url: impl Into<String>) -> Self {
+        Self {
+            authorization_url: authorization_url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsTestResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsTestResponse {
@@ -546,9 +1016,22 @@ pub struct IntegrationsTestResponse {
     pub message: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsTestResponse {
+    /// Creates a new `IntegrationsTestResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(healthy: bool, message: impl Into<String>) -> Self {
+        Self {
+            healthy,
+            message: message.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsSyncResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsSyncResponse {
@@ -557,6 +1040,20 @@ pub struct IntegrationsSyncResponse {
     #[serde(rename = "jobId", default)]
     pub job_id: Option<String>,
     pub mode: IntegrationsSyncResponseMode,
+}
+
+impl IntegrationsSyncResponse {
+    /// Creates a new `IntegrationsSyncResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(integration_id: impl Into<String>, job_id: Option<String>, mode: IntegrationsSyncResponseMode) -> Self {
+        Self {
+            integration_id: integration_id.into(),
+            job_id,
+            mode,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -602,11 +1099,33 @@ impl From<&str> for IntegrationsSyncResponseMode {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsSyncBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsSyncBody {
     /// queued schedules a background integration sync; immediate performs the sync in this request.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<IntegrationsSyncBodyMode>,
+}
+
+impl IntegrationsSyncBody {
+    /// Creates a new `IntegrationsSyncBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `IntegrationsSyncBody::new().with_mode(…)`.
+    pub fn new() -> Self {
+        Self { mode: None }
+    }
+
+    /// Sets `mode`, which `new` leaves unset.
+    pub fn with_mode(mut self, value: IntegrationsSyncBodyMode) -> Self {
+        self.mode = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -652,9 +1171,9 @@ impl From<&str> for IntegrationsSyncBodyMode {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsSyncAllResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsSyncAllResponse {
@@ -666,12 +1185,44 @@ pub struct IntegrationsSyncAllResponse {
     pub pull_request_sync_job_count: i64,
 }
 
+impl IntegrationsSyncAllResponse {
+    /// Creates a new `IntegrationsSyncAllResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        eligible_integration_count: i64,
+        integration_sync_job_count: i64,
+        pull_request_sync_job_count: i64,
+    ) -> Self {
+        Self {
+            eligible_integration_count,
+            integration_sync_job_count,
+            pull_request_sync_job_count,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsSyncAllBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct IntegrationsSyncAllBody {}
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsSyncAllBody {
+    /// Creates a new `IntegrationsSyncAllBody` from its required fields, leaving every optional one unset.
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveSyncStatusResponse::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveSyncStatusResponse {
@@ -681,9 +1232,23 @@ pub struct IntegrationsRetrieveSyncStatusResponse {
     pub eligible_integration_count: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveSyncStatusResponse {
+    /// Creates a new `IntegrationsRetrieveSyncStatusResponse` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(active_job_count: i64, eligible_integration_count: i64) -> Self {
+        Self {
+            active_job_count,
+            eligible_integration_count,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveRateLimitResponse::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveRateLimitResponse {
@@ -692,9 +1257,24 @@ pub struct IntegrationsRetrieveRateLimitResponse {
     pub search: IntegrationsRetrieveRateLimitResponseSearch,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveRateLimitResponse {
+    /// Creates a new `IntegrationsRetrieveRateLimitResponse` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        core: IntegrationsRetrieveRateLimitResponseCore,
+        graphql: IntegrationsRetrieveRateLimitResponseGraphql,
+        search: IntegrationsRetrieveRateLimitResponseSearch,
+    ) -> Self {
+        Self { core, graphql, search }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveRateLimitResponseCore::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveRateLimitResponseCore {
@@ -708,9 +1288,25 @@ pub struct IntegrationsRetrieveRateLimitResponseCore {
     pub used: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveRateLimitResponseCore {
+    /// Creates a new `IntegrationsRetrieveRateLimitResponseCore` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(limit: f64, remaining: f64, reset_at: chrono::DateTime<chrono::FixedOffset>, used: f64) -> Self {
+        Self {
+            limit,
+            remaining,
+            reset_at,
+            used,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveRateLimitResponseGraphql::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveRateLimitResponseGraphql {
@@ -724,9 +1320,25 @@ pub struct IntegrationsRetrieveRateLimitResponseGraphql {
     pub used: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveRateLimitResponseGraphql {
+    /// Creates a new `IntegrationsRetrieveRateLimitResponseGraphql` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(limit: f64, remaining: f64, reset_at: chrono::DateTime<chrono::FixedOffset>, used: f64) -> Self {
+        Self {
+            limit,
+            remaining,
+            reset_at,
+            used,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsRetrieveRateLimitResponseSearch::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveRateLimitResponseSearch {
@@ -740,9 +1352,25 @@ pub struct IntegrationsRetrieveRateLimitResponseSearch {
     pub used: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsRetrieveRateLimitResponseSearch {
+    /// Creates a new `IntegrationsRetrieveRateLimitResponseSearch` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(limit: f64, remaining: f64, reset_at: chrono::DateTime<chrono::FixedOffset>, used: f64) -> Self {
+        Self {
+            limit,
+            remaining,
+            reset_at,
+            used,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsListSentryEnvironmentsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsListSentryEnvironmentsResponse {
@@ -751,9 +1379,20 @@ pub struct IntegrationsListSentryEnvironmentsResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsListSentryEnvironmentsResponse {
+    /// Creates a new `IntegrationsListSentryEnvironmentsResponse` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<String>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsListSlackChannelsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsListSlackChannelsResponse {
@@ -762,12 +1401,37 @@ pub struct IntegrationsListSlackChannelsResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl IntegrationsListSlackChannelsResponse {
+    /// Creates a new `IntegrationsListSlackChannelsResponse` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<IntegrationsListSlackChannelsResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsListSlackChannelsResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsListSlackChannelsResponseItem {
     pub id: String,
     pub name: String,
+}
+
+impl IntegrationsListSlackChannelsResponseItem {
+    /// Creates a new `IntegrationsListSlackChannelsResponseItem` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+        }
+    }
 }

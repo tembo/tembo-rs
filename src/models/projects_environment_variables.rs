@@ -5,49 +5,94 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesListResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesListResponse2 {
     pub items: Vec<EnvironmentVariablesListResponse2Item>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesListResponse2 {
+    /// Creates a new `EnvironmentVariablesListResponse2` from its required fields, leaving every optional one unset.
+    pub fn new(items: Vec<EnvironmentVariablesListResponse2Item>) -> Self {
+        Self { items }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesListResponse2Item::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesListResponse2Item {
     pub key: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesListResponse2Item {
+    /// Creates a new `EnvironmentVariablesListResponse2Item` from its required fields, leaving every optional one
+    /// unset.
+    pub fn new(key: impl Into<String>) -> Self {
+        Self { key: key.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesCreateResponse2 {
     pub items: Vec<EnvironmentVariablesCreateResponse2Item>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesCreateResponse2 {
+    /// Creates a new `EnvironmentVariablesCreateResponse2` from its required fields, leaving every optional one unset.
+    pub fn new(items: Vec<EnvironmentVariablesCreateResponse2Item>) -> Self {
+        Self { items }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateResponse2Item::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesCreateResponse2Item {
     pub key: String,
 }
 
+impl EnvironmentVariablesCreateResponse2Item {
+    /// Creates a new `EnvironmentVariablesCreateResponse2Item` from its required fields, leaving every optional one
+    /// unset.
+    pub fn new(key: impl Into<String>) -> Self {
+        Self { key: key.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateBody2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct EnvironmentVariablesCreateBody2 {
     /// Environment variables to add or replace by key, preserving other keys. Values are encrypted and not returned by list operations.
     pub secrets: Vec<EnvironmentVariablesCreateBody2Secret>,
 }
 
+impl EnvironmentVariablesCreateBody2 {
+    /// Creates a new `EnvironmentVariablesCreateBody2` from its required fields, leaving every optional one unset.
+    pub fn new(secrets: Vec<EnvironmentVariablesCreateBody2Secret>) -> Self {
+        Self { secrets }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateBody2Secret::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct EnvironmentVariablesCreateBody2Secret {
     /// Environment-variable name.
     pub key: String,
@@ -55,12 +100,39 @@ pub struct EnvironmentVariablesCreateBody2Secret {
     pub value: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesCreateBody2Secret {
+    /// Creates a new `EnvironmentVariablesCreateBody2Secret` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(key: impl Into<String>, value: impl Into<String>) -> Self {
+        Self {
+            key: key.into(),
+            value: value.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesDeleteResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesDeleteResponse2 {
     pub deleted: bool,
     pub key: String,
+}
+
+impl EnvironmentVariablesDeleteResponse2 {
+    /// Creates a new `EnvironmentVariablesDeleteResponse2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, key: impl Into<String>) -> Self {
+        Self {
+            deleted,
+            key: key.into(),
+        }
+    }
 }

@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesListResponse {
@@ -16,9 +16,19 @@ pub struct RepositoriesListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesListResponse {
+    /// Creates a new `RepositoriesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<RepositoriesListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesListResponseItem {
@@ -46,9 +56,44 @@ pub struct RepositoriesListResponseItem {
     pub url: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesListResponseItem {
+    /// Creates a new `RepositoriesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        base_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        provider: RepositoriesListResponseItemProvider,
+        target_branch: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        url: impl Into<String>,
+    ) -> Self {
+        Self {
+            base_branch,
+            created_at,
+            description,
+            enabled_at,
+            id: id.into(),
+            name: name.into(),
+            owner,
+            provider,
+            target_branch,
+            updated_at,
+            url: url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesListResponseItemProvider::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesListResponseItemProvider {
@@ -59,9 +104,23 @@ pub struct RepositoriesListResponseItemProvider {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesListResponseItemProvider {
+    /// Creates a new `RepositoriesListResponseItemProvider` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(display_name: impl Into<String>, integration_id: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            display_name: display_name.into(),
+            integration_id: integration_id.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesRetrieveResponse {
@@ -89,9 +148,44 @@ pub struct RepositoriesRetrieveResponse {
     pub url: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesRetrieveResponse {
+    /// Creates a new `RepositoriesRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        base_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        provider: RepositoriesRetrieveResponseProvider,
+        target_branch: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        url: impl Into<String>,
+    ) -> Self {
+        Self {
+            base_branch,
+            created_at,
+            description,
+            enabled_at,
+            id: id.into(),
+            name: name.into(),
+            owner,
+            provider,
+            target_branch,
+            updated_at,
+            url: url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesRetrieveResponseProvider::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesRetrieveResponseProvider {
@@ -102,9 +196,23 @@ pub struct RepositoriesRetrieveResponseProvider {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesRetrieveResponseProvider {
+    /// Creates a new `RepositoriesRetrieveResponseProvider` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(display_name: impl Into<String>, integration_id: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            display_name: display_name.into(),
+            integration_id: integration_id.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesUpdateResponse {
@@ -132,9 +240,44 @@ pub struct RepositoriesUpdateResponse {
     pub url: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RepositoriesUpdateResponse {
+    /// Creates a new `RepositoriesUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        base_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        provider: RepositoriesUpdateResponseProvider,
+        target_branch: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        url: impl Into<String>,
+    ) -> Self {
+        Self {
+            base_branch,
+            created_at,
+            description,
+            enabled_at,
+            id: id.into(),
+            name: name.into(),
+            owner,
+            provider,
+            target_branch,
+            updated_at,
+            url: url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesUpdateResponseProvider::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RepositoriesUpdateResponseProvider {
@@ -145,15 +288,81 @@ pub struct RepositoriesUpdateResponseProvider {
     pub r#type: String,
 }
 
+impl RepositoriesUpdateResponseProvider {
+    /// Creates a new `RepositoriesUpdateResponseProvider` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(display_name: impl Into<String>, integration_id: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            display_name: display_name.into(),
+            integration_id: integration_id.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RepositoriesUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct RepositoriesUpdateBody {
     /// Enable or disable this repository for Tembo. Disabled by default on creation.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
     /// Default Git branch to start sessions from. Null clears the override.
-    #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
-    pub base_branch: Option<String>,
+    #[serde(
+        rename = "baseBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub base_branch: Option<Option<String>>,
     /// Default target branch for agent-created pull requests. Null clears the override.
-    #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
-    pub target_branch: Option<String>,
+    #[serde(
+        rename = "targetBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub target_branch: Option<Option<String>>,
+}
+
+impl RepositoriesUpdateBody {
+    /// Creates a new `RepositoriesUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `RepositoriesUpdateBody::new().with_enabled(…)`.
+    pub fn new() -> Self {
+        Self {
+            enabled: None,
+            base_branch: None,
+            target_branch: None,
+        }
+    }
+
+    /// Sets `enabled`, which `new` leaves unset.
+    pub fn with_enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    /// Sets `base_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `base_branch = Some(None)` on the built value.
+    pub fn with_base_branch(mut self, value: impl Into<String>) -> Self {
+        self.base_branch = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `target_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `target_branch = Some(None)` on the built value.
+    pub fn with_target_branch(mut self, value: impl Into<String>) -> Self {
+        self.target_branch = Some(Some(value.into()));
+        self
+    }
 }

@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct OrganizationsCreateResponse {
@@ -29,7 +29,37 @@ pub struct OrganizationsCreateResponse {
     pub member_count: i64,
 }
 
+impl OrganizationsCreateResponse {
+    /// Creates a new `OrganizationsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        slug: Option<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        logo_url: Option<String>,
+        member_count: i64,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            name: name.into(),
+            slug,
+            updated_at,
+            logo_url,
+            member_count,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct OrganizationsCreateBody {
     /// Organization display name.
     pub name: String,
@@ -41,19 +71,25 @@ pub struct OrganizationsCreateBody {
 impl OrganizationsCreateBody {
     /// Creates a new `OrganizationsCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `OrganizationsCreateBody { slug: Some(…), ..OrganizationsCreateBody::new(name) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `OrganizationsCreateBody::new(name).with_slug(…)`.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
             slug: None,
         }
     }
+
+    /// Sets `slug`, which `new` leaves unset.
+    pub fn with_slug(mut self, value: impl Into<String>) -> Self {
+        self.slug = Some(value.into());
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct OrganizationsRetrieveResponse {
@@ -75,9 +111,35 @@ pub struct OrganizationsRetrieveResponse {
     pub member_count: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl OrganizationsRetrieveResponse {
+    /// Creates a new `OrganizationsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        slug: Option<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        logo_url: Option<String>,
+        member_count: i64,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            name: name.into(),
+            slug,
+            updated_at,
+            logo_url,
+            member_count,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct OrganizationsUpdateResponse {
@@ -99,7 +161,40 @@ pub struct OrganizationsUpdateResponse {
     pub member_count: i64,
 }
 
+impl OrganizationsUpdateResponse {
+    /// Creates a new `OrganizationsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        slug: Option<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        logo_url: Option<String>,
+        member_count: i64,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            name: name.into(),
+            slug,
+            updated_at,
+            logo_url,
+            member_count,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct OrganizationsUpdateBody {
     /// Organization display name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -112,12 +207,54 @@ pub struct OrganizationsUpdateBody {
     pub onboarding_completed: Option<bool>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl OrganizationsUpdateBody {
+    /// Creates a new `OrganizationsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `OrganizationsUpdateBody::new().with_name(…)`.
+    pub fn new() -> Self {
+        Self {
+            name: None,
+            slug: None,
+            onboarding_completed: None,
+        }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `slug`, which `new` leaves unset.
+    pub fn with_slug(mut self, value: impl Into<String>) -> Self {
+        self.slug = Some(value.into());
+        self
+    }
+
+    /// Sets `onboarding_completed`, which `new` leaves unset.
+    pub fn with_onboarding_completed(mut self, value: bool) -> Self {
+        self.onboarding_completed = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct OrganizationsDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl OrganizationsDeleteResponse {
+    /// Creates a new `OrganizationsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

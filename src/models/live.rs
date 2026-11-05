@@ -5,11 +5,17 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `LiveAuthorizeResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct LiveAuthorizeResponse {
     pub ticket: String,
+}
+
+impl LiveAuthorizeResponse {
+    /// Creates a new `LiveAuthorizeResponse` from its required fields, leaving every optional one unset.
+    pub fn new(ticket: impl Into<String>) -> Self {
+        Self { ticket: ticket.into() }
+    }
 }

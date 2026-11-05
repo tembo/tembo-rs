@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsListResponse {
@@ -16,9 +15,18 @@ pub struct BuildsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BuildsListResponse {
+    /// Creates a new `BuildsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<BuildsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsListResponseItem {
@@ -59,9 +67,52 @@ pub struct BuildsListResponseItem {
     pub trigger: BuildsListResponseItemTrigger,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BuildsListResponseItem {
+    /// Creates a new `BuildsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        automatic_sizing: bool,
+        completed_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        duration_ms: Option<i64>,
+        failure: Option<String>,
+        name: Option<String>,
+        progress: Option<BuildsListResponseItemProgress>,
+        project_id: impl Into<String>,
+        repository_ids: Option<Vec<String>>,
+        sandbox_size: BuildsListResponseItemSandboxSize,
+        setup_script: Option<String>,
+        started_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        status: BuildsListResponseItemStatus,
+        trigger: BuildsListResponseItemTrigger,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            automatic_sizing,
+            completed_at,
+            duration_ms,
+            failure,
+            name,
+            progress,
+            project_id: project_id.into(),
+            repository_ids,
+            sandbox_size,
+            setup_script,
+            started_at,
+            status,
+            trigger,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsListResponseItemProgress::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsListResponseItemProgress {
@@ -77,6 +128,26 @@ pub struct BuildsListResponseItemProgress {
         deserialize_with = "crate::datetime::option::deserialize"
     )]
     pub updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+}
+
+impl BuildsListResponseItemProgress {
+    /// Creates a new `BuildsListResponseItemProgress` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        message: Option<String>,
+        percent: Option<f64>,
+        phase: Option<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    ) -> Self {
+        Self {
+            message,
+            percent,
+            phase,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -244,9 +315,8 @@ impl From<&str> for BuildsListResponseItemTrigger {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsCreateResponse {
@@ -254,7 +324,20 @@ pub struct BuildsCreateResponse {
     pub job_ids: Vec<String>,
 }
 
+impl BuildsCreateResponse {
+    /// Creates a new `BuildsCreateResponse` from its required fields, leaving every optional one unset.
+    pub fn new(job_ids: Vec<String>) -> Self {
+        Self { job_ids }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct BuildsCreateBody {
     /// VM sizes to build. Omit to use the project sizes. Cannot be combined with snapshotId.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -262,6 +345,31 @@ pub struct BuildsCreateBody {
     /// Rebuild one existing snapshot instead of building project sizes. Cannot be combined with sizes.
     #[serde(rename = "snapshotId", default, skip_serializing_if = "Option::is_none")]
     pub snapshot_id: Option<String>,
+}
+
+impl BuildsCreateBody {
+    /// Creates a new `BuildsCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `BuildsCreateBody::new().with_sizes(…)`.
+    pub fn new() -> Self {
+        Self {
+            sizes: None,
+            snapshot_id: None,
+        }
+    }
+
+    /// Sets `sizes`, which `new` leaves unset.
+    pub fn with_sizes(mut self, value: Vec<BuildsCreateBodySiz>) -> Self {
+        self.sizes = Some(value);
+        self
+    }
+
+    /// Sets `snapshot_id`, which `new` leaves unset.
+    pub fn with_snapshot_id(mut self, value: impl Into<String>) -> Self {
+        self.snapshot_id = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -327,9 +435,8 @@ impl From<&str> for BuildsCreateBodySiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsRetrieveResponse {
@@ -370,9 +477,52 @@ pub struct BuildsRetrieveResponse {
     pub trigger: BuildsRetrieveResponseTrigger,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BuildsRetrieveResponse {
+    /// Creates a new `BuildsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        automatic_sizing: bool,
+        completed_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        duration_ms: Option<i64>,
+        failure: Option<String>,
+        name: Option<String>,
+        progress: Option<BuildsRetrieveResponseProgress>,
+        project_id: impl Into<String>,
+        repository_ids: Option<Vec<String>>,
+        sandbox_size: BuildsRetrieveResponseSandboxSize,
+        setup_script: Option<String>,
+        started_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        status: BuildsRetrieveResponseStatus,
+        trigger: BuildsRetrieveResponseTrigger,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            automatic_sizing,
+            completed_at,
+            duration_ms,
+            failure,
+            name,
+            progress,
+            project_id: project_id.into(),
+            repository_ids,
+            sandbox_size,
+            setup_script,
+            started_at,
+            status,
+            trigger,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsRetrieveResponseProgress::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsRetrieveResponseProgress {
@@ -388,6 +538,26 @@ pub struct BuildsRetrieveResponseProgress {
         deserialize_with = "crate::datetime::option::deserialize"
     )]
     pub updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+}
+
+impl BuildsRetrieveResponseProgress {
+    /// Creates a new `BuildsRetrieveResponseProgress` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        message: Option<String>,
+        percent: Option<f64>,
+        phase: Option<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    ) -> Self {
+        Self {
+            message,
+            percent,
+            phase,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -555,12 +725,24 @@ impl From<&str> for BuildsRetrieveResponseTrigger {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BuildsCancelResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsCancelResponse {
     pub cancelled: bool,
     pub id: String,
+}
+
+impl BuildsCancelResponse {
+    /// Creates a new `BuildsCancelResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(cancelled: bool, id: impl Into<String>) -> Self {
+        Self {
+            cancelled,
+            id: id.into(),
+        }
+    }
 }

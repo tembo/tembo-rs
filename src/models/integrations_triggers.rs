@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2 {
@@ -16,15 +15,41 @@ pub struct TriggersListResponse2 {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2 {
+    /// Creates a new `TriggersListResponse2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<TriggersListResponse2Item>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2Item::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2Item {
     #[serde(rename = "integrationType")]
     pub integration_type: TriggersListResponse2ItemIntegrationType,
     pub triggers: Vec<TriggersListResponse2ItemTrigger>,
+}
+
+impl TriggersListResponse2Item {
+    /// Creates a new `TriggersListResponse2Item` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        integration_type: TriggersListResponse2ItemIntegrationType,
+        triggers: Vec<TriggersListResponse2ItemTrigger>,
+    ) -> Self {
+        Self {
+            integration_type,
+            triggers,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -134,9 +159,9 @@ impl From<&str> for TriggersListResponse2ItemIntegrationType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTrigger::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTrigger {
@@ -150,13 +175,53 @@ pub struct TriggersListResponse2ItemTrigger {
     pub name: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2ItemTrigger {
+    /// Creates a new `TriggersListResponse2ItemTrigger` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersListResponse2ItemTrigger::new(description, display_name, has_filter_options, name).with_filters(…)`.
+    pub fn new(
+        description: impl Into<String>,
+        display_name: impl Into<String>,
+        has_filter_options: bool,
+        name: impl Into<String>,
+    ) -> Self {
+        Self {
+            description: description.into(),
+            display_name: display_name.into(),
+            filters: None,
+            has_filter_options,
+            name: name.into(),
+        }
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggersListResponse2ItemTriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTriggerFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTriggerFilters {
-    pub properties: std::collections::HashMap<String, TriggersListResponse2ItemTriggerFiltersProperties>,
+    pub properties: std::collections::BTreeMap<String, TriggersListResponse2ItemTriggerFiltersProperties>,
+}
+
+impl TriggersListResponse2ItemTriggerFilters {
+    /// Creates a new `TriggersListResponse2ItemTriggerFilters` from its required fields, leaving every optional one
+    /// unset.
+    pub fn new(
+        properties: std::collections::BTreeMap<String, TriggersListResponse2ItemTriggerFiltersProperties>,
+    ) -> Self {
+        Self { properties }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -181,9 +246,9 @@ pub enum TriggersListResponse2ItemTriggerFiltersProperties {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant1::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant1 {
@@ -194,9 +259,36 @@ pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant1 {
     pub default: Option<bool>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2ItemTriggerFiltersPropertiesVariant1 {
+    /// Creates a new `TriggersListResponse2ItemTriggerFiltersPropertiesVariant1` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant1::new(r#type).with_description(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            description: None,
+            r#type: r#type.into(),
+            default: None,
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `default`, which `new` leaves unset.
+    pub fn with_default(mut self, value: bool) -> Self {
+        self.default = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant2::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant2 {
@@ -207,9 +299,36 @@ pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant2 {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2ItemTriggerFiltersPropertiesVariant2 {
+    /// Creates a new `TriggersListResponse2ItemTriggerFiltersPropertiesVariant2` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant2::new(r#type).with_description(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            description: None,
+            r#enum: None,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `enum`, which `new` leaves unset.
+    pub fn with_enum(mut self, value: Vec<String>) -> Self {
+        self.r#enum = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant3 {
@@ -219,9 +338,36 @@ pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant3 {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2ItemTriggerFiltersPropertiesVariant3 {
+    /// Creates a new `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3::new(items, r#type).with_description(…)`.
+    pub fn new(
+        items: TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items,
+        r#type: impl Into<String>,
+    ) -> Self {
+        Self {
+            description: None,
+            items,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items {
@@ -230,9 +376,29 @@ pub struct TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items {
+    /// Creates a new `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersListResponse2ItemTriggerFiltersPropertiesVariant3Items::new(r#type).with_enum(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            r#enum: None,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `enum`, which `new` leaves unset.
+    pub fn with_enum(mut self, value: Vec<String>) -> Self {
+        self.r#enum = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2 {
@@ -249,16 +415,59 @@ pub struct TriggersRetrieveResponse2 {
     #[serde(rename = "integrationType")]
     pub integration_type: TriggersRetrieveResponse2IntegrationType,
     #[serde(rename = "defaultFilters")]
-    pub default_filters: std::collections::HashMap<String, TriggersRetrieveResponse2DefaultFilters>,
+    pub default_filters: std::collections::BTreeMap<String, TriggersRetrieveResponse2DefaultFilters>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersRetrieveResponse2 {
+    /// Creates a new `TriggersRetrieveResponse2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersRetrieveResponse2::new(…).with_filters(…)`.
+    pub fn new(
+        description: impl Into<String>,
+        display_name: impl Into<String>,
+        has_filter_options: bool,
+        name: impl Into<String>,
+        integration_id: impl Into<String>,
+        integration_type: TriggersRetrieveResponse2IntegrationType,
+        default_filters: std::collections::BTreeMap<String, TriggersRetrieveResponse2DefaultFilters>,
+    ) -> Self {
+        Self {
+            description: description.into(),
+            display_name: display_name.into(),
+            filters: None,
+            has_filter_options,
+            name: name.into(),
+            integration_id: integration_id.into(),
+            integration_type,
+            default_filters,
+        }
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggersRetrieveResponse2Filters) -> Self {
+        self.filters = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2Filters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2Filters {
-    pub properties: std::collections::HashMap<String, TriggersRetrieveResponse2FiltersProperties>,
+    pub properties: std::collections::BTreeMap<String, TriggersRetrieveResponse2FiltersProperties>,
+}
+
+impl TriggersRetrieveResponse2Filters {
+    /// Creates a new `TriggersRetrieveResponse2Filters` from its required fields, leaving every optional one unset.
+    pub fn new(properties: std::collections::BTreeMap<String, TriggersRetrieveResponse2FiltersProperties>) -> Self {
+        Self { properties }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -277,9 +486,9 @@ pub enum TriggersRetrieveResponse2FiltersProperties {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2FiltersPropertiesVariant1::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2FiltersPropertiesVariant1 {
@@ -290,9 +499,36 @@ pub struct TriggersRetrieveResponse2FiltersPropertiesVariant1 {
     pub default: Option<bool>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersRetrieveResponse2FiltersPropertiesVariant1 {
+    /// Creates a new `TriggersRetrieveResponse2FiltersPropertiesVariant1` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersRetrieveResponse2FiltersPropertiesVariant1::new(r#type).with_description(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            description: None,
+            r#type: r#type.into(),
+            default: None,
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `default`, which `new` leaves unset.
+    pub fn with_default(mut self, value: bool) -> Self {
+        self.default = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2FiltersPropertiesVariant2::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2FiltersPropertiesVariant2 {
@@ -303,9 +539,36 @@ pub struct TriggersRetrieveResponse2FiltersPropertiesVariant2 {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersRetrieveResponse2FiltersPropertiesVariant2 {
+    /// Creates a new `TriggersRetrieveResponse2FiltersPropertiesVariant2` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersRetrieveResponse2FiltersPropertiesVariant2::new(r#type).with_description(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            description: None,
+            r#enum: None,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `enum`, which `new` leaves unset.
+    pub fn with_enum(mut self, value: Vec<String>) -> Self {
+        self.r#enum = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2FiltersPropertiesVariant3::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2FiltersPropertiesVariant3 {
@@ -315,15 +578,59 @@ pub struct TriggersRetrieveResponse2FiltersPropertiesVariant3 {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersRetrieveResponse2FiltersPropertiesVariant3 {
+    /// Creates a new `TriggersRetrieveResponse2FiltersPropertiesVariant3` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersRetrieveResponse2FiltersPropertiesVariant3::new(items, r#type).with_description(…)`.
+    pub fn new(items: TriggersRetrieveResponse2FiltersPropertiesVariant3Items, r#type: impl Into<String>) -> Self {
+        Self {
+            description: None,
+            items,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse2FiltersPropertiesVariant3Items::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse2FiltersPropertiesVariant3Items {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub r#enum: Option<Vec<String>>,
     pub r#type: String,
+}
+
+impl TriggersRetrieveResponse2FiltersPropertiesVariant3Items {
+    /// Creates a new `TriggersRetrieveResponse2FiltersPropertiesVariant3Items` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersRetrieveResponse2FiltersPropertiesVariant3Items::new(r#type).with_enum(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            r#enum: None,
+            r#type: r#type.into(),
+        }
+    }
+
+    /// Sets `enum`, which `new` leaves unset.
+    pub fn with_enum(mut self, value: Vec<String>) -> Self {
+        self.r#enum = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -449,9 +756,9 @@ pub enum TriggersRetrieveResponse2DefaultFilters {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListFilterOptionsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListFilterOptionsResponse {
@@ -460,12 +767,36 @@ pub struct TriggersListFilterOptionsResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListFilterOptionsResponse {
+    /// Creates a new `TriggersListFilterOptionsResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<TriggersListFilterOptionsResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListFilterOptionsResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListFilterOptionsResponseItem {
     pub value: String,
     pub label: String,
+}
+
+impl TriggersListFilterOptionsResponseItem {
+    /// Creates a new `TriggersListFilterOptionsResponseItem` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(value: impl Into<String>, label: impl Into<String>) -> Self {
+        Self {
+            value: value.into(),
+            label: label.into(),
+        }
+    }
 }

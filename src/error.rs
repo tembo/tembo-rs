@@ -44,6 +44,10 @@ pub enum Error {
     /// limit on the client builder if the API legitimately returns payloads
     /// this large. Error-response bodies are truncated at the cap instead
     /// (see [`ApiError::truncated`]) so the status is never masked.
+    ///
+    /// `#[non_exhaustive]` so a field can be added without a breaking
+    /// release: match it as `ResponseTooLarge { limit, .. }`.
+    #[non_exhaustive]
     ResponseTooLarge {
         /// The configured cap, in bytes, that the body exceeded.
         limit: usize,
@@ -67,7 +71,9 @@ pub enum Error {
     /// error cannot express. Boxed for the same reason [`Error::Api`] is: an
     /// inline [`ApiError`] would bloat every `Result` in the crate to the size
     /// of a header map. The handshake response is data, not a cause, so
-    /// `source()` is `None`.
+    /// `source()` is `None`. `#[non_exhaustive]` for the same reason as
+    /// [`Error::ResponseTooLarge`]: match it as `WebSocket { message, .. }`.
+    #[non_exhaustive]
     WebSocket {
         /// The underlying failure, rendered for logs.
         message: String,
@@ -105,6 +111,23 @@ impl std::error::Error for Error {
             Self::Serde(error) => Some(error),
             Self::ResponseTooLarge { .. } | Self::Config(_) | Self::MissingParameter(_) => None,
             Self::WebSocket { .. } => None,
+        }
+    }
+}
+
+impl Error {
+    /// The HTTP status of an API failure: `Some` for [`Error::Api`], `None` for
+    /// every other variant.
+    ///
+    /// A failure that never got a response (transport, decoding, configuration)
+    /// has no status to report.
+    /// A rejected WebSocket handshake does carry one, but on
+    /// [`Error::WebSocket`]'s `response`, which this deliberately does not reach
+    /// into: `status()` answers for the API call itself.
+    pub fn status(&self) -> Option<u16> {
+        match self {
+            Self::Api(error) => Some(error.status),
+            _ => None,
         }
     }
 }
@@ -229,6 +252,69 @@ impl ApiError {
     pub fn is_server_error(&self) -> bool {
         (500..600).contains(&self.status)
     }
+
+    /// Classifies the status into an [`ApiErrorKind`], so callers can branch on
+    /// the common failure classes without hard-coding status numbers:
+    /// `if err.kind() == ApiErrorKind::NotFound { … }`.
+    ///
+    /// The raw code stays on [`ApiError::status`] for anything the classes do
+    /// not cover; every unlisted status is [`ApiErrorKind::Other`].
+    pub fn kind(&self) -> ApiErrorKind {
+        ApiErrorKind::from_status(self.status)
+    }
+}
+
+/// Classification of an [`ApiError`] by its HTTP status.
+///
+/// One error type with a classifier, rather than one type per status, because a
+/// single `Error::Api` arm stays matchable while the kind still answers "was
+/// this a 404?" without a magic number.
+///
+/// Non-exhaustive so a status can gain its own class later without breaking
+/// callers' matches; until then it reports [`ApiErrorKind::Other`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
+pub enum ApiErrorKind {
+    /// 400 Bad Request.
+    BadRequest,
+    /// 401 Unauthorized: the credentials were missing or invalid.
+    Authentication,
+    /// 403 Forbidden: the credentials lack permission for the request.
+    PermissionDenied,
+    /// 404 Not Found.
+    NotFound,
+    /// 409 Conflict.
+    Conflict,
+    /// 422 Unprocessable Entity.
+    UnprocessableEntity,
+    /// 429 Too Many Requests.
+    RateLimit,
+    /// Any status of 500 or above.
+    InternalServer,
+    /// Any other status, including the 4xx codes without a class of their own.
+    Other,
+}
+
+impl ApiErrorKind {
+    /// Maps an HTTP status code to its kind.
+    ///
+    /// The server class is open-ended (`>= 500`), not just 500–599, so a
+    /// nonstandard 6xx-and-up status from a misbehaving proxy is still reported
+    /// as a server failure rather than [`ApiErrorKind::Other`]. That is wider
+    /// than [`ApiError::is_server_error`], which tests the 5xx range only.
+    pub(crate) fn from_status(status: u16) -> Self {
+        match status {
+            400 => Self::BadRequest,
+            401 => Self::Authentication,
+            403 => Self::PermissionDenied,
+            404 => Self::NotFound,
+            409 => Self::Conflict,
+            422 => Self::UnprocessableEntity,
+            429 => Self::RateLimit,
+            500.. => Self::InternalServer,
+            _ => Self::Other,
+        }
+    }
 }
 
 // Hand-written (not derived) so response header VALUES pass through a
@@ -322,7 +408,10 @@ fn is_sensitive_header(name: &http::header::HeaderName) -> bool {
 /// helper first (reqwest's `Error::without_url` exists for the same reason).
 /// The host and path are kept because they are what make the error
 /// diagnosable.
-pub fn redact_url(url: &str) -> String {
+///
+/// Crate-private: the redaction rules are an internal policy, not an API a
+/// caller should build on, and a public helper would freeze them.
+pub(crate) fn redact_url(url: &str) -> String {
     let url = strip_userinfo(url);
     match url.split_once('?') {
         Some((base, _)) => format!("{base}?…"),
@@ -354,7 +443,7 @@ fn strip_userinfo(url: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{ApiError, Error, redact_url};
+    use super::{ApiError, ApiErrorKind, Error, redact_url};
     use crate::transport::{TransportError, TransportErrorKind};
     use std::error::Error as _;
 
@@ -425,6 +514,58 @@ mod tests {
             assert_eq!(error.to_string(), expected);
             assert!(error.source().is_none(), "{expected} has no source");
         }
+    }
+
+    /// An API error with the given status and no body.
+    fn api_error_with_status(status: u16) -> ApiError {
+        ApiError::from_parts(status, http::HeaderMap::new(), None, b"", false)
+    }
+
+    #[test]
+    fn kind_classifies_every_mapped_status() {
+        let cases = [
+            (400, ApiErrorKind::BadRequest),
+            (401, ApiErrorKind::Authentication),
+            (403, ApiErrorKind::PermissionDenied),
+            (404, ApiErrorKind::NotFound),
+            (409, ApiErrorKind::Conflict),
+            (422, ApiErrorKind::UnprocessableEntity),
+            (429, ApiErrorKind::RateLimit),
+            (500, ApiErrorKind::InternalServer),
+            (502, ApiErrorKind::InternalServer),
+            (503, ApiErrorKind::InternalServer),
+            (599, ApiErrorKind::InternalServer),
+            // Open-ended, so a nonstandard status past 599 is still a server failure.
+            (600, ApiErrorKind::InternalServer),
+        ];
+        for (status, expected) in cases {
+            assert_eq!(api_error_with_status(status).kind(), expected, "status {status}");
+            assert_eq!(ApiErrorKind::from_status(status), expected, "status {status}");
+        }
+    }
+
+    #[test]
+    fn kind_reports_unlisted_statuses_as_other() {
+        for status in [100, 200, 302, 402, 405, 408, 410, 418, 451, 499] {
+            assert_eq!(
+                api_error_with_status(status).kind(),
+                ApiErrorKind::Other,
+                "status {status}"
+            );
+        }
+    }
+
+    #[test]
+    fn error_status_is_the_api_status_and_none_otherwise() {
+        assert_eq!(Error::from(api_error_with_status(404)).status(), Some(404));
+        assert_eq!(Error::from(api_error_with_status(503)).status(), Some(503));
+        assert_eq!(Error::Config("bad base url".to_owned()).status(), None);
+        assert_eq!(Error::MissingParameter("pet_id").status(), None);
+        assert_eq!(Error::ResponseTooLarge { limit: 1 }.status(), None);
+        assert_eq!(
+            Error::from(TransportError::msg(TransportErrorKind::Body, "short read")).status(),
+            None
+        );
     }
 
     #[test]

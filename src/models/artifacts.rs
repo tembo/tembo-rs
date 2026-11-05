@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsListResponse {
@@ -16,9 +15,19 @@ pub struct ArtifactsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ArtifactsListResponse {
+    /// Creates a new `ArtifactsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<ArtifactsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsListResponseItem {
@@ -59,6 +68,59 @@ pub struct ArtifactsListResponseItem {
     #[serde(rename = "sourceUrl", default)]
     pub source_url: Option<String>,
     pub title: String,
+}
+
+impl ArtifactsListResponseItem {
+    /// Creates a new `ArtifactsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        session_id: impl Into<String>,
+        r#type: ArtifactsListResponseItemType,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        asset_id: Option<String>,
+        asset_url: Option<String>,
+        category: Option<ArtifactsListResponseItemCategory>,
+        content_type: Option<String>,
+        description: Option<String>,
+        file_kind: ArtifactsListResponseItemFileKind,
+        file_name: Option<String>,
+        output_type: Option<ArtifactsListResponseItemOutputType>,
+        related_pull_request_urls: Vec<String>,
+        runtime: Option<ArtifactsListResponseItemRuntime>,
+        service_port: Option<i64>,
+        service_url: Option<String>,
+        size_bytes: Option<i64>,
+        source_url: Option<String>,
+        title: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            session_id: session_id.into(),
+            r#type,
+            updated_at,
+            asset_id,
+            asset_url,
+            category,
+            content_type,
+            description,
+            file_kind,
+            file_name,
+            output_type,
+            related_pull_request_urls,
+            runtime,
+            service_port,
+            service_url,
+            size_bytes,
+            source_url,
+            title: title.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -346,9 +408,9 @@ impl From<&str> for ArtifactsListResponseItemOutputType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsListResponseItemRuntime::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsListResponseItemRuntime {
@@ -360,9 +422,23 @@ pub struct ArtifactsListResponseItemRuntime {
     pub service_type: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ArtifactsListResponseItemRuntime {
+    /// Creates a new `ArtifactsListResponseItemRuntime` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(hostname: Option<String>, service_name: Option<String>, service_type: Option<String>) -> Self {
+        Self {
+            hostname,
+            service_name,
+            service_type,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsCreateResponse {
@@ -404,6 +480,61 @@ pub struct ArtifactsCreateResponse {
     #[serde(rename = "sourceUrl", default)]
     pub source_url: Option<String>,
     pub title: String,
+}
+
+impl ArtifactsCreateResponse {
+    /// Creates a new `ArtifactsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        session_id: impl Into<String>,
+        r#type: ArtifactsCreateResponseType,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        asset_id: Option<String>,
+        asset_url: Option<String>,
+        category: Option<ArtifactsCreateResponseCategory>,
+        content: impl Into<String>,
+        content_type: Option<String>,
+        description: Option<String>,
+        file_kind: ArtifactsCreateResponseFileKind,
+        file_name: Option<String>,
+        output_type: Option<ArtifactsCreateResponseOutputType>,
+        related_pull_request_urls: Vec<String>,
+        runtime: Option<ArtifactsCreateResponseRuntime>,
+        service_port: Option<i64>,
+        service_url: Option<String>,
+        size_bytes: Option<i64>,
+        source_url: Option<String>,
+        title: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            session_id: session_id.into(),
+            r#type,
+            updated_at,
+            asset_id,
+            asset_url,
+            category,
+            content: content.into(),
+            content_type,
+            description,
+            file_kind,
+            file_name,
+            output_type,
+            related_pull_request_urls,
+            runtime,
+            service_port,
+            service_url,
+            size_bytes,
+            source_url,
+            title: title.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -691,9 +822,9 @@ impl From<&str> for ArtifactsCreateResponseOutputType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateResponseRuntime::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsCreateResponseRuntime {
@@ -705,7 +836,24 @@ pub struct ArtifactsCreateResponseRuntime {
     pub service_type: Option<String>,
 }
 
+impl ArtifactsCreateResponseRuntime {
+    /// Creates a new `ArtifactsCreateResponseRuntime` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(hostname: Option<String>, service_name: Option<String>, service_type: Option<String>) -> Self {
+        Self {
+            hostname,
+            service_name,
+            service_type,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBody {
     /// Human-readable title for the artifact.
     pub title: String,
@@ -728,8 +876,11 @@ pub struct ArtifactsCreateBody {
 impl ArtifactsCreateBody {
     /// Creates a new `ArtifactsCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBody { description: Some(…), ..ArtifactsCreateBody::new(title, output, session_id) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBody::new(title, output, session_id).with_description(…)`.
     pub fn new(title: impl Into<String>, output: ArtifactsCreateBodyOutput, session_id: impl Into<String>) -> Self {
         Self {
             title: title.into(),
@@ -739,6 +890,24 @@ impl ArtifactsCreateBody {
             related_pull_request_urls: None,
             session_id: session_id.into(),
         }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `category`, which `new` leaves unset.
+    pub fn with_category(mut self, value: ArtifactsCreateBodyCategory) -> Self {
+        self.category = Some(value);
+        self
+    }
+
+    /// Sets `related_pull_request_urls`, which `new` leaves unset.
+    pub fn with_related_pull_request_urls(mut self, value: Vec<String>) -> Self {
+        self.related_pull_request_urls = Some(value);
+        self
     }
 }
 
@@ -871,7 +1040,11 @@ pub enum ArtifactsCreateBodyOutput {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBodyOutputVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBodyOutputVariant1 {
     pub r#type: String,
     /// Complete self-contained HTML document. Inline CSS and JavaScript are allowed. Do not depend on external network assets. Must be at most 5242880 bytes after UTF-8 encoding.
@@ -884,8 +1057,11 @@ pub struct ArtifactsCreateBodyOutputVariant1 {
 impl ArtifactsCreateBodyOutputVariant1 {
     /// Creates a new `ArtifactsCreateBodyOutputVariant1` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBodyOutputVariant1 { file_name: Some(…), ..ArtifactsCreateBodyOutputVariant1::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBodyOutputVariant1::new(r#type, content).with_file_name(…)`.
     pub fn new(r#type: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
@@ -893,9 +1069,19 @@ impl ArtifactsCreateBodyOutputVariant1 {
             file_name: None,
         }
     }
+
+    /// Sets `file_name`, which `new` leaves unset.
+    pub fn with_file_name(mut self, value: impl Into<String>) -> Self {
+        self.file_name = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBodyOutputVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBodyOutputVariant2 {
     pub r#type: String,
     /// Markdown content for a readable report, checklist, walkthrough, or notes artifact. Must be at most 5242880 bytes after UTF-8 encoding.
@@ -908,8 +1094,11 @@ pub struct ArtifactsCreateBodyOutputVariant2 {
 impl ArtifactsCreateBodyOutputVariant2 {
     /// Creates a new `ArtifactsCreateBodyOutputVariant2` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBodyOutputVariant2 { file_name: Some(…), ..ArtifactsCreateBodyOutputVariant2::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBodyOutputVariant2::new(r#type, content).with_file_name(…)`.
     pub fn new(r#type: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
@@ -917,9 +1106,19 @@ impl ArtifactsCreateBodyOutputVariant2 {
             file_name: None,
         }
     }
+
+    /// Sets `file_name`, which `new` leaves unset.
+    pub fn with_file_name(mut self, value: impl Into<String>) -> Self {
+        self.file_name = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBodyOutputVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBodyOutputVariant3 {
     pub r#type: String,
     /// JSON text for structured data, diagnostics, or machine-readable findings. Send the JSON as a string, not as an object. Must be at most 5242880 bytes after UTF-8 encoding.
@@ -932,8 +1131,11 @@ pub struct ArtifactsCreateBodyOutputVariant3 {
 impl ArtifactsCreateBodyOutputVariant3 {
     /// Creates a new `ArtifactsCreateBodyOutputVariant3` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBodyOutputVariant3 { file_name: Some(…), ..ArtifactsCreateBodyOutputVariant3::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBodyOutputVariant3::new(r#type, content).with_file_name(…)`.
     pub fn new(r#type: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
@@ -941,9 +1143,19 @@ impl ArtifactsCreateBodyOutputVariant3 {
             file_name: None,
         }
     }
+
+    /// Sets `file_name`, which `new` leaves unset.
+    pub fn with_file_name(mut self, value: impl Into<String>) -> Self {
+        self.file_name = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBodyOutputVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBodyOutputVariant4 {
     pub r#type: String,
     /// CSV content for audits, tables, inventories, reports, and spreadsheet-friendly exports. Must be at most 5242880 bytes after UTF-8 encoding.
@@ -956,8 +1168,11 @@ pub struct ArtifactsCreateBodyOutputVariant4 {
 impl ArtifactsCreateBodyOutputVariant4 {
     /// Creates a new `ArtifactsCreateBodyOutputVariant4` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBodyOutputVariant4 { file_name: Some(…), ..ArtifactsCreateBodyOutputVariant4::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBodyOutputVariant4::new(r#type, content).with_file_name(…)`.
     pub fn new(r#type: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
@@ -965,9 +1180,19 @@ impl ArtifactsCreateBodyOutputVariant4 {
             file_name: None,
         }
     }
+
+    /// Sets `file_name`, which `new` leaves unset.
+    pub fn with_file_name(mut self, value: impl Into<String>) -> Self {
+        self.file_name = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsCreateBodyOutputVariant5::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ArtifactsCreateBodyOutputVariant5 {
     pub r#type: String,
     /// ID of an existing uploaded Tembo asset.
@@ -981,8 +1206,11 @@ pub struct ArtifactsCreateBodyOutputVariant5 {
 impl ArtifactsCreateBodyOutputVariant5 {
     /// Creates a new `ArtifactsCreateBodyOutputVariant5` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ArtifactsCreateBodyOutputVariant5 { file_name: Some(…), ..ArtifactsCreateBodyOutputVariant5::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ArtifactsCreateBodyOutputVariant5::new(r#type, asset_id).with_file_name(…)`.
     pub fn new(r#type: impl Into<String>, asset_id: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
@@ -990,11 +1218,17 @@ impl ArtifactsCreateBodyOutputVariant5 {
             file_name: None,
         }
     }
+
+    /// Sets `file_name`, which `new` leaves unset.
+    pub fn with_file_name(mut self, value: impl Into<String>) -> Self {
+        self.file_name = Some(value.into());
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsRetrieveResponse {
@@ -1036,6 +1270,61 @@ pub struct ArtifactsRetrieveResponse {
     #[serde(rename = "sourceUrl", default)]
     pub source_url: Option<String>,
     pub title: String,
+}
+
+impl ArtifactsRetrieveResponse {
+    /// Creates a new `ArtifactsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        session_id: impl Into<String>,
+        r#type: ArtifactsRetrieveResponseType,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        asset_id: Option<String>,
+        asset_url: Option<String>,
+        category: Option<ArtifactsRetrieveResponseCategory>,
+        content: impl Into<String>,
+        content_type: Option<String>,
+        description: Option<String>,
+        file_kind: ArtifactsRetrieveResponseFileKind,
+        file_name: Option<String>,
+        output_type: Option<ArtifactsRetrieveResponseOutputType>,
+        related_pull_request_urls: Vec<String>,
+        runtime: Option<ArtifactsRetrieveResponseRuntime>,
+        service_port: Option<i64>,
+        service_url: Option<String>,
+        size_bytes: Option<i64>,
+        source_url: Option<String>,
+        title: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            session_id: session_id.into(),
+            r#type,
+            updated_at,
+            asset_id,
+            asset_url,
+            category,
+            content: content.into(),
+            content_type,
+            description,
+            file_kind,
+            file_name,
+            output_type,
+            related_pull_request_urls,
+            runtime,
+            service_port,
+            service_url,
+            size_bytes,
+            source_url,
+            title: title.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1323,9 +1612,9 @@ impl From<&str> for ArtifactsRetrieveResponseOutputType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsRetrieveResponseRuntime::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsRetrieveResponseRuntime {
@@ -1337,12 +1626,36 @@ pub struct ArtifactsRetrieveResponseRuntime {
     pub service_type: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ArtifactsRetrieveResponseRuntime {
+    /// Creates a new `ArtifactsRetrieveResponseRuntime` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(hostname: Option<String>, service_name: Option<String>, service_type: Option<String>) -> Self {
+        Self {
+            hostname,
+            service_name,
+            service_type,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ArtifactsDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl ArtifactsDeleteResponse {
+    /// Creates a new `ArtifactsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

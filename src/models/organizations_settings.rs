@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse {
@@ -16,9 +16,22 @@ pub struct SettingsRetrieveResponse {
     pub settings: SettingsRetrieveResponseSettings,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SettingsRetrieveResponse {
+    /// Creates a new `SettingsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(organization_id: impl Into<String>, settings: SettingsRetrieveResponseSettings) -> Self {
+        Self {
+            organization_id: organization_id.into(),
+            settings,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponseSettings::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponseSettings {
@@ -110,6 +123,77 @@ pub struct SettingsRetrieveResponseSettings {
     pub weekly_report_enabled: bool,
 }
 
+impl SettingsRetrieveResponseSettings {
+    /// Creates a new `SettingsRetrieveResponseSettings` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        clone_depth: i64,
+        commit_instructions: impl Into<String>,
+        custom_system_prompt: impl Into<String>,
+        default_agent: impl Into<String>,
+        default_keep_alive_minutes: i64,
+        default_sandbox_size: SettingsRetrieveResponseSettingsDefaultSandboxSize,
+        delete_branch_when_pr_closed: bool,
+        draft_prs: bool,
+        enable_coderabbit_bot: bool,
+        enable_cursor_bot: bool,
+        enable_gemini_code_assist_bot: bool,
+        enable_github_actions_bot: bool,
+        enable_graphite_bot: bool,
+        enable_greptile_bot: bool,
+        experimental_mcp: bool,
+        fallback_to_api_on_subscription_limit: bool,
+        feature_mention_author: bool,
+        max_bot_reviews: i64,
+        max_solutions: i64,
+        on_demand_max_credit_usage: f64,
+        pg_stat_statements_reset_frequency: impl Into<String>,
+        pm_system_prompt: impl Into<String>,
+        pr_title_instructions: impl Into<String>,
+        pull_request_insights_enabled: bool,
+        should_sign_commits: bool,
+        slack_review_on_tembo: bool,
+        slow_query_threshold_ms: f64,
+        ssh_public_keys: impl Into<String>,
+        weekly_report_enabled: bool,
+    ) -> Self {
+        Self {
+            clone_depth,
+            commit_instructions: commit_instructions.into(),
+            custom_system_prompt: custom_system_prompt.into(),
+            default_agent: default_agent.into(),
+            default_keep_alive_minutes,
+            default_sandbox_size,
+            delete_branch_when_pr_closed,
+            draft_prs,
+            enable_coderabbit_bot,
+            enable_cursor_bot,
+            enable_gemini_code_assist_bot,
+            enable_github_actions_bot,
+            enable_graphite_bot,
+            enable_greptile_bot,
+            experimental_mcp,
+            fallback_to_api_on_subscription_limit,
+            feature_mention_author,
+            max_bot_reviews,
+            max_solutions,
+            on_demand_max_credit_usage,
+            pg_stat_statements_reset_frequency: pg_stat_statements_reset_frequency.into(),
+            pm_system_prompt: pm_system_prompt.into(),
+            pr_title_instructions: pr_title_instructions.into(),
+            pull_request_insights_enabled,
+            should_sign_commits,
+            slack_review_on_tembo,
+            slow_query_threshold_ms,
+            ssh_public_keys: ssh_public_keys.into(),
+            weekly_report_enabled,
+        }
+    }
+}
+
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
 /// this SDK version does not know. Matching `Unknown(_)` directly is an
 /// anti-pattern: that arm silently stops matching once a future SDK release
@@ -177,9 +261,8 @@ impl From<&str> for SettingsRetrieveResponseSettingsDefaultSandboxSize {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse {
@@ -188,9 +271,22 @@ pub struct SettingsUpdateResponse {
     pub settings: SettingsUpdateResponseSettings,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SettingsUpdateResponse {
+    /// Creates a new `SettingsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(organization_id: impl Into<String>, settings: SettingsUpdateResponseSettings) -> Self {
+        Self {
+            organization_id: organization_id.into(),
+            settings,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponseSettings::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponseSettings {
@@ -282,6 +378,77 @@ pub struct SettingsUpdateResponseSettings {
     pub weekly_report_enabled: bool,
 }
 
+impl SettingsUpdateResponseSettings {
+    /// Creates a new `SettingsUpdateResponseSettings` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        clone_depth: i64,
+        commit_instructions: impl Into<String>,
+        custom_system_prompt: impl Into<String>,
+        default_agent: impl Into<String>,
+        default_keep_alive_minutes: i64,
+        default_sandbox_size: SettingsUpdateResponseSettingsDefaultSandboxSize,
+        delete_branch_when_pr_closed: bool,
+        draft_prs: bool,
+        enable_coderabbit_bot: bool,
+        enable_cursor_bot: bool,
+        enable_gemini_code_assist_bot: bool,
+        enable_github_actions_bot: bool,
+        enable_graphite_bot: bool,
+        enable_greptile_bot: bool,
+        experimental_mcp: bool,
+        fallback_to_api_on_subscription_limit: bool,
+        feature_mention_author: bool,
+        max_bot_reviews: i64,
+        max_solutions: i64,
+        on_demand_max_credit_usage: f64,
+        pg_stat_statements_reset_frequency: impl Into<String>,
+        pm_system_prompt: impl Into<String>,
+        pr_title_instructions: impl Into<String>,
+        pull_request_insights_enabled: bool,
+        should_sign_commits: bool,
+        slack_review_on_tembo: bool,
+        slow_query_threshold_ms: f64,
+        ssh_public_keys: impl Into<String>,
+        weekly_report_enabled: bool,
+    ) -> Self {
+        Self {
+            clone_depth,
+            commit_instructions: commit_instructions.into(),
+            custom_system_prompt: custom_system_prompt.into(),
+            default_agent: default_agent.into(),
+            default_keep_alive_minutes,
+            default_sandbox_size,
+            delete_branch_when_pr_closed,
+            draft_prs,
+            enable_coderabbit_bot,
+            enable_cursor_bot,
+            enable_gemini_code_assist_bot,
+            enable_github_actions_bot,
+            enable_graphite_bot,
+            enable_greptile_bot,
+            experimental_mcp,
+            fallback_to_api_on_subscription_limit,
+            feature_mention_author,
+            max_bot_reviews,
+            max_solutions,
+            on_demand_max_credit_usage,
+            pg_stat_statements_reset_frequency: pg_stat_statements_reset_frequency.into(),
+            pm_system_prompt: pm_system_prompt.into(),
+            pr_title_instructions: pr_title_instructions.into(),
+            pull_request_insights_enabled,
+            should_sign_commits,
+            slack_review_on_tembo,
+            slow_query_threshold_ms,
+            ssh_public_keys: ssh_public_keys.into(),
+            weekly_report_enabled,
+        }
+    }
+}
+
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
 /// this SDK version does not know. Matching `Unknown(_)` directly is an
 /// anti-pattern: that arm silently stops matching once a future SDK release
@@ -349,7 +516,13 @@ impl From<&str> for SettingsUpdateResponseSettingsDefaultSandboxSize {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody {
     /// API key for Amp agent access.
     #[serde(rename = "ampApiKey", default, skip_serializing_if = "Option::is_none")]
@@ -502,6 +675,297 @@ pub struct SettingsUpdateBody {
     pub weekly_report_enabled: Option<bool>,
 }
 
+impl SettingsUpdateBody {
+    /// Creates a new `SettingsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody::new().with_amp_api_key(…)`.
+    pub fn new() -> Self {
+        Self {
+            amp_api_key: None,
+            anthropic_api_key: None,
+            aws_bedrock_access_key_id: None,
+            aws_bedrock_region: None,
+            aws_bedrock_secret_access_key: None,
+            clone_depth: None,
+            commit_instructions: None,
+            cursor_api_key: None,
+            custom_system_prompt: None,
+            default_agent: None,
+            default_keep_alive_minutes: None,
+            default_sandbox_size: None,
+            delete_branch_when_pr_closed: None,
+            draft_prs: None,
+            enable_coderabbit_bot: None,
+            enable_cursor_bot: None,
+            enable_gemini_code_assist_bot: None,
+            enable_github_actions_bot: None,
+            enable_graphite_bot: None,
+            enable_greptile_bot: None,
+            experimental_mcp: None,
+            feature_mention_author: None,
+            gcp_vertex_ai_location: None,
+            gcp_vertex_ai_project: None,
+            gcp_vertex_ai_service_account_json: None,
+            kernel_api_key: None,
+            max_bot_reviews: None,
+            max_solutions: None,
+            openai_api_key: None,
+            xai_api_key: None,
+            openrouter_api_key: None,
+            pg_stat_statements_reset_frequency: None,
+            pm_system_prompt: None,
+            pr_title_instructions: None,
+            pull_request_insights_enabled: None,
+            should_sign_commits: None,
+            slack_review_on_tembo: None,
+            slow_query_threshold_ms: None,
+            ssh_public_keys: None,
+            weekly_report_enabled: None,
+        }
+    }
+
+    /// Sets `amp_api_key`, which `new` leaves unset.
+    pub fn with_amp_api_key(mut self, value: impl Into<String>) -> Self {
+        self.amp_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `anthropic_api_key`, which `new` leaves unset.
+    pub fn with_anthropic_api_key(mut self, value: impl Into<String>) -> Self {
+        self.anthropic_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `aws_bedrock_access_key_id`, which `new` leaves unset.
+    pub fn with_aws_bedrock_access_key_id(mut self, value: impl Into<String>) -> Self {
+        self.aws_bedrock_access_key_id = Some(value.into());
+        self
+    }
+
+    /// Sets `aws_bedrock_region`, which `new` leaves unset.
+    pub fn with_aws_bedrock_region(mut self, value: impl Into<String>) -> Self {
+        self.aws_bedrock_region = Some(value.into());
+        self
+    }
+
+    /// Sets `aws_bedrock_secret_access_key`, which `new` leaves unset.
+    pub fn with_aws_bedrock_secret_access_key(mut self, value: impl Into<String>) -> Self {
+        self.aws_bedrock_secret_access_key = Some(value.into());
+        self
+    }
+
+    /// Sets `clone_depth`, which `new` leaves unset.
+    pub fn with_clone_depth(mut self, value: i64) -> Self {
+        self.clone_depth = Some(value);
+        self
+    }
+
+    /// Sets `commit_instructions`, which `new` leaves unset.
+    pub fn with_commit_instructions(mut self, value: impl Into<String>) -> Self {
+        self.commit_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `cursor_api_key`, which `new` leaves unset.
+    pub fn with_cursor_api_key(mut self, value: impl Into<String>) -> Self {
+        self.cursor_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `default_keep_alive_minutes`, which `new` leaves unset.
+    pub fn with_default_keep_alive_minutes(mut self, value: i64) -> Self {
+        self.default_keep_alive_minutes = Some(value);
+        self
+    }
+
+    /// Sets `default_sandbox_size`, which `new` leaves unset.
+    pub fn with_default_sandbox_size(mut self, value: SettingsUpdateBodyDefaultSandboxSize) -> Self {
+        self.default_sandbox_size = Some(value);
+        self
+    }
+
+    /// Sets `delete_branch_when_pr_closed`, which `new` leaves unset.
+    pub fn with_delete_branch_when_pr_closed(mut self, value: bool) -> Self {
+        self.delete_branch_when_pr_closed = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+
+    /// Sets `enable_coderabbit_bot`, which `new` leaves unset.
+    pub fn with_enable_coderabbit_bot(mut self, value: bool) -> Self {
+        self.enable_coderabbit_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_cursor_bot`, which `new` leaves unset.
+    pub fn with_enable_cursor_bot(mut self, value: bool) -> Self {
+        self.enable_cursor_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_gemini_code_assist_bot`, which `new` leaves unset.
+    pub fn with_enable_gemini_code_assist_bot(mut self, value: bool) -> Self {
+        self.enable_gemini_code_assist_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_github_actions_bot`, which `new` leaves unset.
+    pub fn with_enable_github_actions_bot(mut self, value: bool) -> Self {
+        self.enable_github_actions_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_graphite_bot`, which `new` leaves unset.
+    pub fn with_enable_graphite_bot(mut self, value: bool) -> Self {
+        self.enable_graphite_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_greptile_bot`, which `new` leaves unset.
+    pub fn with_enable_greptile_bot(mut self, value: bool) -> Self {
+        self.enable_greptile_bot = Some(value);
+        self
+    }
+
+    /// Sets `experimental_mcp`, which `new` leaves unset.
+    pub fn with_experimental_mcp(mut self, value: bool) -> Self {
+        self.experimental_mcp = Some(value);
+        self
+    }
+
+    /// Sets `feature_mention_author`, which `new` leaves unset.
+    pub fn with_feature_mention_author(mut self, value: bool) -> Self {
+        self.feature_mention_author = Some(value);
+        self
+    }
+
+    /// Sets `gcp_vertex_ai_location`, which `new` leaves unset.
+    pub fn with_gcp_vertex_ai_location(mut self, value: impl Into<String>) -> Self {
+        self.gcp_vertex_ai_location = Some(value.into());
+        self
+    }
+
+    /// Sets `gcp_vertex_ai_project`, which `new` leaves unset.
+    pub fn with_gcp_vertex_ai_project(mut self, value: impl Into<String>) -> Self {
+        self.gcp_vertex_ai_project = Some(value.into());
+        self
+    }
+
+    /// Sets `gcp_vertex_ai_service_account_json`, which `new` leaves unset.
+    pub fn with_gcp_vertex_ai_service_account_json(mut self, value: impl Into<String>) -> Self {
+        self.gcp_vertex_ai_service_account_json = Some(value.into());
+        self
+    }
+
+    /// Sets `kernel_api_key`, which `new` leaves unset.
+    pub fn with_kernel_api_key(mut self, value: impl Into<String>) -> Self {
+        self.kernel_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `max_bot_reviews`, which `new` leaves unset.
+    pub fn with_max_bot_reviews(mut self, value: i64) -> Self {
+        self.max_bot_reviews = Some(value);
+        self
+    }
+
+    /// Sets `max_solutions`, which `new` leaves unset.
+    pub fn with_max_solutions(mut self, value: i64) -> Self {
+        self.max_solutions = Some(value);
+        self
+    }
+
+    /// Sets `openai_api_key`, which `new` leaves unset.
+    pub fn with_openai_api_key(mut self, value: impl Into<String>) -> Self {
+        self.openai_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `xai_api_key`, which `new` leaves unset.
+    pub fn with_xai_api_key(mut self, value: impl Into<String>) -> Self {
+        self.xai_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `openrouter_api_key`, which `new` leaves unset.
+    pub fn with_openrouter_api_key(mut self, value: impl Into<String>) -> Self {
+        self.openrouter_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `pg_stat_statements_reset_frequency`, which `new` leaves unset.
+    pub fn with_pg_stat_statements_reset_frequency(mut self, value: impl Into<String>) -> Self {
+        self.pg_stat_statements_reset_frequency = Some(value.into());
+        self
+    }
+
+    /// Sets `pm_system_prompt`, which `new` leaves unset.
+    pub fn with_pm_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.pm_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `pr_title_instructions`, which `new` leaves unset.
+    pub fn with_pr_title_instructions(mut self, value: impl Into<String>) -> Self {
+        self.pr_title_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `pull_request_insights_enabled`, which `new` leaves unset.
+    pub fn with_pull_request_insights_enabled(mut self, value: bool) -> Self {
+        self.pull_request_insights_enabled = Some(value);
+        self
+    }
+
+    /// Sets `should_sign_commits`, which `new` leaves unset.
+    pub fn with_should_sign_commits(mut self, value: bool) -> Self {
+        self.should_sign_commits = Some(value);
+        self
+    }
+
+    /// Sets `slack_review_on_tembo`, which `new` leaves unset.
+    pub fn with_slack_review_on_tembo(mut self, value: bool) -> Self {
+        self.slack_review_on_tembo = Some(value);
+        self
+    }
+
+    /// Sets `slow_query_threshold_ms`, which `new` leaves unset.
+    pub fn with_slow_query_threshold_ms(mut self, value: f64) -> Self {
+        self.slow_query_threshold_ms = Some(value);
+        self
+    }
+
+    /// Sets `ssh_public_keys`, which `new` leaves unset.
+    pub fn with_ssh_public_keys(mut self, value: impl Into<String>) -> Self {
+        self.ssh_public_keys = Some(value.into());
+        self
+    }
+
+    /// Sets `weekly_report_enabled`, which `new` leaves unset.
+    pub fn with_weekly_report_enabled(mut self, value: bool) -> Self {
+        self.weekly_report_enabled = Some(value);
+        self
+    }
+}
+
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
 /// this SDK version does not know. Matching `Unknown(_)` directly is an
 /// anti-pattern: that arm silently stops matching once a future SDK release
@@ -569,14 +1033,21 @@ impl From<&str> for SettingsUpdateBodyDefaultSandboxSize {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsValidateCredentialsResponse {
     /// Whether the supplied credentials passed provider validation.
     pub valid: bool,
+}
+
+impl SettingsValidateCredentialsResponse {
+    /// Creates a new `SettingsValidateCredentialsResponse` from its required fields, leaving every optional one unset.
+    pub fn new(valid: bool) -> Self {
+        Self { valid }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -598,7 +1069,11 @@ pub enum SettingsValidateCredentialsBody {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant1 {
     /// Validate Anthropic API credentials without saving them.
     pub provider: String,
@@ -607,7 +1082,25 @@ pub struct SettingsValidateCredentialsBodyVariant1 {
     pub api_key: String,
 }
 
+impl SettingsValidateCredentialsBodyVariant1 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant1` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(provider: impl Into<String>, api_key: impl Into<String>) -> Self {
+        Self {
+            provider: provider.into(),
+            api_key: api_key.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant2 {
     /// Validate OpenAI API credentials without saving them.
     pub provider: String,
@@ -616,7 +1109,25 @@ pub struct SettingsValidateCredentialsBodyVariant2 {
     pub api_key: String,
 }
 
+impl SettingsValidateCredentialsBodyVariant2 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant2` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(provider: impl Into<String>, api_key: impl Into<String>) -> Self {
+        Self {
+            provider: provider.into(),
+            api_key: api_key.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant3 {
     /// Validate xAI API credentials without saving them.
     pub provider: String,
@@ -625,7 +1136,25 @@ pub struct SettingsValidateCredentialsBodyVariant3 {
     pub api_key: String,
 }
 
+impl SettingsValidateCredentialsBodyVariant3 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant3` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(provider: impl Into<String>, api_key: impl Into<String>) -> Self {
+        Self {
+            provider: provider.into(),
+            api_key: api_key.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant4 {
     /// Validate OpenRouter API credentials without saving them.
     pub provider: String,
@@ -634,7 +1163,25 @@ pub struct SettingsValidateCredentialsBodyVariant4 {
     pub api_key: String,
 }
 
+impl SettingsValidateCredentialsBodyVariant4 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant4` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(provider: impl Into<String>, api_key: impl Into<String>) -> Self {
+        Self {
+            provider: provider.into(),
+            api_key: api_key.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant5::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant5 {
     /// Validate AWS Bedrock credentials without saving them.
     pub provider: String,
@@ -648,7 +1195,32 @@ pub struct SettingsValidateCredentialsBodyVariant5 {
     pub region: String,
 }
 
+impl SettingsValidateCredentialsBodyVariant5 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant5` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        provider: impl Into<String>,
+        access_key_id: impl Into<String>,
+        secret_access_key: impl Into<String>,
+        region: impl Into<String>,
+    ) -> Self {
+        Self {
+            provider: provider.into(),
+            access_key_id: access_key_id.into(),
+            secret_access_key: secret_access_key.into(),
+            region: region.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant6::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsValidateCredentialsBodyVariant6 {
     /// Validate Google Cloud Vertex AI credentials without saving them.
     pub provider: String,
@@ -659,4 +1231,25 @@ pub struct SettingsValidateCredentialsBodyVariant6 {
     pub project: String,
     /// The Vertex AI location.
     pub location: String,
+}
+
+impl SettingsValidateCredentialsBodyVariant6 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant6` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        provider: impl Into<String>,
+        service_account_json: impl Into<String>,
+        project: impl Into<String>,
+        location: impl Into<String>,
+    ) -> Self {
+        Self {
+            provider: provider.into(),
+            service_account_json: service_account_json.into(),
+            project: project.into(),
+            location: location.into(),
+        }
+    }
 }

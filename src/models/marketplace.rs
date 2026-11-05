@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MarketplaceListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MarketplaceListResponse {
@@ -17,9 +17,19 @@ pub struct MarketplaceListResponse {
     pub next_cursor: serde_json::Value,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MarketplaceListResponse {
+    /// Creates a new `MarketplaceListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<MarketplaceListResponseItem>, next_cursor: serde_json::Value) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MarketplaceListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MarketplaceListResponseItem {
@@ -28,6 +38,26 @@ pub struct MarketplaceListResponseItem {
     pub skill_id: String,
     pub name: String,
     pub installs: i64,
+}
+
+impl MarketplaceListResponseItem {
+    /// Creates a new `MarketplaceListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        source: MarketplaceListResponseItemSource,
+        skill_id: impl Into<String>,
+        name: impl Into<String>,
+        installs: i64,
+    ) -> Self {
+        Self {
+            source,
+            skill_id: skill_id.into(),
+            name: name.into(),
+            installs,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -45,9 +75,9 @@ pub enum MarketplaceListResponseItemSource {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MarketplaceRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MarketplaceRetrieveResponse {
@@ -56,6 +86,26 @@ pub struct MarketplaceRetrieveResponse {
     pub skill_id: String,
     pub files: Vec<MarketplaceRetrieveResponseFile>,
     pub hash: String,
+}
+
+impl MarketplaceRetrieveResponse {
+    /// Creates a new `MarketplaceRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        source: MarketplaceRetrieveResponseSource,
+        skill_id: impl Into<String>,
+        files: Vec<MarketplaceRetrieveResponseFile>,
+        hash: impl Into<String>,
+    ) -> Self {
+        Self {
+            source,
+            skill_id: skill_id.into(),
+            files,
+            hash: hash.into(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -73,9 +123,9 @@ pub enum MarketplaceRetrieveResponseSource {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MarketplaceRetrieveResponseFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MarketplaceRetrieveResponseFile {
@@ -83,4 +133,17 @@ pub struct MarketplaceRetrieveResponseFile {
     pub content: String,
     /// Relative file path within the skill, such as SKILL.md.
     pub filename: String,
+}
+
+impl MarketplaceRetrieveResponseFile {
+    /// Creates a new `MarketplaceRetrieveResponseFile` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(content: impl Into<String>, filename: impl Into<String>) -> Self {
+        Self {
+            content: content.into(),
+            filename: filename.into(),
+        }
+    }
 }

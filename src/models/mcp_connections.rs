@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsListResponse {
@@ -16,9 +16,19 @@ pub struct McpConnectionsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl McpConnectionsListResponse {
+    /// Creates a new `McpConnectionsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<McpConnectionsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsListResponseItem {
@@ -35,6 +45,30 @@ pub struct McpConnectionsListResponseItem {
     pub r#type: McpConnectionsListResponseItemType,
     /// shared makes the connection available to the organization; personal restricts it to its owner.
     pub visibility: McpConnectionsListResponseItemVisibility,
+}
+
+impl McpConnectionsListResponseItem {
+    /// Creates a new `McpConnectionsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        connected_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        server_url: Option<String>,
+        r#type: McpConnectionsListResponseItemType,
+        visibility: McpConnectionsListResponseItemVisibility,
+    ) -> Self {
+        Self {
+            connected_at,
+            id: id.into(),
+            name: name.into(),
+            server_url,
+            r#type,
+            visibility,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -123,9 +157,9 @@ impl From<&str> for McpConnectionsListResponseItemVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsCreateResponse {
@@ -134,9 +168,22 @@ pub struct McpConnectionsCreateResponse {
     pub connection: McpConnectionsCreateResponseConnection,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl McpConnectionsCreateResponse {
+    /// Creates a new `McpConnectionsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(authorization_url: Option<String>, connection: McpConnectionsCreateResponseConnection) -> Self {
+        Self {
+            authorization_url,
+            connection,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsCreateResponseConnection::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsCreateResponseConnection {
@@ -169,6 +216,46 @@ pub struct McpConnectionsCreateResponseConnection {
     pub header_keys: Vec<String>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl McpConnectionsCreateResponseConnection {
+    /// Creates a new `McpConnectionsCreateResponseConnection` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        connected_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        server_url: Option<String>,
+        r#type: McpConnectionsCreateResponseConnectionType,
+        visibility: McpConnectionsCreateResponseConnectionVisibility,
+        args: Option<Vec<String>>,
+        auth_type: Option<McpConnectionsCreateResponseConnectionAuthType>,
+        command: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        env_keys: Vec<String>,
+        header_keys: Vec<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            connected_at,
+            id: id.into(),
+            name: name.into(),
+            server_url,
+            r#type,
+            visibility,
+            args,
+            auth_type,
+            command,
+            created_at,
+            env_keys,
+            header_keys,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -319,7 +406,11 @@ pub enum McpConnectionsCreateBody {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsCreateBodyVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct McpConnectionsCreateBodyVariant1 {
     /// Display name for the MCP connection.
     pub name: String,
@@ -330,7 +421,7 @@ pub struct McpConnectionsCreateBodyVariant1 {
     pub command: String,
     /// Environment variables for the stdio command. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub env: Option<std::collections::HashMap<String, String>>,
+    pub env: Option<std::collections::BTreeMap<String, String>>,
     /// Use stdio for a command-based MCP server.
     pub r#type: String,
     /// shared makes the connection available to the organization; personal restricts it to its owner.
@@ -341,8 +432,11 @@ pub struct McpConnectionsCreateBodyVariant1 {
 impl McpConnectionsCreateBodyVariant1 {
     /// Creates a new `McpConnectionsCreateBodyVariant1` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `McpConnectionsCreateBodyVariant1 { args: Some(…), ..McpConnectionsCreateBodyVariant1::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `McpConnectionsCreateBodyVariant1::new(name, command, r#type).with_args(…)`.
     pub fn new(name: impl Into<String>, command: impl Into<String>, r#type: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -352,6 +446,24 @@ impl McpConnectionsCreateBodyVariant1 {
             r#type: r#type.into(),
             visibility: None,
         }
+    }
+
+    /// Sets `args`, which `new` leaves unset.
+    pub fn with_args(mut self, value: Vec<String>) -> Self {
+        self.args = Some(value);
+        self
+    }
+
+    /// Sets `env`, which `new` leaves unset.
+    pub fn with_env(mut self, value: std::collections::BTreeMap<String, String>) -> Self {
+        self.env = Some(value);
+        self
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: McpConnectionsCreateBodyVariant1Visibility) -> Self {
+        self.visibility = Some(value);
+        self
     }
 }
 
@@ -398,7 +510,11 @@ impl From<&str> for McpConnectionsCreateBodyVariant1Visibility {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsCreateBodyVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct McpConnectionsCreateBodyVariant2 {
     /// Display name for the MCP connection.
     pub name: String,
@@ -416,7 +532,7 @@ pub struct McpConnectionsCreateBodyVariant2 {
     pub client_secret: Option<String>,
     /// Request headers for static-header or automatic OAuth authentication. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub headers: Option<std::collections::HashMap<String, String>>,
+    pub headers: Option<std::collections::BTreeMap<String, String>>,
     /// Register an OAuth client automatically or use pre-registered clientId and optional clientSecret.
     #[serde(rename = "oauthRegistration", default, skip_serializing_if = "Option::is_none")]
     pub oauth_registration: Option<McpConnectionsCreateBodyVariant2OauthRegistration>,
@@ -434,8 +550,11 @@ pub struct McpConnectionsCreateBodyVariant2 {
 impl McpConnectionsCreateBodyVariant2 {
     /// Creates a new `McpConnectionsCreateBodyVariant2` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `McpConnectionsCreateBodyVariant2 { auth_type: Some(…), ..McpConnectionsCreateBodyVariant2::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `McpConnectionsCreateBodyVariant2::new(name, server_url).with_auth_type(…)`.
     pub fn new(name: impl Into<String>, server_url: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -449,6 +568,54 @@ impl McpConnectionsCreateBodyVariant2 {
             r#type: None,
             visibility: None,
         }
+    }
+
+    /// Sets `auth_type`, which `new` leaves unset.
+    pub fn with_auth_type(mut self, value: McpConnectionsCreateBodyVariant2AuthType) -> Self {
+        self.auth_type = Some(value);
+        self
+    }
+
+    /// Sets `client_id`, which `new` leaves unset.
+    pub fn with_client_id(mut self, value: impl Into<String>) -> Self {
+        self.client_id = Some(value.into());
+        self
+    }
+
+    /// Sets `client_secret`, which `new` leaves unset.
+    pub fn with_client_secret(mut self, value: impl Into<String>) -> Self {
+        self.client_secret = Some(value.into());
+        self
+    }
+
+    /// Sets `headers`, which `new` leaves unset.
+    pub fn with_headers(mut self, value: std::collections::BTreeMap<String, String>) -> Self {
+        self.headers = Some(value);
+        self
+    }
+
+    /// Sets `oauth_registration`, which `new` leaves unset.
+    pub fn with_oauth_registration(mut self, value: McpConnectionsCreateBodyVariant2OauthRegistration) -> Self {
+        self.oauth_registration = Some(value);
+        self
+    }
+
+    /// Sets `scope`, which `new` leaves unset.
+    pub fn with_scope(mut self, value: impl Into<String>) -> Self {
+        self.scope = Some(value.into());
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: McpConnectionsCreateBodyVariant2Visibility) -> Self {
+        self.visibility = Some(value);
+        self
     }
 }
 
@@ -585,9 +752,9 @@ impl From<&str> for McpConnectionsCreateBodyVariant2Visibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsRetrieveResponse {
@@ -620,6 +787,45 @@ pub struct McpConnectionsRetrieveResponse {
     pub header_keys: Vec<String>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl McpConnectionsRetrieveResponse {
+    /// Creates a new `McpConnectionsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        connected_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        server_url: Option<String>,
+        r#type: McpConnectionsRetrieveResponseType,
+        visibility: McpConnectionsRetrieveResponseVisibility,
+        args: Option<Vec<String>>,
+        auth_type: Option<McpConnectionsRetrieveResponseAuthType>,
+        command: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        env_keys: Vec<String>,
+        header_keys: Vec<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            connected_at,
+            id: id.into(),
+            name: name.into(),
+            server_url,
+            r#type,
+            visibility,
+            args,
+            auth_type,
+            command,
+            created_at,
+            env_keys,
+            header_keys,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -755,9 +961,9 @@ impl From<&str> for McpConnectionsRetrieveResponseAuthType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsUpdateResponse {
@@ -790,6 +996,45 @@ pub struct McpConnectionsUpdateResponse {
     pub header_keys: Vec<String>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl McpConnectionsUpdateResponse {
+    /// Creates a new `McpConnectionsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        connected_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        server_url: Option<String>,
+        r#type: McpConnectionsUpdateResponseType,
+        visibility: McpConnectionsUpdateResponseVisibility,
+        args: Option<Vec<String>>,
+        auth_type: Option<McpConnectionsUpdateResponseAuthType>,
+        command: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        env_keys: Vec<String>,
+        header_keys: Vec<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            connected_at,
+            id: id.into(),
+            name: name.into(),
+            server_url,
+            r#type,
+            visibility,
+            args,
+            auth_type,
+            command,
+            created_at,
+            env_keys,
+            header_keys,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -940,7 +1185,11 @@ pub enum McpConnectionsUpdateBody {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsUpdateBodyVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct McpConnectionsUpdateBodyVariant1 {
     /// Display name for the MCP connection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -960,8 +1209,12 @@ pub struct McpConnectionsUpdateBodyVariant1 {
     #[serde(rename = "clientSecret", default, skip_serializing_if = "Option::is_none")]
     pub client_secret: Option<String>,
     /// Requires authType. Merges by key only when keeping static_headers authentication and the same server URL; otherwise replaces stored headers. Null values remove keys; static_headers requires at least one header. Values are write-only.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub headers: Option<std::collections::HashMap<String, Option<String>>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub headers: Option<Option<std::collections::BTreeMap<String, Option<String>>>>,
     /// Register an OAuth client automatically or use pre-registered clientId and optional clientSecret.
     #[serde(rename = "oauthRegistration", default, skip_serializing_if = "Option::is_none")]
     pub oauth_registration: Option<McpConnectionsUpdateBodyVariant1OauthRegistration>,
@@ -973,8 +1226,8 @@ pub struct McpConnectionsUpdateBodyVariant1 {
 impl McpConnectionsUpdateBodyVariant1 {
     /// Creates a new `McpConnectionsUpdateBodyVariant1` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `McpConnectionsUpdateBodyVariant1 { name: Some(…), ..McpConnectionsUpdateBodyVariant1::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `McpConnectionsUpdateBodyVariant1::new(r#type).with_name(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             name: None,
@@ -987,6 +1240,56 @@ impl McpConnectionsUpdateBodyVariant1 {
             oauth_registration: None,
             scope: None,
         }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `server_url`, which `new` leaves unset.
+    pub fn with_server_url(mut self, value: impl Into<String>) -> Self {
+        self.server_url = Some(value.into());
+        self
+    }
+
+    /// Sets `auth_type`, which `new` leaves unset.
+    pub fn with_auth_type(mut self, value: McpConnectionsUpdateBodyVariant1AuthType) -> Self {
+        self.auth_type = Some(value);
+        self
+    }
+
+    /// Sets `client_id`, which `new` leaves unset.
+    pub fn with_client_id(mut self, value: impl Into<String>) -> Self {
+        self.client_id = Some(value.into());
+        self
+    }
+
+    /// Sets `client_secret`, which `new` leaves unset.
+    pub fn with_client_secret(mut self, value: impl Into<String>) -> Self {
+        self.client_secret = Some(value.into());
+        self
+    }
+
+    /// Sets `headers`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `headers = Some(None)` on the built value.
+    pub fn with_headers(mut self, value: std::collections::BTreeMap<String, Option<String>>) -> Self {
+        self.headers = Some(Some(value));
+        self
+    }
+
+    /// Sets `oauth_registration`, which `new` leaves unset.
+    pub fn with_oauth_registration(mut self, value: McpConnectionsUpdateBodyVariant1OauthRegistration) -> Self {
+        self.oauth_registration = Some(value);
+        self
+    }
+
+    /// Sets `scope`, which `new` leaves unset.
+    pub fn with_scope(mut self, value: impl Into<String>) -> Self {
+        self.scope = Some(value.into());
+        self
     }
 }
 
@@ -1080,7 +1383,11 @@ impl From<&str> for McpConnectionsUpdateBodyVariant1OauthRegistration {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsUpdateBodyVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct McpConnectionsUpdateBodyVariant2 {
     /// Replace the stored stdio server executable. This API never executes it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1091,18 +1398,26 @@ pub struct McpConnectionsUpdateBodyVariant2 {
     /// Connection type must remain stdio; transport type cannot be changed by update.
     pub r#type: String,
     /// Command-line arguments for the stdio server. Stored here, not executed by this API.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub args: Option<Vec<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub args: Option<Option<Vec<String>>>,
     /// Merge write-only environment variables by key. A null value removes a key; null for the entire env field clears all variables.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub env: Option<std::collections::HashMap<String, Option<String>>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub env: Option<Option<std::collections::BTreeMap<String, Option<String>>>>,
 }
 
 impl McpConnectionsUpdateBodyVariant2 {
     /// Creates a new `McpConnectionsUpdateBodyVariant2` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `McpConnectionsUpdateBodyVariant2 { command: Some(…), ..McpConnectionsUpdateBodyVariant2::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `McpConnectionsUpdateBodyVariant2::new(r#type).with_command(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             command: None,
@@ -1112,11 +1427,39 @@ impl McpConnectionsUpdateBodyVariant2 {
             env: None,
         }
     }
+
+    /// Sets `command`, which `new` leaves unset.
+    pub fn with_command(mut self, value: impl Into<String>) -> Self {
+        self.command = Some(value.into());
+        self
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `args`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `args = Some(None)` on the built value.
+    pub fn with_args(mut self, value: Vec<String>) -> Self {
+        self.args = Some(Some(value));
+        self
+    }
+
+    /// Sets `env`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `env = Some(None)` on the built value.
+    pub fn with_env(mut self, value: std::collections::BTreeMap<String, Option<String>>) -> Self {
+        self.env = Some(Some(value));
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsDeleteResponse {
@@ -1124,9 +1467,19 @@ pub struct McpConnectionsDeleteResponse {
     pub id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl McpConnectionsDeleteResponse {
+    /// Creates a new `McpConnectionsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsAuthorizeResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsAuthorizeResponse {
@@ -1135,9 +1488,22 @@ pub struct McpConnectionsAuthorizeResponse {
     pub connection: McpConnectionsAuthorizeResponseConnection,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl McpConnectionsAuthorizeResponse {
+    /// Creates a new `McpConnectionsAuthorizeResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(authorization_url: Option<String>, connection: McpConnectionsAuthorizeResponseConnection) -> Self {
+        Self {
+            authorization_url,
+            connection,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsAuthorizeResponseConnection::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsAuthorizeResponseConnection {
@@ -1170,6 +1536,46 @@ pub struct McpConnectionsAuthorizeResponseConnection {
     pub header_keys: Vec<String>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl McpConnectionsAuthorizeResponseConnection {
+    /// Creates a new `McpConnectionsAuthorizeResponseConnection` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        connected_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        server_url: Option<String>,
+        r#type: McpConnectionsAuthorizeResponseConnectionType,
+        visibility: McpConnectionsAuthorizeResponseConnectionVisibility,
+        args: Option<Vec<String>>,
+        auth_type: Option<McpConnectionsAuthorizeResponseConnectionAuthType>,
+        command: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        env_keys: Vec<String>,
+        header_keys: Vec<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            connected_at,
+            id: id.into(),
+            name: name.into(),
+            server_url,
+            r#type,
+            visibility,
+            args,
+            auth_type,
+            command,
+            created_at,
+            env_keys,
+            header_keys,
+            updated_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1305,11 +1711,18 @@ impl From<&str> for McpConnectionsAuthorizeResponseConnectionAuthType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `McpConnectionsTestResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct McpConnectionsTestResponse {
     pub success: bool,
+}
+
+impl McpConnectionsTestResponse {
+    /// Creates a new `McpConnectionsTestResponse` from its required fields, leaving every optional one unset.
+    pub fn new(success: bool) -> Self {
+        Self { success }
+    }
 }

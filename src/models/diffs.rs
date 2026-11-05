@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `DiffsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct DiffsListResponse {
@@ -16,9 +15,18 @@ pub struct DiffsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl DiffsListResponse {
+    /// Creates a new `DiffsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<DiffsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `DiffsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct DiffsListResponseItem {
@@ -48,9 +56,49 @@ pub struct DiffsListResponseItem {
     pub untracked_files: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl DiffsListResponseItem {
+    /// Creates a new `DiffsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        additions: i64,
+        baseline_sha: Option<String>,
+        branch: Option<String>,
+        captured_at: chrono::DateTime<chrono::FixedOffset>,
+        changed_files: i64,
+        code_repository_id: Option<String>,
+        deletions: i64,
+        has_changes: bool,
+        head_sha: Option<String>,
+        id: impl Into<String>,
+        remote_key: Option<String>,
+        root: impl Into<String>,
+        session_id: impl Into<String>,
+        untracked_files: i64,
+    ) -> Self {
+        Self {
+            additions,
+            baseline_sha,
+            branch,
+            captured_at,
+            changed_files,
+            code_repository_id,
+            deletions,
+            has_changes,
+            head_sha,
+            id: id.into(),
+            remote_key,
+            root: root.into(),
+            session_id: session_id.into(),
+            untracked_files,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `DiffsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct DiffsRetrieveResponse {
@@ -79,4 +127,47 @@ pub struct DiffsRetrieveResponse {
     #[serde(rename = "untrackedFiles")]
     pub untracked_files: i64,
     pub data: String,
+}
+
+impl DiffsRetrieveResponse {
+    /// Creates a new `DiffsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        additions: i64,
+        baseline_sha: Option<String>,
+        branch: Option<String>,
+        captured_at: chrono::DateTime<chrono::FixedOffset>,
+        changed_files: i64,
+        code_repository_id: Option<String>,
+        deletions: i64,
+        has_changes: bool,
+        head_sha: Option<String>,
+        id: impl Into<String>,
+        remote_key: Option<String>,
+        root: impl Into<String>,
+        session_id: impl Into<String>,
+        untracked_files: i64,
+        data: impl Into<String>,
+    ) -> Self {
+        Self {
+            additions,
+            baseline_sha,
+            branch,
+            captured_at,
+            changed_files,
+            code_repository_id,
+            deletions,
+            has_changes,
+            head_sha,
+            id: id.into(),
+            remote_key,
+            root: root.into(),
+            session_id: session_id.into(),
+            untracked_files,
+            data: data.into(),
+        }
+    }
 }

@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsListResponse {
@@ -16,9 +15,18 @@ pub struct SkillsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SkillsListResponse {
+    /// Creates a new `SkillsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<SkillsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsListResponseItem {
@@ -27,6 +35,28 @@ pub struct SkillsListResponseItem {
     pub name: String,
     pub keywords: Vec<String>,
     pub source: SkillsListResponseItemSource,
+}
+
+impl SkillsListResponseItem {
+    /// Creates a new `SkillsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        description: impl Into<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        keywords: Vec<String>,
+        source: SkillsListResponseItemSource,
+    ) -> Self {
+        Self {
+            description: description.into(),
+            id: id.into(),
+            name: name.into(),
+            keywords,
+            source,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -72,9 +102,8 @@ impl From<&str> for SkillsListResponseItemSource {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsCreateResponse {
@@ -88,9 +117,33 @@ pub struct SkillsCreateResponse {
     pub files: Vec<SkillsCreateResponseFile>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SkillsCreateResponse {
+    /// Creates a new `SkillsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: impl Into<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        files: Vec<SkillsCreateResponseFile>,
+    ) -> Self {
+        Self {
+            created_at,
+            description: description.into(),
+            id: id.into(),
+            name: name.into(),
+            updated_at,
+            files,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsCreateResponseFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsCreateResponseFile {
@@ -98,6 +151,26 @@ pub struct SkillsCreateResponseFile {
     pub encoding: SkillsCreateResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+impl SkillsCreateResponseFile {
+    /// Creates a new `SkillsCreateResponseFile` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        content: impl Into<String>,
+        encoding: SkillsCreateResponseFileEncoding,
+        filename: impl Into<String>,
+        id: impl Into<String>,
+    ) -> Self {
+        Self {
+            content: content.into(),
+            encoding,
+            filename: filename.into(),
+            id: id.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -143,7 +216,10 @@ impl From<&str> for SkillsCreateResponseFileEncoding {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SkillsCreateBody {
     /// Summary of what the skill does and when to use it.
     pub description: String,
@@ -153,7 +229,24 @@ pub struct SkillsCreateBody {
     pub files: Vec<SkillsCreateBodyFile>,
 }
 
+impl SkillsCreateBody {
+    /// Creates a new `SkillsCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(description: impl Into<String>, name: impl Into<String>, files: Vec<SkillsCreateBodyFile>) -> Self {
+        Self {
+            description: description.into(),
+            name: name.into(),
+            files,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsCreateBodyFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SkillsCreateBodyFile {
     /// Complete file content: plain text, or base64 when encoding is base64.
     pub content: String,
@@ -167,14 +260,23 @@ pub struct SkillsCreateBodyFile {
 impl SkillsCreateBodyFile {
     /// Creates a new `SkillsCreateBodyFile` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `SkillsCreateBodyFile { encoding: Some(…), ..SkillsCreateBodyFile::new(content, filename) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SkillsCreateBodyFile::new(content, filename).with_encoding(…)`.
     pub fn new(content: impl Into<String>, filename: impl Into<String>) -> Self {
         Self {
             content: content.into(),
             encoding: None,
             filename: filename.into(),
         }
+    }
+
+    /// Sets `encoding`, which `new` leaves unset.
+    pub fn with_encoding(mut self, value: SkillsCreateBodyFileEncoding) -> Self {
+        self.encoding = Some(value);
+        self
     }
 }
 
@@ -221,9 +323,8 @@ impl From<&str> for SkillsCreateBodyFileEncoding {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsRetrieveResponse {
@@ -237,9 +338,33 @@ pub struct SkillsRetrieveResponse {
     pub files: Vec<SkillsRetrieveResponseFile>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SkillsRetrieveResponse {
+    /// Creates a new `SkillsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: impl Into<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        files: Vec<SkillsRetrieveResponseFile>,
+    ) -> Self {
+        Self {
+            created_at,
+            description: description.into(),
+            id: id.into(),
+            name: name.into(),
+            updated_at,
+            files,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsRetrieveResponseFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsRetrieveResponseFile {
@@ -247,6 +372,26 @@ pub struct SkillsRetrieveResponseFile {
     pub encoding: SkillsRetrieveResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+impl SkillsRetrieveResponseFile {
+    /// Creates a new `SkillsRetrieveResponseFile` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        content: impl Into<String>,
+        encoding: SkillsRetrieveResponseFileEncoding,
+        filename: impl Into<String>,
+        id: impl Into<String>,
+    ) -> Self {
+        Self {
+            content: content.into(),
+            encoding,
+            filename: filename.into(),
+            id: id.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -292,9 +437,8 @@ impl From<&str> for SkillsRetrieveResponseFileEncoding {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsUpdateResponse {
@@ -308,9 +452,33 @@ pub struct SkillsUpdateResponse {
     pub files: Vec<SkillsUpdateResponseFile>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SkillsUpdateResponse {
+    /// Creates a new `SkillsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: impl Into<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        files: Vec<SkillsUpdateResponseFile>,
+    ) -> Self {
+        Self {
+            created_at,
+            description: description.into(),
+            id: id.into(),
+            name: name.into(),
+            updated_at,
+            files,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsUpdateResponseFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsUpdateResponseFile {
@@ -318,6 +486,26 @@ pub struct SkillsUpdateResponseFile {
     pub encoding: SkillsUpdateResponseFileEncoding,
     pub filename: String,
     pub id: String,
+}
+
+impl SkillsUpdateResponseFile {
+    /// Creates a new `SkillsUpdateResponseFile` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        content: impl Into<String>,
+        encoding: SkillsUpdateResponseFileEncoding,
+        filename: impl Into<String>,
+        id: impl Into<String>,
+    ) -> Self {
+        Self {
+            content: content.into(),
+            encoding,
+            filename: filename.into(),
+            id: id.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -363,7 +551,13 @@ impl From<&str> for SkillsUpdateResponseFileEncoding {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SkillsUpdateBody {
     /// Summary of what the skill does and when to use it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -376,7 +570,42 @@ pub struct SkillsUpdateBody {
     pub files: Option<Vec<SkillsUpdateBodyFile>>,
 }
 
+impl SkillsUpdateBody {
+    /// Creates a new `SkillsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SkillsUpdateBody::new().with_description(…)`.
+    pub fn new() -> Self {
+        Self {
+            description: None,
+            name: None,
+            files: None,
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `files`, which `new` leaves unset.
+    pub fn with_files(mut self, value: Vec<SkillsUpdateBodyFile>) -> Self {
+        self.files = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsUpdateBodyFile::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SkillsUpdateBodyFile {
     /// Complete file content: plain text, or base64 when encoding is base64.
     pub content: String,
@@ -390,14 +619,23 @@ pub struct SkillsUpdateBodyFile {
 impl SkillsUpdateBodyFile {
     /// Creates a new `SkillsUpdateBodyFile` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `SkillsUpdateBodyFile { encoding: Some(…), ..SkillsUpdateBodyFile::new(content, filename) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SkillsUpdateBodyFile::new(content, filename).with_encoding(…)`.
     pub fn new(content: impl Into<String>, filename: impl Into<String>) -> Self {
         Self {
             content: content.into(),
             encoding: None,
             filename: filename.into(),
         }
+    }
+
+    /// Sets `encoding`, which `new` leaves unset.
+    pub fn with_encoding(mut self, value: SkillsUpdateBodyFileEncoding) -> Self {
+        self.encoding = Some(value);
+        self
     }
 }
 
@@ -444,12 +682,21 @@ impl From<&str> for SkillsUpdateBodyFileEncoding {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SkillsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SkillsDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl SkillsDeleteResponse {
+    /// Creates a new `SkillsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }
