@@ -18,10 +18,15 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 
 use crate::error::{ApiError, Error};
+use crate::platform::AttemptHeaders;
 use crate::transport::{SdkBody, Sleep, Transport, TransportError, TransportErrorKind};
 
 /// Header inspected for a server-assigned request id used in error reports.
 const REQUEST_ID_HEADER: &str = "x-request-id";
+
+/// Non-standard response header through which a server states whether a
+/// failed request should be retried (see [`should_retry_response`]).
+const SHOULD_RETRY_HEADER: &str = "x-should-retry";
 
 /// Default cap on buffered response bodies, in bytes (64 MiB).
 ///
@@ -62,7 +67,7 @@ const ALWAYS_CREDENTIAL_HEADERS: [&str; 3] = ["authorization", "cookie", "proxy-
 ///
 /// Deliberately separate from [`RetryPolicy::max_backoff`], which caps only
 /// the client's own exponential backoff: clamping a `Retry-After: 45` down to
-/// 8 s would replay straight into the same rate-limit window. Within the
+/// that cap would replay straight into the same rate-limit window. Within the
 /// ceiling the server's delay is honored in full; above it the header is
 /// ignored and the client's own backoff applies, so a hostile or confused
 /// server cannot park the caller's future for an arbitrary time.
@@ -208,7 +213,8 @@ pub(crate) fn trace_oauth_fallback() {
 
 /// Retry policy applied to every request issued by the client.
 ///
-/// Retries cover transient transport failures and retryable status codes (see
+/// Retries cover transient transport failures and retryable responses (see
+/// [`should_retry_response`]: the server's `x-should-retry` header, else
 /// [`should_retry_status`]). Backoff grows exponentially from
 /// `initial_backoff`, capped at `max_backoff`; a `Retry-After` response header
 /// overrides the computed delay when present (see [`RETRY_AFTER_CEILING`]).
@@ -228,7 +234,7 @@ pub(crate) struct RetryPolicy {
 }
 
 impl RetryPolicy {
-    /// Creates a policy with sensible exponential-backoff bounds.
+    /// Creates a policy with the crate's exponential-backoff bounds.
     pub(crate) fn new(max_retries: u32) -> Self {
         Self {
             max_retries,
@@ -271,13 +277,34 @@ impl RetryPolicy {
 /// Returns [`Error::Transport`] when every allowed attempt failed at the
 /// transport level (connection, timeout, protocol) or the deadline elapsed
 /// before response headers arrived.
-pub async fn send_with_retries(
+pub(crate) async fn send_with_retries(
     transport: &dyn Transport,
     sleep: &dyn Sleep,
     request: http::Request<SdkBody>,
     max_retries: u32,
     deadline: Option<Duration>,
     keyed: bool,
+) -> Result<http::Response<SdkBody>, Error> {
+    let stamp = AttemptHeaders::plan(request.headers(), deadline);
+    send_attempts(transport, sleep, request, max_retries, deadline, keyed, stamp).await
+}
+
+/// The retry loop behind [`send_with_retries`]; `stamp` decides which
+/// per-attempt headers each attempt carries.
+///
+/// Called directly, with `AttemptHeaders::default()` (no attempt headers), by
+/// the two requests that are not ordinary API calls and so carry none of the
+/// SDK's `X-Scalar-*` headers: the OAuth token exchange, whose endpoint may
+/// belong to a separate identity provider, and a signed-URL fetch, which sends
+/// only the headers the signed URL approved.
+pub(crate) async fn send_attempts(
+    transport: &dyn Transport,
+    sleep: &dyn Sleep,
+    request: http::Request<SdkBody>,
+    max_retries: u32,
+    deadline: Option<Duration>,
+    keyed: bool,
+    stamp: AttemptHeaders,
 ) -> Result<http::Response<SdkBody>, Error> {
     let policy = RetryPolicy::new(max_retries);
     // Whether a *possibly-processed* failure may be replayed: retrying a
@@ -292,7 +319,9 @@ pub async fn send_with_retries(
     loop {
         // A one-shot streaming body cannot be replayed; send the original once
         // (still under the deadline) and stop.
-        let Some(current) = clone_request(&request) else {
+        let Some(mut current) = clone_request(&request) else {
+            let mut request = request;
+            stamp.apply(request.headers_mut(), attempt);
             trace::attempt(request.method(), request.uri(), attempt);
             return match execute_with_deadline(transport, sleep, request, deadline).await {
                 Ok(response) => {
@@ -305,10 +334,13 @@ pub async fn send_with_retries(
                 }
             };
         };
+        // Each attempt is a fresh clone of the caller's request, so the
+        // per-attempt headers are stamped onto the clone and never accumulate.
+        stamp.apply(current.headers_mut(), attempt);
         trace::attempt(current.method(), current.uri(), attempt);
         match execute_with_deadline(transport, sleep, current, deadline).await {
             Ok(response) => {
-                if attempt < policy.max_retries && should_retry_status(response.status().as_u16(), idempotent) {
+                if attempt < policy.max_retries && should_retry_response(&response, idempotent) {
                     // `source` is carried alongside the delay purely so the
                     // retry event can say whether the server dictated the wait.
                     let (delay, source) = match retry_after(response.headers()) {
@@ -378,7 +410,7 @@ async fn execute_with_deadline(
 
 /// Bounds a buffered response-body read by `deadline`.
 ///
-/// [`send_with_retries`] races the transport against the deadline only up to
+/// `send_with_retries` races the transport against the deadline only up to
 /// response **headers**; the body is a stream consumed afterwards, deliberately
 /// left unbounded so SSE and long downloads are not killed mid-flight. That is
 /// right for streaming and wrong for everything else — a server that sends
@@ -389,7 +421,7 @@ async fn execute_with_deadline(
 /// opted out for free: streamed responses are handed back raw and never come
 /// through here.
 ///
-/// This sits *outside* [`send_with_retries`] on purpose, so a body timeout gets
+/// This sits *outside* `send_with_retries` on purpose, so a body timeout gets
 /// zero retries — the request already reached the server and may not be
 /// idempotent — while a stalled header phase still gets `max_retries` attempts.
 ///
@@ -804,7 +836,43 @@ pub(crate) fn request_id(headers: &HeaderMap) -> Option<String> {
         .map(str::to_owned)
 }
 
-/// Whether a response status is worth retrying for this request.
+/// Whether a response is worth retrying for this request.
+///
+/// On an error status (4xx/5xx) the server's `x-should-retry` header, when it
+/// is exactly `true` or `false`, decides outright and takes precedence over the
+/// status taxonomy in [`should_retry_status`]: `false` suppresses a retry the
+/// status would allow (a 503 the server knows will not clear), and `true`
+/// forces one the status would refuse (a 400 caused by a transient upstream
+/// condition), for any method — the server is asserting that replaying the
+/// request is safe, which is exactly what the method-based rule could only
+/// guess at. Every other bound still applies: the retry stays within
+/// `max_retries`, a non-replayable streaming body is still sent once, and the
+/// delay still follows `Retry-After` or the backoff. A success or redirect is
+/// never retried whatever the header says, and any other header value is
+/// ignored, leaving the status taxonomy in charge.
+fn should_retry_response(response: &http::Response<SdkBody>, idempotent: bool) -> bool {
+    let status = response.status().as_u16();
+    if status < 400 {
+        return false;
+    }
+    server_retry_directive(response.headers()).unwrap_or_else(|| should_retry_status(status, idempotent))
+}
+
+/// Reads the `x-should-retry` header: `Some(true)` for `true`, `Some(false)`
+/// for `false`, and `None` for an absent header or any other value.
+///
+/// Matched exactly (after trimming surrounding whitespace), so a typo or a
+/// differently cased value never overrides the status taxonomy by accident.
+fn server_retry_directive(headers: &HeaderMap) -> Option<bool> {
+    match headers.get(SHOULD_RETRY_HEADER)?.to_str().ok()?.trim() {
+        "true" => Some(true),
+        "false" => Some(false),
+        _ => None,
+    }
+}
+
+/// Whether a response status is worth retrying for this request, absent an
+/// `x-should-retry` directive from the server (see [`should_retry_response`]).
 ///
 /// The taxonomy splits on whether the server may have run the request:
 ///
@@ -859,15 +927,29 @@ fn is_retryable_transport(error: &TransportError, idempotent: bool) -> bool {
     }
 }
 
-/// Parses a `Retry-After` header, in either RFC 7231 form.
+/// Parses the server's requested retry delay: `retry-after-ms`, then a
+/// `Retry-After` header in either RFC 7231 form.
 ///
-/// The value is `delta-seconds` (a whole number) or an HTTP-date; the latter is
-/// resolved to a delay from now (servers commonly send it on 429/503). The
-/// caller honors the delay in full up to [`RETRY_AFTER_CEILING`] and falls back
-/// to its own backoff beyond it. A zero delay, a date already past, and anything
+/// `retry-after-ms` is a number of milliseconds, possibly fractional, which
+/// rate limiters send when whole seconds are too coarse; it wins over
+/// `Retry-After` when both are present and usable. `Retry-After` is
+/// `delta-seconds` (a whole number) or an HTTP-date; the latter is resolved to
+/// a delay from now (servers commonly send it on 429/503). The caller honors
+/// the delay in full up to [`RETRY_AFTER_CEILING`] and falls back to its own
+/// backoff beyond it. A zero delay, a date already past, and anything
 /// unparseable yield `None`, so the retry falls back to the client's own
 /// backoff rather than replaying immediately.
 fn retry_after(headers: &HeaderMap) -> Option<Duration> {
+    let millis = headers
+        .get("retry-after-ms")
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.trim().parse::<f64>().ok())
+        .filter(|millis| millis.is_finite() && *millis > 0.0);
+    if let Some(millis) = millis {
+        // Clamped before the conversion, which panics on a value past
+        // `Duration::MAX`; anything above the ceiling is ignored by the caller.
+        return Some(Duration::from_secs_f64(millis.min(1e12) / 1000.0));
+    }
     let value = headers.get(http::header::RETRY_AFTER)?.to_str().ok()?.trim();
     if let Ok(seconds) = value.parse::<u64>() {
         return (seconds > 0).then(|| Duration::from_secs(seconds));
@@ -932,7 +1014,7 @@ fn retry_after_date(value: &str) -> Option<u64> {
 /// Days since the Unix epoch for a civil (proleptic Gregorian) date.
 ///
 /// Howard Hinnant's `days_from_civil` algorithm, valid for any year.
-fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
+pub(crate) fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
     let year = if month <= 2 { year - 1 } else { year };
     let era = (if year >= 0 { year } else { year - 399 }) / 400;
     let year_of_era = year - era * 400;
@@ -1517,7 +1599,7 @@ mod tests {
 
     #[tokio::test]
     async fn retry_after_within_ceiling_sleeps_the_full_server_delay() {
-        // 45 s is far past max_backoff (8 s): the server's delay must be
+        // 45 s is far past the default max_backoff: the server's delay must be
         // honored in full, not clamped back into the same rate-limit window.
         let transport = ScriptedTransport::new(vec![scripted(429, Some(45), "slow down"), scripted(200, None, "{}")]);
         let sleep = RecordingSleep::default();
@@ -1528,6 +1610,66 @@ mod tests {
         assert_eq!(transport.calls(), 2);
         // The first delay is the timer the discarded body's drain races.
         assert_eq!(sleep.delays(), vec![RETRY_DRAIN_TIMEOUT, Duration::from_secs(45)]);
+    }
+
+    /// Builds a scripted response carrying an `x-should-retry` header.
+    fn directed(status: u16, should_retry: &'static str) -> http::Response<SdkBody> {
+        http::Response::builder()
+            .status(status)
+            .header(SHOULD_RETRY_HEADER, should_retry)
+            .body(SdkBody::from_bytes("{}"))
+            .expect("statically valid response parts must build")
+    }
+
+    #[tokio::test]
+    async fn should_retry_false_suppresses_a_retryable_status() {
+        // 503 retries for every method by default; the server's `false` wins.
+        let transport = ScriptedTransport::new(vec![directed(503, "false")]);
+        let sleep = RecordingSleep::default();
+        let response = send_with_retries(&transport, &sleep, post_request(), 2, None, false)
+            .await
+            .expect("scripted attempts cannot fail at the transport level");
+        assert_eq!(response.status(), 503);
+        assert_eq!(transport.calls(), 1);
+        assert!(sleep.delays().is_empty());
+    }
+
+    #[tokio::test]
+    async fn should_retry_true_forces_a_retry_on_an_unkeyed_post() {
+        // Neither 400 nor 409 is retried by status alone, and a POST is the
+        // strictest method; the server's `true` still forces each replay.
+        let transport = ScriptedTransport::new(vec![
+            directed(400, "true"),
+            directed(409, " true "),
+            scripted(200, None, "{}"),
+        ]);
+        let sleep = RecordingSleep::default();
+        let response = send_with_retries(&transport, &sleep, post_request(), 2, None, false)
+            .await
+            .expect("scripted attempts cannot fail at the transport level");
+        assert_eq!(response.status(), 200);
+        assert_eq!(transport.calls(), 3);
+    }
+
+    #[tokio::test]
+    async fn should_retry_true_stays_within_max_retries() {
+        let transport = ScriptedTransport::new(vec![directed(400, "true"), directed(400, "true")]);
+        let sleep = RecordingSleep::default();
+        let response = send_with_retries(&transport, &sleep, post_request(), 1, None, false)
+            .await
+            .expect("scripted attempts cannot fail at the transport level");
+        assert_eq!(response.status(), 400);
+        assert_eq!(transport.calls(), 2);
+    }
+
+    #[test]
+    fn should_retry_header_never_retries_a_success_and_ignores_other_values() {
+        assert!(!should_retry_response(&directed(200, "true"), true));
+        assert!(!should_retry_response(&directed(302, "true"), true));
+        // An unrecognized value leaves the status taxonomy in charge.
+        assert!(should_retry_response(&directed(503, "TRUE"), false));
+        assert!(!should_retry_response(&directed(400, "yes"), true));
+        assert!(!should_retry_response(&directed(409, "1"), true));
     }
 
     #[test]
@@ -1552,6 +1694,23 @@ mod tests {
         assert_eq!(header("-5"), None);
         assert_eq!(header("soon"), None);
         assert_eq!(header("7"), Some(Duration::from_secs(7)));
+        // `retry-after-ms` wins when it is a positive number of milliseconds.
+        let millis = |ms: &str, seconds: Option<&str>| {
+            let mut headers = HeaderMap::new();
+            headers.insert("retry-after-ms", ms.parse().expect("a static header value parses"));
+            if let Some(seconds) = seconds {
+                headers.insert(
+                    http::header::RETRY_AFTER,
+                    seconds.parse().expect("a static header value parses"),
+                );
+            }
+            retry_after(&headers)
+        };
+        assert_eq!(millis("1200", Some("7")), Some(Duration::from_millis(1200)));
+        assert_eq!(millis("2.5", None), Some(Duration::from_micros(2500)));
+        assert_eq!(millis("0", Some("7")), Some(Duration::from_secs(7)));
+        assert_eq!(millis("soon", None), None);
+        assert_eq!(millis("NaN", None), None);
         // A date in the future resolves to a delay from now.
         assert!(header("Fri, 01 Jan 9999 00:00:00 GMT").is_some_and(|delay| delay > Duration::from_secs(60)));
     }
@@ -1874,9 +2033,15 @@ mod tests {
         assert_eq!(transport.calls(), 2);
         // The drain timeout races first; the last recorded sleep is the backoff.
         let slept = *sleep.delays().last().expect("the retry slept before replaying");
-        assert!(
-            slept < Duration::from_secs(61),
-            "slept {slept:?} instead of backing off"
+        // Bounded by the crate's own (configurable) backoff cap, not the header.
+        let cap = RetryPolicy::new(2).max_backoff;
+        assert!(slept <= cap, "slept {slept:?} instead of backing off (cap {cap:?})");
+        // A cap configured past the header's delay would let the line above
+        // pass even if the header were honored, so rule that out directly.
+        assert_ne!(
+            slept,
+            Duration::from_secs(86_400),
+            "the over-ceiling Retry-After was honored"
         );
     }
 

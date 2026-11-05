@@ -248,14 +248,7 @@ Create an API key for the current organization. Optionally set `expiresAt` to a 
 | Response | [`ApiKeysCreateResponse`](./src/models/api_keys.rs) |
 
 ```rust
-let response = client
-    .api_keys()
-    .create(ApiKeysCreateBody {
-        expires_at: None,
-        name: None,
-    })
-    .send()
-    .await?;
+let response = client.api_keys().create(ApiKeysCreateBody::new()).send().await?;
 ```
 
 ### Retrieve an API key
@@ -288,7 +281,7 @@ let response = client
     .api_keys()
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        ApiKeysUpdateBody { name: "x".to_string() },
+        ApiKeysUpdateBody::new("x".to_string()),
     )
     .send()
     .await?;
@@ -336,15 +329,11 @@ Create an organization skill with its files.
 ```rust
 let response = client
     .skills()
-    .create(SkillsCreateBody {
-        description: "".to_string(),
-        name: "x".to_string(),
-        files: vec![SkillsCreateBodyFile {
-            content: "".to_string(),
-            encoding: None,
-            filename: "x".to_string(),
-        }],
-    })
+    .create(SkillsCreateBody::new(
+        "".to_string(),
+        "x".to_string(),
+        vec![SkillsCreateBodyFile::new("".to_string(), "x".to_string())],
+    ))
     .send()
     .await?;
 ```
@@ -377,14 +366,7 @@ Update an organization skill. When files are provided, they replace the complete
 ```rust
 let response = client
     .skills()
-    .update(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SkillsUpdateBody {
-            description: None,
-            name: None,
-            files: None,
-        },
-    )
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SkillsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -460,11 +442,7 @@ Enable or disable pull request insight collection. Enabling starts the initial r
 | Response | [`InsightsUpdateResponse`](./src/models/insights.rs) |
 
 ```rust
-let response = client
-    .insights()
-    .update(InsightsUpdateBody { enabled: false })
-    .send()
-    .await?;
+let response = client.insights().update(InsightsUpdateBody::new(false)).send().await?;
 ```
 
 ### List insight members
@@ -505,10 +483,7 @@ Create an organization and make the authenticated user its administrator.
 ```rust
 let response = client
     .organizations()
-    .create(OrganizationsCreateBody {
-        name: "x".to_string(),
-        slug: None,
-    })
+    .create(OrganizationsCreateBody::new("x".to_string()))
     .send()
     .await?;
 ```
@@ -537,14 +512,7 @@ Update organization profile fields or onboarding state.
 ```rust
 let response = client
     .organizations()
-    .update(
-        "example",
-        OrganizationsUpdateBody {
-            name: None,
-            slug: None,
-            onboarding_completed: None,
-        },
-    )
+    .update("example", OrganizationsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -588,13 +556,7 @@ Invite or add a user to an organization with a role.
 let response = client
     .organizations()
     .members()
-    .create(
-        "example",
-        MembersCreateBody {
-            email_address: "user@example.com".to_string(),
-            role: None,
-        },
-    )
+    .create("example", MembersCreateBody::new("user@example.com".to_string()))
     .send()
     .await?;
 ```
@@ -632,9 +594,7 @@ let response = client
     .update(
         "example",
         "example",
-        MembersUpdateBody {
-            role: MembersUpdateBodyRole::OrgAdmin,
-        },
+        MembersUpdateBody::new(MembersUpdateBodyRole::OrgAdmin),
     )
     .send()
     .await?;
@@ -684,13 +644,7 @@ Create an encrypted organization secret.
 let response = client
     .organizations()
     .secrets()
-    .create(
-        "example",
-        SecretsCreateBody {
-            key: "x".to_string(),
-            value: "x".to_string(),
-        },
-    )
+    .create("example", SecretsCreateBody::new("x".to_string(), "x".to_string()))
     .send()
     .await?;
 ```
@@ -728,7 +682,7 @@ let response = client
     .update(
         "example",
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SecretsUpdateBody { key: None, value: None },
+        SecretsUpdateBody::new(),
     )
     .send()
     .await?;
@@ -778,51 +732,7 @@ Configure organization defaults for agent/model, VM size and keep-alive; inferen
 let response = client
     .organizations()
     .settings()
-    .update(
-        "example",
-        SettingsUpdateBody {
-            amp_api_key: None,
-            anthropic_api_key: None,
-            aws_bedrock_access_key_id: None,
-            aws_bedrock_region: None,
-            aws_bedrock_secret_access_key: None,
-            clone_depth: None,
-            commit_instructions: None,
-            cursor_api_key: None,
-            custom_system_prompt: None,
-            default_agent: None,
-            default_keep_alive_minutes: None,
-            default_sandbox_size: None,
-            delete_branch_when_pr_closed: None,
-            draft_prs: None,
-            enable_coderabbit_bot: None,
-            enable_cursor_bot: None,
-            enable_gemini_code_assist_bot: None,
-            enable_github_actions_bot: None,
-            enable_graphite_bot: None,
-            enable_greptile_bot: None,
-            experimental_mcp: None,
-            feature_mention_author: None,
-            gcp_vertex_ai_location: None,
-            gcp_vertex_ai_project: None,
-            gcp_vertex_ai_service_account_json: None,
-            kernel_api_key: None,
-            max_bot_reviews: None,
-            max_solutions: None,
-            openai_api_key: None,
-            xai_api_key: None,
-            openrouter_api_key: None,
-            pg_stat_statements_reset_frequency: None,
-            pm_system_prompt: None,
-            pr_title_instructions: None,
-            pull_request_insights_enabled: None,
-            should_sign_commits: None,
-            slack_review_on_tembo: None,
-            slow_query_threshold_ms: None,
-            ssh_public_keys: None,
-            weekly_report_enabled: None,
-        },
-    )
+    .update("example", SettingsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -1032,17 +942,10 @@ Send a task or follow-up message to an existing session, resume work, or steer a
 ```rust
 let response = client
     .messages()
-    .create(MessagesCreateBody {
-        artifact_id: None,
-        content: "x".to_string(),
-        mcp_servers: None,
-        pull_request_id: None,
-        session_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-        agent_options: None,
-        delivery_mode: None,
-        rich_content: None,
-        slash_command: None,
-    })
+    .create(MessagesCreateBody::new(
+        "x".to_string(),
+        "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+    ))
     .send()
     .await?;
 ```
@@ -1075,13 +978,7 @@ Update message content before its queued processing has started.
 ```rust
 let response = client
     .messages()
-    .update(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        MessagesUpdateBody {
-            content: None,
-            rich_content: None,
-        },
-    )
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", MessagesUpdateBody::new())
     .send()
     .await?;
 ```
@@ -1110,7 +1007,7 @@ List the models available to the current organization, including enablement and 
 
 | Direction | Type |
 | --- | --- |
-| Response | [`ModelsListResponse`](./src/models/models.rs) |
+| Response | [`ModelsListResponse`](./src/models/models_resource.rs) |
 
 ```rust
 let response = client.models().list().send().await?;
@@ -1122,19 +1019,13 @@ Enable or disable an organization model, or select its inference provider.
 
 | Direction | Type |
 | --- | --- |
-| Request | [`ModelsUpdateBody`](./src/models/models.rs) |
-| Response | [`ModelsUpdateResponse`](./src/models/models.rs) |
+| Request | [`ModelsUpdateBody`](./src/models/models_resource.rs) |
+| Response | [`ModelsUpdateResponse`](./src/models/models_resource.rs) |
 
 ```rust
 let response = client
     .models()
-    .update(
-        "example",
-        ModelsUpdateBody {
-            enabled: None,
-            inference_provider: None,
-        },
-    )
+    .update("example", ModelsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -1206,30 +1097,7 @@ Configure personal agent/model and project defaults, system instructions, follow
 let response = client
     .users()
     .settings()
-    .update(
-        "example",
-        SettingsUpdateBody2 {
-            auto_restart_vm: None,
-            default_project_id: None,
-            gpg_key: None,
-            include_tembo_commit_attribution: None,
-            desktop_notifications_enabled: None,
-            desktop_notification_preferences: None,
-            has_desktop_app: None,
-            open_links_in_desktop_app: None,
-            appearance_preferences: None,
-            app_sidebar_preferences: None,
-            diff_preferences: None,
-            dashboard_preferences: None,
-            composer_preferences: None,
-            review_preferences: None,
-            diff_light_theme: None,
-            diff_dark_theme: None,
-            default_agent: None,
-            follow_up_behavior: None,
-            custom_system_prompt: None,
-        },
-    )
+    .update("example", SettingsUpdateBody2::new())
     .send()
     .await?;
 ```
@@ -1308,10 +1176,7 @@ let response = client
     .environment_variables()
     .create(
         "example",
-        EnvironmentVariablesCreateBody {
-            key: "x".to_string(),
-            value: "x".to_string(),
-        },
+        EnvironmentVariablesCreateBody::new("x".to_string(), "x".to_string()),
     )
     .send()
     .await?;
@@ -1407,26 +1272,16 @@ Create a session for a task. Provide the initial prompt in description and optio
 ```rust
 let response = client
     .sessions()
-    .create(SessionsCreateBody {
-        agent: Some("claudeCode:claude-fable-5-1".to_string()),
-        base_branch: Some("main".to_string()),
-        mcp_servers: Some(vec![]),
-        project_id: Some("your-project-id".to_string()),
-        sandbox_size: None,
-        target_branch: Some("main".to_string()),
-        visibility: Some(SessionsCreateBodyVisibility::Private),
-        agent_options: None,
-        branch_name: None,
-        code_repository_ids: Some(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
-        description: "Fix the authentication bug in the login component".to_string(),
-        id: None,
-        rich_content: None,
-        pull_request_id: None,
-        queue_right_away: None,
-        automatic_sizing: None,
-        session_mode: None,
-        startup_agent: None,
-    })
+    .create(
+        SessionsCreateBody::new("Fix the authentication bug in the login component".to_string())
+            .with_agent("claudeCode:claude-fable-5-1".to_string())
+            .with_base_branch("main".to_string())
+            .with_mcp_servers(vec![])
+            .with_project_id("your-project-id".to_string())
+            .with_target_branch("main".to_string())
+            .with_visibility(SessionsCreateBodyVisibility::Private)
+            .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
+    )
     .send()
     .await?;
 ```
@@ -1459,26 +1314,7 @@ Update a session: archive or restore it, set priority, rename it, change agent/m
 ```rust
 let response = client
     .sessions()
-    .update(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SessionsUpdateBody {
-            memory_mb: None,
-            agent: None,
-            agent_options: None,
-            base_branch: None,
-            branch_name: None,
-            description: None,
-            rich_content: None,
-            level: None,
-            mcp_servers: None,
-            mode: None,
-            project_id: None,
-            sandbox_size: None,
-            target_branch: None,
-            title: None,
-            visibility: None,
-        },
-    )
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -1511,14 +1347,7 @@ Create an independent session from a fresh workspace snapshot, or the latest sav
 ```rust
 let response = client
     .sessions()
-    .fork(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SessionsForkBody {
-            prompt: None,
-            title: None,
-            queue_right_away: None,
-        },
-    )
+    .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsForkBody::new())
     .send()
     .await?;
 ```
@@ -1660,9 +1489,7 @@ let response = client
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         "example",
-        InputsUpdateBody {
-            answers: std::collections::HashMap::new(),
-        },
+        InputsUpdateBody::new(std::collections::BTreeMap::new()),
     )
     .send()
     .await?;
@@ -1685,9 +1512,7 @@ let response = client
     .queue()
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        QueueUpdateBody {
-            message_ids: vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()],
-        },
+        QueueUpdateBody::new(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()]),
     )
     .send()
     .await?;
@@ -1726,10 +1551,10 @@ Choose the default project and sandbox size for the organization.
 ```rust
 let response = client
     .projects()
-    .update_defaults(ProjectsUpdateDefaultsBody {
-        project_id: None,
-        sandbox_size: ProjectsUpdateDefaultsBodySandboxSize::Nano,
-    })
+    .update_defaults(ProjectsUpdateDefaultsBody::new(
+        None,
+        ProjectsUpdateDefaultsBodySandboxSize::Nano,
+    ))
     .send()
     .await?;
 ```
@@ -1758,22 +1583,7 @@ Create a reusable project environment.
 ```rust
 let response = client
     .projects()
-    .create(ProjectsCreateBody {
-        description: None,
-        name: "x".to_string(),
-        setup_script: None,
-        code_repository_ids: None,
-        agent_instructions: None,
-        color: None,
-        icon: None,
-        include_deps: None,
-        include_skills: None,
-        onboarding_default: None,
-        run_now: None,
-        schedule: None,
-        sizes: None,
-        resource_settings: None,
-    })
+    .create(ProjectsCreateBody::new("x".to_string()))
     .send()
     .await?;
 ```
@@ -1802,27 +1612,7 @@ Update project repositories, setup script, agent instructions, environment varia
 ```rust
 let response = client
     .projects()
-    .update(
-        "example",
-        ProjectsUpdateBody {
-            description: None,
-            name: None,
-            setup_script: None,
-            code_repository_ids: None,
-            agent_instructions: None,
-            color: None,
-            icon: None,
-            include_deps: None,
-            include_skills: None,
-            resource_settings: None,
-            default_for_sizes: None,
-            environment_variables: None,
-            schedule: None,
-            sizes: None,
-            warm_pool_schedule: None,
-            warm_pool_enabled: None,
-        },
-    )
+    .update("example", ProjectsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -1880,12 +1670,10 @@ let response = client
     .environment_variables()
     .create(
         "example",
-        EnvironmentVariablesCreateBody2 {
-            secrets: vec![EnvironmentVariablesCreateBody2Secret {
-                key: "".to_string(),
-                value: "x".to_string(),
-            }],
-        },
+        EnvironmentVariablesCreateBody2::new(vec![EnvironmentVariablesCreateBody2Secret::new(
+            "".to_string(),
+            "x".to_string(),
+        )]),
     )
     .send()
     .await?;
@@ -1952,14 +1740,7 @@ Rename a snapshot or choose whether it is pinned.
 let response = client
     .projects()
     .snapshots()
-    .update(
-        "example",
-        "example",
-        SnapshotsUpdateBody {
-            name: None,
-            pinned: None,
-        },
-    )
+    .update("example", "example", SnapshotsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -2008,13 +1789,7 @@ Build selected project sizes or rebuild one snapshot.
 let response = client
     .projects()
     .builds()
-    .create(
-        "example",
-        BuildsCreateBody {
-            sizes: None,
-            snapshot_id: None,
-        },
-    )
+    .create("example", BuildsCreateBody::new())
     .send()
     .await?;
 ```
@@ -2070,13 +1845,7 @@ Create a recurring project build schedule.
 let response = client
     .projects()
     .schedules()
-    .create(
-        "example",
-        SchedulesCreateBody {
-            cron: "x".to_string(),
-            timezone: None,
-        },
-    )
+    .create("example", SchedulesCreateBody::new("x".to_string()))
     .send()
     .await?;
 ```
@@ -2111,15 +1880,7 @@ Update timing or enabled state for a project schedule.
 let response = client
     .projects()
     .schedules()
-    .update(
-        "example",
-        "example",
-        SchedulesUpdateBody {
-            cron: None,
-            enabled: None,
-            timezone: None,
-        },
-    )
+    .update("example", "example", SchedulesUpdateBody::new())
     .send()
     .await?;
 ```
@@ -2167,11 +1928,10 @@ Pin a session, pull request, or project you have permission to access.
 ```rust
 let response = client
     .pins()
-    .create(PinsCreateBody {
-        r#type: PinsCreateBodyType::Session,
-        id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-        placement: None,
-    })
+    .create(PinsCreateBody::new(
+        PinsCreateBodyType::Session,
+        "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+    ))
     .send()
     .await?;
 ```
@@ -2191,15 +1951,13 @@ let response = client
     .update(
         "session".to_string(),
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        PinsUpdateBody {
-            placement: PinsUpdateBodyPlacement {
-                target: PinsUpdateBodyPlacementTarget {
-                    r#type: PinsUpdateBodyPlacementTargetType::Session,
-                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                },
-                position: PinsUpdateBodyPlacementPosition::Before,
-            },
-        },
+        PinsUpdateBody::new(PinsUpdateBodyPlacement::new(
+            PinsUpdateBodyPlacementTarget::new(
+                PinsUpdateBodyPlacementTargetType::Session,
+                "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+            ),
+            PinsUpdateBodyPlacementPosition::Before,
+        )),
     )
     .send()
     .await?;
@@ -2275,25 +2033,7 @@ Create an agent from instructions, a template, or another agent. sourceAgentId c
 | Response | [`AgentsCreateResponse`](./src/models/agents.rs) |
 
 ```rust
-let response = client
-    .agents()
-    .create(AgentsCreateBody {
-        name: None,
-        instructions: None,
-        mcp_servers: None,
-        agent: None,
-        agent_options: None,
-        sandbox_size: None,
-        project_id: None,
-        artifact_type: None,
-        repository_ids: None,
-        triggers: None,
-        schedules: None,
-        template_name: None,
-        source_agent_id: None,
-    })
-    .send()
-    .await?;
+let response = client.agents().create(AgentsCreateBody::new()).send().await?;
 ```
 
 ### Retrieve an agent
@@ -2324,27 +2064,7 @@ Update agent instructions, model, workspace, repositories, or persistent state; 
 ```rust
 let response = client
     .agents()
-    .update(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        AgentsUpdateBody {
-            expected_updated_at: None,
-            name: None,
-            key: None,
-            instructions: None,
-            mcp_servers: None,
-            agent: None,
-            agent_options: None,
-            user_state: None,
-            sandbox_size: None,
-            project_id: None,
-            template_id: None,
-            script: None,
-            artifact_type: None,
-            repository_ids: None,
-            enabled: None,
-            archived: None,
-        },
-    )
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", AgentsUpdateBody::new())
     .send()
     .await?;
 ```
@@ -2425,7 +2145,7 @@ let response = client
     .schedules()
     .create(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SchedulesCreateBody2 { cron: "x".to_string() },
+        SchedulesCreateBody2::new("x".to_string()),
     )
     .send()
     .await?;
@@ -2467,7 +2187,7 @@ let response = client
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        SchedulesUpdateBody2 { cron: "x".to_string() },
+        SchedulesUpdateBody2::new("x".to_string()),
     )
     .send()
     .await?;
@@ -2527,12 +2247,7 @@ let response = client
     .triggers()
     .create(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        TriggersCreateBody {
-            name: "x".to_string(),
-            integration_type: None,
-            integration_id: None,
-            filters: None,
-        },
+        TriggersCreateBody::new("x".to_string()),
     )
     .send()
     .await?;
@@ -2574,11 +2289,7 @@ let response = client
     .update(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        TriggersUpdateBody {
-            name: "x".to_string(),
-            integration_id: None,
-            filters: None,
-        },
+        TriggersUpdateBody::new("x".to_string()),
     )
     .send()
     .await?;
@@ -2629,7 +2340,7 @@ Queue an agent run. The entire JSON object body is passed to the agent as event 
 
 | Direction | Type |
 | --- | --- |
-| Request | `std::collections::HashMap<String, serde_json::Value>` |
+| Request | `std::collections::BTreeMap<String, serde_json::Value>` |
 | Response | [`RunsCreateResponse`](./src/models/runs.rs) |
 
 ```rust
@@ -2713,9 +2424,7 @@ let response = client
     .restore(
         "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         1,
-        ContentRevisionsRestoreBody {
-            expected_content_version: 1,
-        },
+        ContentRevisionsRestoreBody::new(1),
     )
     .send()
     .await?;
@@ -2763,14 +2472,7 @@ Update repository configuration or enable or disable it.
 ```rust
 let response = client
     .repositories()
-    .update(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        RepositoriesUpdateBody {
-            enabled: None,
-            base_branch: None,
-            target_branch: None,
-        },
-    )
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", RepositoriesUpdateBody::new())
     .send()
     .await?;
 ```
@@ -2883,10 +2585,7 @@ Queue or immediately perform an integration sync.
 ```rust
 let response = client
     .integrations()
-    .sync(
-        "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        IntegrationsSyncBody { mode: None },
-    )
+    .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7", IntegrationsSyncBody::new())
     .send()
     .await?;
 ```
@@ -2903,7 +2602,7 @@ Queue integration and pull-request sync jobs for integrations with enabled repos
 ```rust
 let response = client
     .integrations()
-    .sync_all(IntegrationsSyncAllBody {})
+    .sync_all(IntegrationsSyncAllBody::new())
     .send()
     .await?;
 ```
@@ -2995,12 +2694,10 @@ Validate Snyk service-account credentials and list accessible organizations.
 let response = client
     .integrations()
     .providers()
-    .discover_snyk_organizations(ProvidersDiscoverSnykOrganizationsBody {
-        client_id: "x".to_string(),
-        client_secret: "x".to_string(),
-        cursor: None,
-        limit: None,
-    })
+    .discover_snyk_organizations(ProvidersDiscoverSnykOrganizationsBody::new(
+        "x".to_string(),
+        "x".to_string(),
+    ))
     .send()
     .await?;
 ```

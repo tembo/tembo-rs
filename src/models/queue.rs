@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `QueueUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct QueueUpdateResponse {
@@ -15,8 +14,25 @@ pub struct QueueUpdateResponse {
     pub message_ids: Vec<String>,
 }
 
+impl QueueUpdateResponse {
+    /// Creates a new `QueueUpdateResponse` from its required fields, leaving every optional one unset.
+    pub fn new(message_ids: Vec<String>) -> Self {
+        Self { message_ids }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `QueueUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct QueueUpdateBody {
     #[serde(rename = "messageIds")]
     pub message_ids: Vec<String>,
+}
+
+impl QueueUpdateBody {
+    /// Creates a new `QueueUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(message_ids: Vec<String>) -> Self {
+        Self { message_ids }
+    }
 }

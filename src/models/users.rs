@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `UsersMeResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct UsersMeResponse {
@@ -26,9 +25,34 @@ pub struct UsersMeResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl UsersMeResponse {
+    /// Creates a new `UsersMeResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        email: Option<String>,
+        email_verified: bool,
+        id: impl Into<String>,
+        image: Option<String>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            email,
+            email_verified,
+            id: id.into(),
+            image,
+            name,
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `UsersRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct UsersRetrieveResponse {
@@ -45,4 +69,30 @@ pub struct UsersRetrieveResponse {
     pub name: Option<String>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl UsersRetrieveResponse {
+    /// Creates a new `UsersRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        email: Option<String>,
+        email_verified: bool,
+        id: impl Into<String>,
+        image: Option<String>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            email,
+            email_verified,
+            id: id.into(),
+            image,
+            name,
+            updated_at,
+        }
+    }
 }

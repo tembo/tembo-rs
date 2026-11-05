@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponse {
@@ -16,9 +15,19 @@ pub struct RuntimesListResponse {
     pub next_cursor: Option<RuntimesListResponseNextCursor>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RuntimesListResponse {
+    /// Creates a new `RuntimesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<RuntimesListResponseItem>, next_cursor: Option<RuntimesListResponseNextCursor>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItem {
@@ -36,6 +45,35 @@ pub struct RuntimesListResponseItem {
     pub availability: RuntimesListResponseItemAvailability,
     #[serde(rename = "compatibleModels")]
     pub compatible_models: Vec<RuntimesListResponseItemCompatibleModel>,
+}
+
+impl RuntimesListResponseItem {
+    /// Creates a new `RuntimesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        name: RuntimesListResponseItemName,
+        display_name: impl Into<String>,
+        default_model_name: impl Into<String>,
+        requires_api_key: bool,
+        has_api_key: bool,
+        run_capabilities: RuntimesListResponseItemRunCapabilities,
+        availability: RuntimesListResponseItemAvailability,
+        compatible_models: Vec<RuntimesListResponseItemCompatibleModel>,
+    ) -> Self {
+        Self {
+            name,
+            display_name: display_name.into(),
+            default_model_name: default_model_name.into(),
+            requires_api_key,
+            has_api_key,
+            run_capabilities,
+            availability,
+            compatible_models,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -101,9 +139,9 @@ impl From<&str> for RuntimesListResponseItemName {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemRunCapabilities::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemRunCapabilities {
@@ -114,6 +152,27 @@ pub struct RuntimesListResponseItemRunCapabilities {
     /// Models that support ultracode workflow orchestration.
     #[serde(rename = "ultracodeModels")]
     pub ultracode_models: Vec<String>,
+}
+
+impl RuntimesListResponseItemRunCapabilities {
+    /// Creates a new `RuntimesListResponseItemRunCapabilities` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        modes: Vec<RuntimesListResponseItemRunCapabilitiesMode>,
+        speeds: Vec<RuntimesListResponseItemRunCapabilitiesSpeed>,
+        supports_goals: bool,
+        ultracode_models: Vec<String>,
+    ) -> Self {
+        Self {
+            modes,
+            speeds,
+            supports_goals,
+            ultracode_models,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -221,24 +280,51 @@ pub enum RuntimesListResponseItemAvailability {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemAvailabilityVariant1::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemAvailabilityVariant1 {
     pub status: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RuntimesListResponseItemAvailabilityVariant1 {
+    /// Creates a new `RuntimesListResponseItemAvailabilityVariant1` from its required fields, leaving every optional
+    /// one unset.
+    pub fn new(status: impl Into<String>) -> Self {
+        Self { status: status.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemAvailabilityVariant2::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemAvailabilityVariant2 {
     pub status: String,
     pub code: RuntimesListResponseItemAvailabilityVariant2Code,
     pub reason: String,
+}
+
+impl RuntimesListResponseItemAvailabilityVariant2 {
+    /// Creates a new `RuntimesListResponseItemAvailabilityVariant2` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: impl Into<String>,
+        code: RuntimesListResponseItemAvailabilityVariant2Code,
+        reason: impl Into<String>,
+    ) -> Self {
+        Self {
+            status: status.into(),
+            code,
+            reason: reason.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -284,9 +370,9 @@ impl From<&str> for RuntimesListResponseItemAvailabilityVariant2Code {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemCompatibleModel::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemCompatibleModel {
@@ -303,6 +389,36 @@ pub struct RuntimesListResponseItemCompatibleModel {
     #[serde(rename = "reasoningLevels")]
     pub reasoning_levels: Vec<String>,
     pub availability: RuntimesListResponseItemCompatibleModelAvailability,
+}
+
+impl RuntimesListResponseItemCompatibleModel {
+    /// Creates a new `RuntimesListResponseItemCompatibleModel` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        name: impl Into<String>,
+        label: impl Into<String>,
+        provider: impl Into<String>,
+        inference_source: Option<String>,
+        is_default: bool,
+        is_platform_default: bool,
+        reasoning_levels: Vec<String>,
+        availability: RuntimesListResponseItemCompatibleModelAvailability,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            label: label.into(),
+            provider: provider.into(),
+            inference_source,
+            is_default,
+            is_platform_default,
+            reasoning_levels,
+            availability,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -324,24 +440,51 @@ pub enum RuntimesListResponseItemCompatibleModelAvailability {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemCompatibleModelAvailabilityVariant1::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemCompatibleModelAvailabilityVariant1 {
     pub status: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RuntimesListResponseItemCompatibleModelAvailabilityVariant1 {
+    /// Creates a new `RuntimesListResponseItemCompatibleModelAvailabilityVariant1` from its required fields, leaving
+    /// every optional one unset.
+    pub fn new(status: impl Into<String>) -> Self {
+        Self { status: status.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RuntimesListResponseItemCompatibleModelAvailabilityVariant2::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RuntimesListResponseItemCompatibleModelAvailabilityVariant2 {
     pub status: String,
     pub code: RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code,
     pub reason: String,
+}
+
+impl RuntimesListResponseItemCompatibleModelAvailabilityVariant2 {
+    /// Creates a new `RuntimesListResponseItemCompatibleModelAvailabilityVariant2` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: impl Into<String>,
+        code: RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code,
+        reason: impl Into<String>,
+    ) -> Self {
+        Self {
+            status: status.into(),
+            code,
+            reason: reason.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

@@ -6,11 +6,10 @@ use super::*;
 use serde::{Deserialize, Serialize};
 
 /// Custom webhook input. Arbitrary keys and nested JSON values are preserved and passed to the agent.
-pub type AgentRunEventPayload = std::collections::HashMap<String, serde_json::Value>;
+pub type AgentRunEventPayload = std::collections::BTreeMap<String, serde_json::Value>;
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RunsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RunsListResponse {
@@ -19,9 +18,18 @@ pub struct RunsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RunsListResponse {
+    /// Creates a new `RunsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<RunsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RunsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RunsListResponseItem {
@@ -40,9 +48,34 @@ pub struct RunsListResponseItem {
     pub error_message: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RunsListResponseItem {
+    /// Creates a new `RunsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RunsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RunsCreateResponse {
@@ -53,9 +86,22 @@ pub struct RunsCreateResponse {
     pub status: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl RunsCreateResponse {
+    /// Creates a new `RunsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(job_id: impl Into<String>, agent_id: impl Into<String>, status: impl Into<String>) -> Self {
+        Self {
+            job_id: job_id.into(),
+            agent_id: agent_id.into(),
+            status: status.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `RunsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct RunsRetrieveResponse {
@@ -72,4 +118,30 @@ pub struct RunsRetrieveResponse {
     pub duration_ms: i64,
     #[serde(rename = "errorMessage", default)]
     pub error_message: Option<String>,
+}
+
+impl RunsRetrieveResponse {
+    /// Creates a new `RunsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
 }

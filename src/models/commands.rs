@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `CommandsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct CommandsListResponse {
@@ -17,9 +16,23 @@ pub struct CommandsListResponse {
     pub cached: bool,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl CommandsListResponse {
+    /// Creates a new `CommandsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<CommandsListResponseItem>, next_cursor: serde_json::Value, cached: bool) -> Self {
+        Self {
+            items,
+            next_cursor,
+            cached,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `CommandsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct CommandsListResponseItem {
@@ -32,8 +45,39 @@ pub struct CommandsListResponseItem {
     pub source: CommandsListResponseItemSource,
 }
 
+impl CommandsListResponseItem {
+    /// Creates a new `CommandsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `CommandsListResponseItem::new(name, command, source).with_description(…)`.
+    pub fn new(name: impl Into<String>, command: impl Into<String>, source: CommandsListResponseItemSource) -> Self {
+        Self {
+            name: name.into(),
+            command: command.into(),
+            description: None,
+            argument_hint: None,
+            source,
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `argument_hint`, which `new` leaves unset.
+    pub fn with_argument_hint(mut self, value: impl Into<String>) -> Self {
+        self.argument_hint = Some(value.into());
+        self
+    }
+}
+
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown_(_)` directly is an
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
 /// anti-pattern: that arm silently stops matching once a future SDK release
 /// adds the real variant.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -48,10 +92,10 @@ pub enum CommandsListResponseItemSource {
     #[serde(rename = "skill")]
     Skill,
     #[serde(rename = "unknown")]
-    Unknown,
+    Unknown_,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
-    Unknown_(String),
+    Unknown(String),
 }
 
 impl CommandsListResponseItemSource {
@@ -62,8 +106,8 @@ impl CommandsListResponseItemSource {
             Self::Project => "project",
             Self::Mcp => "mcp",
             Self::Skill => "skill",
-            Self::Unknown => "unknown",
-            Self::Unknown_(value) => value,
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
         }
     }
 }
@@ -81,8 +125,8 @@ impl From<&str> for CommandsListResponseItemSource {
             "project" => Self::Project,
             "mcp" => Self::Mcp,
             "skill" => Self::Skill,
-            "unknown" => Self::Unknown,
-            other => Self::Unknown_(other.to_owned()),
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }
