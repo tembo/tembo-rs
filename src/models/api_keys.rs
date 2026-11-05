@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysListResponse {
@@ -16,9 +15,19 @@ pub struct ApiKeysListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ApiKeysListResponse {
+    /// Creates a new `ApiKeysListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<ApiKeysListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysListResponseItem {
@@ -47,9 +56,37 @@ pub struct ApiKeysListResponseItem {
     pub token_preview: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ApiKeysListResponseItem {
+    /// Creates a new `ApiKeysListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_used_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        token_preview: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            expires_at,
+            id: id.into(),
+            last_used_at,
+            name,
+            updated_at,
+            user_id: user_id.into(),
+            token_preview: token_preview.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysCreateResponse {
@@ -79,24 +116,88 @@ pub struct ApiKeysCreateResponse {
     pub token: String,
 }
 
+impl ApiKeysCreateResponse {
+    /// Creates a new `ApiKeysCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_used_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        token_preview: impl Into<String>,
+        token: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            expires_at,
+            id: id.into(),
+            last_used_at,
+            name,
+            updated_at,
+            user_id: user_id.into(),
+            token_preview: token_preview.into(),
+            token: token.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ApiKeysCreateBody {
     /// Future ISO 8601 expiration timestamp. Omit or use null for a key that does not expire.
     #[serde(
         rename = "expiresAt",
         default,
         skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::datetime::option::deserialize"
+        with = "crate::explicit_null::datetime"
     )]
-    pub expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    pub expires_at: Option<Option<chrono::DateTime<chrono::FixedOffset>>>,
     /// Display name for identifying this API key.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ApiKeysCreateBody {
+    /// Creates a new `ApiKeysCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ApiKeysCreateBody::new().with_expires_at(…)`.
+    pub fn new() -> Self {
+        Self {
+            expires_at: None,
+            name: None,
+        }
+    }
+
+    /// Sets `expires_at`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `expires_at = Some(None)` on the built value.
+    pub fn with_expires_at(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
+        self.expires_at = Some(Some(value));
+        self
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysRetrieveResponse {
@@ -125,9 +226,37 @@ pub struct ApiKeysRetrieveResponse {
     pub token_preview: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ApiKeysRetrieveResponse {
+    /// Creates a new `ApiKeysRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_used_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        token_preview: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            expires_at,
+            id: id.into(),
+            last_used_at,
+            name,
+            updated_at,
+            user_id: user_id.into(),
+            token_preview: token_preview.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysUpdateResponse {
@@ -156,18 +285,66 @@ pub struct ApiKeysUpdateResponse {
     pub token_preview: String,
 }
 
+impl ApiKeysUpdateResponse {
+    /// Creates a new `ApiKeysUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        expires_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_used_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        token_preview: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            expires_at,
+            id: id.into(),
+            last_used_at,
+            name,
+            updated_at,
+            user_id: user_id.into(),
+            token_preview: token_preview.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ApiKeysUpdateBody {
     /// New display name for the API key. This does not rotate its token.
     pub name: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ApiKeysUpdateBody {
+    /// Creates a new `ApiKeysUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(name: impl Into<String>) -> Self {
+        Self { name: name.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ApiKeysDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ApiKeysDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl ApiKeysDeleteResponse {
+    /// Creates a new `ApiKeysDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

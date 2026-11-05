@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProvidersListResponse {
@@ -18,10 +17,31 @@ pub struct ProvidersListResponse {
     pub next_cursor: Option<String>,
 }
 
+impl ProvidersListResponse {
+    /// Creates a new `ProvidersListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        installed_counts: ProvidersListResponseInstalledCounts,
+        items: Vec<ProvidersListResponseItem>,
+        next_cursor: Option<String>,
+    ) -> Self {
+        Self {
+            installed_counts,
+            items,
+            next_cursor,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersListResponseInstalledCounts::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProvidersListResponseInstalledCounts {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -62,9 +82,146 @@ pub struct ProvidersListResponseInstalledCounts {
     pub tailscale: Option<i64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProvidersListResponseInstalledCounts {
+    /// Creates a new `ProvidersListResponseInstalledCounts` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProvidersListResponseInstalledCounts::new().with_github(…)`.
+    pub fn new() -> Self {
+        Self {
+            github: None,
+            gitlab: None,
+            bitbucket: None,
+            atlassian: None,
+            linear: None,
+            slack: None,
+            sentry: None,
+            aws: None,
+            agent: None,
+            notion: None,
+            postgres: None,
+            bigquery: None,
+            azure: None,
+            ms_teams: None,
+            snyk: None,
+            hubspot: None,
+            openconnect: None,
+            tailscale: None,
+        }
+    }
+
+    /// Sets `github`, which `new` leaves unset.
+    pub fn with_github(mut self, value: i64) -> Self {
+        self.github = Some(value);
+        self
+    }
+
+    /// Sets `gitlab`, which `new` leaves unset.
+    pub fn with_gitlab(mut self, value: i64) -> Self {
+        self.gitlab = Some(value);
+        self
+    }
+
+    /// Sets `bitbucket`, which `new` leaves unset.
+    pub fn with_bitbucket(mut self, value: i64) -> Self {
+        self.bitbucket = Some(value);
+        self
+    }
+
+    /// Sets `atlassian`, which `new` leaves unset.
+    pub fn with_atlassian(mut self, value: i64) -> Self {
+        self.atlassian = Some(value);
+        self
+    }
+
+    /// Sets `linear`, which `new` leaves unset.
+    pub fn with_linear(mut self, value: i64) -> Self {
+        self.linear = Some(value);
+        self
+    }
+
+    /// Sets `slack`, which `new` leaves unset.
+    pub fn with_slack(mut self, value: i64) -> Self {
+        self.slack = Some(value);
+        self
+    }
+
+    /// Sets `sentry`, which `new` leaves unset.
+    pub fn with_sentry(mut self, value: i64) -> Self {
+        self.sentry = Some(value);
+        self
+    }
+
+    /// Sets `aws`, which `new` leaves unset.
+    pub fn with_aws(mut self, value: i64) -> Self {
+        self.aws = Some(value);
+        self
+    }
+
+    /// Sets `agent`, which `new` leaves unset.
+    pub fn with_agent(mut self, value: i64) -> Self {
+        self.agent = Some(value);
+        self
+    }
+
+    /// Sets `notion`, which `new` leaves unset.
+    pub fn with_notion(mut self, value: i64) -> Self {
+        self.notion = Some(value);
+        self
+    }
+
+    /// Sets `postgres`, which `new` leaves unset.
+    pub fn with_postgres(mut self, value: i64) -> Self {
+        self.postgres = Some(value);
+        self
+    }
+
+    /// Sets `bigquery`, which `new` leaves unset.
+    pub fn with_bigquery(mut self, value: i64) -> Self {
+        self.bigquery = Some(value);
+        self
+    }
+
+    /// Sets `azure`, which `new` leaves unset.
+    pub fn with_azure(mut self, value: i64) -> Self {
+        self.azure = Some(value);
+        self
+    }
+
+    /// Sets `ms_teams`, which `new` leaves unset.
+    pub fn with_ms_teams(mut self, value: i64) -> Self {
+        self.ms_teams = Some(value);
+        self
+    }
+
+    /// Sets `snyk`, which `new` leaves unset.
+    pub fn with_snyk(mut self, value: i64) -> Self {
+        self.snyk = Some(value);
+        self
+    }
+
+    /// Sets `hubspot`, which `new` leaves unset.
+    pub fn with_hubspot(mut self, value: i64) -> Self {
+        self.hubspot = Some(value);
+        self
+    }
+
+    /// Sets `openconnect`, which `new` leaves unset.
+    pub fn with_openconnect(mut self, value: i64) -> Self {
+        self.openconnect = Some(value);
+        self
+    }
+
+    /// Sets `tailscale`, which `new` leaves unset.
+    pub fn with_tailscale(mut self, value: i64) -> Self {
+        self.tailscale = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProvidersListResponseItem {
@@ -88,6 +245,61 @@ pub struct ProvidersListResponseItem {
     pub redirect_url: Option<String>,
     #[serde(rename = "templateUrl", default, skip_serializing_if = "Option::is_none")]
     pub template_url: Option<String>,
+}
+
+impl ProvidersListResponseItem {
+    /// Creates a new `ProvidersListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProvidersListResponseItem::new(…).with_oidc_issuer_host(…)`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        authorize_url: impl Into<String>,
+        category: impl Into<String>,
+        coming_soon: bool,
+        description: impl Into<String>,
+        display_name: impl Into<String>,
+        installed: bool,
+        integration_type: ProvidersListResponseItemIntegrationType,
+        is_o_auth: bool,
+        name: impl Into<String>,
+    ) -> Self {
+        Self {
+            authorize_url: authorize_url.into(),
+            category: category.into(),
+            coming_soon,
+            description: description.into(),
+            display_name: display_name.into(),
+            installed,
+            integration_type,
+            is_o_auth,
+            name: name.into(),
+            oidc_issuer_host: None,
+            redirect_url: None,
+            template_url: None,
+        }
+    }
+
+    /// Sets `oidc_issuer_host`, which `new` leaves unset.
+    pub fn with_oidc_issuer_host(mut self, value: impl Into<String>) -> Self {
+        self.oidc_issuer_host = Some(value.into());
+        self
+    }
+
+    /// Sets `redirect_url`, which `new` leaves unset.
+    pub fn with_redirect_url(mut self, value: impl Into<String>) -> Self {
+        self.redirect_url = Some(value.into());
+        self
+    }
+
+    /// Sets `template_url`, which `new` leaves unset.
+    pub fn with_template_url(mut self, value: impl Into<String>) -> Self {
+        self.template_url = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -197,9 +409,9 @@ impl From<&str> for ProvidersListResponseItemIntegrationType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersDiscoverSnykOrganizationsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProvidersDiscoverSnykOrganizationsResponse {
@@ -208,9 +420,20 @@ pub struct ProvidersDiscoverSnykOrganizationsResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProvidersDiscoverSnykOrganizationsResponse {
+    /// Creates a new `ProvidersDiscoverSnykOrganizationsResponse` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<ProvidersDiscoverSnykOrganizationsResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersDiscoverSnykOrganizationsResponseItem::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProvidersDiscoverSnykOrganizationsResponseItem {
@@ -221,7 +444,26 @@ pub struct ProvidersDiscoverSnykOrganizationsResponseItem {
     pub slug: Option<String>,
 }
 
+impl ProvidersDiscoverSnykOrganizationsResponseItem {
+    /// Creates a new `ProvidersDiscoverSnykOrganizationsResponseItem` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: Option<String>, slug: Option<String>) -> Self {
+        Self {
+            id: id.into(),
+            name,
+            slug,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProvidersDiscoverSnykOrganizationsBody::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProvidersDiscoverSnykOrganizationsBody {
     /// Snyk service-account client ID to validate and use for organization discovery.
     #[serde(rename = "clientId")]
@@ -241,8 +483,11 @@ impl ProvidersDiscoverSnykOrganizationsBody {
     /// Creates a new `ProvidersDiscoverSnykOrganizationsBody` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ProvidersDiscoverSnykOrganizationsBody { cursor: Some(…), ..ProvidersDiscoverSnykOrganizationsBody::new(…) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProvidersDiscoverSnykOrganizationsBody::new(client_id, client_secret).with_cursor(…)`.
     pub fn new(client_id: impl Into<String>, client_secret: impl Into<String>) -> Self {
         Self {
             client_id: client_id.into(),
@@ -250,5 +495,17 @@ impl ProvidersDiscoverSnykOrganizationsBody {
             cursor: None,
             limit: None,
         }
+    }
+
+    /// Sets `cursor`, which `new` leaves unset.
+    pub fn with_cursor(mut self, value: impl Into<String>) -> Self {
+        self.cursor = Some(value.into());
+        self
+    }
+
+    /// Sets `limit`, which `new` leaves unset.
+    pub fn with_limit(mut self, value: i64) -> Self {
+        self.limit = Some(value);
+        self
     }
 }

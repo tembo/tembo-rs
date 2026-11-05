@@ -47,14 +47,7 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .api_keys()
-                .create(ApiKeysCreateBody {
-                    expires_at: None,
-                    name: None,
-                })
-                .send()
-                .await?;
+            let _ = client.api_keys().create(ApiKeysCreateBody::new()).send().await?;
             Ok(())
         }
         .await;
@@ -68,10 +61,11 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .api_keys()
-                .create(ApiKeysCreateBody {
-                    expires_at: Some(chrono::Utc::now().fixed_offset()),
-                    name: Some("x".to_string()),
-                })
+                .create(
+                    ApiKeysCreateBody::new()
+                        .with_expires_at(chrono::Utc::now().fixed_offset())
+                        .with_name("x".to_string()),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -105,7 +99,7 @@ async fn smoke() {
                 .api_keys()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    ApiKeysUpdateBody { name: "x".to_string() },
+                    ApiKeysUpdateBody::new("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -174,15 +168,11 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .skills()
-                .create(SkillsCreateBody {
-                    description: "".to_string(),
-                    name: "x".to_string(),
-                    files: vec![SkillsCreateBodyFile {
-                        content: "".to_string(),
-                        encoding: None,
-                        filename: "x".to_string(),
-                    }],
-                })
+                .create(SkillsCreateBody::new(
+                    "".to_string(),
+                    "x".to_string(),
+                    vec![SkillsCreateBodyFile::new("".to_string(), "x".to_string())],
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -214,14 +204,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .skills()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SkillsUpdateBody {
-                        description: None,
-                        name: None,
-                        files: None,
-                    },
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SkillsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -239,15 +222,10 @@ async fn smoke() {
                 .skills()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SkillsUpdateBody {
-                        description: Some("".to_string()),
-                        name: Some("x".to_string()),
-                        files: Some(vec![SkillsUpdateBodyFile {
-                            content: "".to_string(),
-                            encoding: None,
-                            filename: "x".to_string(),
-                        }]),
-                    },
+                    SkillsUpdateBody::new()
+                        .with_description("".to_string())
+                        .with_name("x".to_string())
+                        .with_files(vec![SkillsUpdateBodyFile::new("".to_string(), "x".to_string())]),
                 )
                 .send()
                 .await?;
@@ -351,11 +329,7 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .insights()
-                .update(InsightsUpdateBody { enabled: false })
-                .send()
-                .await?;
+            let _ = client.insights().update(InsightsUpdateBody::new(false)).send().await?;
             Ok(())
         }
         .await;
@@ -434,10 +408,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .organizations()
-                .create(OrganizationsCreateBody {
-                    name: "x".to_string(),
-                    slug: None,
-                })
+                .create(OrganizationsCreateBody::new("x".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -453,10 +424,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .organizations()
-                .create(OrganizationsCreateBody {
-                    name: "x".to_string(),
-                    slug: Some("x".to_string()),
-                })
+                .create(OrganizationsCreateBody::new("x".to_string()).with_slug("x".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -484,14 +452,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .organizations()
-                .update(
-                    "example",
-                    OrganizationsUpdateBody {
-                        name: None,
-                        slug: None,
-                        onboarding_completed: None,
-                    },
-                )
+                .update("example", OrganizationsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -512,11 +473,10 @@ async fn smoke() {
                 .organizations()
                 .update(
                     "example",
-                    OrganizationsUpdateBody {
-                        name: Some("x".to_string()),
-                        slug: Some("x".to_string()),
-                        onboarding_completed: Some(false),
-                    },
+                    OrganizationsUpdateBody::new()
+                        .with_name("x".to_string())
+                        .with_slug("x".to_string())
+                        .with_onboarding_completed(false),
                 )
                 .send()
                 .await?;
@@ -588,13 +548,7 @@ async fn smoke() {
             let _ = client
                 .organizations()
                 .members()
-                .create(
-                    "example",
-                    MembersCreateBody {
-                        email_address: "user@example.com".to_string(),
-                        role: None,
-                    },
-                )
+                .create("example", MembersCreateBody::new("user@example.com".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -616,10 +570,7 @@ async fn smoke() {
                 .members()
                 .create(
                     "example",
-                    MembersCreateBody {
-                        email_address: "user@example.com".to_string(),
-                        role: Some(MembersCreateBodyRole::OrgMember),
-                    },
+                    MembersCreateBody::new("user@example.com".to_string()).with_role(MembersCreateBodyRole::OrgMember),
                 )
                 .send()
                 .await?;
@@ -663,9 +614,7 @@ async fn smoke() {
                 .update(
                     "example",
                     "example",
-                    MembersUpdateBody {
-                        role: MembersUpdateBodyRole::OrgAdmin,
-                    },
+                    MembersUpdateBody::new(MembersUpdateBodyRole::OrgAdmin),
                 )
                 .send()
                 .await?;
@@ -744,13 +693,7 @@ async fn smoke() {
             let _ = client
                 .organizations()
                 .secrets()
-                .create(
-                    "example",
-                    SecretsCreateBody {
-                        key: "x".to_string(),
-                        value: "x".to_string(),
-                    },
-                )
+                .create("example", SecretsCreateBody::new("x".to_string(), "x".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -793,7 +736,7 @@ async fn smoke() {
                 .update(
                     "example",
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SecretsUpdateBody { key: None, value: None },
+                    SecretsUpdateBody::new(),
                 )
                 .send()
                 .await?;
@@ -817,10 +760,9 @@ async fn smoke() {
                 .update(
                     "example",
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SecretsUpdateBody {
-                        key: Some("x".to_string()),
-                        value: Some("x".to_string()),
-                    },
+                    SecretsUpdateBody::new()
+                        .with_key("x".to_string())
+                        .with_value("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -876,51 +818,7 @@ async fn smoke() {
             let _ = client
                 .organizations()
                 .settings()
-                .update(
-                    "example",
-                    SettingsUpdateBody {
-                        amp_api_key: None,
-                        anthropic_api_key: None,
-                        aws_bedrock_access_key_id: None,
-                        aws_bedrock_region: None,
-                        aws_bedrock_secret_access_key: None,
-                        clone_depth: None,
-                        commit_instructions: None,
-                        cursor_api_key: None,
-                        custom_system_prompt: None,
-                        default_agent: None,
-                        default_keep_alive_minutes: None,
-                        default_sandbox_size: None,
-                        delete_branch_when_pr_closed: None,
-                        draft_prs: None,
-                        enable_coderabbit_bot: None,
-                        enable_cursor_bot: None,
-                        enable_gemini_code_assist_bot: None,
-                        enable_github_actions_bot: None,
-                        enable_graphite_bot: None,
-                        enable_greptile_bot: None,
-                        experimental_mcp: None,
-                        feature_mention_author: None,
-                        gcp_vertex_ai_location: None,
-                        gcp_vertex_ai_project: None,
-                        gcp_vertex_ai_service_account_json: None,
-                        kernel_api_key: None,
-                        max_bot_reviews: None,
-                        max_solutions: None,
-                        openai_api_key: None,
-                        xai_api_key: None,
-                        openrouter_api_key: None,
-                        pg_stat_statements_reset_frequency: None,
-                        pm_system_prompt: None,
-                        pr_title_instructions: None,
-                        pull_request_insights_enabled: None,
-                        should_sign_commits: None,
-                        slack_review_on_tembo: None,
-                        slow_query_threshold_ms: None,
-                        ssh_public_keys: None,
-                        weekly_report_enabled: None,
-                    },
-                )
+                .update("example", SettingsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -942,48 +840,47 @@ async fn smoke() {
                 .settings()
                 .update(
                     "example",
-                    SettingsUpdateBody {
-                        amp_api_key: Some("".to_string()),
-                        anthropic_api_key: Some("".to_string()),
-                        aws_bedrock_access_key_id: Some("".to_string()),
-                        aws_bedrock_region: Some("".to_string()),
-                        aws_bedrock_secret_access_key: Some("".to_string()),
-                        clone_depth: Some(1),
-                        commit_instructions: Some("".to_string()),
-                        cursor_api_key: Some("".to_string()),
-                        custom_system_prompt: Some("".to_string()),
-                        default_agent: Some("".to_string()),
-                        default_keep_alive_minutes: Some(0),
-                        default_sandbox_size: Some(SettingsUpdateBodyDefaultSandboxSize::Nano),
-                        delete_branch_when_pr_closed: Some(false),
-                        draft_prs: Some(false),
-                        enable_coderabbit_bot: Some(false),
-                        enable_cursor_bot: Some(false),
-                        enable_gemini_code_assist_bot: Some(false),
-                        enable_github_actions_bot: Some(false),
-                        enable_graphite_bot: Some(false),
-                        enable_greptile_bot: Some(false),
-                        experimental_mcp: Some(false),
-                        feature_mention_author: Some(false),
-                        gcp_vertex_ai_location: Some("".to_string()),
-                        gcp_vertex_ai_project: Some("".to_string()),
-                        gcp_vertex_ai_service_account_json: Some("".to_string()),
-                        kernel_api_key: Some("".to_string()),
-                        max_bot_reviews: Some(0),
-                        max_solutions: Some(0),
-                        openai_api_key: Some("".to_string()),
-                        xai_api_key: Some("".to_string()),
-                        openrouter_api_key: Some("".to_string()),
-                        pg_stat_statements_reset_frequency: Some("".to_string()),
-                        pm_system_prompt: Some("".to_string()),
-                        pr_title_instructions: Some("".to_string()),
-                        pull_request_insights_enabled: Some(false),
-                        should_sign_commits: Some(false),
-                        slack_review_on_tembo: Some(false),
-                        slow_query_threshold_ms: Some(0.0),
-                        ssh_public_keys: Some("".to_string()),
-                        weekly_report_enabled: Some(false),
-                    },
+                    SettingsUpdateBody::new()
+                        .with_amp_api_key("".to_string())
+                        .with_anthropic_api_key("".to_string())
+                        .with_aws_bedrock_access_key_id("".to_string())
+                        .with_aws_bedrock_region("".to_string())
+                        .with_aws_bedrock_secret_access_key("".to_string())
+                        .with_clone_depth(1)
+                        .with_commit_instructions("".to_string())
+                        .with_cursor_api_key("".to_string())
+                        .with_custom_system_prompt("".to_string())
+                        .with_default_agent("".to_string())
+                        .with_default_keep_alive_minutes(0)
+                        .with_default_sandbox_size(SettingsUpdateBodyDefaultSandboxSize::Nano)
+                        .with_delete_branch_when_pr_closed(false)
+                        .with_draft_prs(false)
+                        .with_enable_coderabbit_bot(false)
+                        .with_enable_cursor_bot(false)
+                        .with_enable_gemini_code_assist_bot(false)
+                        .with_enable_github_actions_bot(false)
+                        .with_enable_graphite_bot(false)
+                        .with_enable_greptile_bot(false)
+                        .with_experimental_mcp(false)
+                        .with_feature_mention_author(false)
+                        .with_gcp_vertex_ai_location("".to_string())
+                        .with_gcp_vertex_ai_project("".to_string())
+                        .with_gcp_vertex_ai_service_account_json("".to_string())
+                        .with_kernel_api_key("".to_string())
+                        .with_max_bot_reviews(0)
+                        .with_max_solutions(0)
+                        .with_openai_api_key("".to_string())
+                        .with_xai_api_key("".to_string())
+                        .with_openrouter_api_key("".to_string())
+                        .with_pg_stat_statements_reset_frequency("".to_string())
+                        .with_pm_system_prompt("".to_string())
+                        .with_pr_title_instructions("".to_string())
+                        .with_pull_request_insights_enabled(false)
+                        .with_should_sign_commits(false)
+                        .with_slack_review_on_tembo(false)
+                        .with_slow_query_threshold_ms(0.0)
+                        .with_ssh_public_keys("".to_string())
+                        .with_weekly_report_enabled(false),
                 )
                 .send()
                 .await?;
@@ -1222,17 +1119,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .messages()
-                .create(MessagesCreateBody {
-                    artifact_id: None,
-                    content: "x".to_string(),
-                    mcp_servers: None,
-                    pull_request_id: None,
-                    session_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                    agent_options: None,
-                    delivery_mode: None,
-                    rich_content: None,
-                    slash_command: None,
-                })
+                .create(MessagesCreateBody::new(
+                    "x".to_string(),
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -1248,20 +1138,14 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .messages()
-                .create(MessagesCreateBody {
-                    artifact_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                    content: "x".to_string(),
-                    mcp_servers: Some(vec!["x".to_string()]),
-                    pull_request_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                    session_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                    agent_options: None,
-                    delivery_mode: Some(MessagesCreateBodyDeliveryMode::Queue),
-                    rich_content: None,
-                    slash_command: Some(MessagesCreateBodySlashCommand {
-                        command: "x".to_string(),
-                        arguments: None,
-                    }),
-                })
+                .create(
+                    MessagesCreateBody::new("x".to_string(), "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string())
+                        .with_artifact_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string())
+                        .with_mcp_servers(vec!["x".to_string()])
+                        .with_pull_request_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string())
+                        .with_delivery_mode(MessagesCreateBodyDeliveryMode::Queue)
+                        .with_slash_command(MessagesCreateBodySlashCommand::new("x".to_string())),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -1293,13 +1177,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .messages()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    MessagesUpdateBody {
-                        content: None,
-                        rich_content: None,
-                    },
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", MessagesUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -1320,10 +1198,7 @@ async fn smoke() {
                 .messages()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    MessagesUpdateBody {
-                        content: Some("x".to_string()),
-                        rich_content: None,
-                    },
+                    MessagesUpdateBody::new().with_content("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -1380,13 +1255,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .models()
-                .update(
-                    "example",
-                    ModelsUpdateBody {
-                        enabled: None,
-                        inference_provider: None,
-                    },
-                )
+                .update("example", ModelsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -1404,10 +1273,9 @@ async fn smoke() {
                 .models()
                 .update(
                     "example",
-                    ModelsUpdateBody {
-                        enabled: Some(false),
-                        inference_provider: Some(ModelsUpdateBodyInferenceProvider::TemboManagedInference),
-                    },
+                    ModelsUpdateBody::new()
+                        .with_enabled(false)
+                        .with_inference_provider(ModelsUpdateBodyInferenceProvider::TemboManagedInference),
                 )
                 .send()
                 .await?;
@@ -1491,30 +1359,7 @@ async fn smoke() {
             let _ = client
                 .users()
                 .settings()
-                .update(
-                    "example",
-                    SettingsUpdateBody2 {
-                        auto_restart_vm: None,
-                        default_project_id: None,
-                        gpg_key: None,
-                        include_tembo_commit_attribution: None,
-                        desktop_notifications_enabled: None,
-                        desktop_notification_preferences: None,
-                        has_desktop_app: None,
-                        open_links_in_desktop_app: None,
-                        appearance_preferences: None,
-                        app_sidebar_preferences: None,
-                        diff_preferences: None,
-                        dashboard_preferences: None,
-                        composer_preferences: None,
-                        review_preferences: None,
-                        diff_light_theme: None,
-                        diff_dark_theme: None,
-                        default_agent: None,
-                        follow_up_behavior: None,
-                        custom_system_prompt: None,
-                    },
-                )
+                .update("example", SettingsUpdateBody2::new())
                 .send()
                 .await?;
             Ok(())
@@ -1536,62 +1381,27 @@ async fn smoke() {
                 .settings()
                 .update(
                     "example",
-                    SettingsUpdateBody2 {
-                        auto_restart_vm: Some(false),
-                        default_project_id: Some("x".to_string()),
-                        gpg_key: Some("".to_string()),
-                        include_tembo_commit_attribution: Some(false),
-                        desktop_notifications_enabled: Some(false),
-                        desktop_notification_preferences: Some(SettingsUpdateBody2DesktopNotificationPreferences {
-                            awaiting_approval: None,
-                            pull_request_opened: None,
-                            pull_request_review_requested: None,
-                        }),
-                        has_desktop_app: Some(false),
-                        open_links_in_desktop_app: Some(false),
-                        appearance_preferences: Some(SettingsUpdateBody2AppearancePreferences {
-                            app_theme: None,
-                            accent_theme: None,
-                        }),
-                        app_sidebar_preferences: Some(SettingsUpdateBody2AppSidebarPreferences {
-                            open: None,
-                            session_owner_scope: None,
-                            session_sort_by: None,
-                            session_organization: None,
-                            show_archived_sessions: None,
-                            show_activity: None,
-                            width: None,
-                            right_sidebar: None,
-                        }),
-                        diff_preferences: Some(SettingsUpdateBody2DiffPreferences {
-                            style: None,
-                            indicators: None,
-                            overflow: None,
-                            show_line_numbers: None,
-                            expand_unchanged: None,
-                            show_file_tree: None,
-                            file_tree_position: None,
-                            file_tree_view: None,
-                            light_theme: None,
-                            dark_theme: None,
-                        }),
-                        dashboard_preferences: Some(SettingsUpdateBody2DashboardPreferences { task_filters: None }),
-                        composer_preferences: Some(SettingsUpdateBody2ComposerPreferences {
-                            last_selected_repositories: None,
-                        }),
-                        review_preferences: Some(SettingsUpdateBody2ReviewPreferences {
-                            file_sort_mode: None,
-                            excluded_file_patterns: None,
-                            sections: None,
-                            hide_bot_comments: None,
-                            layout: None,
-                        }),
-                        diff_light_theme: Some("".to_string()),
-                        diff_dark_theme: Some("".to_string()),
-                        default_agent: Some("".to_string()),
-                        follow_up_behavior: Some(SettingsUpdateBody2FollowUpBehavior::Queue),
-                        custom_system_prompt: Some("".to_string()),
-                    },
+                    SettingsUpdateBody2::new()
+                        .with_default_session_visibility_by_workspace(std::collections::BTreeMap::new())
+                        .with_auto_restart_vm(false)
+                        .with_default_project_id("x".to_string())
+                        .with_gpg_key("".to_string())
+                        .with_include_tembo_commit_attribution(false)
+                        .with_desktop_notifications_enabled(false)
+                        .with_desktop_notification_preferences(SettingsUpdateBody2DesktopNotificationPreferences::new())
+                        .with_has_desktop_app(false)
+                        .with_open_links_in_desktop_app(false)
+                        .with_appearance_preferences(SettingsUpdateBody2AppearancePreferences::new())
+                        .with_app_sidebar_preferences(SettingsUpdateBody2AppSidebarPreferences::new())
+                        .with_diff_preferences(SettingsUpdateBody2DiffPreferences::new())
+                        .with_dashboard_preferences(SettingsUpdateBody2DashboardPreferences::new())
+                        .with_composer_preferences(SettingsUpdateBody2ComposerPreferences::new())
+                        .with_review_preferences(SettingsUpdateBody2ReviewPreferences::new())
+                        .with_diff_light_theme("".to_string())
+                        .with_diff_dark_theme("".to_string())
+                        .with_default_agent("".to_string())
+                        .with_follow_up_behavior(SettingsUpdateBody2FollowUpBehavior::Queue)
+                        .with_custom_system_prompt("".to_string()),
                 )
                 .send()
                 .await?;
@@ -1692,10 +1502,7 @@ async fn smoke() {
                 .environment_variables()
                 .create(
                     "example",
-                    EnvironmentVariablesCreateBody {
-                        key: "x".to_string(),
-                        value: "x".to_string(),
-                    },
+                    EnvironmentVariablesCreateBody::new("x".to_string(), "x".to_string()),
                 )
                 .send()
                 .await?;
@@ -1826,26 +1633,16 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .sessions()
-                .create(SessionsCreateBody {
-                    agent: Some("claudeCode:claude-fable-5-1".to_string()),
-                    base_branch: Some("main".to_string()),
-                    mcp_servers: Some(vec![]),
-                    project_id: Some("your-project-id".to_string()),
-                    sandbox_size: None,
-                    target_branch: Some("main".to_string()),
-                    visibility: Some(SessionsCreateBodyVisibility::Private),
-                    agent_options: None,
-                    branch_name: None,
-                    code_repository_ids: Some(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
-                    description: "Fix the authentication bug in the login component".to_string(),
-                    id: None,
-                    rich_content: None,
-                    pull_request_id: None,
-                    queue_right_away: None,
-                    automatic_sizing: None,
-                    session_mode: None,
-                    startup_agent: None,
-                })
+                .create(
+                    SessionsCreateBody::new("Fix the authentication bug in the login component".to_string())
+                        .with_agent("claudeCode:claude-fable-5-1".to_string())
+                        .with_base_branch("main".to_string())
+                        .with_mcp_servers(vec![])
+                        .with_project_id("your-project-id".to_string())
+                        .with_target_branch("main".to_string())
+                        .with_visibility(SessionsCreateBodyVisibility::Private)
+                        .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -1861,32 +1658,25 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .sessions()
-                .create(SessionsCreateBody {
-                    agent: Some("claudeCode:claude-fable-5-1".to_string()),
-                    base_branch: Some("main".to_string()),
-                    mcp_servers: Some(vec![]),
-                    project_id: Some("your-project-id".to_string()),
-                    sandbox_size: Some(SessionsCreateBodySandboxSize::Nano),
-                    target_branch: Some("main".to_string()),
-                    visibility: Some(SessionsCreateBodyVisibility::Private),
-                    agent_options: Some(AgentOptions {
-                        reasoning_level: None,
-                        mode: None,
-                        speed: None,
-                        goal: None,
-                        ultracode: None,
-                    }),
-                    branch_name: Some("x".to_string()),
-                    code_repository_ids: Some(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
-                    description: "Fix the authentication bug in the login component".to_string(),
-                    id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                    rich_content: None,
-                    pull_request_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                    queue_right_away: Some(false),
-                    automatic_sizing: Some(false),
-                    session_mode: Some(SessionsCreateBodySessionMode::Chat),
-                    startup_agent: Some(SessionsCreateBodyStartupAgent::ClaudeCode),
-                })
+                .create(
+                    SessionsCreateBody::new("Fix the authentication bug in the login component".to_string())
+                        .with_agent("claudeCode:claude-fable-5-1".to_string())
+                        .with_base_branch("main".to_string())
+                        .with_mcp_servers(vec![])
+                        .with_project_id("your-project-id".to_string())
+                        .with_sandbox_size(SessionsCreateBodySandboxSize::Nano)
+                        .with_target_branch("main".to_string())
+                        .with_visibility(SessionsCreateBodyVisibility::Private)
+                        .with_agent_options(AgentOptions::new())
+                        .with_branch_name("x".to_string())
+                        .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()])
+                        .with_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string())
+                        .with_pull_request_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string())
+                        .with_queue_right_away(false)
+                        .with_automatic_sizing(false)
+                        .with_session_mode(SessionsCreateBodySessionMode::Chat)
+                        .with_startup_agent(SessionsCreateBodyStartupAgent::ClaudeCode),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -1918,26 +1708,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .sessions()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SessionsUpdateBody {
-                        memory_mb: None,
-                        agent: None,
-                        agent_options: None,
-                        base_branch: None,
-                        branch_name: None,
-                        description: None,
-                        rich_content: None,
-                        level: None,
-                        mcp_servers: None,
-                        mode: None,
-                        project_id: None,
-                        sandbox_size: None,
-                        target_branch: None,
-                        title: None,
-                        visibility: None,
-                    },
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -1958,29 +1729,21 @@ async fn smoke() {
                 .sessions()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SessionsUpdateBody {
-                        memory_mb: Some(1024),
-                        agent: Some("x".to_string()),
-                        agent_options: Some(AgentOptions {
-                            reasoning_level: None,
-                            mode: None,
-                            speed: None,
-                            goal: None,
-                            ultracode: None,
-                        }),
-                        base_branch: Some("x".to_string()),
-                        branch_name: Some("x".to_string()),
-                        description: Some("x".to_string()),
-                        rich_content: None,
-                        level: Some(0),
-                        mcp_servers: Some(vec!["x".to_string()]),
-                        mode: Some(SessionsUpdateBodyMode::Normal),
-                        project_id: Some("".to_string()),
-                        sandbox_size: Some(SessionsUpdateBodySandboxSize::Nano),
-                        target_branch: Some("x".to_string()),
-                        title: Some("x".to_string()),
-                        visibility: Some(SessionsUpdateBodyVisibility::Private),
-                    },
+                    SessionsUpdateBody::new()
+                        .with_memory_mb(1024)
+                        .with_agent("x".to_string())
+                        .with_agent_options(AgentOptions::new())
+                        .with_base_branch("x".to_string())
+                        .with_branch_name("x".to_string())
+                        .with_description("x".to_string())
+                        .with_level(0)
+                        .with_mcp_servers(vec!["x".to_string()])
+                        .with_mode(SessionsUpdateBodyMode::Normal)
+                        .with_project_id("".to_string())
+                        .with_sandbox_size(SessionsUpdateBodySandboxSize::Nano)
+                        .with_target_branch("x".to_string())
+                        .with_title("x".to_string())
+                        .with_visibility(SessionsUpdateBodyVisibility::Private),
                 )
                 .send()
                 .await?;
@@ -2013,14 +1776,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .sessions()
-                .fork(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SessionsForkBody {
-                        prompt: None,
-                        title: None,
-                        queue_right_away: None,
-                    },
-                )
+                .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsForkBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -2041,11 +1797,10 @@ async fn smoke() {
                 .sessions()
                 .fork(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SessionsForkBody {
-                        prompt: Some("x".to_string()),
-                        title: Some("x".to_string()),
-                        queue_right_away: Some(true),
-                    },
+                    SessionsForkBody::new()
+                        .with_prompt("x".to_string())
+                        .with_title("x".to_string())
+                        .with_queue_right_away(true),
                 )
                 .send()
                 .await?;
@@ -2284,9 +2039,7 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     "example",
-                    InputsUpdateBody {
-                        answers: std::collections::HashMap::new(),
-                    },
+                    InputsUpdateBody::new(std::collections::BTreeMap::new()),
                 )
                 .send()
                 .await?;
@@ -2309,9 +2062,7 @@ async fn smoke() {
                 .queue()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    QueueUpdateBody {
-                        message_ids: vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()],
-                    },
+                    QueueUpdateBody::new(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()]),
                 )
                 .send()
                 .await?;
@@ -2345,10 +2096,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .projects()
-                .update_defaults(ProjectsUpdateDefaultsBody {
-                    project_id: None,
-                    sandbox_size: ProjectsUpdateDefaultsBodySandboxSize::Nano,
-                })
+                .update_defaults(ProjectsUpdateDefaultsBody::new(
+                    None,
+                    ProjectsUpdateDefaultsBodySandboxSize::Nano,
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -2364,10 +2115,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .projects()
-                .update_defaults(ProjectsUpdateDefaultsBody {
-                    project_id: Some("x".to_string()),
-                    sandbox_size: ProjectsUpdateDefaultsBodySandboxSize::Nano,
-                })
+                .update_defaults(ProjectsUpdateDefaultsBody::new(
+                    Some("x".to_string()),
+                    ProjectsUpdateDefaultsBodySandboxSize::Nano,
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -2415,22 +2166,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .projects()
-                .create(ProjectsCreateBody {
-                    description: None,
-                    name: "x".to_string(),
-                    setup_script: None,
-                    code_repository_ids: None,
-                    agent_instructions: None,
-                    color: None,
-                    icon: None,
-                    include_deps: None,
-                    include_skills: None,
-                    onboarding_default: None,
-                    run_now: None,
-                    schedule: None,
-                    sizes: None,
-                    resource_settings: None,
-                })
+                .create(ProjectsCreateBody::new("x".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -2446,25 +2182,21 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .projects()
-                .create(ProjectsCreateBody {
-                    description: Some("".to_string()),
-                    name: "x".to_string(),
-                    setup_script: Some("".to_string()),
-                    code_repository_ids: Some(vec!["x".to_string()]),
-                    agent_instructions: Some("".to_string()),
-                    color: Some(ProjectsCreateBodyColor::Neutral),
-                    icon: Some(ProjectsCreateBodyIcon::Folder),
-                    include_deps: Some(false),
-                    include_skills: Some(false),
-                    onboarding_default: Some(false),
-                    run_now: Some(false),
-                    schedule: Some(ProjectsCreateBodySchedule {
-                        cron: "x".to_string(),
-                        timezone: None,
-                    }),
-                    sizes: Some(vec![ProjectsCreateBodySiz::Medium]),
-                    resource_settings: None,
-                })
+                .create(
+                    ProjectsCreateBody::new("x".to_string())
+                        .with_description("".to_string())
+                        .with_setup_script("".to_string())
+                        .with_code_repository_ids(vec!["x".to_string()])
+                        .with_agent_instructions("".to_string())
+                        .with_color(ProjectsCreateBodyColor::Neutral)
+                        .with_icon(ProjectsCreateBodyIcon::Folder)
+                        .with_include_deps(false)
+                        .with_include_skills(false)
+                        .with_onboarding_default(false)
+                        .with_run_now(false)
+                        .with_schedule(ProjectsCreateBodySchedule::new("x".to_string()))
+                        .with_sizes(vec![ProjectsCreateBodySiz::Medium]),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -2492,27 +2224,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .projects()
-                .update(
-                    "example",
-                    ProjectsUpdateBody {
-                        description: None,
-                        name: None,
-                        setup_script: None,
-                        code_repository_ids: None,
-                        agent_instructions: None,
-                        color: None,
-                        icon: None,
-                        include_deps: None,
-                        include_skills: None,
-                        resource_settings: None,
-                        default_for_sizes: None,
-                        environment_variables: None,
-                        schedule: None,
-                        sizes: None,
-                        warm_pool_schedule: None,
-                        warm_pool_enabled: None,
-                    },
-                )
+                .update("example", ProjectsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -2533,33 +2245,27 @@ async fn smoke() {
                 .projects()
                 .update(
                     "example",
-                    ProjectsUpdateBody {
-                        description: Some("".to_string()),
-                        name: Some("x".to_string()),
-                        setup_script: Some("".to_string()),
-                        code_repository_ids: Some(vec!["x".to_string()]),
-                        agent_instructions: Some("".to_string()),
-                        color: Some(ProjectsUpdateBodyColor::Neutral),
-                        icon: Some(ProjectsUpdateBodyIcon::Folder),
-                        include_deps: Some(false),
-                        include_skills: Some(false),
-                        resource_settings: None,
-                        default_for_sizes: Some(vec![ProjectsUpdateBodyDefaultForSiz::Nano]),
-                        environment_variables: Some(std::collections::HashMap::new()),
-                        schedule: Some(ProjectsUpdateBodySchedule {
-                            cron: None,
-                            enabled: None,
-                            timezone: None,
-                        }),
-                        sizes: Some(vec![ProjectsUpdateBodySiz::Nano]),
-                        warm_pool_schedule: Some(ProjectsUpdateBodyWarmPoolSchedule {
-                            timezone: "x".to_string(),
-                            days: vec![0],
-                            start_time: "".to_string(),
-                            end_time: "".to_string(),
-                        }),
-                        warm_pool_enabled: Some(false),
-                    },
+                    ProjectsUpdateBody::new()
+                        .with_description("".to_string())
+                        .with_name("x".to_string())
+                        .with_setup_script("".to_string())
+                        .with_code_repository_ids(vec!["x".to_string()])
+                        .with_agent_instructions("".to_string())
+                        .with_color(ProjectsUpdateBodyColor::Neutral)
+                        .with_icon(ProjectsUpdateBodyIcon::Folder)
+                        .with_include_deps(false)
+                        .with_include_skills(false)
+                        .with_default_for_sizes(vec![ProjectsUpdateBodyDefaultForSiz::Nano])
+                        .with_environment_variables(std::collections::BTreeMap::new())
+                        .with_schedule(ProjectsUpdateBodySchedule::new())
+                        .with_sizes(vec![ProjectsUpdateBodySiz::Nano])
+                        .with_warm_pool_schedule(ProjectsUpdateBodyWarmPoolSchedule::new(
+                            "x".to_string(),
+                            vec![0],
+                            "".to_string(),
+                            "".to_string(),
+                        ))
+                        .with_warm_pool_enabled(false),
                 )
                 .send()
                 .await?;
@@ -2618,12 +2324,10 @@ async fn smoke() {
                 .environment_variables()
                 .create(
                     "example",
-                    EnvironmentVariablesCreateBody2 {
-                        secrets: vec![EnvironmentVariablesCreateBody2Secret {
-                            key: "".to_string(),
-                            value: "x".to_string(),
-                        }],
-                    },
+                    EnvironmentVariablesCreateBody2::new(vec![EnvironmentVariablesCreateBody2Secret::new(
+                        "".to_string(),
+                        "x".to_string(),
+                    )]),
                 )
                 .send()
                 .await?;
@@ -2721,14 +2425,7 @@ async fn smoke() {
             let _ = client
                 .projects()
                 .snapshots()
-                .update(
-                    "example",
-                    "example",
-                    SnapshotsUpdateBody {
-                        name: None,
-                        pinned: None,
-                    },
-                )
+                .update("example", "example", SnapshotsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -2751,10 +2448,7 @@ async fn smoke() {
                 .update(
                     "example",
                     "example",
-                    SnapshotsUpdateBody {
-                        name: Some("".to_string()),
-                        pinned: Some(false),
-                    },
+                    SnapshotsUpdateBody::new().with_name("".to_string()).with_pinned(false),
                 )
                 .send()
                 .await?;
@@ -2832,13 +2526,7 @@ async fn smoke() {
             let _ = client
                 .projects()
                 .builds()
-                .create(
-                    "example",
-                    BuildsCreateBody {
-                        sizes: None,
-                        snapshot_id: None,
-                    },
-                )
+                .create("example", BuildsCreateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -2860,10 +2548,9 @@ async fn smoke() {
                 .builds()
                 .create(
                     "example",
-                    BuildsCreateBody {
-                        sizes: Some(vec![BuildsCreateBodySiz::Nano]),
-                        snapshot_id: Some("x".to_string()),
-                    },
+                    BuildsCreateBody::new()
+                        .with_sizes(vec![BuildsCreateBodySiz::Nano])
+                        .with_snapshot_id("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -2948,13 +2635,7 @@ async fn smoke() {
             let _ = client
                 .projects()
                 .schedules()
-                .create(
-                    "example",
-                    SchedulesCreateBody {
-                        cron: "x".to_string(),
-                        timezone: None,
-                    },
-                )
+                .create("example", SchedulesCreateBody::new("x".to_string()))
                 .send()
                 .await?;
             Ok(())
@@ -2976,10 +2657,7 @@ async fn smoke() {
                 .schedules()
                 .create(
                     "example",
-                    SchedulesCreateBody {
-                        cron: "x".to_string(),
-                        timezone: Some("x".to_string()),
-                    },
+                    SchedulesCreateBody::new("x".to_string()).with_timezone("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3020,15 +2698,7 @@ async fn smoke() {
             let _ = client
                 .projects()
                 .schedules()
-                .update(
-                    "example",
-                    "example",
-                    SchedulesUpdateBody {
-                        cron: None,
-                        enabled: None,
-                        timezone: None,
-                    },
-                )
+                .update("example", "example", SchedulesUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -3051,11 +2721,10 @@ async fn smoke() {
                 .update(
                     "example",
                     "example",
-                    SchedulesUpdateBody {
-                        cron: Some("x".to_string()),
-                        enabled: Some(false),
-                        timezone: Some("x".to_string()),
-                    },
+                    SchedulesUpdateBody::new()
+                        .with_cron("x".to_string())
+                        .with_enabled(false)
+                        .with_timezone("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3119,11 +2788,10 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .pins()
-                .create(PinsCreateBody {
-                    r#type: PinsCreateBodyType::Session,
-                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                    placement: None,
-                })
+                .create(PinsCreateBody::new(
+                    PinsCreateBodyType::Session,
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -3139,17 +2807,19 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .pins()
-                .create(PinsCreateBody {
-                    r#type: PinsCreateBodyType::Session,
-                    id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                    placement: Some(PinsCreateBodyPlacement {
-                        target: PinsCreateBodyPlacementTarget {
-                            r#type: PinsCreateBodyPlacementTargetType::Session,
-                            id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                        },
-                        position: PinsCreateBodyPlacementPosition::Before,
-                    }),
-                })
+                .create(
+                    PinsCreateBody::new(
+                        PinsCreateBodyType::Session,
+                        "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                    )
+                    .with_placement(PinsCreateBodyPlacement::new(
+                        PinsCreateBodyPlacementTarget::new(
+                            PinsCreateBodyPlacementTargetType::Session,
+                            "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        ),
+                        PinsCreateBodyPlacementPosition::Before,
+                    )),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -3168,15 +2838,13 @@ async fn smoke() {
                 .update(
                     "session".to_string(),
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    PinsUpdateBody {
-                        placement: PinsUpdateBodyPlacement {
-                            target: PinsUpdateBodyPlacementTarget {
-                                r#type: PinsUpdateBodyPlacementTargetType::Session,
-                                id: "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
-                            },
-                            position: PinsUpdateBodyPlacementPosition::Before,
-                        },
-                    },
+                    PinsUpdateBody::new(PinsUpdateBodyPlacement::new(
+                        PinsUpdateBodyPlacementTarget::new(
+                            PinsUpdateBodyPlacementTargetType::Session,
+                            "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        ),
+                        PinsUpdateBodyPlacementPosition::Before,
+                    )),
                 )
                 .send()
                 .await?;
@@ -3307,25 +2975,7 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
-            let _ = client
-                .agents()
-                .create(AgentsCreateBody {
-                    name: None,
-                    instructions: None,
-                    mcp_servers: None,
-                    agent: None,
-                    agent_options: None,
-                    sandbox_size: None,
-                    project_id: None,
-                    artifact_type: None,
-                    repository_ids: None,
-                    triggers: None,
-                    schedules: None,
-                    template_name: None,
-                    source_agent_id: None,
-                })
-                .send()
-                .await?;
+            let _ = client.agents().create(AgentsCreateBody::new()).send().await?;
             Ok(())
         }
         .await;
@@ -3339,26 +2989,19 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .agents()
-                .create(AgentsCreateBody {
-                    name: Some("x".to_string()),
-                    instructions: None,
-                    mcp_servers: Some(vec!["x".to_string()]),
-                    agent: Some("x".to_string()),
-                    agent_options: None,
-                    sandbox_size: Some(AgentsCreateBodySandboxSize::Nano),
-                    project_id: None,
-                    artifact_type: Some(AgentsCreateBodyArtifactType::PullRequest),
-                    repository_ids: Some(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()]),
-                    triggers: Some(vec![AgentsCreateBodyTrigger {
-                        name: "x".to_string(),
-                        integration_type: None,
-                        integration_id: None,
-                        filters: None,
-                    }]),
-                    schedules: Some(vec![AgentsCreateBodySchedule { cron: "x".to_string() }]),
-                    template_name: Some(AgentsCreateBodyTemplateName::AddTestCoverage),
-                    source_agent_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                })
+                .create(
+                    AgentsCreateBody::new()
+                        .with_name("x".to_string())
+                        .with_mcp_servers(vec!["x".to_string()])
+                        .with_agent("x".to_string())
+                        .with_sandbox_size(AgentsCreateBodySandboxSize::Nano)
+                        .with_artifact_type(AgentsCreateBodyArtifactType::PullRequest)
+                        .with_repository_ids(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()])
+                        .with_triggers(vec![AgentsCreateBodyTrigger::new("x".to_string())])
+                        .with_schedules(vec![AgentsCreateBodySchedule::new("x".to_string())])
+                        .with_template_name(AgentsCreateBodyTemplateName::AddTestCoverage)
+                        .with_source_agent_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -3390,27 +3033,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .agents()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    AgentsUpdateBody {
-                        expected_updated_at: None,
-                        name: None,
-                        key: None,
-                        instructions: None,
-                        mcp_servers: None,
-                        agent: None,
-                        agent_options: None,
-                        user_state: None,
-                        sandbox_size: None,
-                        project_id: None,
-                        template_id: None,
-                        script: None,
-                        artifact_type: None,
-                        repository_ids: None,
-                        enabled: None,
-                        archived: None,
-                    },
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", AgentsUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -3428,24 +3051,20 @@ async fn smoke() {
                 .agents()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    AgentsUpdateBody {
-                        expected_updated_at: Some(chrono::Utc::now().fixed_offset()),
-                        name: Some("x".to_string()),
-                        key: Some("x".to_string()),
-                        instructions: None,
-                        mcp_servers: Some(vec!["x".to_string()]),
-                        agent: Some("x".to_string()),
-                        agent_options: None,
-                        user_state: Some(std::collections::HashMap::new()),
-                        sandbox_size: Some(AgentsUpdateBodySandboxSize::Nano),
-                        project_id: None,
-                        template_id: Some("".to_string()),
-                        script: Some("".to_string()),
-                        artifact_type: Some(AgentsUpdateBodyArtifactType::PullRequest),
-                        repository_ids: Some(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()]),
-                        enabled: Some(false),
-                        archived: Some(false),
-                    },
+                    AgentsUpdateBody::new()
+                        .with_expected_updated_at(chrono::Utc::now().fixed_offset())
+                        .with_name("x".to_string())
+                        .with_key("x".to_string())
+                        .with_mcp_servers(vec!["x".to_string()])
+                        .with_agent("x".to_string())
+                        .with_user_state(std::collections::BTreeMap::new())
+                        .with_sandbox_size(AgentsUpdateBodySandboxSize::Nano)
+                        .with_template_id("".to_string())
+                        .with_script("".to_string())
+                        .with_artifact_type(AgentsUpdateBodyArtifactType::PullRequest)
+                        .with_repository_ids(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()])
+                        .with_enabled(false)
+                        .with_archived(false),
                 )
                 .send()
                 .await?;
@@ -3566,7 +3185,7 @@ async fn smoke() {
                 .schedules()
                 .create(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SchedulesCreateBody2 { cron: "x".to_string() },
+                    SchedulesCreateBody2::new("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3610,7 +3229,7 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SchedulesUpdateBody2 { cron: "x".to_string() },
+                    SchedulesUpdateBody2::new("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3695,12 +3314,7 @@ async fn smoke() {
                 .triggers()
                 .create(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    TriggersCreateBody {
-                        name: "x".to_string(),
-                        integration_type: None,
-                        integration_id: None,
-                        filters: None,
-                    },
+                    TriggersCreateBody::new("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3723,12 +3337,9 @@ async fn smoke() {
                 .triggers()
                 .create(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    TriggersCreateBody {
-                        name: "x".to_string(),
-                        integration_type: Some("x".to_string()),
-                        integration_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                        filters: None,
-                    },
+                    TriggersCreateBody::new("x".to_string())
+                        .with_integration_type("x".to_string())
+                        .with_integration_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
                 )
                 .send()
                 .await?;
@@ -3772,11 +3383,7 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    TriggersUpdateBody {
-                        name: "x".to_string(),
-                        integration_id: None,
-                        filters: None,
-                    },
+                    TriggersUpdateBody::new("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -3800,11 +3407,8 @@ async fn smoke() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    TriggersUpdateBody {
-                        name: "x".to_string(),
-                        integration_id: Some("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
-                        filters: None,
-                    },
+                    TriggersUpdateBody::new("x".to_string())
+                        .with_integration_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
                 )
                 .send()
                 .await?;
@@ -3989,9 +3593,7 @@ async fn smoke() {
                 .restore(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     1,
-                    ContentRevisionsRestoreBody {
-                        expected_content_version: 1,
-                    },
+                    ContentRevisionsRestoreBody::new(1),
                 )
                 .send()
                 .await?;
@@ -4063,14 +3665,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .repositories()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    RepositoriesUpdateBody {
-                        enabled: None,
-                        base_branch: None,
-                        target_branch: None,
-                    },
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", RepositoriesUpdateBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -4091,11 +3686,10 @@ async fn smoke() {
                 .repositories()
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    RepositoriesUpdateBody {
-                        enabled: Some(false),
-                        base_branch: Some("x".to_string()),
-                        target_branch: Some("x".to_string()),
-                    },
+                    RepositoriesUpdateBody::new()
+                        .with_enabled(false)
+                        .with_base_branch("x".to_string())
+                        .with_target_branch("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -4241,10 +3835,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .integrations()
-                .sync(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    IntegrationsSyncBody { mode: None },
-                )
+                .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7", IntegrationsSyncBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -4265,9 +3856,7 @@ async fn smoke() {
                 .integrations()
                 .sync(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    IntegrationsSyncBody {
-                        mode: Some(IntegrationsSyncBodyMode::Queued),
-                    },
+                    IntegrationsSyncBody::new().with_mode(IntegrationsSyncBodyMode::Queued),
                 )
                 .send()
                 .await?;
@@ -4287,7 +3876,7 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .integrations()
-                .sync_all(IntegrationsSyncAllBody {})
+                .sync_all(IntegrationsSyncAllBody::new())
                 .send()
                 .await?;
             Ok(())
@@ -4471,12 +4060,10 @@ async fn smoke() {
             let _ = client
                 .integrations()
                 .providers()
-                .discover_snyk_organizations(ProvidersDiscoverSnykOrganizationsBody {
-                    client_id: "x".to_string(),
-                    client_secret: "x".to_string(),
-                    cursor: None,
-                    limit: None,
-                })
+                .discover_snyk_organizations(ProvidersDiscoverSnykOrganizationsBody::new(
+                    "x".to_string(),
+                    "x".to_string(),
+                ))
                 .send()
                 .await?;
             Ok(())
@@ -4496,12 +4083,11 @@ async fn smoke() {
             let _ = client
                 .integrations()
                 .providers()
-                .discover_snyk_organizations(ProvidersDiscoverSnykOrganizationsBody {
-                    client_id: "x".to_string(),
-                    client_secret: "x".to_string(),
-                    cursor: Some("x".to_string()),
-                    limit: Some(50),
-                })
+                .discover_snyk_organizations(
+                    ProvidersDiscoverSnykOrganizationsBody::new("x".to_string(), "x".to_string())
+                        .with_cursor("x".to_string())
+                        .with_limit(50),
+                )
                 .send()
                 .await?;
             Ok(())

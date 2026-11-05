@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponse {
@@ -18,9 +18,32 @@ pub struct PullRequestsListResponse {
     pub total_count: Option<i64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsListResponse {
+    /// Creates a new `PullRequestsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PullRequestsListResponse::new(items, next_cursor).with_total_count(…)`.
+    pub fn new(items: Vec<PullRequestsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self {
+            items,
+            next_cursor,
+            total_count: None,
+        }
+    }
+
+    /// Sets `total_count`, which `new` leaves unset.
+    pub fn with_total_count(mut self, value: i64) -> Self {
+        self.total_count = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItem {
@@ -69,6 +92,67 @@ pub struct PullRequestsListResponseItem {
     pub diff: Option<PullRequestsListResponseItemDiff>,
     #[serde(default)]
     pub session: Option<PullRequestsListResponseItemSession>,
+}
+
+impl PullRequestsListResponseItem {
+    /// Creates a new `PullRequestsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        external_id: impl Into<String>,
+        external_provider: impl Into<String>,
+        id: impl Into<String>,
+        is_draft: bool,
+        merged_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        review_decision: Option<PullRequestsListResponseItemReviewDecision>,
+        source_branch: Option<String>,
+        status: PullRequestsListResponseItemStatus,
+        title: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        url: impl Into<String>,
+        author: PullRequestsListResponseItemAuthor,
+        base_branch: Option<String>,
+        code_repository: Option<PullRequestsListResponseItemCodeRepository>,
+        head_sha: Option<String>,
+        number: Option<i64>,
+        owner: Option<String>,
+        reviewers: Vec<PullRequestsListResponseItemReviewer>,
+        state: PullRequestsListResponseItemState,
+        approvers: Vec<PullRequestsListResponseItemApprover>,
+        diff: Option<PullRequestsListResponseItemDiff>,
+        session: Option<PullRequestsListResponseItemSession>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            external_id: external_id.into(),
+            external_provider: external_provider.into(),
+            id: id.into(),
+            is_draft,
+            merged_at,
+            review_decision,
+            source_branch,
+            status,
+            title,
+            updated_at,
+            url: url.into(),
+            author,
+            base_branch,
+            code_repository,
+            head_sha,
+            number,
+            owner,
+            reviewers,
+            state,
+            approvers,
+            diff,
+            session,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -165,9 +249,9 @@ impl From<&str> for PullRequestsListResponseItemStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemAuthor::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemAuthor {
@@ -183,9 +267,31 @@ pub struct PullRequestsListResponseItemAuthor {
     pub profile_url: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsListResponseItemAuthor {
+    /// Creates a new `PullRequestsListResponseItemAuthor` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: Option<String>,
+        login: Option<String>,
+        name: Option<String>,
+        avatar_url: Option<String>,
+        profile_url: Option<String>,
+    ) -> Self {
+        Self {
+            id,
+            login,
+            name,
+            avatar_url,
+            profile_url,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemCodeRepository {
@@ -201,9 +307,36 @@ pub struct PullRequestsListResponseItemCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsListResponseItemCodeRepository {
+    /// Creates a new `PullRequestsListResponseItemCodeRepository` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        url: impl Into<String>,
+        owner: Option<String>,
+        target_branch: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            url: url.into(),
+            owner,
+            target_branch,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemReviewer::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemReviewer {
@@ -226,6 +359,66 @@ pub struct PullRequestsListResponseItemReviewer {
     pub changes_requested: Option<bool>,
     #[serde(rename = "awaitingReview", default, skip_serializing_if = "Option::is_none")]
     pub awaiting_review: Option<bool>,
+}
+
+impl PullRequestsListResponseItemReviewer {
+    /// Creates a new `PullRequestsListResponseItemReviewer` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PullRequestsListResponseItemReviewer::new(…).with_type(…)`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        login: impl Into<String>,
+        name: impl Into<String>,
+        avatar_url: Option<String>,
+        profile_url: Option<String>,
+        review_requested: bool,
+        commented: bool,
+        approved: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            login: login.into(),
+            name: name.into(),
+            avatar_url,
+            profile_url,
+            r#type: None,
+            review_requested,
+            commented,
+            approved,
+            state: None,
+            changes_requested: None,
+            awaiting_review: None,
+        }
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: PullRequestsListResponseItemReviewerType) -> Self {
+        self.r#type = Some(value);
+        self
+    }
+
+    /// Sets `state`, which `new` leaves unset.
+    pub fn with_state(mut self, value: PullRequestsListResponseItemReviewerState) -> Self {
+        self.state = Some(value);
+        self
+    }
+
+    /// Sets `changes_requested`, which `new` leaves unset.
+    pub fn with_changes_requested(mut self, value: bool) -> Self {
+        self.changes_requested = Some(value);
+        self
+    }
+
+    /// Sets `awaiting_review`, which `new` leaves unset.
+    pub fn with_awaiting_review(mut self, value: bool) -> Self {
+        self.awaiting_review = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -377,9 +570,9 @@ impl From<&str> for PullRequestsListResponseItemState {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemApprover::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemApprover {
@@ -388,9 +581,22 @@ pub struct PullRequestsListResponseItemApprover {
     pub avatar_url: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsListResponseItemApprover {
+    /// Creates a new `PullRequestsListResponseItemApprover` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(login: impl Into<String>, avatar_url: Option<String>) -> Self {
+        Self {
+            login: login.into(),
+            avatar_url,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemDiff::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemDiff {
@@ -398,9 +604,19 @@ pub struct PullRequestsListResponseItemDiff {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsListResponseItemDiff {
+    /// Creates a new `PullRequestsListResponseItemDiff` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsListResponseItemSession::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsListResponseItemSession {
@@ -411,6 +627,36 @@ pub struct PullRequestsListResponseItemSession {
     pub html_url: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<PullRequestsListResponseItemSessionVisibility>,
+}
+
+impl PullRequestsListResponseItemSession {
+    /// Creates a new `PullRequestsListResponseItemSession` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PullRequestsListResponseItemSession::new(id, title, kind, html_url).with_visibility(…)`.
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        kind: impl Into<String>,
+        html_url: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            kind: kind.into(),
+            html_url: html_url.into(),
+            visibility: None,
+        }
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: PullRequestsListResponseItemSessionVisibility) -> Self {
+        self.visibility = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -456,9 +702,9 @@ impl From<&str> for PullRequestsListResponseItemSessionVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponse {
@@ -506,6 +752,65 @@ pub struct PullRequestsRetrieveResponse {
     pub state: PullRequestsRetrieveResponseState,
     #[serde(default)]
     pub session: Option<PullRequestsRetrieveResponseSession>,
+}
+
+impl PullRequestsRetrieveResponse {
+    /// Creates a new `PullRequestsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        external_id: impl Into<String>,
+        external_provider: impl Into<String>,
+        id: impl Into<String>,
+        is_draft: bool,
+        merged_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        review_decision: Option<PullRequestsRetrieveResponseReviewDecision>,
+        source_branch: Option<String>,
+        status: PullRequestsRetrieveResponseStatus,
+        title: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        url: impl Into<String>,
+        author: PullRequestsRetrieveResponseAuthor,
+        base_branch: Option<String>,
+        code_repository: Option<PullRequestsRetrieveResponseCodeRepository>,
+        diff: Option<PullRequestsRetrieveResponseDiff>,
+        head_sha: Option<String>,
+        number: Option<i64>,
+        owner: Option<String>,
+        reviewers: Vec<PullRequestsRetrieveResponseReviewer>,
+        state: PullRequestsRetrieveResponseState,
+        session: Option<PullRequestsRetrieveResponseSession>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            external_id: external_id.into(),
+            external_provider: external_provider.into(),
+            id: id.into(),
+            is_draft,
+            merged_at,
+            review_decision,
+            source_branch,
+            status,
+            title,
+            updated_at,
+            url: url.into(),
+            author,
+            base_branch,
+            code_repository,
+            diff,
+            head_sha,
+            number,
+            owner,
+            reviewers,
+            state,
+            session,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -602,9 +907,9 @@ impl From<&str> for PullRequestsRetrieveResponseStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponseAuthor::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponseAuthor {
@@ -620,9 +925,31 @@ pub struct PullRequestsRetrieveResponseAuthor {
     pub profile_url: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsRetrieveResponseAuthor {
+    /// Creates a new `PullRequestsRetrieveResponseAuthor` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: Option<String>,
+        login: Option<String>,
+        name: Option<String>,
+        avatar_url: Option<String>,
+        profile_url: Option<String>,
+    ) -> Self {
+        Self {
+            id,
+            login,
+            name,
+            avatar_url,
+            profile_url,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponseCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponseCodeRepository {
@@ -638,9 +965,36 @@ pub struct PullRequestsRetrieveResponseCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsRetrieveResponseCodeRepository {
+    /// Creates a new `PullRequestsRetrieveResponseCodeRepository` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        url: impl Into<String>,
+        owner: Option<String>,
+        target_branch: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            url: url.into(),
+            owner,
+            target_branch,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponseDiff::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponseDiff {
@@ -649,9 +1003,23 @@ pub struct PullRequestsRetrieveResponseDiff {
     pub data: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PullRequestsRetrieveResponseDiff {
+    /// Creates a new `PullRequestsRetrieveResponseDiff` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64, data: impl Into<String>) -> Self {
+        Self {
+            additions,
+            deletions,
+            data: data.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponseReviewer::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponseReviewer {
@@ -674,6 +1042,66 @@ pub struct PullRequestsRetrieveResponseReviewer {
     pub changes_requested: Option<bool>,
     #[serde(rename = "awaitingReview", default, skip_serializing_if = "Option::is_none")]
     pub awaiting_review: Option<bool>,
+}
+
+impl PullRequestsRetrieveResponseReviewer {
+    /// Creates a new `PullRequestsRetrieveResponseReviewer` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PullRequestsRetrieveResponseReviewer::new(…).with_type(…)`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        login: impl Into<String>,
+        name: impl Into<String>,
+        avatar_url: Option<String>,
+        profile_url: Option<String>,
+        review_requested: bool,
+        commented: bool,
+        approved: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            login: login.into(),
+            name: name.into(),
+            avatar_url,
+            profile_url,
+            r#type: None,
+            review_requested,
+            commented,
+            approved,
+            state: None,
+            changes_requested: None,
+            awaiting_review: None,
+        }
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: PullRequestsRetrieveResponseReviewerType) -> Self {
+        self.r#type = Some(value);
+        self
+    }
+
+    /// Sets `state`, which `new` leaves unset.
+    pub fn with_state(mut self, value: PullRequestsRetrieveResponseReviewerState) -> Self {
+        self.state = Some(value);
+        self
+    }
+
+    /// Sets `changes_requested`, which `new` leaves unset.
+    pub fn with_changes_requested(mut self, value: bool) -> Self {
+        self.changes_requested = Some(value);
+        self
+    }
+
+    /// Sets `awaiting_review`, which `new` leaves unset.
+    pub fn with_awaiting_review(mut self, value: bool) -> Self {
+        self.awaiting_review = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -825,9 +1253,9 @@ impl From<&str> for PullRequestsRetrieveResponseState {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PullRequestsRetrieveResponseSession::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PullRequestsRetrieveResponseSession {
@@ -838,6 +1266,36 @@ pub struct PullRequestsRetrieveResponseSession {
     pub html_url: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<PullRequestsRetrieveResponseSessionVisibility>,
+}
+
+impl PullRequestsRetrieveResponseSession {
+    /// Creates a new `PullRequestsRetrieveResponseSession` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PullRequestsRetrieveResponseSession::new(id, title, kind, html_url).with_visibility(…)`.
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        kind: impl Into<String>,
+        html_url: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            kind: kind.into(),
+            html_url: html_url.into(),
+            visibility: None,
+        }
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: PullRequestsRetrieveResponseSessionVisibility) -> Self {
+        self.visibility = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

@@ -123,7 +123,7 @@ impl ListRequestBuilder {
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
     agent_id: String,
-    body: Option<std::collections::HashMap<String, serde_json::Value>>,
+    body: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
@@ -141,7 +141,7 @@ impl CreateRequestBuilder {
         }
     }
 
-    pub fn body(mut self, value: std::collections::HashMap<String, serde_json::Value>) -> Self {
+    pub fn body(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
         self.body = Some(value);
         self
     }

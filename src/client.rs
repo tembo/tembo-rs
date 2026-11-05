@@ -21,7 +21,7 @@ const DEFAULT_MAX_RETRIES: u32 = 2;
 // body, but only one small by construction, never a binary download. It
 // also bounds a WebSocket handshake and a streaming error body.
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(60);
-const USER_AGENT: &str = concat!("tembo-rs/", env!("CARGO_PKG_VERSION"));
+const USER_AGENT: &str = concat!("Tembo/Rust ", env!("CARGO_PKG_VERSION"));
 // Default `Accept` for the JSON APIs that make up almost every operation.
 // A static `HeaderValue` so the insert costs no allocation and can never fail.
 const JSON_ACCEPT: http::HeaderValue = http::HeaderValue::from_static("application/json");
@@ -463,6 +463,10 @@ impl Tembo {
         if !header_map.contains_key(http::header::USER_AGENT) {
             header_map.insert(http::header::USER_AGENT, self.inner.user_agent.clone());
         }
+        // The `X-Scalar-*` platform headers, insert-if-absent for the same
+        // reason: a default, per-request, or configured header of the same name
+        // is the caller's choice and wins.
+        crate::platform::apply_platform_headers(&mut header_map);
         // Every operation decodes JSON unless it said otherwise, so JSON is the
         // client-wide default. Insert-if-absent, after per-request headers land,
         // so an operation advertising a text/binary/SSE media type — or a caller
@@ -475,12 +479,11 @@ impl Tembo {
             .iter()
             .any(|(name, _)| name.eq_ignore_ascii_case(IDEMPOTENCY_HEADER));
         // An explicit timeout applies to every request, but the *default*
-        // deadline must not kill a multipart form: its file parts can be
-        // arbitrarily large. The encoding tag decides, never content sniffing.
+        // deadline must not kill a file upload, which can be arbitrarily large.
+        // The encoding tag decides, never content sniffing.
         #[cfg(feature = "multipart")]
         let default_deadline_eligible = !matches!(&content, ContentEncoding::Multipart(_));
-        // Without the multipart feature no multipart body can be built, so
-        // every buffered body is eligible for the default deadline.
+        // The same check without the multipart feature, where no multipart body exists.
         #[cfg(not(feature = "multipart"))]
         let default_deadline_eligible = true;
         let mut request_body = SdkBody::empty();
@@ -494,9 +497,7 @@ impl Tembo {
             ContentEncoding::Json => {
                 if let Some(body) = body {
                     // `entry`+`or_insert` so a spec-declared Content-Type header param
-                    // (already appended via `headers`) wins over the JSON default. The
-                    // form/multipart arms insert unconditionally: the runtime owns those
-                    // encodings (the multipart boundary is generated per request).
+                    // (already appended via `headers`) wins over the JSON default.
                     header_map
                         .entry(http::header::CONTENT_TYPE)
                         .or_insert(http::HeaderValue::from_static("application/json"));
@@ -517,11 +518,11 @@ impl Tembo {
         let max_retries = overrides.max_retries.unwrap_or(self.inner.max_retries);
         // An explicit timeout (per-request or builder-wide) applies to every
         // request — the caller asked for it. The default applies only when the
-        // body is buffered AND not multipart: the deadline race covers the
+        // body is buffered AND not a file upload: the deadline race covers the
         // upload too, and a default must not kill a streaming upload of unknown
-        // duration — nor a multipart form, whose buffered file parts can be
-        // arbitrarily large (see `default_deadline_eligible` above, computed
-        // from the encoding tag rather than by sniffing the body).
+        // duration — nor a buffered file upload, which can be arbitrarily large
+        // (see `default_deadline_eligible` above, computed from the encoding tag
+        // rather than by sniffing the body).
         let deadline = overrides
             .timeout
             .or(self.inner.deadline)

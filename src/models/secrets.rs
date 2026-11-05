@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsListResponse {
@@ -16,9 +15,19 @@ pub struct SecretsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SecretsListResponse {
+    /// Creates a new `SecretsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<SecretsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsListResponseItem {
@@ -30,9 +39,28 @@ pub struct SecretsListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SecretsListResponseItem {
+    /// Creates a new `SecretsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsCreateResponse {
@@ -44,7 +72,30 @@ pub struct SecretsCreateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
+impl SecretsCreateResponse {
+    /// Creates a new `SecretsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SecretsCreateBody {
     /// Secret name used to reference it in the organization.
     pub key: String,
@@ -52,9 +103,22 @@ pub struct SecretsCreateBody {
     pub value: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SecretsCreateBody {
+    /// Creates a new `SecretsCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(key: impl Into<String>, value: impl Into<String>) -> Self {
+        Self {
+            key: key.into(),
+            value: value.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsRetrieveResponse {
@@ -66,9 +130,28 @@ pub struct SecretsRetrieveResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SecretsRetrieveResponse {
+    /// Creates a new `SecretsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsUpdateResponse {
@@ -80,7 +163,33 @@ pub struct SecretsUpdateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
+impl SecretsUpdateResponse {
+    /// Creates a new `SecretsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SecretsUpdateBody {
     /// Secret name used to reference it in the organization.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -90,12 +199,43 @@ pub struct SecretsUpdateBody {
     pub value: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SecretsUpdateBody {
+    /// Creates a new `SecretsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SecretsUpdateBody::new().with_key(…)`.
+    pub fn new() -> Self {
+        Self { key: None, value: None }
+    }
+
+    /// Sets `key`, which `new` leaves unset.
+    pub fn with_key(mut self, value: impl Into<String>) -> Self {
+        self.key = Some(value.into());
+        self
+    }
+
+    /// Sets `value`, which `new` leaves unset.
+    pub fn with_value(mut self, value: impl Into<String>) -> Self {
+        self.value = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SecretsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SecretsDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl SecretsDeleteResponse {
+    /// Creates a new `SecretsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

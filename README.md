@@ -10,7 +10,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-tembo-rs = "0.6.0" # x-release-please-version
+tembo-rs = "0.7.0" # x-release-please-version
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 ```
 
@@ -31,7 +31,7 @@ use tembo_rs::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = Tembo::builder().api_key(std::env::var("TEMBO_API_KEY")?).build()?;
+    let client = Tembo::from_env()?;
 
     let response = client.api_keys().list().send().await?;
 
@@ -44,8 +44,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 Every operation returns a request builder; set optional parameters fluently
 and finish with `.send().await`.
 
-The builder accepts every credential this API takes, and `from_env` reads
-them from the environment instead:
+`from_env` reads the environment variables listed under Authentication below. A
+variable that is not set is skipped rather than reported, so export them before
+running the example, or authenticated requests will be rejected. The builder
+takes every credential explicitly instead:
 
 ```rust,no_run
 use tembo_rs::Tembo;
@@ -74,12 +76,17 @@ result of `send().await` to distinguish API errors (with status and decoded
 body) from transport and decoding failures:
 
 ```rust,no_run
-use tembo_rs::Error;
+use tembo_rs::{ApiErrorKind, Error};
 
 fn report<T>(result: Result<T, Error>) {
     match result {
         Ok(value) => { /* … */ }
-        Err(Error::Api(api)) => eprintln!("status {}: {:?}", api.status, api.body),
+        Err(Error::Api(api)) => match api.kind() {
+            ApiErrorKind::NotFound => eprintln!("not found"),
+            ApiErrorKind::RateLimit => eprintln!("rate limited; retry later"),
+            ApiErrorKind::InternalServer => eprintln!("server error {}", api.status),
+            _ => eprintln!("status {}: {:?}", api.status, api.body),
+        },
         Err(other) => eprintln!("request failed: {other}"),
     }
 }
@@ -88,6 +95,13 @@ fn report<T>(result: Result<T, Error>) {
 `Error::Api` carries the response `status`, `headers`, the server-assigned
 `request_id` when there was one, the decoded `body`, and the raw text of a
 body that was not JSON — nothing about a failed response is discarded.
+
+[`ApiErrorKind`] classifies the status: `BadRequest` (400), `Authentication`
+(401), `PermissionDenied` (403), `NotFound` (404), `Conflict` (409),
+`UnprocessableEntity` (422), `RateLimit` (429), `InternalServer` (500 and
+above), and `Other` for any other status. It is non-exhaustive, so a match
+on it needs a `_` arm. `Error::status()` returns the status of an API failure
+and `None` for every other kind of error.
 
 ## Bring your own HTTP client
 

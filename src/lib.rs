@@ -8,10 +8,13 @@ pub mod client;
 pub mod datetime;
 pub mod error;
 #[doc(hidden)]
+pub mod explicit_null;
+#[doc(hidden)]
 pub mod http;
 pub mod models;
 #[doc(hidden)]
 pub mod number;
+mod platform;
 #[cfg(feature = "multipart")]
 mod random;
 pub mod resources;
@@ -24,7 +27,7 @@ pub mod websocket;
 pub use client::Environment;
 pub use client::Tembo;
 pub use client::TemboBuilder;
-pub use error::{ApiError, Error};
+pub use error::{ApiError, ApiErrorKind, Error};
 pub use models::{
     AgentOptions, AgentOptionsGoal, AgentOptionsInput, AgentOptionsMode, AgentOptionsSpeed, AgentRunEventPayload,
     AgentState, AgentsCreateBody, AgentsCreateBodyArtifactType, AgentsCreateBodyProjectId, AgentsCreateBodySandboxSize,
@@ -326,14 +329,14 @@ pub use models::{
     SessionsRetrieveResponseSessionSourceRepository, SessionsRetrieveResponseSessionType,
     SessionsRetrieveResponseSourcePullRequest, SessionsRetrieveResponseSourcePullRequestStatus,
     SessionsRetrieveResponseState, SessionsRetrieveResponseStateCurrent, SessionsRetrieveResponseVisibility,
-    SessionsStopResponse, SessionsUpdateBody, SessionsUpdateBodyMode, SessionsUpdateBodySandboxSize,
-    SessionsUpdateBodyVisibility, SessionsUpdateResponse, SessionsUpdateResponseArtifact,
-    SessionsUpdateResponseArtifactPullRequest, SessionsUpdateResponseArtifactPullRequestAuthor,
-    SessionsUpdateResponseArtifactPullRequestCodeRepository, SessionsUpdateResponseArtifactPullRequestDiff,
-    SessionsUpdateResponseArtifactPullRequestStatus, SessionsUpdateResponseArtifactType,
-    SessionsUpdateResponseArtifactType2, SessionsUpdateResponseDiffSummary, SessionsUpdateResponseMode,
-    SessionsUpdateResponseProject, SessionsUpdateResponseProjectColor, SessionsUpdateResponseProjectIcon,
-    SessionsUpdateResponseSandboxSize, SessionsUpdateResponseSessionSource,
+    SessionsStopResponse, SessionsStopResponseState, SessionsStopResponseStateCurrent, SessionsUpdateBody,
+    SessionsUpdateBodyMode, SessionsUpdateBodySandboxSize, SessionsUpdateBodyVisibility, SessionsUpdateResponse,
+    SessionsUpdateResponseArtifact, SessionsUpdateResponseArtifactPullRequest,
+    SessionsUpdateResponseArtifactPullRequestAuthor, SessionsUpdateResponseArtifactPullRequestCodeRepository,
+    SessionsUpdateResponseArtifactPullRequestDiff, SessionsUpdateResponseArtifactPullRequestStatus,
+    SessionsUpdateResponseArtifactType, SessionsUpdateResponseArtifactType2, SessionsUpdateResponseDiffSummary,
+    SessionsUpdateResponseMode, SessionsUpdateResponseProject, SessionsUpdateResponseProjectColor,
+    SessionsUpdateResponseProjectIcon, SessionsUpdateResponseSandboxSize, SessionsUpdateResponseSessionSource,
     SessionsUpdateResponseSessionSourceRepository, SessionsUpdateResponseSessionType,
     SessionsUpdateResponseSourcePullRequest, SessionsUpdateResponseSourcePullRequestStatus,
     SessionsUpdateResponseState, SessionsUpdateResponseStateCurrent, SessionsUpdateResponseVisibility,
@@ -346,6 +349,7 @@ pub use models::{
     SettingsRetrieveResponse2ComposerPreferences, SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository,
     SettingsRetrieveResponse2DashboardPreferences, SettingsRetrieveResponse2DashboardPreferencesTaskFilters,
     SettingsRetrieveResponse2DashboardPreferencesTaskFiltersSortBy,
+    SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace,
     SettingsRetrieveResponse2DesktopNotificationPreferences, SettingsRetrieveResponse2DiffPreferences,
     SettingsRetrieveResponse2DiffPreferencesFileTreePosition, SettingsRetrieveResponse2DiffPreferencesFileTreeView,
     SettingsRetrieveResponse2DiffPreferencesIndicators, SettingsRetrieveResponse2DiffPreferencesOverflow,
@@ -360,10 +364,11 @@ pub use models::{
     SettingsUpdateBody2AppearancePreferencesAppTheme, SettingsUpdateBody2ComposerPreferences,
     SettingsUpdateBody2ComposerPreferencesLastSelectedRepository, SettingsUpdateBody2DashboardPreferences,
     SettingsUpdateBody2DashboardPreferencesTaskFilters, SettingsUpdateBody2DashboardPreferencesTaskFiltersSortBy,
-    SettingsUpdateBody2DesktopNotificationPreferences, SettingsUpdateBody2DiffPreferences,
-    SettingsUpdateBody2DiffPreferencesFileTreePosition, SettingsUpdateBody2DiffPreferencesFileTreeView,
-    SettingsUpdateBody2DiffPreferencesIndicators, SettingsUpdateBody2DiffPreferencesOverflow,
-    SettingsUpdateBody2DiffPreferencesStyle, SettingsUpdateBody2FollowUpBehavior, SettingsUpdateBody2ReviewPreferences,
+    SettingsUpdateBody2DefaultSessionVisibilityByWorkspace, SettingsUpdateBody2DesktopNotificationPreferences,
+    SettingsUpdateBody2DiffPreferences, SettingsUpdateBody2DiffPreferencesFileTreePosition,
+    SettingsUpdateBody2DiffPreferencesFileTreeView, SettingsUpdateBody2DiffPreferencesIndicators,
+    SettingsUpdateBody2DiffPreferencesOverflow, SettingsUpdateBody2DiffPreferencesStyle,
+    SettingsUpdateBody2FollowUpBehavior, SettingsUpdateBody2ReviewPreferences,
     SettingsUpdateBody2ReviewPreferencesFileSortMode, SettingsUpdateBody2ReviewPreferencesLayout,
     SettingsUpdateBodyDefaultSandboxSize, SettingsUpdateResponse, SettingsUpdateResponse2,
     SettingsUpdateResponse2AppSidebarPreferences, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar,
@@ -374,13 +379,13 @@ pub use models::{
     SettingsUpdateResponse2ComposerPreferences, SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository,
     SettingsUpdateResponse2DashboardPreferences, SettingsUpdateResponse2DashboardPreferencesTaskFilters,
     SettingsUpdateResponse2DashboardPreferencesTaskFiltersSortBy,
-    SettingsUpdateResponse2DesktopNotificationPreferences, SettingsUpdateResponse2DiffPreferences,
-    SettingsUpdateResponse2DiffPreferencesFileTreePosition, SettingsUpdateResponse2DiffPreferencesFileTreeView,
-    SettingsUpdateResponse2DiffPreferencesIndicators, SettingsUpdateResponse2DiffPreferencesOverflow,
-    SettingsUpdateResponse2DiffPreferencesStyle, SettingsUpdateResponse2FollowUpBehavior,
-    SettingsUpdateResponse2ReviewPreferences, SettingsUpdateResponse2ReviewPreferencesFileSortMode,
-    SettingsUpdateResponse2ReviewPreferencesLayout, SettingsUpdateResponseSettings,
-    SettingsUpdateResponseSettingsDefaultSandboxSize, SettingsValidateCredentialsBody,
+    SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace, SettingsUpdateResponse2DesktopNotificationPreferences,
+    SettingsUpdateResponse2DiffPreferences, SettingsUpdateResponse2DiffPreferencesFileTreePosition,
+    SettingsUpdateResponse2DiffPreferencesFileTreeView, SettingsUpdateResponse2DiffPreferencesIndicators,
+    SettingsUpdateResponse2DiffPreferencesOverflow, SettingsUpdateResponse2DiffPreferencesStyle,
+    SettingsUpdateResponse2FollowUpBehavior, SettingsUpdateResponse2ReviewPreferences,
+    SettingsUpdateResponse2ReviewPreferencesFileSortMode, SettingsUpdateResponse2ReviewPreferencesLayout,
+    SettingsUpdateResponseSettings, SettingsUpdateResponseSettingsDefaultSandboxSize, SettingsValidateCredentialsBody,
     SettingsValidateCredentialsBodyVariant1, SettingsValidateCredentialsBodyVariant2,
     SettingsValidateCredentialsBodyVariant3, SettingsValidateCredentialsBodyVariant4,
     SettingsValidateCredentialsBodyVariant5, SettingsValidateCredentialsBodyVariant6,

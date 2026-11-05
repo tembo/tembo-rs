@@ -5,18 +5,25 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesListResponse {
     pub items: Vec<EnvironmentVariablesListResponseItem>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesListResponse {
+    /// Creates a new `EnvironmentVariablesListResponse` from its required fields, leaving every optional one unset.
+    pub fn new(items: Vec<EnvironmentVariablesListResponseItem>) -> Self {
+        Self { items }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesListResponseItem {
@@ -28,9 +35,29 @@ pub struct EnvironmentVariablesListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesListResponseItem {
+    /// Creates a new `EnvironmentVariablesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesCreateResponse {
@@ -42,7 +69,31 @@ pub struct EnvironmentVariablesCreateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
+impl EnvironmentVariablesCreateResponse {
+    /// Creates a new `EnvironmentVariablesCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        key: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            key: key.into(),
+            updated_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct EnvironmentVariablesCreateBody {
     /// Environment variable name, e.g. GITHUB_TOKEN.
     pub key: String,
@@ -50,12 +101,35 @@ pub struct EnvironmentVariablesCreateBody {
     pub value: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EnvironmentVariablesCreateBody {
+    /// Creates a new `EnvironmentVariablesCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(key: impl Into<String>, value: impl Into<String>) -> Self {
+        Self {
+            key: key.into(),
+            value: value.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EnvironmentVariablesDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct EnvironmentVariablesDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl EnvironmentVariablesDeleteResponse {
+    /// Creates a new `EnvironmentVariablesDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

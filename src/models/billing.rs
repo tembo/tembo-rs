@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponse {
@@ -25,9 +25,35 @@ pub struct BillingRetrieveResponse {
     pub subscription: Option<BillingRetrieveResponseSubscription>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponse {
+    /// Creates a new `BillingRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        access: BillingRetrieveResponseAccess,
+        trial: Option<BillingRetrieveResponseTrial>,
+        billing_enabled: bool,
+        available_plans: Vec<BillingRetrieveResponseAvailablePlan>,
+        balance: BillingRetrieveResponseBalance,
+        on_demand: BillingRetrieveResponseOnDemand,
+        subscription: Option<BillingRetrieveResponseSubscription>,
+    ) -> Self {
+        Self {
+            access,
+            trial,
+            billing_enabled,
+            available_plans,
+            balance,
+            on_demand,
+            subscription,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseAccess::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseAccess {
@@ -36,6 +62,24 @@ pub struct BillingRetrieveResponseAccess {
     pub can_execute: bool,
     #[serde(rename = "blockedReason", default)]
     pub blocked_reason: Option<BillingRetrieveResponseAccessBlockedReason>,
+}
+
+impl BillingRetrieveResponseAccess {
+    /// Creates a new `BillingRetrieveResponseAccess` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        state: BillingRetrieveResponseAccessState,
+        can_execute: bool,
+        blocked_reason: Option<BillingRetrieveResponseAccessBlockedReason>,
+    ) -> Self {
+        Self {
+            state,
+            can_execute,
+            blocked_reason,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -136,9 +180,9 @@ impl From<&str> for BillingRetrieveResponseAccessBlockedReason {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseTrial::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseTrial {
@@ -154,9 +198,33 @@ pub struct BillingRetrieveResponseTrial {
     pub exhausted: bool,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseTrial {
+    /// Creates a new `BillingRetrieveResponseTrial` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: impl Into<String>,
+        started_at: chrono::DateTime<chrono::FixedOffset>,
+        ends_at: chrono::DateTime<chrono::FixedOffset>,
+        allowance: f64,
+        remaining_allowance: f64,
+        exhausted: bool,
+    ) -> Self {
+        Self {
+            status: status.into(),
+            started_at,
+            ends_at,
+            allowance,
+            remaining_allowance,
+            exhausted,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseAvailablePlan::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseAvailablePlan {
@@ -172,9 +240,35 @@ pub struct BillingRetrieveResponseAvailablePlan {
     pub yearly_price: Option<f64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseAvailablePlan {
+    /// Creates a new `BillingRetrieveResponseAvailablePlan` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        tier: i64,
+        description: impl Into<String>,
+        included_credits: f64,
+        monthly_price: f64,
+        yearly_price: Option<f64>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            tier,
+            description: description.into(),
+            included_credits,
+            monthly_price,
+            yearly_price,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseBalance::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseBalance {
@@ -190,9 +284,31 @@ pub struct BillingRetrieveResponseBalance {
     pub unlimited_credits: bool,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseBalance {
+    /// Creates a new `BillingRetrieveResponseBalance` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        calculated_balance: f64,
+        available_balance: f64,
+        available_on_demand_usage: f64,
+        last_transaction: Option<BillingRetrieveResponseBalanceLastTransaction>,
+        unlimited_credits: bool,
+    ) -> Self {
+        Self {
+            calculated_balance,
+            available_balance,
+            available_on_demand_usage,
+            last_transaction,
+            unlimited_credits,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseBalanceLastTransaction::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseBalanceLastTransaction {
@@ -201,9 +317,20 @@ pub struct BillingRetrieveResponseBalanceLastTransaction {
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseBalanceLastTransaction {
+    /// Creates a new `BillingRetrieveResponseBalanceLastTransaction` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(amount: i64, created_at: chrono::DateTime<chrono::FixedOffset>) -> Self {
+        Self { amount, created_at }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseOnDemand::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseOnDemand {
@@ -214,9 +341,23 @@ pub struct BillingRetrieveResponseOnDemand {
     pub max_credit_usage: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseOnDemand {
+    /// Creates a new `BillingRetrieveResponseOnDemand` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(enabled: bool, current_usage: f64, max_credit_usage: f64) -> Self {
+        Self {
+            enabled,
+            current_usage,
+            max_credit_usage,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseSubscription::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseSubscription {
@@ -240,6 +381,32 @@ pub struct BillingRetrieveResponseSubscription {
     pub current_tier: i64,
     #[serde(rename = "upgradablePlans")]
     pub upgradable_plans: Vec<BillingRetrieveResponseSubscriptionUpgradablePlan>,
+}
+
+impl BillingRetrieveResponseSubscription {
+    /// Creates a new `BillingRetrieveResponseSubscription` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: BillingRetrieveResponseSubscriptionStatus,
+        canceled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        period_end: Option<chrono::DateTime<chrono::FixedOffset>>,
+        r#type: impl Into<String>,
+        plan: Option<BillingRetrieveResponseSubscriptionPlan>,
+        current_tier: i64,
+        upgradable_plans: Vec<BillingRetrieveResponseSubscriptionUpgradablePlan>,
+    ) -> Self {
+        Self {
+            status,
+            canceled_at,
+            period_end,
+            r#type: r#type.into(),
+            plan,
+            current_tier,
+            upgradable_plans,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -298,9 +465,9 @@ impl From<&str> for BillingRetrieveResponseSubscriptionStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseSubscriptionPlan::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseSubscriptionPlan {
@@ -316,9 +483,36 @@ pub struct BillingRetrieveResponseSubscriptionPlan {
     pub yearly_price: Option<f64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseSubscriptionPlan {
+    /// Creates a new `BillingRetrieveResponseSubscriptionPlan` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        tier: i64,
+        description: impl Into<String>,
+        included_credits: f64,
+        monthly_price: f64,
+        yearly_price: Option<f64>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            tier,
+            description: description.into(),
+            included_credits,
+            monthly_price,
+            yearly_price,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingRetrieveResponseSubscriptionUpgradablePlan::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingRetrieveResponseSubscriptionUpgradablePlan {
@@ -334,9 +528,36 @@ pub struct BillingRetrieveResponseSubscriptionUpgradablePlan {
     pub yearly_price: Option<f64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingRetrieveResponseSubscriptionUpgradablePlan {
+    /// Creates a new `BillingRetrieveResponseSubscriptionUpgradablePlan` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        tier: i64,
+        description: impl Into<String>,
+        included_credits: f64,
+        monthly_price: f64,
+        yearly_price: Option<f64>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            tier,
+            description: description.into(),
+            included_credits,
+            monthly_price,
+            yearly_price,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingListUsageResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingListUsageResponse {
@@ -345,6 +566,24 @@ pub struct BillingListUsageResponse {
     pub next_cursor: Option<String>,
     #[serde(rename = "asOf", deserialize_with = "crate::datetime::deserialize")]
     pub as_of: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl BillingListUsageResponse {
+    /// Creates a new `BillingListUsageResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        items: Vec<BillingListUsageResponseItem>,
+        next_cursor: Option<String>,
+        as_of: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            items,
+            next_cursor,
+            as_of,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -362,9 +601,9 @@ pub enum BillingListUsageResponseItem {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingListUsageResponseItemVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingListUsageResponseItemVariant1 {
@@ -384,9 +623,40 @@ pub struct BillingListUsageResponseItemVariant1 {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl BillingListUsageResponseItemVariant1 {
+    /// Creates a new `BillingListUsageResponseItemVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        id: impl Into<String>,
+        title: impl Into<String>,
+        kind: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        managed_inference_credits: f64,
+        compute_credits: f64,
+        total_credits: f64,
+        r#type: impl Into<String>,
+    ) -> Self {
+        Self {
+            agent,
+            id: id.into(),
+            title: title.into(),
+            kind: kind.into(),
+            created_at,
+            managed_inference_credits,
+            compute_credits,
+            total_credits,
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingListUsageResponseItemVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingListUsageResponseItemVariant2 {
@@ -410,4 +680,35 @@ pub struct BillingListUsageResponseItemVariant2 {
     #[serde(rename = "computeCredits", serialize_with = "crate::number::serialize")]
     pub compute_credits: f64,
     pub r#type: String,
+}
+
+impl BillingListUsageResponseItemVariant2 {
+    /// Creates a new `BillingListUsageResponseItemVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        virtual_machine_id: impl Into<String>,
+        started_at: chrono::DateTime<chrono::FixedOffset>,
+        ended_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        runtime_ms: f64,
+        cpu: f64,
+        memory_mb: f64,
+        compute_credits: f64,
+        r#type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            virtual_machine_id: virtual_machine_id.into(),
+            started_at,
+            ended_at,
+            runtime_ms,
+            cpu,
+            memory_mb,
+            compute_credits,
+            r#type: r#type.into(),
+        }
+    }
 }

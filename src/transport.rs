@@ -157,6 +157,15 @@ impl<T: Sleep + ?Sized> Sleep for Arc<T> {
     }
 }
 
+// Mirrors the `Box<T>` impl for `Transport`. `Box` is a fundamental type, so a
+// downstream crate may write `impl Sleep for Box<TheirSleeper>` today; adding
+// this blanket impl after release would then break it.
+impl<T: Sleep + ?Sized> Sleep for Box<T> {
+    fn sleep(&self, duration: Duration) -> BoxFuture<'static, ()> {
+        (**self).sleep(duration)
+    }
+}
+
 /// The default [`Sleep`] implementation, backed by `tokio::time`.
 #[cfg(feature = "tokio")]
 #[derive(Debug, Clone, Copy, Default)]
@@ -1046,8 +1055,13 @@ struct MockState {
 
 /// A request captured by [`MockTransport`], with its body fully buffered so
 /// tests can assert on the exact bytes sent.
+///
+/// The fields stay public for reading; `#[non_exhaustive]` keeps callers from
+/// constructing or exhaustively destructuring one, so a field can be added
+/// later without a breaking release.
 #[cfg(feature = "mock")]
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub struct RecordedRequest {
     /// The request method.
     pub method: http::Method,

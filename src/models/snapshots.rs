@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SnapshotsListResponse {
@@ -16,9 +15,19 @@ pub struct SnapshotsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SnapshotsListResponse {
+    /// Creates a new `SnapshotsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<SnapshotsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SnapshotsListResponseItem {
@@ -77,6 +86,63 @@ pub struct SnapshotsListResponseItem {
     pub size_bytes: Option<String>,
     #[serde(default)]
     pub trigger: Option<SnapshotsListResponseItemTrigger>,
+}
+
+impl SnapshotsListResponseItem {
+    /// Creates a new `SnapshotsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        is_active: bool,
+        name: Option<String>,
+        pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        automatic_sizing: bool,
+        build_duration_ms: Option<f64>,
+        built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        cpu: Option<i64>,
+        disk_size_gb: Option<f64>,
+        has_setup_script: Option<bool>,
+        includes_repos: Option<bool>,
+        is_kvm: Option<bool>,
+        memory_mb: Option<i64>,
+        project_id: impl Into<String>,
+        rebuild_of_snapshot_id: Option<String>,
+        repository_ids: Option<Vec<String>>,
+        setup_script: Option<String>,
+        size: Option<SnapshotsListResponseItemSize>,
+        size_bytes: Option<String>,
+        trigger: Option<SnapshotsListResponseItemTrigger>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            is_active,
+            name,
+            pinned_at,
+            updated_at,
+            automatic_sizing,
+            build_duration_ms,
+            built_at,
+            cpu,
+            disk_size_gb,
+            has_setup_script,
+            includes_repos,
+            is_kvm,
+            memory_mb,
+            project_id: project_id.into(),
+            rebuild_of_snapshot_id,
+            repository_ids,
+            setup_script,
+            size,
+            size_bytes,
+            trigger,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -201,9 +267,9 @@ impl From<&str> for SnapshotsListResponseItemTrigger {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SnapshotsRetrieveResponse {
@@ -262,6 +328,63 @@ pub struct SnapshotsRetrieveResponse {
     pub size_bytes: Option<String>,
     #[serde(default)]
     pub trigger: Option<SnapshotsRetrieveResponseTrigger>,
+}
+
+impl SnapshotsRetrieveResponse {
+    /// Creates a new `SnapshotsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        is_active: bool,
+        name: Option<String>,
+        pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        automatic_sizing: bool,
+        build_duration_ms: Option<f64>,
+        built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        cpu: Option<i64>,
+        disk_size_gb: Option<f64>,
+        has_setup_script: Option<bool>,
+        includes_repos: Option<bool>,
+        is_kvm: Option<bool>,
+        memory_mb: Option<i64>,
+        project_id: impl Into<String>,
+        rebuild_of_snapshot_id: Option<String>,
+        repository_ids: Option<Vec<String>>,
+        setup_script: Option<String>,
+        size: Option<SnapshotsRetrieveResponseSize>,
+        size_bytes: Option<String>,
+        trigger: Option<SnapshotsRetrieveResponseTrigger>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            is_active,
+            name,
+            pinned_at,
+            updated_at,
+            automatic_sizing,
+            build_duration_ms,
+            built_at,
+            cpu,
+            disk_size_gb,
+            has_setup_script,
+            includes_repos,
+            is_kvm,
+            memory_mb,
+            project_id: project_id.into(),
+            rebuild_of_snapshot_id,
+            repository_ids,
+            setup_script,
+            size,
+            size_bytes,
+            trigger,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -386,9 +509,9 @@ impl From<&str> for SnapshotsRetrieveResponseTrigger {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SnapshotsUpdateResponse {
@@ -447,6 +570,63 @@ pub struct SnapshotsUpdateResponse {
     pub size_bytes: Option<String>,
     #[serde(default)]
     pub trigger: Option<SnapshotsUpdateResponseTrigger>,
+}
+
+impl SnapshotsUpdateResponse {
+    /// Creates a new `SnapshotsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        is_active: bool,
+        name: Option<String>,
+        pinned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        automatic_sizing: bool,
+        build_duration_ms: Option<f64>,
+        built_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        cpu: Option<i64>,
+        disk_size_gb: Option<f64>,
+        has_setup_script: Option<bool>,
+        includes_repos: Option<bool>,
+        is_kvm: Option<bool>,
+        memory_mb: Option<i64>,
+        project_id: impl Into<String>,
+        rebuild_of_snapshot_id: Option<String>,
+        repository_ids: Option<Vec<String>>,
+        setup_script: Option<String>,
+        size: Option<SnapshotsUpdateResponseSize>,
+        size_bytes: Option<String>,
+        trigger: Option<SnapshotsUpdateResponseTrigger>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            is_active,
+            name,
+            pinned_at,
+            updated_at,
+            automatic_sizing,
+            build_duration_ms,
+            built_at,
+            cpu,
+            disk_size_gb,
+            has_setup_script,
+            includes_repos,
+            is_kvm,
+            memory_mb,
+            project_id: project_id.into(),
+            rebuild_of_snapshot_id,
+            repository_ids,
+            setup_script,
+            size,
+            size_bytes,
+            trigger,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -571,19 +751,56 @@ impl From<&str> for SnapshotsUpdateResponseTrigger {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SnapshotsUpdateBody {
     /// Rename the snapshot, or null to clear its name.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub name: Option<Option<String>>,
     /// Pin the snapshot with true to retain it, or unpin with false. This is separate from user sidebar resource pins.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pinned: Option<bool>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SnapshotsUpdateBody {
+    /// Creates a new `SnapshotsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SnapshotsUpdateBody::new().with_name(…)`.
+    pub fn new() -> Self {
+        Self {
+            name: None,
+            pinned: None,
+        }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `name = Some(None)` on the built value.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `pinned`, which `new` leaves unset.
+    pub fn with_pinned(mut self, value: bool) -> Self {
+        self.pinned = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SnapshotsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SnapshotsDeleteResponse {
@@ -591,4 +808,18 @@ pub struct SnapshotsDeleteResponse {
     pub cleanup_job_count: i64,
     pub deleted: bool,
     pub id: String,
+}
+
+impl SnapshotsDeleteResponse {
+    /// Creates a new `SnapshotsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(cleanup_job_count: i64, deleted: bool, id: impl Into<String>) -> Self {
+        Self {
+            cleanup_job_count,
+            deleted,
+            id: id.into(),
+        }
+    }
 }

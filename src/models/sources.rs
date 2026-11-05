@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesListResponse {
@@ -18,9 +17,32 @@ pub struct SourcesListResponse {
     pub total_count: Option<i64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesListResponse {
+    /// Creates a new `SourcesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SourcesListResponse::new(items, next_cursor).with_total_count(…)`.
+    pub fn new(items: Vec<SourcesListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self {
+            items,
+            next_cursor,
+            total_count: None,
+        }
+    }
+
+    /// Sets `total_count`, which `new` leaves unset.
+    pub fn with_total_count(mut self, value: i64) -> Self {
+        self.total_count = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesListResponseItem {
@@ -58,18 +80,62 @@ pub struct SourcesListResponseItem {
     pub repositories: Vec<SourcesListResponseItemRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesListResponseItem {
+    /// Creates a new `SourcesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        last_scanned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        integration: Option<SourcesListResponseItemIntegration>,
+        repositories: Vec<SourcesListResponseItemRepository>,
+    ) -> Self {
+        Self {
+            created_at,
+            enabled_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            last_scanned_at,
+            last_seen_at,
+            name: name.into(),
+            r#type: r#type.into(),
+            updated_at,
+            integration,
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesListResponseItemIntegration::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesListResponseItemIntegration {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesListResponseItemIntegration {
+    /// Creates a new `SourcesListResponseItemIntegration` from its required fields, leaving every optional one unset.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self { r#type: r#type.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesListResponseItemRepository::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesListResponseItemRepository {
@@ -82,9 +148,31 @@ pub struct SourcesListResponseItemRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesListResponseItemRepository {
+    /// Creates a new `SourcesListResponseItemRepository` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesRetrieveResponse {
@@ -122,18 +210,62 @@ pub struct SourcesRetrieveResponse {
     pub repositories: Vec<SourcesRetrieveResponseRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesRetrieveResponse {
+    /// Creates a new `SourcesRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        last_scanned_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        integration: Option<SourcesRetrieveResponseIntegration>,
+        repositories: Vec<SourcesRetrieveResponseRepository>,
+    ) -> Self {
+        Self {
+            created_at,
+            enabled_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            last_scanned_at,
+            last_seen_at,
+            name: name.into(),
+            r#type: r#type.into(),
+            updated_at,
+            integration,
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesRetrieveResponseIntegration::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesRetrieveResponseIntegration {
     pub r#type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SourcesRetrieveResponseIntegration {
+    /// Creates a new `SourcesRetrieveResponseIntegration` from its required fields, leaving every optional one unset.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self { r#type: r#type.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SourcesRetrieveResponseRepository::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SourcesRetrieveResponseRepository {
@@ -144,4 +276,26 @@ pub struct SourcesRetrieveResponseRepository {
     #[serde(rename = "baseBranch", default)]
     pub base_branch: Option<String>,
     pub provider: String,
+}
+
+impl SourcesRetrieveResponseRepository {
+    /// Creates a new `SourcesRetrieveResponseRepository` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
 }

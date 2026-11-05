@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsListResponse {
@@ -16,9 +16,19 @@ pub struct ContentRevisionsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ContentRevisionsListResponse {
+    /// Creates a new `ContentRevisionsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<ContentRevisionsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsListResponseItem {
@@ -34,9 +44,33 @@ pub struct ContentRevisionsListResponseItem {
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ContentRevisionsListResponseItem {
+    /// Creates a new `ContentRevisionsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        version: i64,
+        author_id: Option<String>,
+        author_name: Option<String>,
+        source: impl Into<String>,
+        restored_from_version: Option<i64>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            version,
+            author_id,
+            author_name,
+            source: source.into(),
+            restored_from_version,
+            created_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsRetrieveResponse {
@@ -55,9 +89,35 @@ pub struct ContentRevisionsRetrieveResponse {
     pub instructions: Option<TipTapDocument>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ContentRevisionsRetrieveResponse {
+    /// Creates a new `ContentRevisionsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        version: i64,
+        author_id: Option<String>,
+        author_name: Option<String>,
+        source: impl Into<String>,
+        restored_from_version: Option<i64>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        instructions: Option<TipTapDocument>,
+    ) -> Self {
+        Self {
+            version,
+            author_id,
+            author_name,
+            source: source.into(),
+            restored_from_version,
+            created_at,
+            instructions,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsRestoreResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsRestoreResponse {
@@ -113,7 +173,7 @@ pub struct ContentRevisionsRestoreResponse {
     pub mcp_servers: Vec<String>,
     /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
     #[serde(rename = "userState", default)]
-    pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(rename = "codeRepositories")]
     pub code_repositories: Vec<ContentRevisionsRestoreResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
@@ -132,6 +192,79 @@ pub struct ContentRevisionsRestoreResponse {
     pub integration_ids: Vec<String>,
     #[serde(rename = "integrationTypes")]
     pub integration_types: Vec<String>,
+}
+
+impl ContentRevisionsRestoreResponse {
+    /// Creates a new `ContentRevisionsRestoreResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        key: Option<String>,
+        sandbox_size: Option<ContentRevisionsRestoreResponseSandboxSize>,
+        project_id: Option<String>,
+        template_id: Option<String>,
+        content_version: i64,
+        script: Option<String>,
+        artifact_type: Option<ContentRevisionsRestoreResponseArtifactType>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        organization_id: Option<String>,
+        organization_name: Option<String>,
+        created_by: Option<String>,
+        instructions: Option<TipTapDocument>,
+        agent: Option<String>,
+        agent_options: AgentOptionsInput,
+        mcp_servers: Vec<String>,
+        user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
+        code_repositories: Vec<ContentRevisionsRestoreResponseCodeRepository>,
+        last_run: Option<ContentRevisionsRestoreResponseLastRun>,
+        run_count: i64,
+        schedule_count: i64,
+        trigger_count: i64,
+        has_paused_schedule: bool,
+        has_paused_trigger: bool,
+        integration_ids: Vec<String>,
+        integration_types: Vec<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            key,
+            sandbox_size,
+            project_id,
+            template_id,
+            content_version,
+            script,
+            artifact_type,
+            created_at,
+            updated_at,
+            archived_at,
+            enabled_at,
+            organization_id,
+            organization_name,
+            created_by,
+            instructions,
+            agent,
+            agent_options,
+            mcp_servers,
+            user_state,
+            code_repositories,
+            last_run,
+            run_count,
+            schedule_count,
+            trigger_count,
+            has_paused_schedule,
+            has_paused_trigger,
+            integration_ids,
+            integration_types,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -257,9 +390,9 @@ impl From<&str> for ContentRevisionsRestoreResponseArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsRestoreResponseCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsRestoreResponseCodeRepository {
@@ -273,9 +406,32 @@ pub struct ContentRevisionsRestoreResponseCodeRepository {
     pub integration_type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ContentRevisionsRestoreResponseCodeRepository {
+    /// Creates a new `ContentRevisionsRestoreResponseCodeRepository` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration_id: impl Into<String>,
+        integration_type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            integration_id: integration_id.into(),
+            integration_type: integration_type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsRestoreResponseLastRun::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ContentRevisionsRestoreResponseLastRun {
@@ -294,9 +450,49 @@ pub struct ContentRevisionsRestoreResponseLastRun {
     pub error_message: Option<String>,
 }
 
+impl ContentRevisionsRestoreResponseLastRun {
+    /// Creates a new `ContentRevisionsRestoreResponseLastRun` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ContentRevisionsRestoreBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ContentRevisionsRestoreBody {
     /// The agent’s current instruction version, used to reject a restore if the instructions have changed.
     #[serde(rename = "expectedContentVersion")]
     pub expected_content_version: i64,
+}
+
+impl ContentRevisionsRestoreBody {
+    /// Creates a new `ContentRevisionsRestoreBody` from its required fields, leaving every optional one unset.
+    pub fn new(expected_content_version: i64) -> Self {
+        Self {
+            expected_content_version,
+        }
+    }
 }

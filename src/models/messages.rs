@@ -17,7 +17,7 @@ pub enum TipTapDocument {
     TipTapTaskItemNode(TipTapTaskItemNode),
     TipTapCodeBlockNode(TipTapCodeBlockNode),
     TipTapContentNode(TipTapContentNode),
-    CustomDocument(std::collections::HashMap<String, serde_json::Value>),
+    CustomDocument(std::collections::BTreeMap<String, serde_json::Value>),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -47,95 +47,340 @@ pub enum TipTapNode {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `TipTapLinkMark::new`
+/// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapLinkMark {
     pub r#type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attrs: Option<TipTapLinkMarkAttrs>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapLinkMark {
     /// Creates a new `TipTapLinkMark` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapLinkMark { attrs: Some(…), ..TipTapLinkMark::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapLinkMark::new(r#type).with_attrs(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
             attrs: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapLinkMarkAttrs) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `TipTapMark::new` and
+/// the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapMark {
     pub r#type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapMark {
     /// Creates a new `TipTapMark` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapMark { attrs: Some(…), ..TipTapMark::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapMark::new(r#type).with_attrs(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
             attrs: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
-pub type TipTapExtensionAttributes = std::collections::HashMap<String, serde_json::Value>;
+pub type TipTapExtensionAttributes = std::collections::BTreeMap<String, serde_json::Value>;
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapImageAttributes::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapImageAttributes {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub src: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub alt: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub title: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub width: Option<String>,
-    #[serde(rename = "data-uploading", default, skip_serializing_if = "Option::is_none")]
-    pub data_uploading: Option<String>,
-    #[serde(rename = "data-placeholder-id", default, skip_serializing_if = "Option::is_none")]
-    pub data_placeholder_id: Option<String>,
-    #[serde(rename = "upload-progress", default, skip_serializing_if = "Option::is_none")]
-    pub upload_progress: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub src: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub alt: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub title: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub width: Option<Option<String>>,
+    #[serde(
+        rename = "data-uploading",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub data_uploading: Option<Option<String>>,
+    #[serde(
+        rename = "data-placeholder-id",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub data_placeholder_id: Option<Option<String>>,
+    #[serde(
+        rename = "upload-progress",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub upload_progress: Option<Option<String>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
+impl TipTapImageAttributes {
+    /// Creates a new `TipTapImageAttributes` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapImageAttributes::new().with_src(…)`.
+    pub fn new() -> Self {
+        Self {
+            src: None,
+            alt: None,
+            title: None,
+            width: None,
+            data_uploading: None,
+            data_placeholder_id: None,
+            upload_progress: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `src`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `src = Some(None)` on the built value.
+    pub fn with_src(mut self, value: impl Into<String>) -> Self {
+        self.src = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `alt`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `alt = Some(None)` on the built value.
+    pub fn with_alt(mut self, value: impl Into<String>) -> Self {
+        self.alt = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `title`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `title = Some(None)` on the built value.
+    pub fn with_title(mut self, value: impl Into<String>) -> Self {
+        self.title = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `width = Some(None)` on the built value.
+    pub fn with_width(mut self, value: impl Into<String>) -> Self {
+        self.width = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `data_uploading`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `data_uploading = Some(None)` on the built value.
+    pub fn with_data_uploading(mut self, value: impl Into<String>) -> Self {
+        self.data_uploading = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `data_placeholder_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `data_placeholder_id = Some(None)` on the built value.
+    pub fn with_data_placeholder_id(mut self, value: impl Into<String>) -> Self {
+        self.data_placeholder_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `upload_progress`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `upload_progress = Some(None)` on the built value.
+    pub fn with_upload_progress(mut self, value: impl Into<String>) -> Self {
+        self.upload_progress = Some(Some(value.into()));
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapMentionAttributes::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapMentionAttributes {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub label: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub r#type: Option<String>,
-    #[serde(rename = "mentionSuggestionChar", default, skip_serializing_if = "Option::is_none")]
-    pub mention_suggestion_char: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<TipTapMentionAttributesMetadata>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub id: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub label: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub r#type: Option<Option<String>>,
+    #[serde(
+        rename = "mentionSuggestionChar",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub mention_suggestion_char: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub metadata: Option<Option<TipTapMentionAttributesMetadata>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
+impl TipTapMentionAttributes {
+    /// Creates a new `TipTapMentionAttributes` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapMentionAttributes::new().with_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            id: None,
+            label: None,
+            r#type: None,
+            mention_suggestion_char: None,
+            metadata: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `id = Some(None)` on the built value.
+    pub fn with_id(mut self, value: impl Into<String>) -> Self {
+        self.id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `label`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `label = Some(None)` on the built value.
+    pub fn with_label(mut self, value: impl Into<String>) -> Self {
+        self.label = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `r#type = Some(None)` on the built value.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `mention_suggestion_char`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `mention_suggestion_char = Some(None)` on the built value.
+    pub fn with_mention_suggestion_char(mut self, value: impl Into<String>) -> Self {
+        self.mention_suggestion_char = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `metadata`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `metadata = Some(None)` on the built value.
+    pub fn with_metadata(mut self, value: TipTapMentionAttributesMetadata) -> Self {
+        self.metadata = Some(Some(value));
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapContentNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapContentNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -144,21 +389,77 @@ pub struct TipTapContentNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapContentNode {
+    /// Creates a new `TipTapContentNode` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapContentNode::new().with_text(…)`.
+    pub fn new() -> Self {
+        Self {
+            text: None,
+            marks: None,
+            r#type: None,
+            attrs: None,
+            content: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapContentNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }
 
 /// Rich-text content with custom document properties and node attributes.
-pub type CustomDocument = std::collections::HashMap<String, serde_json::Value>;
+pub type CustomDocument = std::collections::BTreeMap<String, serde_json::Value>;
 
 /// Runtime-specific execution settings and provider extensions.
-pub type RuntimeAgentOptions = std::collections::HashMap<String, serde_json::Value>;
+pub type RuntimeAgentOptions = std::collections::BTreeMap<String, serde_json::Value>;
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapImageNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapImageNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -171,14 +472,14 @@ pub struct TipTapImageNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapImageNode {
     /// Creates a new `TipTapImageNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapImageNode { text: Some(…), ..TipTapImageNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapImageNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -186,12 +487,45 @@ impl TipTapImageNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapImageNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapImageAttributes) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapMentionNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapMentionNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -204,14 +538,14 @@ pub struct TipTapMentionNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapMentionNode {
     /// Creates a new `TipTapMentionNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapMentionNode { text: Some(…), ..TipTapMentionNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapMentionNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -219,12 +553,45 @@ impl TipTapMentionNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapMentionNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapMentionAttributes) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapHeadingNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapHeadingNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -237,14 +604,14 @@ pub struct TipTapHeadingNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapHeadingNode {
     /// Creates a new `TipTapHeadingNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapHeadingNode { text: Some(…), ..TipTapHeadingNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapHeadingNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -252,12 +619,45 @@ impl TipTapHeadingNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapHeadingNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapHeadingNodeAttrs) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapOrderedListNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapOrderedListNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -270,14 +670,14 @@ pub struct TipTapOrderedListNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapOrderedListNode {
     /// Creates a new `TipTapOrderedListNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapOrderedListNode { text: Some(…), ..TipTapOrderedListNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapOrderedListNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -285,12 +685,45 @@ impl TipTapOrderedListNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapOrderedListNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapOrderedListNodeAttrs) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapTaskItemNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapTaskItemNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -303,14 +736,14 @@ pub struct TipTapTaskItemNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapTaskItemNode {
     /// Creates a new `TipTapTaskItemNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapTaskItemNode { text: Some(…), ..TipTapTaskItemNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapTaskItemNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -318,12 +751,45 @@ impl TipTapTaskItemNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapTaskItemNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapTaskItemNodeAttrs) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapCodeBlockNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapCodeBlockNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
@@ -336,14 +802,14 @@ pub struct TipTapCodeBlockNode {
     pub content: Option<Vec<TipTapNode>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 impl TipTapCodeBlockNode {
     /// Creates a new `TipTapCodeBlockNode` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TipTapCodeBlockNode { text: Some(…), ..TipTapCodeBlockNode::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapCodeBlockNode::new(r#type).with_text(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             text: None,
@@ -351,14 +817,43 @@ impl TipTapCodeBlockNode {
             r#type: r#type.into(),
             attrs: None,
             content: None,
-            additional_properties: std::collections::HashMap::new(),
+            additional_properties: std::collections::BTreeMap::new(),
         }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapCodeBlockNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: TipTapCodeBlockNodeAttrs) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesListResponse {
@@ -367,9 +862,19 @@ pub struct MessagesListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesListResponse {
+    /// Creates a new `MessagesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<MessagesListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesListResponseItem {
@@ -402,6 +907,51 @@ pub struct MessagesListResponseItem {
     pub slash_command: Option<MessagesListResponseItemSlashCommand>,
     #[serde(default)]
     pub source: Option<String>,
+}
+
+impl MessagesListResponseItem {
+    /// Creates a new `MessagesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        artifact_id: Option<String>,
+        content: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
+        external_avatar_url: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        parent_message_id: Option<String>,
+        pull_request_id: Option<String>,
+        role: MessagesListResponseItemRole,
+        session_id: Option<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        rich_content: Option<TipTapDocument>,
+        slash_command: Option<MessagesListResponseItemSlashCommand>,
+        source: Option<String>,
+    ) -> Self {
+        Self {
+            artifact_id,
+            content: content.into(),
+            created_at,
+            created_by,
+            external_avatar_url,
+            external_url,
+            id: id.into(),
+            parent_message_id,
+            pull_request_id,
+            role,
+            session_id,
+            r#type: r#type.into(),
+            updated_at,
+            rich_content,
+            slash_command,
+            source,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -451,9 +1001,9 @@ impl From<&str> for MessagesListResponseItemRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesListResponseItemSlashCommand::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesListResponseItemSlashCommand {
@@ -462,9 +1012,27 @@ pub struct MessagesListResponseItemSlashCommand {
     pub arguments: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesListResponseItemSlashCommand {
+    /// Creates a new `MessagesListResponseItemSlashCommand` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesListResponseItemSlashCommand::new(command).with_arguments(…)`.
+    pub fn new(command: impl Into<String>) -> Self {
+        Self {
+            command: command.into(),
+            arguments: None,
+        }
+    }
+
+    /// Sets `arguments`, which `new` leaves unset.
+    pub fn with_arguments(mut self, value: impl Into<String>) -> Self {
+        self.arguments = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponse {
@@ -476,10 +1044,33 @@ pub struct MessagesCreateResponse {
     pub session: MessagesCreateResponseSession,
 }
 
+impl MessagesCreateResponse {
+    /// Creates a new `MessagesCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        hot_path: Option<MessagesCreateResponseHotPath>,
+        job: Option<MessagesCreateResponseJob>,
+        message: MessagesCreateResponseMessage,
+        session: MessagesCreateResponseSession,
+    ) -> Self {
+        Self {
+            hot_path,
+            job,
+            message,
+            session,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponseHotPath::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponseHotPath {
     #[serde(rename = "activeProviderTurnId", default, skip_serializing_if = "Option::is_none")]
@@ -492,6 +1083,52 @@ pub struct MessagesCreateResponseHotPath {
     pub queued_turn_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub transport: Option<String>,
+}
+
+impl MessagesCreateResponseHotPath {
+    /// Creates a new `MessagesCreateResponseHotPath` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesCreateResponseHotPath::new().with_active_provider_turn_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            active_provider_turn_id: None,
+            mode: None,
+            provider_session_id: None,
+            queued_turn_id: None,
+            transport: None,
+        }
+    }
+
+    /// Sets `active_provider_turn_id`, which `new` leaves unset.
+    pub fn with_active_provider_turn_id(mut self, value: impl Into<String>) -> Self {
+        self.active_provider_turn_id = Some(value.into());
+        self
+    }
+
+    /// Sets `mode`, which `new` leaves unset.
+    pub fn with_mode(mut self, value: MessagesCreateResponseHotPathMode) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Sets `provider_session_id`, which `new` leaves unset.
+    pub fn with_provider_session_id(mut self, value: impl Into<String>) -> Self {
+        self.provider_session_id = Some(value.into());
+        self
+    }
+
+    /// Sets `queued_turn_id`, which `new` leaves unset.
+    pub fn with_queued_turn_id(mut self, value: impl Into<String>) -> Self {
+        self.queued_turn_id = Some(value.into());
+        self
+    }
+
+    /// Sets `transport`, which `new` leaves unset.
+    pub fn with_transport(mut self, value: impl Into<String>) -> Self {
+        self.transport = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -541,9 +1178,9 @@ impl From<&str> for MessagesCreateResponseHotPathMode {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponseJob::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponseJob {
@@ -551,9 +1188,22 @@ pub struct MessagesCreateResponseJob {
     pub task: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesCreateResponseJob {
+    /// Creates a new `MessagesCreateResponseJob` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, task: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            task: task.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponseMessage::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponseMessage {
@@ -588,6 +1238,53 @@ pub struct MessagesCreateResponseMessage {
     pub source: Option<String>,
     #[serde(rename = "isQueued")]
     pub is_queued: bool,
+}
+
+impl MessagesCreateResponseMessage {
+    /// Creates a new `MessagesCreateResponseMessage` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        artifact_id: Option<String>,
+        content: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
+        external_avatar_url: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        parent_message_id: Option<String>,
+        pull_request_id: Option<String>,
+        role: MessagesCreateResponseMessageRole,
+        session_id: Option<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        rich_content: Option<TipTapDocument>,
+        slash_command: Option<MessagesCreateResponseMessageSlashCommand>,
+        source: Option<String>,
+        is_queued: bool,
+    ) -> Self {
+        Self {
+            artifact_id,
+            content: content.into(),
+            created_at,
+            created_by,
+            external_avatar_url,
+            external_url,
+            id: id.into(),
+            parent_message_id,
+            pull_request_id,
+            role,
+            session_id,
+            r#type: r#type.into(),
+            updated_at,
+            rich_content,
+            slash_command,
+            source,
+            is_queued,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -637,9 +1334,9 @@ impl From<&str> for MessagesCreateResponseMessageRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponseMessageSlashCommand::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponseMessageSlashCommand {
@@ -648,9 +1345,29 @@ pub struct MessagesCreateResponseMessageSlashCommand {
     pub arguments: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesCreateResponseMessageSlashCommand {
+    /// Creates a new `MessagesCreateResponseMessageSlashCommand` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesCreateResponseMessageSlashCommand::new(command).with_arguments(…)`.
+    pub fn new(command: impl Into<String>) -> Self {
+        Self {
+            command: command.into(),
+            arguments: None,
+        }
+    }
+
+    /// Sets `arguments`, which `new` leaves unset.
+    pub fn with_arguments(mut self, value: impl Into<String>) -> Self {
+        self.arguments = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateResponseSession::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesCreateResponseSession {
@@ -658,7 +1375,23 @@ pub struct MessagesCreateResponseSession {
     pub title: String,
 }
 
+impl MessagesCreateResponseSession {
+    /// Creates a new `MessagesCreateResponseSession` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, title: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct MessagesCreateBody {
     /// Artifact to associate with this message.
     #[serde(rename = "artifactId", default, skip_serializing_if = "Option::is_none")]
@@ -691,8 +1424,11 @@ pub struct MessagesCreateBody {
 impl MessagesCreateBody {
     /// Creates a new `MessagesCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `MessagesCreateBody { artifact_id: Some(…), ..MessagesCreateBody::new(content, session_id) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesCreateBody::new(content, session_id).with_artifact_id(…)`.
     pub fn new(content: impl Into<String>, session_id: impl Into<String>) -> Self {
         Self {
             artifact_id: None,
@@ -705,6 +1441,48 @@ impl MessagesCreateBody {
             rich_content: None,
             slash_command: None,
         }
+    }
+
+    /// Sets `artifact_id`, which `new` leaves unset.
+    pub fn with_artifact_id(mut self, value: impl Into<String>) -> Self {
+        self.artifact_id = Some(value.into());
+        self
+    }
+
+    /// Sets `mcp_servers`, which `new` leaves unset.
+    pub fn with_mcp_servers(mut self, value: Vec<String>) -> Self {
+        self.mcp_servers = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_id`, which `new` leaves unset.
+    pub fn with_pull_request_id(mut self, value: impl Into<String>) -> Self {
+        self.pull_request_id = Some(value.into());
+        self
+    }
+
+    /// Sets `agent_options`, which `new` leaves unset.
+    pub fn with_agent_options(mut self, value: AgentOptionsInput) -> Self {
+        self.agent_options = Some(value);
+        self
+    }
+
+    /// Sets `delivery_mode`, which `new` leaves unset.
+    pub fn with_delivery_mode(mut self, value: MessagesCreateBodyDeliveryMode) -> Self {
+        self.delivery_mode = Some(value);
+        self
+    }
+
+    /// Sets `rich_content`, which `new` leaves unset.
+    pub fn with_rich_content(mut self, value: TipTapDocument) -> Self {
+        self.rich_content = Some(value);
+        self
+    }
+
+    /// Sets `slash_command`, which `new` leaves unset.
+    pub fn with_slash_command(mut self, value: MessagesCreateBodySlashCommand) -> Self {
+        self.slash_command = Some(value);
+        self
     }
 }
 
@@ -751,7 +1529,11 @@ impl From<&str> for MessagesCreateBodyDeliveryMode {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesCreateBodySlashCommand::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct MessagesCreateBodySlashCommand {
     pub command: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -761,19 +1543,25 @@ pub struct MessagesCreateBodySlashCommand {
 impl MessagesCreateBodySlashCommand {
     /// Creates a new `MessagesCreateBodySlashCommand` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `MessagesCreateBodySlashCommand { arguments: Some(…), ..MessagesCreateBodySlashCommand::new(command) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesCreateBodySlashCommand::new(command).with_arguments(…)`.
     pub fn new(command: impl Into<String>) -> Self {
         Self {
             command: command.into(),
             arguments: None,
         }
     }
+
+    /// Sets `arguments`, which `new` leaves unset.
+    pub fn with_arguments(mut self, value: impl Into<String>) -> Self {
+        self.arguments = Some(value.into());
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesRetrieveResponse {
@@ -806,6 +1594,51 @@ pub struct MessagesRetrieveResponse {
     pub slash_command: Option<MessagesRetrieveResponseSlashCommand>,
     #[serde(default)]
     pub source: Option<String>,
+}
+
+impl MessagesRetrieveResponse {
+    /// Creates a new `MessagesRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        artifact_id: Option<String>,
+        content: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
+        external_avatar_url: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        parent_message_id: Option<String>,
+        pull_request_id: Option<String>,
+        role: MessagesRetrieveResponseRole,
+        session_id: Option<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        rich_content: Option<TipTapDocument>,
+        slash_command: Option<MessagesRetrieveResponseSlashCommand>,
+        source: Option<String>,
+    ) -> Self {
+        Self {
+            artifact_id,
+            content: content.into(),
+            created_at,
+            created_by,
+            external_avatar_url,
+            external_url,
+            id: id.into(),
+            parent_message_id,
+            pull_request_id,
+            role,
+            session_id,
+            r#type: r#type.into(),
+            updated_at,
+            rich_content,
+            slash_command,
+            source,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -855,9 +1688,9 @@ impl From<&str> for MessagesRetrieveResponseRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesRetrieveResponseSlashCommand::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesRetrieveResponseSlashCommand {
@@ -866,9 +1699,27 @@ pub struct MessagesRetrieveResponseSlashCommand {
     pub arguments: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesRetrieveResponseSlashCommand {
+    /// Creates a new `MessagesRetrieveResponseSlashCommand` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesRetrieveResponseSlashCommand::new(command).with_arguments(…)`.
+    pub fn new(command: impl Into<String>) -> Self {
+        Self {
+            command: command.into(),
+            arguments: None,
+        }
+    }
+
+    /// Sets `arguments`, which `new` leaves unset.
+    pub fn with_arguments(mut self, value: impl Into<String>) -> Self {
+        self.arguments = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesUpdateResponse {
@@ -901,6 +1752,51 @@ pub struct MessagesUpdateResponse {
     pub slash_command: Option<MessagesUpdateResponseSlashCommand>,
     #[serde(default)]
     pub source: Option<String>,
+}
+
+impl MessagesUpdateResponse {
+    /// Creates a new `MessagesUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        artifact_id: Option<String>,
+        content: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
+        external_avatar_url: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        parent_message_id: Option<String>,
+        pull_request_id: Option<String>,
+        role: MessagesUpdateResponseRole,
+        session_id: Option<String>,
+        r#type: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        rich_content: Option<TipTapDocument>,
+        slash_command: Option<MessagesUpdateResponseSlashCommand>,
+        source: Option<String>,
+    ) -> Self {
+        Self {
+            artifact_id,
+            content: content.into(),
+            created_at,
+            created_by,
+            external_avatar_url,
+            external_url,
+            id: id.into(),
+            parent_message_id,
+            pull_request_id,
+            role,
+            session_id,
+            r#type: r#type.into(),
+            updated_at,
+            rich_content,
+            slash_command,
+            source,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -950,9 +1846,9 @@ impl From<&str> for MessagesUpdateResponseRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesUpdateResponseSlashCommand::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesUpdateResponseSlashCommand {
@@ -961,19 +1857,75 @@ pub struct MessagesUpdateResponseSlashCommand {
     pub arguments: Option<String>,
 }
 
+impl MessagesUpdateResponseSlashCommand {
+    /// Creates a new `MessagesUpdateResponseSlashCommand` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesUpdateResponseSlashCommand::new(command).with_arguments(…)`.
+    pub fn new(command: impl Into<String>) -> Self {
+        Self {
+            command: command.into(),
+            arguments: None,
+        }
+    }
+
+    /// Sets `arguments`, which `new` leaves unset.
+    pub fn with_arguments(mut self, value: impl Into<String>) -> Self {
+        self.arguments = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct MessagesUpdateBody {
     /// Replace the text of a queued message before processing starts.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content: Option<String>,
     /// Replace the queued message rich-text document, or null to clear it.
-    #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
-    pub rich_content: Option<TipTapDocument>,
+    #[serde(
+        rename = "richContent",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub rich_content: Option<Option<TipTapDocument>>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MessagesUpdateBody {
+    /// Creates a new `MessagesUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MessagesUpdateBody::new().with_content(…)`.
+    pub fn new() -> Self {
+        Self {
+            content: None,
+            rich_content: None,
+        }
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: impl Into<String>) -> Self {
+        self.content = Some(value.into());
+        self
+    }
+
+    /// Sets `rich_content`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `rich_content = Some(None)` on the built value.
+    pub fn with_rich_content(mut self, value: TipTapDocument) -> Self {
+        self.rich_content = Some(Some(value));
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MessagesDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MessagesDeleteResponse {
@@ -987,24 +1939,142 @@ pub struct MessagesDeleteResponse {
     pub id: String,
 }
 
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-pub struct TipTapLinkMarkAttrs {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub href: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub target: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub rel: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub title: Option<String>,
-    /// Additional properties not captured by the named fields.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+impl MessagesDeleteResponse {
+    /// Creates a new `MessagesDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        cancelled_jobs_count: i64,
+        cancelled_sessions_count: i64,
+        deleted: bool,
+        deleted_jobs_count: i64,
+        id: impl Into<String>,
+    ) -> Self {
+        Self {
+            cancelled_jobs_count,
+            cancelled_sessions_count,
+            deleted,
+            deleted_jobs_count,
+            id: id.into(),
+        }
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapLinkMarkAttrs::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct TipTapLinkMarkAttrs {
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub href: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub target: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub rel: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub class: Option<Option<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub title: Option<Option<String>>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapLinkMarkAttrs {
+    /// Creates a new `TipTapLinkMarkAttrs` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapLinkMarkAttrs::new().with_href(…)`.
+    pub fn new() -> Self {
+        Self {
+            href: None,
+            target: None,
+            rel: None,
+            class: None,
+            title: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `href`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `href = Some(None)` on the built value.
+    pub fn with_href(mut self, value: impl Into<String>) -> Self {
+        self.href = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `target`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `target = Some(None)` on the built value.
+    pub fn with_target(mut self, value: impl Into<String>) -> Self {
+        self.target = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `rel`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `rel = Some(None)` on the built value.
+    pub fn with_rel(mut self, value: impl Into<String>) -> Self {
+        self.rel = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `class`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `class = Some(None)` on the built value.
+    pub fn with_class(mut self, value: impl Into<String>) -> Self {
+        self.class = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `title`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `title = Some(None)` on the built value.
+    pub fn with_title(mut self, value: impl Into<String>) -> Self {
+        self.title = Some(Some(value.into()));
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapMentionAttributesMetadata::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapMentionAttributesMetadata {
     #[serde(rename = "integrationType", default, skip_serializing_if = "Option::is_none")]
     pub integration_type: Option<String>,
@@ -1020,7 +2090,67 @@ pub struct TipTapMentionAttributesMetadata {
     pub source: Option<String>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapMentionAttributesMetadata {
+    /// Creates a new `TipTapMentionAttributesMetadata` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapMentionAttributesMetadata::new().with_integration_type(…)`.
+    pub fn new() -> Self {
+        Self {
+            integration_type: None,
+            code_repository_id: None,
+            is_header: None,
+            argument_hint: None,
+            command_name: None,
+            source: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: impl Into<String>) -> Self {
+        self.integration_type = Some(value.into());
+        self
+    }
+
+    /// Sets `code_repository_id`, which `new` leaves unset.
+    pub fn with_code_repository_id(mut self, value: impl Into<String>) -> Self {
+        self.code_repository_id = Some(value.into());
+        self
+    }
+
+    /// Sets `is_header`, which `new` leaves unset.
+    pub fn with_is_header(mut self, value: bool) -> Self {
+        self.is_header = Some(value);
+        self
+    }
+
+    /// Sets `argument_hint`, which `new` leaves unset.
+    pub fn with_argument_hint(mut self, value: impl Into<String>) -> Self {
+        self.argument_hint = Some(value.into());
+        self
+    }
+
+    /// Sets `command_name`, which `new` leaves unset.
+    pub fn with_command_name(mut self, value: impl Into<String>) -> Self {
+        self.command_name = Some(value.into());
+        self
+    }
+
+    /// Sets `source`, which `new` leaves unset.
+    pub fn with_source(mut self, value: impl Into<String>) -> Self {
+        self.source = Some(value.into());
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1083,13 +2213,44 @@ pub enum TipTapHeadingNodeMark {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapHeadingNodeAttrs::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapHeadingNodeAttrs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub level: Option<i64>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapHeadingNodeAttrs {
+    /// Creates a new `TipTapHeadingNodeAttrs` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapHeadingNodeAttrs::new().with_level(…)`.
+    pub fn new() -> Self {
+        Self {
+            level: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `level`, which `new` leaves unset.
+    pub fn with_level(mut self, value: i64) -> Self {
+        self.level = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1107,15 +2268,60 @@ pub enum TipTapOrderedListNodeMark {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapOrderedListNodeAttrs::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapOrderedListNodeAttrs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub r#type: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub r#type: Option<Option<String>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapOrderedListNodeAttrs {
+    /// Creates a new `TipTapOrderedListNodeAttrs` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapOrderedListNodeAttrs::new().with_start(…)`.
+    pub fn new() -> Self {
+        Self {
+            start: None,
+            r#type: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `start`, which `new` leaves unset.
+    pub fn with_start(mut self, value: i64) -> Self {
+        self.start = Some(value);
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `r#type = Some(None)` on the built value.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(Some(value.into()));
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1133,13 +2339,45 @@ pub enum TipTapTaskItemNodeMark {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapTaskItemNodeAttrs::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapTaskItemNodeAttrs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub checked: Option<bool>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapTaskItemNodeAttrs {
+    /// Creates a new `TipTapTaskItemNodeAttrs` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapTaskItemNodeAttrs::new().with_checked(…)`.
+    pub fn new() -> Self {
+        Self {
+            checked: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `checked`, which `new` leaves unset.
+    pub fn with_checked(mut self, value: bool) -> Self {
+        self.checked = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1157,11 +2395,49 @@ pub enum TipTapCodeBlockNodeMark {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapCodeBlockNodeAttrs::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TipTapCodeBlockNodeAttrs {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub language: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub language: Option<Option<String>>,
     /// Additional properties not captured by the named fields.
     #[serde(flatten)]
-    pub additional_properties: std::collections::HashMap<String, serde_json::Value>,
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapCodeBlockNodeAttrs {
+    /// Creates a new `TipTapCodeBlockNodeAttrs` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapCodeBlockNodeAttrs::new().with_language(…)`.
+    pub fn new() -> Self {
+        Self {
+            language: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `language`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `language = Some(None)` on the built value.
+    pub fn with_language(mut self, value: impl Into<String>) -> Self {
+        self.language = Some(Some(value.into()));
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
 }

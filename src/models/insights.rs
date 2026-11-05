@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponse {
@@ -36,6 +36,32 @@ pub struct InsightsRetrieveResponse {
     pub enabled: bool,
     #[serde(default)]
     pub data: Option<InsightsRetrieveResponseData>,
+}
+
+impl InsightsRetrieveResponse {
+    /// Creates a new `InsightsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: Option<String>,
+        status: Option<InsightsRetrieveResponseStatus>,
+        range_start: Option<chrono::DateTime<chrono::FixedOffset>>,
+        range_end: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled: bool,
+        data: Option<InsightsRetrieveResponseData>,
+    ) -> Self {
+        Self {
+            id,
+            status,
+            range_start,
+            range_end,
+            last_synced_at,
+            enabled,
+            data,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -85,9 +111,9 @@ impl From<&str> for InsightsRetrieveResponseStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsRetrieveResponseData::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseData {
@@ -95,6 +121,24 @@ pub struct InsightsRetrieveResponseData {
     pub summary: InsightsRetrieveResponseDataSummary,
     #[serde(rename = "timeSeries")]
     pub time_series: Vec<InsightsRetrieveResponseDataTimeSery>,
+}
+
+impl InsightsRetrieveResponseData {
+    /// Creates a new `InsightsRetrieveResponseData` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        range: InsightsRetrieveResponseDataRange,
+        summary: InsightsRetrieveResponseDataSummary,
+        time_series: Vec<InsightsRetrieveResponseDataTimeSery>,
+    ) -> Self {
+        Self {
+            range,
+            summary,
+            time_series,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -148,9 +192,9 @@ impl From<&str> for InsightsRetrieveResponseDataRange {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsRetrieveResponseDataSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseDataSummary {
@@ -165,9 +209,31 @@ pub struct InsightsRetrieveResponseDataSummary {
     pub changes: InsightsRetrieveResponseDataSummaryChanges,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsRetrieveResponseDataSummary {
+    /// Creates a new `InsightsRetrieveResponseDataSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        tasks_completed: i64,
+        prs_created: i64,
+        prs_merged: i64,
+        tembo_contribution: f64,
+        changes: InsightsRetrieveResponseDataSummaryChanges,
+    ) -> Self {
+        Self {
+            tasks_completed,
+            prs_created,
+            prs_merged,
+            tembo_contribution,
+            changes,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsRetrieveResponseDataSummaryChanges::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseDataSummaryChanges {
@@ -181,9 +247,25 @@ pub struct InsightsRetrieveResponseDataSummaryChanges {
     pub tembo_contribution: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsRetrieveResponseDataSummaryChanges {
+    /// Creates a new `InsightsRetrieveResponseDataSummaryChanges` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(prs_created: f64, prs_merged: f64, tasks_completed: f64, tembo_contribution: f64) -> Self {
+        Self {
+            prs_created,
+            prs_merged,
+            tasks_completed,
+            tembo_contribution,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsRetrieveResponseDataTimeSery::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseDataTimeSery {
@@ -201,9 +283,32 @@ pub struct InsightsRetrieveResponseDataTimeSery {
     pub tembo_contribution: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsRetrieveResponseDataTimeSery {
+    /// Creates a new `InsightsRetrieveResponseDataTimeSery` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        month: impl Into<String>,
+        prs_with_tembo: i64,
+        prs_without_tembo: f64,
+        prs_merged: i64,
+        prs_created: i64,
+        tembo_contribution: f64,
+    ) -> Self {
+        Self {
+            month: month.into(),
+            prs_with_tembo,
+            prs_without_tembo,
+            prs_merged,
+            prs_created,
+            tembo_contribution,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponse {
@@ -232,6 +337,32 @@ pub struct InsightsUpdateResponse {
     pub enabled: bool,
     #[serde(default)]
     pub data: Option<InsightsUpdateResponseData>,
+}
+
+impl InsightsUpdateResponse {
+    /// Creates a new `InsightsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: Option<String>,
+        status: Option<InsightsUpdateResponseStatus>,
+        range_start: Option<chrono::DateTime<chrono::FixedOffset>>,
+        range_end: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_synced_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled: bool,
+        data: Option<InsightsUpdateResponseData>,
+    ) -> Self {
+        Self {
+            id,
+            status,
+            range_start,
+            range_end,
+            last_synced_at,
+            enabled,
+            data,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -281,9 +412,9 @@ impl From<&str> for InsightsUpdateResponseStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateResponseData::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseData {
@@ -291,6 +422,24 @@ pub struct InsightsUpdateResponseData {
     pub summary: InsightsUpdateResponseDataSummary,
     #[serde(rename = "timeSeries")]
     pub time_series: Vec<InsightsUpdateResponseDataTimeSery>,
+}
+
+impl InsightsUpdateResponseData {
+    /// Creates a new `InsightsUpdateResponseData` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        range: InsightsUpdateResponseDataRange,
+        summary: InsightsUpdateResponseDataSummary,
+        time_series: Vec<InsightsUpdateResponseDataTimeSery>,
+    ) -> Self {
+        Self {
+            range,
+            summary,
+            time_series,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -344,9 +493,9 @@ impl From<&str> for InsightsUpdateResponseDataRange {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateResponseDataSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseDataSummary {
@@ -361,9 +510,31 @@ pub struct InsightsUpdateResponseDataSummary {
     pub changes: InsightsUpdateResponseDataSummaryChanges,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsUpdateResponseDataSummary {
+    /// Creates a new `InsightsUpdateResponseDataSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        tasks_completed: i64,
+        prs_created: i64,
+        prs_merged: i64,
+        tembo_contribution: f64,
+        changes: InsightsUpdateResponseDataSummaryChanges,
+    ) -> Self {
+        Self {
+            tasks_completed,
+            prs_created,
+            prs_merged,
+            tembo_contribution,
+            changes,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateResponseDataSummaryChanges::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseDataSummaryChanges {
@@ -377,9 +548,25 @@ pub struct InsightsUpdateResponseDataSummaryChanges {
     pub tembo_contribution: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsUpdateResponseDataSummaryChanges {
+    /// Creates a new `InsightsUpdateResponseDataSummaryChanges` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(prs_created: f64, prs_merged: f64, tasks_completed: f64, tembo_contribution: f64) -> Self {
+        Self {
+            prs_created,
+            prs_merged,
+            tasks_completed,
+            tembo_contribution,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateResponseDataTimeSery::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseDataTimeSery {
@@ -397,15 +584,49 @@ pub struct InsightsUpdateResponseDataTimeSery {
     pub tembo_contribution: f64,
 }
 
+impl InsightsUpdateResponseDataTimeSery {
+    /// Creates a new `InsightsUpdateResponseDataTimeSery` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        month: impl Into<String>,
+        prs_with_tembo: i64,
+        prs_without_tembo: f64,
+        prs_merged: i64,
+        prs_created: i64,
+        tembo_contribution: f64,
+    ) -> Self {
+        Self {
+            month: month.into(),
+            prs_with_tembo,
+            prs_without_tembo,
+            prs_merged,
+            prs_created,
+            tembo_contribution,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct InsightsUpdateBody {
     /// Enable or disable pull request contribution insight collection. Enabling starts the initial refresh when needed.
     pub enabled: bool,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsUpdateBody {
+    /// Creates a new `InsightsUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(enabled: bool) -> Self {
+        Self { enabled }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListMembersResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsListMembersResponse {
@@ -414,9 +635,19 @@ pub struct InsightsListMembersResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsListMembersResponse {
+    /// Creates a new `InsightsListMembersResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<InsightsListMembersResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListMembersResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsListMembersResponseItem {
@@ -434,9 +665,35 @@ pub struct InsightsListMembersResponseItem {
     pub tembo_contribution: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsListMembersResponseItem {
+    /// Creates a new `InsightsListMembersResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        provider: impl Into<String>,
+        username: impl Into<String>,
+        name: Option<String>,
+        avatar_url: impl Into<String>,
+        prs_created: i64,
+        prs_merged: i64,
+        tembo_contribution: f64,
+    ) -> Self {
+        Self {
+            provider: provider.into(),
+            username: username.into(),
+            name,
+            avatar_url: avatar_url.into(),
+            prs_created,
+            prs_merged,
+            tembo_contribution,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListRepositoriesResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsListRepositoriesResponse {
@@ -445,9 +702,19 @@ pub struct InsightsListRepositoriesResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InsightsListRepositoriesResponse {
+    /// Creates a new `InsightsListRepositoriesResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<InsightsListRepositoriesResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListRepositoriesResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsListRepositoriesResponseItem {
@@ -462,4 +729,30 @@ pub struct InsightsListRepositoriesResponseItem {
     pub prs_merged: i64,
     #[serde(rename = "temboContribution", serialize_with = "crate::number::serialize")]
     pub tembo_contribution: f64,
+}
+
+impl InsightsListRepositoriesResponseItem {
+    /// Creates a new `InsightsListRepositoriesResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        code_repository_id: impl Into<String>,
+        name: impl Into<String>,
+        url: impl Into<String>,
+        provider: impl Into<String>,
+        prs_created: i64,
+        prs_merged: i64,
+        tembo_contribution: f64,
+    ) -> Self {
+        Self {
+            code_repository_id: code_repository_id.into(),
+            name: name.into(),
+            url: url.into(),
+            provider: provider.into(),
+            prs_created,
+            prs_merged,
+            tembo_contribution,
+        }
+    }
 }

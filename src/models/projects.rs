@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateDefaultsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateDefaultsResponse {
@@ -17,6 +17,19 @@ pub struct ProjectsUpdateDefaultsResponse {
     /// Default workspace VM size for the organization.
     #[serde(rename = "sandboxSize")]
     pub sandbox_size: ProjectsUpdateDefaultsResponseSandboxSize,
+}
+
+impl ProjectsUpdateDefaultsResponse {
+    /// Creates a new `ProjectsUpdateDefaultsResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(project_id: Option<String>, sandbox_size: ProjectsUpdateDefaultsResponseSandboxSize) -> Self {
+        Self {
+            project_id,
+            sandbox_size,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -86,7 +99,11 @@ impl From<&str> for ProjectsUpdateDefaultsResponseSandboxSize {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateDefaultsBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateDefaultsBody {
     /// Project to make the organization default, or null to clear the default.
     #[serde(rename = "projectId", default)]
@@ -94,6 +111,19 @@ pub struct ProjectsUpdateDefaultsBody {
     /// Default workspace VM size for the organization.
     #[serde(rename = "sandboxSize")]
     pub sandbox_size: ProjectsUpdateDefaultsBodySandboxSize,
+}
+
+impl ProjectsUpdateDefaultsBody {
+    /// Creates a new `ProjectsUpdateDefaultsBody` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(project_id: Option<String>, sandbox_size: ProjectsUpdateDefaultsBodySandboxSize) -> Self {
+        Self {
+            project_id,
+            sandbox_size,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -163,9 +193,8 @@ impl From<&str> for ProjectsUpdateDefaultsBodySandboxSize {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponse {
@@ -176,9 +205,23 @@ pub struct ProjectsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponse {
+    /// Creates a new `ProjectsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(has_built_snapshot: bool, items: Vec<ProjectsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self {
+            has_built_snapshot,
+            items,
+            next_cursor,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItem {
@@ -214,9 +257,56 @@ pub struct ProjectsListResponseItem {
     pub warm_pool_schedule: Option<ProjectsListResponseItemWarmPoolSchedule>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponseItem {
+    /// Creates a new `ProjectsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        setup_script: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        active_snapshots: Vec<ProjectsListResponseItemActiveSnapshot>,
+        resource_settings: Option<ProjectsListResponseItemResourceSettings>,
+        agent_instructions: Option<String>,
+        code_repository_ids: Option<Vec<String>>,
+        color: ProjectsListResponseItemColor,
+        default_for_sizes: Vec<ProjectsListResponseItemDefaultForSiz>,
+        icon: ProjectsListResponseItemIcon,
+        onboarding_default: bool,
+        sizes: Vec<ProjectsListResponseItemSiz>,
+        warm_pool_enabled: bool,
+        warm_pool_schedule: Option<ProjectsListResponseItemWarmPoolSchedule>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            id: id.into(),
+            name: name.into(),
+            setup_script,
+            updated_at,
+            active_snapshots,
+            resource_settings,
+            agent_instructions,
+            code_repository_ids,
+            color,
+            default_for_sizes,
+            icon,
+            onboarding_default,
+            sizes,
+            warm_pool_enabled,
+            warm_pool_schedule,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemActiveSnapshot::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemActiveSnapshot {
@@ -224,6 +314,25 @@ pub struct ProjectsListResponseItemActiveSnapshot {
     pub size: ProjectsListResponseItemActiveSnapshotSize,
     #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
     pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl ProjectsListResponseItemActiveSnapshot {
+    /// Creates a new `ProjectsListResponseItemActiveSnapshot` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        size: ProjectsListResponseItemActiveSnapshotSize,
+        built_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            size,
+            built_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -308,9 +417,9 @@ pub enum ProjectsListResponseItemResourceSettings {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant1 {
@@ -320,9 +429,29 @@ pub struct ProjectsListResponseItemResourceSettingsVariant1 {
     pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant1Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponseItemResourceSettingsVariant1 {
+    /// Creates a new `ProjectsListResponseItemResourceSettingsVariant1` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsListResponseItemResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsListResponseItemResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant1Allocation {
@@ -338,9 +467,41 @@ pub struct ProjectsListResponseItemResourceSettingsVariant1Allocation {
     pub disk_size_gb: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponseItemResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsListResponseItemResourceSettingsVariant1Allocation` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsListResponseItemResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant2 {
@@ -350,9 +511,29 @@ pub struct ProjectsListResponseItemResourceSettingsVariant2 {
     pub allocation: Option<ProjectsListResponseItemResourceSettingsVariant2Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponseItemResourceSettingsVariant2 {
+    /// Creates a new `ProjectsListResponseItemResourceSettingsVariant2` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsListResponseItemResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsListResponseItemResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemResourceSettingsVariant2Allocation {
@@ -366,6 +547,38 @@ pub struct ProjectsListResponseItemResourceSettingsVariant2Allocation {
     pub memory_max_mb: i64,
     #[serde(rename = "diskSizeGb")]
     pub disk_size_gb: i64,
+}
+
+impl ProjectsListResponseItemResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsListResponseItemResourceSettingsVariant2Allocation` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsListResponseItemResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -692,9 +905,9 @@ impl From<&str> for ProjectsListResponseItemSiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsListResponseItemWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsListResponseItemWarmPoolSchedule {
@@ -706,9 +919,29 @@ pub struct ProjectsListResponseItemWarmPoolSchedule {
     pub end_time: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsListResponseItemWarmPoolSchedule {
+    /// Creates a new `ProjectsListResponseItemWarmPoolSchedule` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponse {
@@ -717,9 +950,19 @@ pub struct ProjectsCreateResponse {
     pub project: ProjectsCreateResponseProject,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsCreateResponse {
+    /// Creates a new `ProjectsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(job_ids: Vec<String>, project: ProjectsCreateResponseProject) -> Self {
+        Self { job_ids, project }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProject {
@@ -755,9 +998,56 @@ pub struct ProjectsCreateResponseProject {
     pub warm_pool_schedule: Option<ProjectsCreateResponseProjectWarmPoolSchedule>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsCreateResponseProject {
+    /// Creates a new `ProjectsCreateResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        setup_script: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        active_snapshots: Vec<ProjectsCreateResponseProjectActiveSnapshot>,
+        resource_settings: Option<ProjectsCreateResponseProjectResourceSettings>,
+        agent_instructions: Option<String>,
+        code_repository_ids: Option<Vec<String>>,
+        color: ProjectsCreateResponseProjectColor,
+        default_for_sizes: Vec<ProjectsCreateResponseProjectDefaultForSiz>,
+        icon: ProjectsCreateResponseProjectIcon,
+        onboarding_default: bool,
+        sizes: Vec<ProjectsCreateResponseProjectSiz>,
+        warm_pool_enabled: bool,
+        warm_pool_schedule: Option<ProjectsCreateResponseProjectWarmPoolSchedule>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            id: id.into(),
+            name: name.into(),
+            setup_script,
+            updated_at,
+            active_snapshots,
+            resource_settings,
+            agent_instructions,
+            code_repository_ids,
+            color,
+            default_for_sizes,
+            icon,
+            onboarding_default,
+            sizes,
+            warm_pool_enabled,
+            warm_pool_schedule,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectActiveSnapshot::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectActiveSnapshot {
@@ -765,6 +1055,25 @@ pub struct ProjectsCreateResponseProjectActiveSnapshot {
     pub size: ProjectsCreateResponseProjectActiveSnapshotSize,
     #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
     pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl ProjectsCreateResponseProjectActiveSnapshot {
+    /// Creates a new `ProjectsCreateResponseProjectActiveSnapshot` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        size: ProjectsCreateResponseProjectActiveSnapshotSize,
+        built_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            size,
+            built_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -849,9 +1158,9 @@ pub enum ProjectsCreateResponseProjectResourceSettings {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant1 {
@@ -861,9 +1170,29 @@ pub struct ProjectsCreateResponseProjectResourceSettingsVariant1 {
     pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant1Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsCreateResponseProjectResourceSettingsVariant1 {
+    /// Creates a new `ProjectsCreateResponseProjectResourceSettingsVariant1` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateResponseProjectResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsCreateResponseProjectResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant1Allocation {
@@ -879,9 +1208,41 @@ pub struct ProjectsCreateResponseProjectResourceSettingsVariant1Allocation {
     pub disk_size_gb: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsCreateResponseProjectResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsCreateResponseProjectResourceSettingsVariant1Allocation` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateResponseProjectResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant2 {
@@ -891,9 +1252,29 @@ pub struct ProjectsCreateResponseProjectResourceSettingsVariant2 {
     pub allocation: Option<ProjectsCreateResponseProjectResourceSettingsVariant2Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsCreateResponseProjectResourceSettingsVariant2 {
+    /// Creates a new `ProjectsCreateResponseProjectResourceSettingsVariant2` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateResponseProjectResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsCreateResponseProjectResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectResourceSettingsVariant2Allocation {
@@ -907,6 +1288,38 @@ pub struct ProjectsCreateResponseProjectResourceSettingsVariant2Allocation {
     pub memory_max_mb: i64,
     #[serde(rename = "diskSizeGb")]
     pub disk_size_gb: i64,
+}
+
+impl ProjectsCreateResponseProjectResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsCreateResponseProjectResourceSettingsVariant2Allocation` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateResponseProjectResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1233,9 +1646,9 @@ impl From<&str> for ProjectsCreateResponseProjectSiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateResponseProjectWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsCreateResponseProjectWarmPoolSchedule {
@@ -1247,22 +1660,65 @@ pub struct ProjectsCreateResponseProjectWarmPoolSchedule {
     pub end_time: String,
 }
 
+impl ProjectsCreateResponseProjectWarmPoolSchedule {
+    /// Creates a new `ProjectsCreateResponseProjectWarmPoolSchedule` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBody {
     /// Short project description, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub description: Option<Option<String>>,
     /// Project display name.
     pub name: String,
     /// Setup script to run while building the environment, or null to clear it.
-    #[serde(rename = "setupScript", default, skip_serializing_if = "Option::is_none")]
-    pub setup_script: Option<String>,
+    #[serde(
+        rename = "setupScript",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub setup_script: Option<Option<String>>,
     /// Repository IDs included in the project environment. On update, replaces the repository selection.
-    #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
-    pub code_repository_ids: Option<Vec<String>>,
+    #[serde(
+        rename = "codeRepositoryIds",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub code_repository_ids: Option<Option<Vec<String>>>,
     /// Instructions supplied to agents using this project, or null to clear them.
-    #[serde(rename = "agentInstructions", default, skip_serializing_if = "Option::is_none")]
-    pub agent_instructions: Option<String>,
+    #[serde(
+        rename = "agentInstructions",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub agent_instructions: Option<Option<String>>,
     /// Project display color.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<ProjectsCreateBodyColor>,
@@ -1294,8 +1750,8 @@ pub struct ProjectsCreateBody {
 impl ProjectsCreateBody {
     /// Creates a new `ProjectsCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ProjectsCreateBody { description: Some(…), ..ProjectsCreateBody::new(name) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBody::new(name).with_description(…)`.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             description: None,
@@ -1313,6 +1769,92 @@ impl ProjectsCreateBody {
             sizes: None,
             resource_settings: None,
         }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `description = Some(None)` on the built value.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `setup_script`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `setup_script = Some(None)` on the built value.
+    pub fn with_setup_script(mut self, value: impl Into<String>) -> Self {
+        self.setup_script = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `code_repository_ids`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `code_repository_ids = Some(None)` on the built value.
+    pub fn with_code_repository_ids(mut self, value: Vec<String>) -> Self {
+        self.code_repository_ids = Some(Some(value));
+        self
+    }
+
+    /// Sets `agent_instructions`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `agent_instructions = Some(None)` on the built value.
+    pub fn with_agent_instructions(mut self, value: impl Into<String>) -> Self {
+        self.agent_instructions = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `color`, which `new` leaves unset.
+    pub fn with_color(mut self, value: ProjectsCreateBodyColor) -> Self {
+        self.color = Some(value);
+        self
+    }
+
+    /// Sets `icon`, which `new` leaves unset.
+    pub fn with_icon(mut self, value: ProjectsCreateBodyIcon) -> Self {
+        self.icon = Some(value);
+        self
+    }
+
+    /// Sets `include_deps`, which `new` leaves unset.
+    pub fn with_include_deps(mut self, value: bool) -> Self {
+        self.include_deps = Some(value);
+        self
+    }
+
+    /// Sets `include_skills`, which `new` leaves unset.
+    pub fn with_include_skills(mut self, value: bool) -> Self {
+        self.include_skills = Some(value);
+        self
+    }
+
+    /// Sets `onboarding_default`, which `new` leaves unset.
+    pub fn with_onboarding_default(mut self, value: bool) -> Self {
+        self.onboarding_default = Some(value);
+        self
+    }
+
+    /// Sets `run_now`, which `new` leaves unset.
+    pub fn with_run_now(mut self, value: bool) -> Self {
+        self.run_now = Some(value);
+        self
+    }
+
+    /// Sets `schedule`, which `new` leaves unset.
+    pub fn with_schedule(mut self, value: ProjectsCreateBodySchedule) -> Self {
+        self.schedule = Some(value);
+        self
+    }
+
+    /// Sets `sizes`, which `new` leaves unset.
+    pub fn with_sizes(mut self, value: Vec<ProjectsCreateBodySiz>) -> Self {
+        self.sizes = Some(value);
+        self
+    }
+
+    /// Sets `resource_settings`, which `new` leaves unset.
+    pub fn with_resource_settings(mut self, value: ProjectsCreateBodyResourceSettings) -> Self {
+        self.resource_settings = Some(value);
+        self
     }
 }
 
@@ -1510,7 +2052,11 @@ impl From<&str> for ProjectsCreateBodyIcon {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBodySchedule::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBodySchedule {
     /// Cron expression for recurring project snapshot builds.
     pub cron: String,
@@ -1522,13 +2068,19 @@ pub struct ProjectsCreateBodySchedule {
 impl ProjectsCreateBodySchedule {
     /// Creates a new `ProjectsCreateBodySchedule` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `ProjectsCreateBodySchedule { timezone: Some(…), ..ProjectsCreateBodySchedule::new(cron) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBodySchedule::new(cron).with_timezone(…)`.
     pub fn new(cron: impl Into<String>) -> Self {
         Self {
             cron: cron.into(),
             timezone: None,
         }
+    }
+
+    /// Sets `timezone`, which `new` leaves unset.
+    pub fn with_timezone(mut self, value: impl Into<String>) -> Self {
+        self.timezone = Some(value.into());
+        self
     }
 }
 
@@ -1610,7 +2162,11 @@ pub enum ProjectsCreateBodyResourceSettings {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBodyResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBodyResourceSettingsVariant1 {
     #[serde(rename = "automaticSizing")]
     pub automatic_sizing: bool,
@@ -1622,23 +2178,27 @@ impl ProjectsCreateBodyResourceSettingsVariant1 {
     /// Creates a new `ProjectsCreateBodyResourceSettingsVariant1` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    ///
-    /// ```text
-    /// ProjectsCreateBodyResourceSettingsVariant1 {
-    ///     allocation: Some(…),
-    ///     ..ProjectsCreateBodyResourceSettingsVariant1::new(automatic_sizing)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBodyResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
     pub fn new(automatic_sizing: bool) -> Self {
         Self {
             automatic_sizing,
             allocation: None,
         }
     }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsCreateBodyResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBodyResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBodyResourceSettingsVariant1Allocation {
     #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
     pub cpu_min: Option<i64>,
@@ -1656,14 +2216,11 @@ impl ProjectsCreateBodyResourceSettingsVariant1Allocation {
     /// Creates a new `ProjectsCreateBodyResourceSettingsVariant1Allocation` from its required fields, leaving every
     /// optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
     ///
-    /// ```text
-    /// ProjectsCreateBodyResourceSettingsVariant1Allocation {
-    ///     cpu_min: Some(…),
-    ///     ..ProjectsCreateBodyResourceSettingsVariant1Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBodyResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
     pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
         Self {
             cpu_min: None,
@@ -1673,9 +2230,25 @@ impl ProjectsCreateBodyResourceSettingsVariant1Allocation {
             disk_size_gb,
         }
     }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBodyResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBodyResourceSettingsVariant2 {
     #[serde(rename = "automaticSizing")]
     pub automatic_sizing: bool,
@@ -1687,23 +2260,27 @@ impl ProjectsCreateBodyResourceSettingsVariant2 {
     /// Creates a new `ProjectsCreateBodyResourceSettingsVariant2` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    ///
-    /// ```text
-    /// ProjectsCreateBodyResourceSettingsVariant2 {
-    ///     allocation: Some(…),
-    ///     ..ProjectsCreateBodyResourceSettingsVariant2::new(automatic_sizing)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBodyResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
     pub fn new(automatic_sizing: bool) -> Self {
         Self {
             automatic_sizing,
             allocation: None,
         }
     }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsCreateBodyResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsCreateBodyResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsCreateBodyResourceSettingsVariant2Allocation {
     #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
     pub cpu_min: Option<i64>,
@@ -1721,14 +2298,11 @@ impl ProjectsCreateBodyResourceSettingsVariant2Allocation {
     /// Creates a new `ProjectsCreateBodyResourceSettingsVariant2Allocation` from its required fields, leaving every
     /// optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
     ///
-    /// ```text
-    /// ProjectsCreateBodyResourceSettingsVariant2Allocation {
-    ///     cpu_min: Some(…),
-    ///     ..ProjectsCreateBodyResourceSettingsVariant2Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsCreateBodyResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
     pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
         Self {
             cpu_min: None,
@@ -1738,11 +2312,23 @@ impl ProjectsCreateBodyResourceSettingsVariant2Allocation {
             disk_size_gb,
         }
     }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponse {
@@ -1778,9 +2364,56 @@ pub struct ProjectsRetrieveResponse {
     pub warm_pool_schedule: Option<ProjectsRetrieveResponseWarmPoolSchedule>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsRetrieveResponse {
+    /// Creates a new `ProjectsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        setup_script: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        active_snapshots: Vec<ProjectsRetrieveResponseActiveSnapshot>,
+        resource_settings: Option<ProjectsRetrieveResponseResourceSettings>,
+        agent_instructions: Option<String>,
+        code_repository_ids: Option<Vec<String>>,
+        color: ProjectsRetrieveResponseColor,
+        default_for_sizes: Vec<ProjectsRetrieveResponseDefaultForSiz>,
+        icon: ProjectsRetrieveResponseIcon,
+        onboarding_default: bool,
+        sizes: Vec<ProjectsRetrieveResponseSiz>,
+        warm_pool_enabled: bool,
+        warm_pool_schedule: Option<ProjectsRetrieveResponseWarmPoolSchedule>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            id: id.into(),
+            name: name.into(),
+            setup_script,
+            updated_at,
+            active_snapshots,
+            resource_settings,
+            agent_instructions,
+            code_repository_ids,
+            color,
+            default_for_sizes,
+            icon,
+            onboarding_default,
+            sizes,
+            warm_pool_enabled,
+            warm_pool_schedule,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseActiveSnapshot::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseActiveSnapshot {
@@ -1788,6 +2421,25 @@ pub struct ProjectsRetrieveResponseActiveSnapshot {
     pub size: ProjectsRetrieveResponseActiveSnapshotSize,
     #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
     pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl ProjectsRetrieveResponseActiveSnapshot {
+    /// Creates a new `ProjectsRetrieveResponseActiveSnapshot` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        size: ProjectsRetrieveResponseActiveSnapshotSize,
+        built_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            size,
+            built_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1872,9 +2524,9 @@ pub enum ProjectsRetrieveResponseResourceSettings {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant1 {
@@ -1884,9 +2536,29 @@ pub struct ProjectsRetrieveResponseResourceSettingsVariant1 {
     pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant1Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsRetrieveResponseResourceSettingsVariant1 {
+    /// Creates a new `ProjectsRetrieveResponseResourceSettingsVariant1` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsRetrieveResponseResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsRetrieveResponseResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant1Allocation {
@@ -1902,9 +2574,41 @@ pub struct ProjectsRetrieveResponseResourceSettingsVariant1Allocation {
     pub disk_size_gb: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsRetrieveResponseResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsRetrieveResponseResourceSettingsVariant1Allocation` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsRetrieveResponseResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant2 {
@@ -1914,9 +2618,29 @@ pub struct ProjectsRetrieveResponseResourceSettingsVariant2 {
     pub allocation: Option<ProjectsRetrieveResponseResourceSettingsVariant2Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsRetrieveResponseResourceSettingsVariant2 {
+    /// Creates a new `ProjectsRetrieveResponseResourceSettingsVariant2` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsRetrieveResponseResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsRetrieveResponseResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseResourceSettingsVariant2Allocation {
@@ -1930,6 +2654,38 @@ pub struct ProjectsRetrieveResponseResourceSettingsVariant2Allocation {
     pub memory_max_mb: i64,
     #[serde(rename = "diskSizeGb")]
     pub disk_size_gb: i64,
+}
+
+impl ProjectsRetrieveResponseResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsRetrieveResponseResourceSettingsVariant2Allocation` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsRetrieveResponseResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2256,9 +3012,9 @@ impl From<&str> for ProjectsRetrieveResponseSiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveResponseWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsRetrieveResponseWarmPoolSchedule {
@@ -2270,9 +3026,29 @@ pub struct ProjectsRetrieveResponseWarmPoolSchedule {
     pub end_time: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsRetrieveResponseWarmPoolSchedule {
+    /// Creates a new `ProjectsRetrieveResponseWarmPoolSchedule` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponse {
@@ -2308,9 +3084,56 @@ pub struct ProjectsUpdateResponse {
     pub warm_pool_schedule: Option<ProjectsUpdateResponseWarmPoolSchedule>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsUpdateResponse {
+    /// Creates a new `ProjectsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        setup_script: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        active_snapshots: Vec<ProjectsUpdateResponseActiveSnapshot>,
+        resource_settings: Option<ProjectsUpdateResponseResourceSettings>,
+        agent_instructions: Option<String>,
+        code_repository_ids: Option<Vec<String>>,
+        color: ProjectsUpdateResponseColor,
+        default_for_sizes: Vec<ProjectsUpdateResponseDefaultForSiz>,
+        icon: ProjectsUpdateResponseIcon,
+        onboarding_default: bool,
+        sizes: Vec<ProjectsUpdateResponseSiz>,
+        warm_pool_enabled: bool,
+        warm_pool_schedule: Option<ProjectsUpdateResponseWarmPoolSchedule>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            id: id.into(),
+            name: name.into(),
+            setup_script,
+            updated_at,
+            active_snapshots,
+            resource_settings,
+            agent_instructions,
+            code_repository_ids,
+            color,
+            default_for_sizes,
+            icon,
+            onboarding_default,
+            sizes,
+            warm_pool_enabled,
+            warm_pool_schedule,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseActiveSnapshot::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseActiveSnapshot {
@@ -2318,6 +3141,24 @@ pub struct ProjectsUpdateResponseActiveSnapshot {
     pub size: ProjectsUpdateResponseActiveSnapshotSize,
     #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
     pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl ProjectsUpdateResponseActiveSnapshot {
+    /// Creates a new `ProjectsUpdateResponseActiveSnapshot` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        size: ProjectsUpdateResponseActiveSnapshotSize,
+        built_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            size,
+            built_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2402,9 +3243,9 @@ pub enum ProjectsUpdateResponseResourceSettings {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant1 {
@@ -2414,9 +3255,29 @@ pub struct ProjectsUpdateResponseResourceSettingsVariant1 {
     pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant1Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsUpdateResponseResourceSettingsVariant1 {
+    /// Creates a new `ProjectsUpdateResponseResourceSettingsVariant1` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateResponseResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsUpdateResponseResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant1Allocation {
@@ -2432,9 +3293,41 @@ pub struct ProjectsUpdateResponseResourceSettingsVariant1Allocation {
     pub disk_size_gb: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsUpdateResponseResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsUpdateResponseResourceSettingsVariant1Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateResponseResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant2 {
@@ -2444,9 +3337,29 @@ pub struct ProjectsUpdateResponseResourceSettingsVariant2 {
     pub allocation: Option<ProjectsUpdateResponseResourceSettingsVariant2Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsUpdateResponseResourceSettingsVariant2 {
+    /// Creates a new `ProjectsUpdateResponseResourceSettingsVariant2` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateResponseResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsUpdateResponseResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseResourceSettingsVariant2Allocation {
@@ -2460,6 +3373,38 @@ pub struct ProjectsUpdateResponseResourceSettingsVariant2Allocation {
     pub memory_max_mb: i64,
     #[serde(rename = "diskSizeGb")]
     pub disk_size_gb: i64,
+}
+
+impl ProjectsUpdateResponseResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsUpdateResponseResourceSettingsVariant2Allocation` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateResponseResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2786,9 +3731,9 @@ impl From<&str> for ProjectsUpdateResponseSiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateResponseWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsUpdateResponseWarmPoolSchedule {
@@ -2800,23 +3745,69 @@ pub struct ProjectsUpdateResponseWarmPoolSchedule {
     pub end_time: String,
 }
 
+impl ProjectsUpdateResponseWarmPoolSchedule {
+    /// Creates a new `ProjectsUpdateResponseWarmPoolSchedule` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBody {
     /// Short project description, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub description: Option<Option<String>>,
     /// Project display name.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Setup script to run while building the environment, or null to clear it.
-    #[serde(rename = "setupScript", default, skip_serializing_if = "Option::is_none")]
-    pub setup_script: Option<String>,
+    #[serde(
+        rename = "setupScript",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub setup_script: Option<Option<String>>,
     /// Repository IDs included in the project environment. On update, replaces the repository selection.
-    #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
-    pub code_repository_ids: Option<Vec<String>>,
+    #[serde(
+        rename = "codeRepositoryIds",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub code_repository_ids: Option<Option<Vec<String>>>,
     /// Instructions supplied to agents using this project, or null to clear them.
-    #[serde(rename = "agentInstructions", default, skip_serializing_if = "Option::is_none")]
-    pub agent_instructions: Option<String>,
+    #[serde(
+        rename = "agentInstructions",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub agent_instructions: Option<Option<String>>,
     /// Project display color.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<ProjectsUpdateBodyColor>,
@@ -2836,7 +3827,7 @@ pub struct ProjectsUpdateBody {
     pub default_for_sizes: Option<Vec<ProjectsUpdateBodyDefaultForSiz>>,
     /// Replace the complete environment-variable map. Use createProjectEnvironmentVariables to add or replace individual keys instead.
     #[serde(rename = "environmentVariables", default, skip_serializing_if = "Option::is_none")]
-    pub environment_variables: Option<std::collections::HashMap<String, String>>,
+    pub environment_variables: Option<std::collections::BTreeMap<String, String>>,
     /// Change the project build schedule, including enabling or pausing it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsUpdateBodySchedule>,
@@ -2844,11 +3835,149 @@ pub struct ProjectsUpdateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsUpdateBodySiz>>,
     /// Weekly availability for prewarmed VMs. Null means always on; days use 0=Sunday. Overnight windows end the following day.
-    #[serde(rename = "warmPoolSchedule", default, skip_serializing_if = "Option::is_none")]
-    pub warm_pool_schedule: Option<ProjectsUpdateBodyWarmPoolSchedule>,
+    #[serde(
+        rename = "warmPoolSchedule",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub warm_pool_schedule: Option<Option<ProjectsUpdateBodyWarmPoolSchedule>>,
     /// Enable or disable prewarmed VMs for this project.
     #[serde(rename = "warmPoolEnabled", default, skip_serializing_if = "Option::is_none")]
     pub warm_pool_enabled: Option<bool>,
+}
+
+impl ProjectsUpdateBody {
+    /// Creates a new `ProjectsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBody::new().with_description(…)`.
+    pub fn new() -> Self {
+        Self {
+            description: None,
+            name: None,
+            setup_script: None,
+            code_repository_ids: None,
+            agent_instructions: None,
+            color: None,
+            icon: None,
+            include_deps: None,
+            include_skills: None,
+            resource_settings: None,
+            default_for_sizes: None,
+            environment_variables: None,
+            schedule: None,
+            sizes: None,
+            warm_pool_schedule: None,
+            warm_pool_enabled: None,
+        }
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `description = Some(None)` on the built value.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `setup_script`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `setup_script = Some(None)` on the built value.
+    pub fn with_setup_script(mut self, value: impl Into<String>) -> Self {
+        self.setup_script = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `code_repository_ids`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `code_repository_ids = Some(None)` on the built value.
+    pub fn with_code_repository_ids(mut self, value: Vec<String>) -> Self {
+        self.code_repository_ids = Some(Some(value));
+        self
+    }
+
+    /// Sets `agent_instructions`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `agent_instructions = Some(None)` on the built value.
+    pub fn with_agent_instructions(mut self, value: impl Into<String>) -> Self {
+        self.agent_instructions = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `color`, which `new` leaves unset.
+    pub fn with_color(mut self, value: ProjectsUpdateBodyColor) -> Self {
+        self.color = Some(value);
+        self
+    }
+
+    /// Sets `icon`, which `new` leaves unset.
+    pub fn with_icon(mut self, value: ProjectsUpdateBodyIcon) -> Self {
+        self.icon = Some(value);
+        self
+    }
+
+    /// Sets `include_deps`, which `new` leaves unset.
+    pub fn with_include_deps(mut self, value: bool) -> Self {
+        self.include_deps = Some(value);
+        self
+    }
+
+    /// Sets `include_skills`, which `new` leaves unset.
+    pub fn with_include_skills(mut self, value: bool) -> Self {
+        self.include_skills = Some(value);
+        self
+    }
+
+    /// Sets `resource_settings`, which `new` leaves unset.
+    pub fn with_resource_settings(mut self, value: ProjectsUpdateBodyResourceSettings) -> Self {
+        self.resource_settings = Some(value);
+        self
+    }
+
+    /// Sets `default_for_sizes`, which `new` leaves unset.
+    pub fn with_default_for_sizes(mut self, value: Vec<ProjectsUpdateBodyDefaultForSiz>) -> Self {
+        self.default_for_sizes = Some(value);
+        self
+    }
+
+    /// Sets `environment_variables`, which `new` leaves unset.
+    pub fn with_environment_variables(mut self, value: std::collections::BTreeMap<String, String>) -> Self {
+        self.environment_variables = Some(value);
+        self
+    }
+
+    /// Sets `schedule`, which `new` leaves unset.
+    pub fn with_schedule(mut self, value: ProjectsUpdateBodySchedule) -> Self {
+        self.schedule = Some(value);
+        self
+    }
+
+    /// Sets `sizes`, which `new` leaves unset.
+    pub fn with_sizes(mut self, value: Vec<ProjectsUpdateBodySiz>) -> Self {
+        self.sizes = Some(value);
+        self
+    }
+
+    /// Sets `warm_pool_schedule`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `warm_pool_schedule = Some(None)` on the built value.
+    pub fn with_warm_pool_schedule(mut self, value: ProjectsUpdateBodyWarmPoolSchedule) -> Self {
+        self.warm_pool_schedule = Some(Some(value));
+        self
+    }
+
+    /// Sets `warm_pool_enabled`, which `new` leaves unset.
+    pub fn with_warm_pool_enabled(mut self, value: bool) -> Self {
+        self.warm_pool_enabled = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3060,7 +4189,11 @@ pub enum ProjectsUpdateBodyResourceSettings {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodyResourceSettingsVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodyResourceSettingsVariant1 {
     #[serde(rename = "automaticSizing")]
     pub automatic_sizing: bool,
@@ -3072,23 +4205,27 @@ impl ProjectsUpdateBodyResourceSettingsVariant1 {
     /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant1` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    ///
-    /// ```text
-    /// ProjectsUpdateBodyResourceSettingsVariant1 {
-    ///     allocation: Some(…),
-    ///     ..ProjectsUpdateBodyResourceSettingsVariant1::new(automatic_sizing)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBodyResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
     pub fn new(automatic_sizing: bool) -> Self {
         Self {
             automatic_sizing,
             allocation: None,
         }
     }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsUpdateBodyResourceSettingsVariant1Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodyResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodyResourceSettingsVariant1Allocation {
     #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
     pub cpu_min: Option<i64>,
@@ -3106,14 +4243,11 @@ impl ProjectsUpdateBodyResourceSettingsVariant1Allocation {
     /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant1Allocation` from its required fields, leaving every
     /// optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
     ///
-    /// ```text
-    /// ProjectsUpdateBodyResourceSettingsVariant1Allocation {
-    ///     cpu_min: Some(…),
-    ///     ..ProjectsUpdateBodyResourceSettingsVariant1Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBodyResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
     pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
         Self {
             cpu_min: None,
@@ -3123,9 +4257,25 @@ impl ProjectsUpdateBodyResourceSettingsVariant1Allocation {
             disk_size_gb,
         }
     }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodyResourceSettingsVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodyResourceSettingsVariant2 {
     #[serde(rename = "automaticSizing")]
     pub automatic_sizing: bool,
@@ -3137,23 +4287,27 @@ impl ProjectsUpdateBodyResourceSettingsVariant2 {
     /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant2` from its required fields, leaving every optional one
     /// unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    ///
-    /// ```text
-    /// ProjectsUpdateBodyResourceSettingsVariant2 {
-    ///     allocation: Some(…),
-    ///     ..ProjectsUpdateBodyResourceSettingsVariant2::new(automatic_sizing)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBodyResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
     pub fn new(automatic_sizing: bool) -> Self {
         Self {
             automatic_sizing,
             allocation: None,
         }
     }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(mut self, value: ProjectsUpdateBodyResourceSettingsVariant2Allocation) -> Self {
+        self.allocation = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodyResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodyResourceSettingsVariant2Allocation {
     #[serde(rename = "cpuMin", default, skip_serializing_if = "Option::is_none")]
     pub cpu_min: Option<i64>,
@@ -3171,14 +4325,11 @@ impl ProjectsUpdateBodyResourceSettingsVariant2Allocation {
     /// Creates a new `ProjectsUpdateBodyResourceSettingsVariant2Allocation` from its required fields, leaving every
     /// optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
     ///
-    /// ```text
-    /// ProjectsUpdateBodyResourceSettingsVariant2Allocation {
-    ///     cpu_min: Some(…),
-    ///     ..ProjectsUpdateBodyResourceSettingsVariant2Allocation::new(memory_min_mb, memory_max_mb, disk_size_gb)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBodyResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
     pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
         Self {
             cpu_min: None,
@@ -3187,6 +4338,18 @@ impl ProjectsUpdateBodyResourceSettingsVariant2Allocation {
             memory_max_mb,
             disk_size_gb,
         }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
     }
 }
 
@@ -3253,7 +4416,14 @@ impl From<&str> for ProjectsUpdateBodyDefaultForSiz {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodySchedule::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodySchedule {
     /// Replace the recurring project build cron expression.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -3262,8 +4432,46 @@ pub struct ProjectsUpdateBodySchedule {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
     /// Timezone for the cron schedule, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timezone: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub timezone: Option<Option<String>>,
+}
+
+impl ProjectsUpdateBodySchedule {
+    /// Creates a new `ProjectsUpdateBodySchedule` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateBodySchedule::new().with_cron(…)`.
+    pub fn new() -> Self {
+        Self {
+            cron: None,
+            enabled: None,
+            timezone: None,
+        }
+    }
+
+    /// Sets `cron`, which `new` leaves unset.
+    pub fn with_cron(mut self, value: impl Into<String>) -> Self {
+        self.cron = Some(value.into());
+        self
+    }
+
+    /// Sets `enabled`, which `new` leaves unset.
+    pub fn with_enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    /// Sets `timezone`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `timezone = Some(None)` on the built value.
+    pub fn with_timezone(mut self, value: impl Into<String>) -> Self {
+        self.timezone = Some(Some(value.into()));
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3329,7 +4537,11 @@ impl From<&str> for ProjectsUpdateBodySiz {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsUpdateBodyWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProjectsUpdateBodyWarmPoolSchedule {
     pub timezone: String,
     pub days: Vec<i64>,
@@ -3339,9 +4551,28 @@ pub struct ProjectsUpdateBodyWarmPoolSchedule {
     pub end_time: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsUpdateBodyWarmPoolSchedule {
+    /// Creates a new `ProjectsUpdateBodyWarmPoolSchedule` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDeleteResponse {
@@ -3349,9 +4580,19 @@ pub struct ProjectsDeleteResponse {
     pub id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDeleteResponse {
+    /// Creates a new `ProjectsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponse {
@@ -3360,9 +4601,19 @@ pub struct ProjectsDuplicateResponse {
     pub project: ProjectsDuplicateResponseProject,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDuplicateResponse {
+    /// Creates a new `ProjectsDuplicateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(job_ids: Vec<String>, project: ProjectsDuplicateResponseProject) -> Self {
+        Self { job_ids, project }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProject {
@@ -3398,9 +4649,56 @@ pub struct ProjectsDuplicateResponseProject {
     pub warm_pool_schedule: Option<ProjectsDuplicateResponseProjectWarmPoolSchedule>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDuplicateResponseProject {
+    /// Creates a new `ProjectsDuplicateResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        description: Option<String>,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        setup_script: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        active_snapshots: Vec<ProjectsDuplicateResponseProjectActiveSnapshot>,
+        resource_settings: Option<ProjectsDuplicateResponseProjectResourceSettings>,
+        agent_instructions: Option<String>,
+        code_repository_ids: Option<Vec<String>>,
+        color: ProjectsDuplicateResponseProjectColor,
+        default_for_sizes: Vec<ProjectsDuplicateResponseProjectDefaultForSiz>,
+        icon: ProjectsDuplicateResponseProjectIcon,
+        onboarding_default: bool,
+        sizes: Vec<ProjectsDuplicateResponseProjectSiz>,
+        warm_pool_enabled: bool,
+        warm_pool_schedule: Option<ProjectsDuplicateResponseProjectWarmPoolSchedule>,
+    ) -> Self {
+        Self {
+            created_at,
+            description,
+            id: id.into(),
+            name: name.into(),
+            setup_script,
+            updated_at,
+            active_snapshots,
+            resource_settings,
+            agent_instructions,
+            code_repository_ids,
+            color,
+            default_for_sizes,
+            icon,
+            onboarding_default,
+            sizes,
+            warm_pool_enabled,
+            warm_pool_schedule,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectActiveSnapshot::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectActiveSnapshot {
@@ -3408,6 +4706,25 @@ pub struct ProjectsDuplicateResponseProjectActiveSnapshot {
     pub size: ProjectsDuplicateResponseProjectActiveSnapshotSize,
     #[serde(rename = "builtAt", deserialize_with = "crate::datetime::deserialize")]
     pub built_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl ProjectsDuplicateResponseProjectActiveSnapshot {
+    /// Creates a new `ProjectsDuplicateResponseProjectActiveSnapshot` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        size: ProjectsDuplicateResponseProjectActiveSnapshotSize,
+        built_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            size,
+            built_at,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3492,9 +4809,9 @@ pub enum ProjectsDuplicateResponseProjectResourceSettings {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectResourceSettingsVariant1::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1 {
@@ -3504,9 +4821,32 @@ pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1 {
     pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDuplicateResponseProjectResourceSettingsVariant1 {
+    /// Creates a new `ProjectsDuplicateResponseProjectResourceSettingsVariant1` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsDuplicateResponseProjectResourceSettingsVariant1::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(
+        mut self,
+        value: ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation,
+    ) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation {
@@ -3522,9 +4862,41 @@ pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation {
     pub disk_size_gb: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation {
+    /// Creates a new `ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsDuplicateResponseProjectResourceSettingsVariant1Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectResourceSettingsVariant2::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2 {
@@ -3534,9 +4906,32 @@ pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2 {
     pub allocation: Option<ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProjectsDuplicateResponseProjectResourceSettingsVariant2 {
+    /// Creates a new `ProjectsDuplicateResponseProjectResourceSettingsVariant2` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsDuplicateResponseProjectResourceSettingsVariant2::new(automatic_sizing).with_allocation(…)`.
+    pub fn new(automatic_sizing: bool) -> Self {
+        Self {
+            automatic_sizing,
+            allocation: None,
+        }
+    }
+
+    /// Sets `allocation`, which `new` leaves unset.
+    pub fn with_allocation(
+        mut self,
+        value: ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation,
+    ) -> Self {
+        self.allocation = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation {
@@ -3550,6 +4945,38 @@ pub struct ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation {
     pub memory_max_mb: i64,
     #[serde(rename = "diskSizeGb")]
     pub disk_size_gb: i64,
+}
+
+impl ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation {
+    /// Creates a new `ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsDuplicateResponseProjectResourceSettingsVariant2Allocation::new(…).with_cpu_min(…)`.
+    pub fn new(memory_min_mb: i64, memory_max_mb: i64, disk_size_gb: i64) -> Self {
+        Self {
+            cpu_min: None,
+            cpu_max: None,
+            memory_min_mb,
+            memory_max_mb,
+            disk_size_gb,
+        }
+    }
+
+    /// Sets `cpu_min`, which `new` leaves unset.
+    pub fn with_cpu_min(mut self, value: i64) -> Self {
+        self.cpu_min = Some(value);
+        self
+    }
+
+    /// Sets `cpu_max`, which `new` leaves unset.
+    pub fn with_cpu_max(mut self, value: i64) -> Self {
+        self.cpu_max = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3876,9 +5303,9 @@ impl From<&str> for ProjectsDuplicateResponseProjectSiz {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsDuplicateResponseProjectWarmPoolSchedule::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProjectsDuplicateResponseProjectWarmPoolSchedule {
@@ -3888,4 +5315,25 @@ pub struct ProjectsDuplicateResponseProjectWarmPoolSchedule {
     pub start_time: String,
     #[serde(rename = "endTime")]
     pub end_time: String,
+}
+
+impl ProjectsDuplicateResponseProjectWarmPoolSchedule {
+    /// Creates a new `ProjectsDuplicateResponseProjectWarmPoolSchedule` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        timezone: impl Into<String>,
+        days: Vec<i64>,
+        start_time: impl Into<String>,
+        end_time: impl Into<String>,
+    ) -> Self {
+        Self {
+            timezone: timezone.into(),
+            days,
+            start_time: start_time.into(),
+            end_time: end_time.into(),
+        }
+    }
 }

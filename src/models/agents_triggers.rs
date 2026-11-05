@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponse {
@@ -16,9 +15,19 @@ pub struct TriggersListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponse {
+    /// Creates a new `TriggersListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<TriggersListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersListResponseItem {
@@ -47,9 +56,41 @@ pub struct TriggersListResponseItem {
     pub filters: TriggerFilters,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersListResponseItem {
+    /// Creates a new `TriggersListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        trigger_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        agent_id: impl Into<String>,
+        trigger_display_name: impl Into<String>,
+        integration_id: Option<String>,
+        integration_type: Option<String>,
+        filters: TriggerFilters,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            trigger_name: trigger_name.into(),
+            enabled_at,
+            created_at,
+            updated_at,
+            agent_id: agent_id.into(),
+            trigger_display_name: trigger_display_name.into(),
+            integration_id,
+            integration_type,
+            filters,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersCreateResponse {
@@ -78,7 +119,43 @@ pub struct TriggersCreateResponse {
     pub filters: TriggerFilters,
 }
 
+impl TriggersCreateResponse {
+    /// Creates a new `TriggersCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        trigger_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        agent_id: impl Into<String>,
+        trigger_display_name: impl Into<String>,
+        integration_id: Option<String>,
+        integration_type: Option<String>,
+        filters: TriggerFilters,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            trigger_name: trigger_name.into(),
+            enabled_at,
+            created_at,
+            updated_at,
+            agent_id: agent_id.into(),
+            trigger_display_name: trigger_display_name.into(),
+            integration_id,
+            integration_type,
+            filters,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TriggersCreateBody {
     /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
@@ -96,8 +173,8 @@ pub struct TriggersCreateBody {
 impl TriggersCreateBody {
     /// Creates a new `TriggersCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TriggersCreateBody { integration_type: Some(…), ..TriggersCreateBody::new(name) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersCreateBody::new(name).with_integration_type(…)`.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -106,11 +183,29 @@ impl TriggersCreateBody {
             filters: None,
         }
     }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: impl Into<String>) -> Self {
+        self.integration_type = Some(value.into());
+        self
+    }
+
+    /// Sets `integration_id`, which `new` leaves unset.
+    pub fn with_integration_id(mut self, value: impl Into<String>) -> Self {
+        self.integration_id = Some(value.into());
+        self
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersRetrieveResponse {
@@ -139,9 +234,41 @@ pub struct TriggersRetrieveResponse {
     pub filters: TriggerFilters,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TriggersRetrieveResponse {
+    /// Creates a new `TriggersRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        trigger_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        agent_id: impl Into<String>,
+        trigger_display_name: impl Into<String>,
+        integration_id: Option<String>,
+        integration_type: Option<String>,
+        filters: TriggerFilters,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            trigger_name: trigger_name.into(),
+            enabled_at,
+            created_at,
+            updated_at,
+            agent_id: agent_id.into(),
+            trigger_display_name: trigger_display_name.into(),
+            integration_id,
+            integration_type,
+            filters,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersUpdateResponse {
@@ -170,7 +297,43 @@ pub struct TriggersUpdateResponse {
     pub filters: TriggerFilters,
 }
 
+impl TriggersUpdateResponse {
+    /// Creates a new `TriggersUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        trigger_name: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        agent_id: impl Into<String>,
+        trigger_display_name: impl Into<String>,
+        integration_id: Option<String>,
+        integration_type: Option<String>,
+        filters: TriggerFilters,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            trigger_name: trigger_name.into(),
+            enabled_at,
+            created_at,
+            updated_at,
+            agent_id: agent_id.into(),
+            trigger_display_name: trigger_display_name.into(),
+            integration_id,
+            integration_type,
+            filters,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct TriggersUpdateBody {
     /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
@@ -185,8 +348,8 @@ pub struct TriggersUpdateBody {
 impl TriggersUpdateBody {
     /// Creates a new `TriggersUpdateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `TriggersUpdateBody { integration_id: Some(…), ..TriggersUpdateBody::new(name) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `TriggersUpdateBody::new(name).with_integration_id(…)`.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -194,16 +357,37 @@ impl TriggersUpdateBody {
             filters: None,
         }
     }
+
+    /// Sets `integration_id`, which `new` leaves unset.
+    pub fn with_integration_id(mut self, value: impl Into<String>) -> Self {
+        self.integration_id = Some(value.into());
+        self
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TriggersDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TriggersDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl TriggersDeleteResponse {
+    /// Creates a new `TriggersDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

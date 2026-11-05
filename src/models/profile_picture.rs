@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProfilePictureUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProfilePictureUpdateResponse {
@@ -16,18 +16,55 @@ pub struct ProfilePictureUpdateResponse {
     pub url: String,
 }
 
+impl ProfilePictureUpdateResponse {
+    /// Creates a new `ProfilePictureUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(user_id: impl Into<String>, url: impl Into<String>) -> Self {
+        Self {
+            user_id: user_id.into(),
+            url: url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProfilePictureUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct ProfilePictureUpdateBody {
     pub file: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ProfilePictureUpdateBody {
+    /// Creates a new `ProfilePictureUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(file: impl Into<String>) -> Self {
+        Self { file: file.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProfilePictureDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ProfilePictureDeleteResponse {
     #[serde(rename = "userId")]
     pub user_id: String,
     pub deleted: bool,
+}
+
+impl ProfilePictureDeleteResponse {
+    /// Creates a new `ProfilePictureDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(user_id: impl Into<String>, deleted: bool) -> Self {
+        Self {
+            user_id: user_id.into(),
+            deleted,
+        }
+    }
 }
