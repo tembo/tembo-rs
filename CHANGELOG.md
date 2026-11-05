@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/tembo/tembo-rs/compare/v0.7.0...v0.8.0) (2026-11-05)
+
+
+### Features
+
+* **api:** update SDK surface (2 changes) ([b2ef088](https://github.com/tembo/tembo-rs/commit/b2ef088af77d564648ac16114910d7c78e479cdc))
+
+
+### Bug Fixes
+
+* resolve Scalar conflict for generator 0.38.0 and smoke test stack overflow ([06005ba](https://github.com/tembo/tembo-rs/commit/06005ba4941eac4abe28da0e5afc42e9783d447b))
+* **tests:** raise test thread stack for generated smoke test ([17c9d98](https://github.com/tembo/tembo-rs/commit/17c9d98031ed47ae7621a2266e8f0868c1e6665b))
+
 ## [0.7.0](https://github.com/tembo/tembo-rs/compare/v0.6.0...v0.7.0) (2026-11-03)
 
 
