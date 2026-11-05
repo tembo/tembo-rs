@@ -62,7 +62,14 @@ pub enum TriggerFilters {
     Unknown(serde_json::Value),
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueAddedToBoardFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueAddedToBoardFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -84,7 +91,67 @@ pub struct AtlassianIssueAddedToBoardFilters {
     pub include_new_issues: Option<bool>,
 }
 
+impl AtlassianIssueAddedToBoardFilters {
+    /// Creates a new `AtlassianIssueAddedToBoardFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueAddedToBoardFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            boards: None,
+            statuses: None,
+            assigned_to: None,
+            labels: None,
+            include_new_issues: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `boards`, which `new` leaves unset.
+    pub fn with_boards(mut self, value: Vec<String>) -> Self {
+        self.boards = Some(value);
+        self
+    }
+
+    /// Sets `statuses`, which `new` leaves unset.
+    pub fn with_statuses(mut self, value: Vec<String>) -> Self {
+        self.statuses = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `include_new_issues`, which `new` leaves unset.
+    pub fn with_include_new_issues(mut self, value: bool) -> Self {
+        self.include_new_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueAssignedToUserFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueAssignedToUserFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -100,7 +167,53 @@ pub struct AtlassianIssueAssignedToUserFilters {
     pub include_new_issues: Option<bool>,
 }
 
+impl AtlassianIssueAssignedToUserFilters {
+    /// Creates a new `AtlassianIssueAssignedToUserFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueAssignedToUserFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            assigned_to: None,
+            labels: None,
+            include_new_issues: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `include_new_issues`, which `new` leaves unset.
+    pub fn with_include_new_issues(mut self, value: bool) -> Self {
+        self.include_new_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueCreatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueCreatedFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -116,7 +229,53 @@ pub struct AtlassianIssueCreatedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl AtlassianIssueCreatedFilters {
+    /// Creates a new `AtlassianIssueCreatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueCreatedFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            assigned_to: None,
+            issue_types: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `issue_types`, which `new` leaves unset.
+    pub fn with_issue_types(mut self, value: Vec<String>) -> Self {
+        self.issue_types = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueLabelAddedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueLabelAddedFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -129,7 +288,46 @@ pub struct AtlassianIssueLabelAddedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl AtlassianIssueLabelAddedFilters {
+    /// Creates a new `AtlassianIssueLabelAddedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueLabelAddedFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            teams: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `teams`, which `new` leaves unset.
+    pub fn with_teams(mut self, value: Vec<String>) -> Self {
+        self.teams = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueStatusChangedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueStatusChangedFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -151,7 +349,67 @@ pub struct AtlassianIssueStatusChangedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl AtlassianIssueStatusChangedFilters {
+    /// Creates a new `AtlassianIssueStatusChangedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueStatusChangedFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            statuses: None,
+            previous_statuses: None,
+            issue_types: None,
+            assigned_to: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `statuses`, which `new` leaves unset.
+    pub fn with_statuses(mut self, value: Vec<String>) -> Self {
+        self.statuses = Some(value);
+        self
+    }
+
+    /// Sets `previous_statuses`, which `new` leaves unset.
+    pub fn with_previous_statuses(mut self, value: Vec<String>) -> Self {
+        self.previous_statuses = Some(value);
+        self
+    }
+
+    /// Sets `issue_types`, which `new` leaves unset.
+    pub fn with_issue_types(mut self, value: Vec<String>) -> Self {
+        self.issue_types = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueUpdatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueUpdatedFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -167,7 +425,53 @@ pub struct AtlassianIssueUpdatedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl AtlassianIssueUpdatedFilters {
+    /// Creates a new `AtlassianIssueUpdatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueUpdatedFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            issue_types: None,
+            assigned_to: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `issue_types`, which `new` leaves unset.
+    pub fn with_issue_types(mut self, value: Vec<String>) -> Self {
+        self.issue_types = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BitbucketPullRequestOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct BitbucketPullRequestOpenedFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -180,7 +484,45 @@ pub struct BitbucketPullRequestOpenedFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl BitbucketPullRequestOpenedFilters {
+    /// Creates a new `BitbucketPullRequestOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `BitbucketPullRequestOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubCreateFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubCreateFilters {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub repositories: Option<Vec<String>>,
@@ -193,7 +535,53 @@ pub struct GithubCreateFilters {
     pub tag_names: Option<Vec<String>>,
 }
 
+impl GithubCreateFilters {
+    /// Creates a new `GithubCreateFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubCreateFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            ref_type: None,
+            branch_names: None,
+            tag_names: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `ref_type`, which `new` leaves unset.
+    pub fn with_ref_type(mut self, value: Vec<GithubCreateFiltersRefType>) -> Self {
+        self.ref_type = Some(value);
+        self
+    }
+
+    /// Sets `branch_names`, which `new` leaves unset.
+    pub fn with_branch_names(mut self, value: Vec<String>) -> Self {
+        self.branch_names = Some(value);
+        self
+    }
+
+    /// Sets `tag_names`, which `new` leaves unset.
+    pub fn with_tag_names(mut self, value: Vec<String>) -> Self {
+        self.tag_names = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubIssueClosedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubIssueClosedFilters {
     /// Only trigger if the issue is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -206,7 +594,46 @@ pub struct GithubIssueClosedFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl GithubIssueClosedFilters {
+    /// Creates a new `GithubIssueClosedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubIssueClosedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubIssueCommentCreatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubIssueCommentCreatedFilters {
     /// Only trigger if the comment is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -222,7 +649,53 @@ pub struct GithubIssueCommentCreatedFilters {
     pub message_contains: Option<Vec<String>>,
 }
 
+impl GithubIssueCommentCreatedFilters {
+    /// Creates a new `GithubIssueCommentCreatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubIssueCommentCreatedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            commented_by: None,
+            comment_on: None,
+            message_contains: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `commented_by`, which `new` leaves unset.
+    pub fn with_commented_by(mut self, value: Vec<String>) -> Self {
+        self.commented_by = Some(value);
+        self
+    }
+
+    /// Sets `comment_on`, which `new` leaves unset.
+    pub fn with_comment_on(mut self, value: Vec<GithubIssueCommentCreatedFiltersCommentOn>) -> Self {
+        self.comment_on = Some(value);
+        self
+    }
+
+    /// Sets `message_contains`, which `new` leaves unset.
+    pub fn with_message_contains(mut self, value: Vec<String>) -> Self {
+        self.message_contains = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubIssueOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubIssueOpenedFilters {
     /// Only trigger if the issue is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -235,7 +708,46 @@ pub struct GithubIssueOpenedFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl GithubIssueOpenedFilters {
+    /// Creates a new `GithubIssueOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubIssueOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestClosedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubPullRequestClosedFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -248,7 +760,46 @@ pub struct GithubPullRequestClosedFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl GithubPullRequestClosedFilters {
+    /// Creates a new `GithubPullRequestClosedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestClosedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestMergedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubPullRequestMergedFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -261,7 +812,46 @@ pub struct GithubPullRequestMergedFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl GithubPullRequestMergedFilters {
+    /// Creates a new `GithubPullRequestMergedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestMergedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            merged_by: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `merged_by`, which `new` leaves unset.
+    pub fn with_merged_by(mut self, value: Vec<String>) -> Self {
+        self.merged_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubPullRequestOpenedFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -283,7 +873,67 @@ pub struct GithubPullRequestOpenedFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl GithubPullRequestOpenedFilters {
+    /// Creates a new `GithubPullRequestOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            labels: None,
+            opened_by: None,
+            branches: None,
+            draft_prs: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `branches`, which `new` leaves unset.
+    pub fn with_branches(mut self, value: Vec<String>) -> Self {
+        self.branches = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestReadyForReviewFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubPullRequestReadyForReviewFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -296,7 +946,47 @@ pub struct GithubPullRequestReadyForReviewFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl GithubPullRequestReadyForReviewFilters {
+    /// Creates a new `GithubPullRequestReadyForReviewFilters` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestReadyForReviewFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestSynchronizeFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubPullRequestSynchronizeFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -312,7 +1002,53 @@ pub struct GithubPullRequestSynchronizeFilters {
     pub tembo_prs: Option<bool>,
 }
 
+impl GithubPullRequestSynchronizeFilters {
+    /// Creates a new `GithubPullRequestSynchronizeFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestSynchronizeFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            pushed_by: None,
+            draft_prs: None,
+            tembo_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `pushed_by`, which `new` leaves unset.
+    pub fn with_pushed_by(mut self, value: Vec<String>) -> Self {
+        self.pushed_by = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubTemboPullRequestOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubTemboPullRequestOpenedFilters {
     /// Only trigger if the pull request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -322,7 +1058,39 @@ pub struct GithubTemboPullRequestOpenedFilters {
     pub draft_prs: Option<bool>,
 }
 
+impl GithubTemboPullRequestOpenedFilters {
+    /// Creates a new `GithubTemboPullRequestOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubTemboPullRequestOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            draft_prs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubWorkflowRunFailedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubWorkflowRunFailedFilters {
     /// Only trigger if the workflow run is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -335,7 +1103,46 @@ pub struct GithubWorkflowRunFailedFilters {
     pub branches: Option<Vec<String>>,
 }
 
+impl GithubWorkflowRunFailedFilters {
+    /// Creates a new `GithubWorkflowRunFailedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubWorkflowRunFailedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            workflow_names: None,
+            branches: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `workflow_names`, which `new` leaves unset.
+    pub fn with_workflow_names(mut self, value: Vec<String>) -> Self {
+        self.workflow_names = Some(value);
+        self
+    }
+
+    /// Sets `branches`, which `new` leaves unset.
+    pub fn with_branches(mut self, value: Vec<String>) -> Self {
+        self.branches = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabBotMergeRequestCommentFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabBotMergeRequestCommentFilters {
     /// Only trigger if the comment is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -345,7 +1152,39 @@ pub struct GitlabBotMergeRequestCommentFilters {
     pub bot_usernames: Option<Vec<String>>,
 }
 
+impl GitlabBotMergeRequestCommentFilters {
+    /// Creates a new `GitlabBotMergeRequestCommentFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabBotMergeRequestCommentFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            bot_usernames: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `bot_usernames`, which `new` leaves unset.
+    pub fn with_bot_usernames(mut self, value: Vec<String>) -> Self {
+        self.bot_usernames = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabIssueClosedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabIssueClosedFilters {
     /// Only trigger if the issue is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -358,7 +1197,46 @@ pub struct GitlabIssueClosedFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl GitlabIssueClosedFilters {
+    /// Creates a new `GitlabIssueClosedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabIssueClosedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            closed_by: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `closed_by`, which `new` leaves unset.
+    pub fn with_closed_by(mut self, value: Vec<String>) -> Self {
+        self.closed_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabIssueOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabIssueOpenedFilters {
     /// Only trigger if the issue is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -371,7 +1249,46 @@ pub struct GitlabIssueOpenedFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl GitlabIssueOpenedFilters {
+    /// Creates a new `GitlabIssueOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabIssueOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            opened_by: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabMergeRequestClosedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabMergeRequestClosedFilters {
     /// Only trigger if the merge request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -384,7 +1301,46 @@ pub struct GitlabMergeRequestClosedFilters {
     pub tembo_mrs: Option<bool>,
 }
 
+impl GitlabMergeRequestClosedFilters {
+    /// Creates a new `GitlabMergeRequestClosedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabMergeRequestClosedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            closed_by: None,
+            tembo_mrs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `closed_by`, which `new` leaves unset.
+    pub fn with_closed_by(mut self, value: Vec<String>) -> Self {
+        self.closed_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_mrs`, which `new` leaves unset.
+    pub fn with_tembo_mrs(mut self, value: bool) -> Self {
+        self.tembo_mrs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabMergeRequestMergedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabMergeRequestMergedFilters {
     /// Only trigger if the merge request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -397,7 +1353,46 @@ pub struct GitlabMergeRequestMergedFilters {
     pub tembo_mrs: Option<bool>,
 }
 
+impl GitlabMergeRequestMergedFilters {
+    /// Creates a new `GitlabMergeRequestMergedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabMergeRequestMergedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            merged_by: None,
+            tembo_mrs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `merged_by`, which `new` leaves unset.
+    pub fn with_merged_by(mut self, value: Vec<String>) -> Self {
+        self.merged_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_mrs`, which `new` leaves unset.
+    pub fn with_tembo_mrs(mut self, value: bool) -> Self {
+        self.tembo_mrs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabMergeRequestOpenedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabMergeRequestOpenedFilters {
     /// Only trigger if the merge request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -410,7 +1405,46 @@ pub struct GitlabMergeRequestOpenedFilters {
     pub tembo_mrs: Option<bool>,
 }
 
+impl GitlabMergeRequestOpenedFilters {
+    /// Creates a new `GitlabMergeRequestOpenedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabMergeRequestOpenedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            draft_mrs: None,
+            tembo_mrs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `draft_mrs`, which `new` leaves unset.
+    pub fn with_draft_mrs(mut self, value: bool) -> Self {
+        self.draft_mrs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_mrs`, which `new` leaves unset.
+    pub fn with_tembo_mrs(mut self, value: bool) -> Self {
+        self.tembo_mrs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabMergeRequestUpdatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabMergeRequestUpdatedFilters {
     /// Only trigger if the merge request is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -426,7 +1460,53 @@ pub struct GitlabMergeRequestUpdatedFilters {
     pub tembo_mrs: Option<bool>,
 }
 
+impl GitlabMergeRequestUpdatedFilters {
+    /// Creates a new `GitlabMergeRequestUpdatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabMergeRequestUpdatedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            pushed_by: None,
+            draft_mrs: None,
+            tembo_mrs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `pushed_by`, which `new` leaves unset.
+    pub fn with_pushed_by(mut self, value: Vec<String>) -> Self {
+        self.pushed_by = Some(value);
+        self
+    }
+
+    /// Sets `draft_mrs`, which `new` leaves unset.
+    pub fn with_draft_mrs(mut self, value: bool) -> Self {
+        self.draft_mrs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_mrs`, which `new` leaves unset.
+    pub fn with_tembo_mrs(mut self, value: bool) -> Self {
+        self.tembo_mrs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabPipelineFailedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabPipelineFailedFilters {
     /// Only trigger if the pipeline is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -436,7 +1516,39 @@ pub struct GitlabPipelineFailedFilters {
     pub branches: Option<Vec<String>>,
 }
 
+impl GitlabPipelineFailedFilters {
+    /// Creates a new `GitlabPipelineFailedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabPipelineFailedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            branches: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `branches`, which `new` leaves unset.
+    pub fn with_branches(mut self, value: Vec<String>) -> Self {
+        self.branches = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabRefCreatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GitlabRefCreatedFilters {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub repositories: Option<Vec<String>>,
@@ -449,7 +1561,53 @@ pub struct GitlabRefCreatedFilters {
     pub tag_names: Option<Vec<String>>,
 }
 
+impl GitlabRefCreatedFilters {
+    /// Creates a new `GitlabRefCreatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabRefCreatedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            ref_type: None,
+            branch_names: None,
+            tag_names: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `ref_type`, which `new` leaves unset.
+    pub fn with_ref_type(mut self, value: Vec<GitlabRefCreatedFiltersRefType>) -> Self {
+        self.ref_type = Some(value);
+        self
+    }
+
+    /// Sets `branch_names`, which `new` leaves unset.
+    pub fn with_branch_names(mut self, value: Vec<String>) -> Self {
+        self.branch_names = Some(value);
+        self
+    }
+
+    /// Sets `tag_names`, which `new` leaves unset.
+    pub fn with_tag_names(mut self, value: Vec<String>) -> Self {
+        self.tag_names = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `LinearIssueCreateFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct LinearIssueCreateFilters {
     /// Only trigger if the issue belongs to one of the specified teams
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -471,7 +1629,67 @@ pub struct LinearIssueCreateFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl LinearIssueCreateFilters {
+    /// Creates a new `LinearIssueCreateFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `LinearIssueCreateFilters::new().with_teams(…)`.
+    pub fn new() -> Self {
+        Self {
+            teams: None,
+            states: None,
+            opened_by: None,
+            assigned_to: None,
+            labels: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `teams`, which `new` leaves unset.
+    pub fn with_teams(mut self, value: Vec<String>) -> Self {
+        self.teams = Some(value);
+        self
+    }
+
+    /// Sets `states`, which `new` leaves unset.
+    pub fn with_states(mut self, value: Vec<String>) -> Self {
+        self.states = Some(value);
+        self
+    }
+
+    /// Sets `opened_by`, which `new` leaves unset.
+    pub fn with_opened_by(mut self, value: Vec<String>) -> Self {
+        self.opened_by = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `LinearIssueLabelAddedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct LinearIssueLabelAddedFilters {
     /// Only trigger if the issue belongs to one of the specified teams
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -484,7 +1702,46 @@ pub struct LinearIssueLabelAddedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl LinearIssueLabelAddedFilters {
+    /// Creates a new `LinearIssueLabelAddedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `LinearIssueLabelAddedFilters::new().with_teams(…)`.
+    pub fn new() -> Self {
+        Self {
+            teams: None,
+            assigned_to: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `teams`, which `new` leaves unset.
+    pub fn with_teams(mut self, value: Vec<String>) -> Self {
+        self.teams = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `LinearIssueStatusChangedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct LinearIssueStatusChangedFilters {
     /// Only trigger if the issue belongs to one of the specified teams
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -503,7 +1760,60 @@ pub struct LinearIssueStatusChangedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl LinearIssueStatusChangedFilters {
+    /// Creates a new `LinearIssueStatusChangedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `LinearIssueStatusChangedFilters::new().with_teams(…)`.
+    pub fn new() -> Self {
+        Self {
+            teams: None,
+            statuses: None,
+            previous_statuses: None,
+            assigned_to: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `teams`, which `new` leaves unset.
+    pub fn with_teams(mut self, value: Vec<String>) -> Self {
+        self.teams = Some(value);
+        self
+    }
+
+    /// Sets `statuses`, which `new` leaves unset.
+    pub fn with_statuses(mut self, value: Vec<String>) -> Self {
+        self.statuses = Some(value);
+        self
+    }
+
+    /// Sets `previous_statuses`, which `new` leaves unset.
+    pub fn with_previous_statuses(mut self, value: Vec<String>) -> Self {
+        self.previous_statuses = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `LinearIssueUpdatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct LinearIssueUpdatedFilters {
     /// Only trigger if the issue belongs to one of the specified teams
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -522,7 +1832,60 @@ pub struct LinearIssueUpdatedFilters {
     pub tembo_issues: Option<bool>,
 }
 
+impl LinearIssueUpdatedFilters {
+    /// Creates a new `LinearIssueUpdatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `LinearIssueUpdatedFilters::new().with_teams(…)`.
+    pub fn new() -> Self {
+        Self {
+            teams: None,
+            states: None,
+            assigned_to: None,
+            labels: None,
+            tembo_issues: None,
+        }
+    }
+
+    /// Sets `teams`, which `new` leaves unset.
+    pub fn with_teams(mut self, value: Vec<String>) -> Self {
+        self.teams = Some(value);
+        self
+    }
+
+    /// Sets `states`, which `new` leaves unset.
+    pub fn with_states(mut self, value: Vec<String>) -> Self {
+        self.states = Some(value);
+        self
+    }
+
+    /// Sets `assigned_to`, which `new` leaves unset.
+    pub fn with_assigned_to(mut self, value: Vec<String>) -> Self {
+        self.assigned_to = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `tembo_issues`, which `new` leaves unset.
+    pub fn with_tembo_issues(mut self, value: bool) -> Self {
+        self.tembo_issues = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SentryIssueCreatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SentryIssueCreatedFilters {
     /// Only trigger if the issue has one of the specified priorities
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -532,7 +1895,39 @@ pub struct SentryIssueCreatedFilters {
     pub project_slugs: Option<Vec<String>>,
 }
 
+impl SentryIssueCreatedFilters {
+    /// Creates a new `SentryIssueCreatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SentryIssueCreatedFilters::new().with_priorities(…)`.
+    pub fn new() -> Self {
+        Self {
+            priorities: None,
+            project_slugs: None,
+        }
+    }
+
+    /// Sets `priorities`, which `new` leaves unset.
+    pub fn with_priorities(mut self, value: Vec<SentryIssueCreatedFiltersPriority>) -> Self {
+        self.priorities = Some(value);
+        self
+    }
+
+    /// Sets `project_slugs`, which `new` leaves unset.
+    pub fn with_project_slugs(mut self, value: Vec<String>) -> Self {
+        self.project_slugs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SlackMessageReactionAddedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SlackMessageReactionAddedFilters {
     /// Only trigger if one of these emoji reactions is added
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -545,7 +1940,46 @@ pub struct SlackMessageReactionAddedFilters {
     pub users: Option<Vec<String>>,
 }
 
+impl SlackMessageReactionAddedFilters {
+    /// Creates a new `SlackMessageReactionAddedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SlackMessageReactionAddedFilters::new().with_emojis(…)`.
+    pub fn new() -> Self {
+        Self {
+            emojis: None,
+            channels: None,
+            users: None,
+        }
+    }
+
+    /// Sets `emojis`, which `new` leaves unset.
+    pub fn with_emojis(mut self, value: Vec<String>) -> Self {
+        self.emojis = Some(value);
+        self
+    }
+
+    /// Sets `channels`, which `new` leaves unset.
+    pub fn with_channels(mut self, value: Vec<String>) -> Self {
+        self.channels = Some(value);
+        self
+    }
+
+    /// Sets `users`, which `new` leaves unset.
+    pub fn with_users(mut self, value: Vec<String>) -> Self {
+        self.users = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SlackMessageSentInChannelFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SlackMessageSentInChannelFilters {
     /// Only trigger if the message is sent in one of the channels
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -561,12 +1995,63 @@ pub struct SlackMessageSentInChannelFilters {
     pub message_not_contains: Option<Vec<String>>,
 }
 
+impl SlackMessageSentInChannelFilters {
+    /// Creates a new `SlackMessageSentInChannelFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SlackMessageSentInChannelFilters::new().with_channels(…)`.
+    pub fn new() -> Self {
+        Self {
+            channels: None,
+            users: None,
+            message_contains: None,
+            message_not_contains: None,
+        }
+    }
+
+    /// Sets `channels`, which `new` leaves unset.
+    pub fn with_channels(mut self, value: Vec<String>) -> Self {
+        self.channels = Some(value);
+        self
+    }
+
+    /// Sets `users`, which `new` leaves unset.
+    pub fn with_users(mut self, value: Vec<String>) -> Self {
+        self.users = Some(value);
+        self
+    }
+
+    /// Sets `message_contains`, which `new` leaves unset.
+    pub fn with_message_contains(mut self, value: Vec<String>) -> Self {
+        self.message_contains = Some(value);
+        self
+    }
+
+    /// Sets `message_not_contains`, which `new` leaves unset.
+    pub fn with_message_not_contains(mut self, value: Vec<String>) -> Self {
+        self.message_not_contains = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `EmptyTriggerFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct EmptyTriggerFilters {}
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl EmptyTriggerFilters {
+    /// Creates a new `EmptyTriggerFilters` from its required fields, leaving every optional one unset.
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TemplatesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TemplatesListResponse {
@@ -575,9 +2060,19 @@ pub struct TemplatesListResponse {
     pub next_cursor: Option<TemplatesListResponseNextCursor>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl TemplatesListResponse {
+    /// Creates a new `TemplatesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<TemplatesListResponseItem>, next_cursor: Option<TemplatesListResponseNextCursor>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TemplatesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TemplatesListResponseItem {
@@ -598,6 +2093,63 @@ pub struct TemplatesListResponseItem {
     pub schedules: Option<Vec<String>>,
     #[serde(rename = "requiredParams", default, skip_serializing_if = "Option::is_none")]
     pub required_params: Option<Vec<String>>,
+}
+
+impl TemplatesListResponseItem {
+    /// Creates a new `TemplatesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TemplatesListResponseItem::new(…).with_artifact_type(…)`.
+    pub fn new(
+        name: TemplatesListResponseItemName,
+        title: impl Into<String>,
+        description: impl Into<String>,
+        label: TemplatesListResponseItemLabel,
+        instructions: TipTapDocument,
+        connected_apps: Vec<String>,
+        agent: impl Into<String>,
+    ) -> Self {
+        Self {
+            name,
+            title: title.into(),
+            description: description.into(),
+            label,
+            instructions,
+            connected_apps,
+            artifact_type: None,
+            agent: agent.into(),
+            triggers: None,
+            schedules: None,
+            required_params: None,
+        }
+    }
+
+    /// Sets `artifact_type`, which `new` leaves unset.
+    pub fn with_artifact_type(mut self, value: TemplatesListResponseItemArtifactType) -> Self {
+        self.artifact_type = Some(value);
+        self
+    }
+
+    /// Sets `triggers`, which `new` leaves unset.
+    pub fn with_triggers(mut self, value: Vec<TemplatesListResponseItemTrigger>) -> Self {
+        self.triggers = Some(value);
+        self
+    }
+
+    /// Sets `schedules`, which `new` leaves unset.
+    pub fn with_schedules(mut self, value: Vec<String>) -> Self {
+        self.schedules = Some(value);
+        self
+    }
+
+    /// Sets `required_params`, which `new` leaves unset.
+    pub fn with_required_params(mut self, value: Vec<String>) -> Self {
+        self.required_params = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -893,9 +2445,9 @@ impl From<&str> for TemplatesListResponseItemArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TemplatesListResponseItemTrigger::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TemplatesListResponseItemTrigger {
@@ -907,6 +2459,30 @@ pub struct TemplatesListResponseItemTrigger {
     /// Conditions that determine whether the selected integration event starts the agent. Available fields depend on the integration and event type.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filters: Option<TriggerFilters>,
+}
+
+impl TemplatesListResponseItemTrigger {
+    /// Creates a new `TemplatesListResponseItemTrigger` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TemplatesListResponseItemTrigger::new(name, display_name, integration_type).with_filters(…)`.
+    pub fn new(name: impl Into<String>, display_name: impl Into<String>, integration_type: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            display_name: display_name.into(),
+            integration_type: integration_type.into(),
+            filters: None,
+        }
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1092,9 +2668,9 @@ impl From<&str> for TemplatesListResponseNextCursor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TemplatesRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TemplatesRetrieveResponse {
@@ -1115,6 +2691,63 @@ pub struct TemplatesRetrieveResponse {
     pub schedules: Option<Vec<String>>,
     #[serde(rename = "requiredParams", default, skip_serializing_if = "Option::is_none")]
     pub required_params: Option<Vec<String>>,
+}
+
+impl TemplatesRetrieveResponse {
+    /// Creates a new `TemplatesRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TemplatesRetrieveResponse::new(…).with_artifact_type(…)`.
+    pub fn new(
+        name: TemplatesRetrieveResponseName,
+        title: impl Into<String>,
+        description: impl Into<String>,
+        label: TemplatesRetrieveResponseLabel,
+        instructions: TipTapDocument,
+        connected_apps: Vec<String>,
+        agent: impl Into<String>,
+    ) -> Self {
+        Self {
+            name,
+            title: title.into(),
+            description: description.into(),
+            label,
+            instructions,
+            connected_apps,
+            artifact_type: None,
+            agent: agent.into(),
+            triggers: None,
+            schedules: None,
+            required_params: None,
+        }
+    }
+
+    /// Sets `artifact_type`, which `new` leaves unset.
+    pub fn with_artifact_type(mut self, value: TemplatesRetrieveResponseArtifactType) -> Self {
+        self.artifact_type = Some(value);
+        self
+    }
+
+    /// Sets `triggers`, which `new` leaves unset.
+    pub fn with_triggers(mut self, value: Vec<TemplatesRetrieveResponseTrigger>) -> Self {
+        self.triggers = Some(value);
+        self
+    }
+
+    /// Sets `schedules`, which `new` leaves unset.
+    pub fn with_schedules(mut self, value: Vec<String>) -> Self {
+        self.schedules = Some(value);
+        self
+    }
+
+    /// Sets `required_params`, which `new` leaves unset.
+    pub fn with_required_params(mut self, value: Vec<String>) -> Self {
+        self.required_params = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1410,9 +3043,9 @@ impl From<&str> for TemplatesRetrieveResponseArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TemplatesRetrieveResponseTrigger::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TemplatesRetrieveResponseTrigger {
@@ -1424,4 +3057,28 @@ pub struct TemplatesRetrieveResponseTrigger {
     /// Conditions that determine whether the selected integration event starts the agent. Available fields depend on the integration and event type.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filters: Option<TriggerFilters>,
+}
+
+impl TemplatesRetrieveResponseTrigger {
+    /// Creates a new `TemplatesRetrieveResponseTrigger` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TemplatesRetrieveResponseTrigger::new(name, display_name, integration_type).with_filters(…)`.
+    pub fn new(name: impl Into<String>, display_name: impl Into<String>, integration_type: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            display_name: display_name.into(),
+            integration_type: integration_type.into(),
+            filters: None,
+        }
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
 }

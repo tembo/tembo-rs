@@ -5,16 +5,26 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2 {
     #[serde(rename = "autoRestartVm", default, skip_serializing_if = "Option::is_none")]
     pub auto_restart_vm: Option<bool>,
     #[serde(rename = "defaultProjectId", default, skip_serializing_if = "Option::is_none")]
     pub default_project_id: Option<String>,
+    #[serde(
+        rename = "defaultSessionVisibilityByWorkspace",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub default_session_visibility_by_workspace:
+        Option<std::collections::BTreeMap<String, SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace>>,
     #[serde(rename = "gpgKey", default, skip_serializing_if = "Option::is_none")]
     pub gpg_key: Option<String>,
     #[serde(
@@ -63,10 +73,213 @@ pub struct SettingsRetrieveResponse2 {
     pub custom_system_prompt: Option<String>,
 }
 
+impl SettingsRetrieveResponse2 {
+    /// Creates a new `SettingsRetrieveResponse2` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2::new().with_auto_restart_vm(…)`.
+    pub fn new() -> Self {
+        Self {
+            auto_restart_vm: None,
+            default_project_id: None,
+            default_session_visibility_by_workspace: None,
+            gpg_key: None,
+            include_tembo_commit_attribution: None,
+            desktop_notifications_enabled: None,
+            desktop_notification_preferences: None,
+            has_desktop_app: None,
+            open_links_in_desktop_app: None,
+            appearance_preferences: None,
+            app_sidebar_preferences: None,
+            diff_preferences: None,
+            dashboard_preferences: None,
+            composer_preferences: None,
+            review_preferences: None,
+            diff_light_theme: None,
+            diff_dark_theme: None,
+            default_agent: None,
+            follow_up_behavior: None,
+            custom_system_prompt: None,
+        }
+    }
+
+    /// Sets `auto_restart_vm`, which `new` leaves unset.
+    pub fn with_auto_restart_vm(mut self, value: bool) -> Self {
+        self.auto_restart_vm = Some(value);
+        self
+    }
+
+    /// Sets `default_project_id`, which `new` leaves unset.
+    pub fn with_default_project_id(mut self, value: impl Into<String>) -> Self {
+        self.default_project_id = Some(value.into());
+        self
+    }
+
+    /// Sets `default_session_visibility_by_workspace`, which `new` leaves unset.
+    pub fn with_default_session_visibility_by_workspace(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace>,
+    ) -> Self {
+        self.default_session_visibility_by_workspace = Some(value);
+        self
+    }
+
+    /// Sets `gpg_key`, which `new` leaves unset.
+    pub fn with_gpg_key(mut self, value: impl Into<String>) -> Self {
+        self.gpg_key = Some(value.into());
+        self
+    }
+
+    /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
+    pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
+        self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notifications_enabled`, which `new` leaves unset.
+    pub fn with_desktop_notifications_enabled(mut self, value: bool) -> Self {
+        self.desktop_notifications_enabled = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notification_preferences`, which `new` leaves unset.
+    pub fn with_desktop_notification_preferences(
+        mut self,
+        value: SettingsRetrieveResponse2DesktopNotificationPreferences,
+    ) -> Self {
+        self.desktop_notification_preferences = Some(value);
+        self
+    }
+
+    /// Sets `has_desktop_app`, which `new` leaves unset.
+    pub fn with_has_desktop_app(mut self, value: bool) -> Self {
+        self.has_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
+    pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
+        self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `appearance_preferences`, which `new` leaves unset.
+    pub fn with_appearance_preferences(mut self, value: SettingsRetrieveResponse2AppearancePreferences) -> Self {
+        self.appearance_preferences = Some(value);
+        self
+    }
+
+    /// Sets `app_sidebar_preferences`, which `new` leaves unset.
+    pub fn with_app_sidebar_preferences(mut self, value: SettingsRetrieveResponse2AppSidebarPreferences) -> Self {
+        self.app_sidebar_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_preferences`, which `new` leaves unset.
+    pub fn with_diff_preferences(mut self, value: SettingsRetrieveResponse2DiffPreferences) -> Self {
+        self.diff_preferences = Some(value);
+        self
+    }
+
+    /// Sets `dashboard_preferences`, which `new` leaves unset.
+    pub fn with_dashboard_preferences(mut self, value: SettingsRetrieveResponse2DashboardPreferences) -> Self {
+        self.dashboard_preferences = Some(value);
+        self
+    }
+
+    /// Sets `composer_preferences`, which `new` leaves unset.
+    pub fn with_composer_preferences(mut self, value: SettingsRetrieveResponse2ComposerPreferences) -> Self {
+        self.composer_preferences = Some(value);
+        self
+    }
+
+    /// Sets `review_preferences`, which `new` leaves unset.
+    pub fn with_review_preferences(mut self, value: SettingsRetrieveResponse2ReviewPreferences) -> Self {
+        self.review_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_light_theme`, which `new` leaves unset.
+    pub fn with_diff_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `diff_dark_theme`, which `new` leaves unset.
+    pub fn with_diff_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_dark_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `follow_up_behavior`, which `new` leaves unset.
+    pub fn with_follow_up_behavior(mut self, value: SettingsRetrieveResponse2FollowUpBehavior) -> Self {
+        self.follow_up_behavior = Some(value);
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Private => "private",
+            Self::Public => "public",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SettingsRetrieveResponse2DefaultSessionVisibilityByWorkspace {
+    fn from(value: &str) -> Self {
+        match value {
+            "private" => Self::Private,
+            "public" => Self::Public,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2DesktopNotificationPreferences::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2DesktopNotificationPreferences {
     #[serde(rename = "awaitingApproval", default, skip_serializing_if = "Option::is_none")]
@@ -81,16 +294,78 @@ pub struct SettingsRetrieveResponse2DesktopNotificationPreferences {
     pub pull_request_review_requested: Option<bool>,
 }
 
+impl SettingsRetrieveResponse2DesktopNotificationPreferences {
+    /// Creates a new `SettingsRetrieveResponse2DesktopNotificationPreferences` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2DesktopNotificationPreferences::new().with_awaiting_approval(…)`.
+    pub fn new() -> Self {
+        Self {
+            awaiting_approval: None,
+            pull_request_opened: None,
+            pull_request_review_requested: None,
+        }
+    }
+
+    /// Sets `awaiting_approval`, which `new` leaves unset.
+    pub fn with_awaiting_approval(mut self, value: bool) -> Self {
+        self.awaiting_approval = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_opened`, which `new` leaves unset.
+    pub fn with_pull_request_opened(mut self, value: bool) -> Self {
+        self.pull_request_opened = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_review_requested`, which `new` leaves unset.
+    pub fn with_pull_request_review_requested(mut self, value: bool) -> Self {
+        self.pull_request_review_requested = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2AppearancePreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2AppearancePreferences {
     #[serde(rename = "appTheme", default, skip_serializing_if = "Option::is_none")]
     pub app_theme: Option<SettingsRetrieveResponse2AppearancePreferencesAppTheme>,
     #[serde(rename = "accentTheme", default, skip_serializing_if = "Option::is_none")]
     pub accent_theme: Option<SettingsRetrieveResponse2AppearancePreferencesAccentTheme>,
+}
+
+impl SettingsRetrieveResponse2AppearancePreferences {
+    /// Creates a new `SettingsRetrieveResponse2AppearancePreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2AppearancePreferences::new().with_app_theme(…)`.
+    pub fn new() -> Self {
+        Self {
+            app_theme: None,
+            accent_theme: None,
+        }
+    }
+
+    /// Sets `app_theme`, which `new` leaves unset.
+    pub fn with_app_theme(mut self, value: SettingsRetrieveResponse2AppearancePreferencesAppTheme) -> Self {
+        self.app_theme = Some(value);
+        self
+    }
+
+    /// Sets `accent_theme`, which `new` leaves unset.
+    pub fn with_accent_theme(mut self, value: SettingsRetrieveResponse2AppearancePreferencesAccentTheme) -> Self {
+        self.accent_theme = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -140,10 +415,13 @@ impl From<&str> for SettingsRetrieveResponse2AppearancePreferencesAppTheme {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2AppearancePreferencesAccentTheme::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2AppearancePreferencesAccentTheme {
     #[serde(rename = "themeId", default, skip_serializing_if = "Option::is_none")]
@@ -165,10 +443,67 @@ pub struct SettingsRetrieveResponse2AppearancePreferencesAccentTheme {
     pub system_dark: Option<String>,
 }
 
+impl SettingsRetrieveResponse2AppearancePreferencesAccentTheme {
+    /// Creates a new `SettingsRetrieveResponse2AppearancePreferencesAccentTheme` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2AppearancePreferencesAccentTheme::new().with_theme_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            theme_id: None,
+            custom_surface: None,
+            custom_accent: None,
+            custom_intensity: None,
+            system_light: None,
+            system_dark: None,
+        }
+    }
+
+    /// Sets `theme_id`, which `new` leaves unset.
+    pub fn with_theme_id(mut self, value: impl Into<String>) -> Self {
+        self.theme_id = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_surface`, which `new` leaves unset.
+    pub fn with_custom_surface(mut self, value: impl Into<String>) -> Self {
+        self.custom_surface = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_accent`, which `new` leaves unset.
+    pub fn with_custom_accent(mut self, value: impl Into<String>) -> Self {
+        self.custom_accent = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_intensity`, which `new` leaves unset.
+    pub fn with_custom_intensity(mut self, value: f64) -> Self {
+        self.custom_intensity = Some(value);
+        self
+    }
+
+    /// Sets `system_light`, which `new` leaves unset.
+    pub fn with_system_light(mut self, value: impl Into<String>) -> Self {
+        self.system_light = Some(value.into());
+        self
+    }
+
+    /// Sets `system_dark`, which `new` leaves unset.
+    pub fn with_system_dark(mut self, value: impl Into<String>) -> Self {
+        self.system_dark = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2AppSidebarPreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2AppSidebarPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -191,7 +526,84 @@ pub struct SettingsRetrieveResponse2AppSidebarPreferences {
     pub width: Option<f64>,
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
     pub right_sidebar:
-        Option<std::collections::HashMap<String, SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar>>,
+        Option<std::collections::BTreeMap<String, SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar>>,
+}
+
+impl SettingsRetrieveResponse2AppSidebarPreferences {
+    /// Creates a new `SettingsRetrieveResponse2AppSidebarPreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2AppSidebarPreferences::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            session_owner_scope: None,
+            session_sort_by: None,
+            session_organization: None,
+            show_archived_sessions: None,
+            show_activity: None,
+            width: None,
+            right_sidebar: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `session_owner_scope`, which `new` leaves unset.
+    pub fn with_session_owner_scope(
+        mut self,
+        value: SettingsRetrieveResponse2AppSidebarPreferencesSessionOwnerScope,
+    ) -> Self {
+        self.session_owner_scope = Some(value);
+        self
+    }
+
+    /// Sets `session_sort_by`, which `new` leaves unset.
+    pub fn with_session_sort_by(mut self, value: SettingsRetrieveResponse2AppSidebarPreferencesSessionSortBy) -> Self {
+        self.session_sort_by = Some(value);
+        self
+    }
+
+    /// Sets `session_organization`, which `new` leaves unset.
+    pub fn with_session_organization(
+        mut self,
+        value: SettingsRetrieveResponse2AppSidebarPreferencesSessionOrganization,
+    ) -> Self {
+        self.session_organization = Some(value);
+        self
+    }
+
+    /// Sets `show_archived_sessions`, which `new` leaves unset.
+    pub fn with_show_archived_sessions(mut self, value: bool) -> Self {
+        self.show_archived_sessions = Some(value);
+        self
+    }
+
+    /// Sets `show_activity`, which `new` leaves unset.
+    pub fn with_show_activity(mut self, value: bool) -> Self {
+        self.show_activity = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: f64) -> Self {
+        self.width = Some(value);
+        self
+    }
+
+    /// Sets `right_sidebar`, which `new` leaves unset.
+    pub fn with_right_sidebar(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar>,
+    ) -> Self {
+        self.right_sidebar = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -323,10 +735,13 @@ impl From<&str> for SettingsRetrieveResponse2AppSidebarPreferencesSessionOrganiz
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -335,10 +750,39 @@ pub struct SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar {
     pub width: Option<String>,
 }
 
+impl SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar {
+    /// Creates a new `SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            width: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: impl Into<String>) -> Self {
+        self.width = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2DiffPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2DiffPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -361,6 +805,88 @@ pub struct SettingsRetrieveResponse2DiffPreferences {
     pub light_theme: Option<String>,
     #[serde(rename = "darkTheme", default, skip_serializing_if = "Option::is_none")]
     pub dark_theme: Option<String>,
+}
+
+impl SettingsRetrieveResponse2DiffPreferences {
+    /// Creates a new `SettingsRetrieveResponse2DiffPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2DiffPreferences::new().with_style(…)`.
+    pub fn new() -> Self {
+        Self {
+            style: None,
+            indicators: None,
+            overflow: None,
+            show_line_numbers: None,
+            expand_unchanged: None,
+            show_file_tree: None,
+            file_tree_position: None,
+            file_tree_view: None,
+            light_theme: None,
+            dark_theme: None,
+        }
+    }
+
+    /// Sets `style`, which `new` leaves unset.
+    pub fn with_style(mut self, value: SettingsRetrieveResponse2DiffPreferencesStyle) -> Self {
+        self.style = Some(value);
+        self
+    }
+
+    /// Sets `indicators`, which `new` leaves unset.
+    pub fn with_indicators(mut self, value: SettingsRetrieveResponse2DiffPreferencesIndicators) -> Self {
+        self.indicators = Some(value);
+        self
+    }
+
+    /// Sets `overflow`, which `new` leaves unset.
+    pub fn with_overflow(mut self, value: SettingsRetrieveResponse2DiffPreferencesOverflow) -> Self {
+        self.overflow = Some(value);
+        self
+    }
+
+    /// Sets `show_line_numbers`, which `new` leaves unset.
+    pub fn with_show_line_numbers(mut self, value: bool) -> Self {
+        self.show_line_numbers = Some(value);
+        self
+    }
+
+    /// Sets `expand_unchanged`, which `new` leaves unset.
+    pub fn with_expand_unchanged(mut self, value: bool) -> Self {
+        self.expand_unchanged = Some(value);
+        self
+    }
+
+    /// Sets `show_file_tree`, which `new` leaves unset.
+    pub fn with_show_file_tree(mut self, value: bool) -> Self {
+        self.show_file_tree = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_position`, which `new` leaves unset.
+    pub fn with_file_tree_position(mut self, value: SettingsRetrieveResponse2DiffPreferencesFileTreePosition) -> Self {
+        self.file_tree_position = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_view`, which `new` leaves unset.
+    pub fn with_file_tree_view(mut self, value: SettingsRetrieveResponse2DiffPreferencesFileTreeView) -> Self {
+        self.file_tree_view = Some(value);
+        self
+    }
+
+    /// Sets `light_theme`, which `new` leaves unset.
+    pub fn with_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `dark_theme`, which `new` leaves unset.
+    pub fn with_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.dark_theme = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -582,20 +1108,43 @@ impl From<&str> for SettingsRetrieveResponse2DiffPreferencesFileTreeView {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2DashboardPreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2DashboardPreferences {
     #[serde(rename = "taskFilters", default, skip_serializing_if = "Option::is_none")]
     pub task_filters: Option<SettingsRetrieveResponse2DashboardPreferencesTaskFilters>,
 }
 
+impl SettingsRetrieveResponse2DashboardPreferences {
+    /// Creates a new `SettingsRetrieveResponse2DashboardPreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2DashboardPreferences::new().with_task_filters(…)`.
+    pub fn new() -> Self {
+        Self { task_filters: None }
+    }
+
+    /// Sets `task_filters`, which `new` leaves unset.
+    pub fn with_task_filters(mut self, value: SettingsRetrieveResponse2DashboardPreferencesTaskFilters) -> Self {
+        self.task_filters = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2DashboardPreferencesTaskFilters::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2DashboardPreferencesTaskFilters {
     #[serde(rename = "statusFilter", default, skip_serializing_if = "Option::is_none")]
@@ -616,6 +1165,81 @@ pub struct SettingsRetrieveResponse2DashboardPreferencesTaskFilters {
     pub pr_status_filter: Option<Vec<String>>,
     #[serde(rename = "automationFilter", default, skip_serializing_if = "Option::is_none")]
     pub automation_filter: Option<Vec<String>>,
+}
+
+impl SettingsRetrieveResponse2DashboardPreferencesTaskFilters {
+    /// Creates a new `SettingsRetrieveResponse2DashboardPreferencesTaskFilters` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2DashboardPreferencesTaskFilters::new().with_status_filter(…)`.
+    pub fn new() -> Self {
+        Self {
+            status_filter: None,
+            sort_by: None,
+            search_query: None,
+            integration_type: None,
+            external_id: None,
+            project_filter: None,
+            author_filter: None,
+            pr_status_filter: None,
+            automation_filter: None,
+        }
+    }
+
+    /// Sets `status_filter`, which `new` leaves unset.
+    pub fn with_status_filter(mut self, value: Vec<String>) -> Self {
+        self.status_filter = Some(value);
+        self
+    }
+
+    /// Sets `sort_by`, which `new` leaves unset.
+    pub fn with_sort_by(mut self, value: SettingsRetrieveResponse2DashboardPreferencesTaskFiltersSortBy) -> Self {
+        self.sort_by = Some(value);
+        self
+    }
+
+    /// Sets `search_query`, which `new` leaves unset.
+    pub fn with_search_query(mut self, value: impl Into<String>) -> Self {
+        self.search_query = Some(value.into());
+        self
+    }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: Vec<String>) -> Self {
+        self.integration_type = Some(value);
+        self
+    }
+
+    /// Sets `external_id`, which `new` leaves unset.
+    pub fn with_external_id(mut self, value: impl Into<String>) -> Self {
+        self.external_id = Some(value.into());
+        self
+    }
+
+    /// Sets `project_filter`, which `new` leaves unset.
+    pub fn with_project_filter(mut self, value: Vec<String>) -> Self {
+        self.project_filter = Some(value);
+        self
+    }
+
+    /// Sets `author_filter`, which `new` leaves unset.
+    pub fn with_author_filter(mut self, value: Vec<String>) -> Self {
+        self.author_filter = Some(value);
+        self
+    }
+
+    /// Sets `pr_status_filter`, which `new` leaves unset.
+    pub fn with_pr_status_filter(mut self, value: Vec<String>) -> Self {
+        self.pr_status_filter = Some(value);
+        self
+    }
+
+    /// Sets `automation_filter`, which `new` leaves unset.
+    pub fn with_automation_filter(mut self, value: Vec<String>) -> Self {
+        self.automation_filter = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -661,10 +1285,13 @@ impl From<&str> for SettingsRetrieveResponse2DashboardPreferencesTaskFiltersSort
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2ComposerPreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2ComposerPreferences {
     #[serde(
@@ -675,9 +1302,31 @@ pub struct SettingsRetrieveResponse2ComposerPreferences {
     pub last_selected_repositories: Option<Vec<SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository>>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SettingsRetrieveResponse2ComposerPreferences {
+    /// Creates a new `SettingsRetrieveResponse2ComposerPreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2ComposerPreferences::new().with_last_selected_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            last_selected_repositories: None,
+        }
+    }
+
+    /// Sets `last_selected_repositories`, which `new` leaves unset.
+    pub fn with_last_selected_repositories(
+        mut self,
+        value: Vec<SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository>,
+    ) -> Self {
+        self.last_selected_repositories = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository {
@@ -688,10 +1337,40 @@ pub struct SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository {
     pub r#type: Option<String>,
 }
 
+impl SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository {
+    /// Creates a new `SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2ComposerPreferencesLastSelectedRepository::new(id).with_name(…)`.
+    pub fn new(id: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: None,
+            r#type: None,
+        }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2ReviewPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2ReviewPreferences {
     #[serde(rename = "fileSortMode", default, skip_serializing_if = "Option::is_none")]
@@ -699,11 +1378,58 @@ pub struct SettingsRetrieveResponse2ReviewPreferences {
     #[serde(rename = "excludedFilePatterns", default, skip_serializing_if = "Option::is_none")]
     pub excluded_file_patterns: Option<Vec<String>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sections: Option<std::collections::HashMap<String, bool>>,
+    pub sections: Option<std::collections::BTreeMap<String, bool>>,
     #[serde(rename = "hideBotComments", default, skip_serializing_if = "Option::is_none")]
     pub hide_bot_comments: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub layout: Option<SettingsRetrieveResponse2ReviewPreferencesLayout>,
+}
+
+impl SettingsRetrieveResponse2ReviewPreferences {
+    /// Creates a new `SettingsRetrieveResponse2ReviewPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2ReviewPreferences::new().with_file_sort_mode(…)`.
+    pub fn new() -> Self {
+        Self {
+            file_sort_mode: None,
+            excluded_file_patterns: None,
+            sections: None,
+            hide_bot_comments: None,
+            layout: None,
+        }
+    }
+
+    /// Sets `file_sort_mode`, which `new` leaves unset.
+    pub fn with_file_sort_mode(mut self, value: SettingsRetrieveResponse2ReviewPreferencesFileSortMode) -> Self {
+        self.file_sort_mode = Some(value);
+        self
+    }
+
+    /// Sets `excluded_file_patterns`, which `new` leaves unset.
+    pub fn with_excluded_file_patterns(mut self, value: Vec<String>) -> Self {
+        self.excluded_file_patterns = Some(value);
+        self
+    }
+
+    /// Sets `sections`, which `new` leaves unset.
+    pub fn with_sections(mut self, value: std::collections::BTreeMap<String, bool>) -> Self {
+        self.sections = Some(value);
+        self
+    }
+
+    /// Sets `hide_bot_comments`, which `new` leaves unset.
+    pub fn with_hide_bot_comments(mut self, value: bool) -> Self {
+        self.hide_bot_comments = Some(value);
+        self
+    }
+
+    /// Sets `layout`, which `new` leaves unset.
+    pub fn with_layout(mut self, value: SettingsRetrieveResponse2ReviewPreferencesLayout) -> Self {
+        self.layout = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -761,10 +1487,13 @@ impl From<&str> for SettingsRetrieveResponse2ReviewPreferencesFileSortMode {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsRetrieveResponse2ReviewPreferencesLayout::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponse2ReviewPreferencesLayout {
     #[serde(
@@ -800,6 +1529,81 @@ pub struct SettingsRetrieveResponse2ReviewPreferencesLayout {
         serialize_with = "crate::number::option::serialize"
     )]
     pub right_desktop_sidebar_width: Option<f64>,
+}
+
+impl SettingsRetrieveResponse2ReviewPreferencesLayout {
+    /// Creates a new `SettingsRetrieveResponse2ReviewPreferencesLayout` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponse2ReviewPreferencesLayout::new().with_focus_chat_height(…)`.
+    pub fn new() -> Self {
+        Self {
+            focus_chat_height: None,
+            active_tab: None,
+            active_view_mode: None,
+            focus_chat_open: None,
+            focus_mode: None,
+            left_desktop_sidebar_open: None,
+            left_desktop_sidebar_width: None,
+            right_desktop_sidebar_open: None,
+            right_desktop_sidebar_width: None,
+        }
+    }
+
+    /// Sets `focus_chat_height`, which `new` leaves unset.
+    pub fn with_focus_chat_height(mut self, value: f64) -> Self {
+        self.focus_chat_height = Some(value);
+        self
+    }
+
+    /// Sets `active_tab`, which `new` leaves unset.
+    pub fn with_active_tab(mut self, value: impl Into<String>) -> Self {
+        self.active_tab = Some(value.into());
+        self
+    }
+
+    /// Sets `active_view_mode`, which `new` leaves unset.
+    pub fn with_active_view_mode(mut self, value: impl Into<String>) -> Self {
+        self.active_view_mode = Some(value.into());
+        self
+    }
+
+    /// Sets `focus_chat_open`, which `new` leaves unset.
+    pub fn with_focus_chat_open(mut self, value: bool) -> Self {
+        self.focus_chat_open = Some(value);
+        self
+    }
+
+    /// Sets `focus_mode`, which `new` leaves unset.
+    pub fn with_focus_mode(mut self, value: bool) -> Self {
+        self.focus_mode = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.left_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.left_desktop_sidebar_width = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.right_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.right_desktop_sidebar_width = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -845,16 +1649,26 @@ impl From<&str> for SettingsRetrieveResponse2FollowUpBehavior {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2 {
     #[serde(rename = "autoRestartVm", default, skip_serializing_if = "Option::is_none")]
     pub auto_restart_vm: Option<bool>,
     #[serde(rename = "defaultProjectId", default, skip_serializing_if = "Option::is_none")]
     pub default_project_id: Option<String>,
+    #[serde(
+        rename = "defaultSessionVisibilityByWorkspace",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub default_session_visibility_by_workspace:
+        Option<std::collections::BTreeMap<String, SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace>>,
     #[serde(rename = "gpgKey", default, skip_serializing_if = "Option::is_none")]
     pub gpg_key: Option<String>,
     #[serde(
@@ -903,10 +1717,213 @@ pub struct SettingsUpdateResponse2 {
     pub custom_system_prompt: Option<String>,
 }
 
+impl SettingsUpdateResponse2 {
+    /// Creates a new `SettingsUpdateResponse2` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2::new().with_auto_restart_vm(…)`.
+    pub fn new() -> Self {
+        Self {
+            auto_restart_vm: None,
+            default_project_id: None,
+            default_session_visibility_by_workspace: None,
+            gpg_key: None,
+            include_tembo_commit_attribution: None,
+            desktop_notifications_enabled: None,
+            desktop_notification_preferences: None,
+            has_desktop_app: None,
+            open_links_in_desktop_app: None,
+            appearance_preferences: None,
+            app_sidebar_preferences: None,
+            diff_preferences: None,
+            dashboard_preferences: None,
+            composer_preferences: None,
+            review_preferences: None,
+            diff_light_theme: None,
+            diff_dark_theme: None,
+            default_agent: None,
+            follow_up_behavior: None,
+            custom_system_prompt: None,
+        }
+    }
+
+    /// Sets `auto_restart_vm`, which `new` leaves unset.
+    pub fn with_auto_restart_vm(mut self, value: bool) -> Self {
+        self.auto_restart_vm = Some(value);
+        self
+    }
+
+    /// Sets `default_project_id`, which `new` leaves unset.
+    pub fn with_default_project_id(mut self, value: impl Into<String>) -> Self {
+        self.default_project_id = Some(value.into());
+        self
+    }
+
+    /// Sets `default_session_visibility_by_workspace`, which `new` leaves unset.
+    pub fn with_default_session_visibility_by_workspace(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace>,
+    ) -> Self {
+        self.default_session_visibility_by_workspace = Some(value);
+        self
+    }
+
+    /// Sets `gpg_key`, which `new` leaves unset.
+    pub fn with_gpg_key(mut self, value: impl Into<String>) -> Self {
+        self.gpg_key = Some(value.into());
+        self
+    }
+
+    /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
+    pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
+        self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notifications_enabled`, which `new` leaves unset.
+    pub fn with_desktop_notifications_enabled(mut self, value: bool) -> Self {
+        self.desktop_notifications_enabled = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notification_preferences`, which `new` leaves unset.
+    pub fn with_desktop_notification_preferences(
+        mut self,
+        value: SettingsUpdateResponse2DesktopNotificationPreferences,
+    ) -> Self {
+        self.desktop_notification_preferences = Some(value);
+        self
+    }
+
+    /// Sets `has_desktop_app`, which `new` leaves unset.
+    pub fn with_has_desktop_app(mut self, value: bool) -> Self {
+        self.has_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
+    pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
+        self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `appearance_preferences`, which `new` leaves unset.
+    pub fn with_appearance_preferences(mut self, value: SettingsUpdateResponse2AppearancePreferences) -> Self {
+        self.appearance_preferences = Some(value);
+        self
+    }
+
+    /// Sets `app_sidebar_preferences`, which `new` leaves unset.
+    pub fn with_app_sidebar_preferences(mut self, value: SettingsUpdateResponse2AppSidebarPreferences) -> Self {
+        self.app_sidebar_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_preferences`, which `new` leaves unset.
+    pub fn with_diff_preferences(mut self, value: SettingsUpdateResponse2DiffPreferences) -> Self {
+        self.diff_preferences = Some(value);
+        self
+    }
+
+    /// Sets `dashboard_preferences`, which `new` leaves unset.
+    pub fn with_dashboard_preferences(mut self, value: SettingsUpdateResponse2DashboardPreferences) -> Self {
+        self.dashboard_preferences = Some(value);
+        self
+    }
+
+    /// Sets `composer_preferences`, which `new` leaves unset.
+    pub fn with_composer_preferences(mut self, value: SettingsUpdateResponse2ComposerPreferences) -> Self {
+        self.composer_preferences = Some(value);
+        self
+    }
+
+    /// Sets `review_preferences`, which `new` leaves unset.
+    pub fn with_review_preferences(mut self, value: SettingsUpdateResponse2ReviewPreferences) -> Self {
+        self.review_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_light_theme`, which `new` leaves unset.
+    pub fn with_diff_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `diff_dark_theme`, which `new` leaves unset.
+    pub fn with_diff_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_dark_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `follow_up_behavior`, which `new` leaves unset.
+    pub fn with_follow_up_behavior(mut self, value: SettingsUpdateResponse2FollowUpBehavior) -> Self {
+        self.follow_up_behavior = Some(value);
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Private => "private",
+            Self::Public => "public",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SettingsUpdateResponse2DefaultSessionVisibilityByWorkspace {
+    fn from(value: &str) -> Self {
+        match value {
+            "private" => Self::Private,
+            "public" => Self::Public,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2DesktopNotificationPreferences::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2DesktopNotificationPreferences {
     #[serde(rename = "awaitingApproval", default, skip_serializing_if = "Option::is_none")]
@@ -921,16 +1938,78 @@ pub struct SettingsUpdateResponse2DesktopNotificationPreferences {
     pub pull_request_review_requested: Option<bool>,
 }
 
+impl SettingsUpdateResponse2DesktopNotificationPreferences {
+    /// Creates a new `SettingsUpdateResponse2DesktopNotificationPreferences` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2DesktopNotificationPreferences::new().with_awaiting_approval(…)`.
+    pub fn new() -> Self {
+        Self {
+            awaiting_approval: None,
+            pull_request_opened: None,
+            pull_request_review_requested: None,
+        }
+    }
+
+    /// Sets `awaiting_approval`, which `new` leaves unset.
+    pub fn with_awaiting_approval(mut self, value: bool) -> Self {
+        self.awaiting_approval = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_opened`, which `new` leaves unset.
+    pub fn with_pull_request_opened(mut self, value: bool) -> Self {
+        self.pull_request_opened = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_review_requested`, which `new` leaves unset.
+    pub fn with_pull_request_review_requested(mut self, value: bool) -> Self {
+        self.pull_request_review_requested = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2AppearancePreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2AppearancePreferences {
     #[serde(rename = "appTheme", default, skip_serializing_if = "Option::is_none")]
     pub app_theme: Option<SettingsUpdateResponse2AppearancePreferencesAppTheme>,
     #[serde(rename = "accentTheme", default, skip_serializing_if = "Option::is_none")]
     pub accent_theme: Option<SettingsUpdateResponse2AppearancePreferencesAccentTheme>,
+}
+
+impl SettingsUpdateResponse2AppearancePreferences {
+    /// Creates a new `SettingsUpdateResponse2AppearancePreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2AppearancePreferences::new().with_app_theme(…)`.
+    pub fn new() -> Self {
+        Self {
+            app_theme: None,
+            accent_theme: None,
+        }
+    }
+
+    /// Sets `app_theme`, which `new` leaves unset.
+    pub fn with_app_theme(mut self, value: SettingsUpdateResponse2AppearancePreferencesAppTheme) -> Self {
+        self.app_theme = Some(value);
+        self
+    }
+
+    /// Sets `accent_theme`, which `new` leaves unset.
+    pub fn with_accent_theme(mut self, value: SettingsUpdateResponse2AppearancePreferencesAccentTheme) -> Self {
+        self.accent_theme = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -980,10 +2059,13 @@ impl From<&str> for SettingsUpdateResponse2AppearancePreferencesAppTheme {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2AppearancePreferencesAccentTheme::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2AppearancePreferencesAccentTheme {
     #[serde(rename = "themeId", default, skip_serializing_if = "Option::is_none")]
@@ -1005,10 +2087,67 @@ pub struct SettingsUpdateResponse2AppearancePreferencesAccentTheme {
     pub system_dark: Option<String>,
 }
 
+impl SettingsUpdateResponse2AppearancePreferencesAccentTheme {
+    /// Creates a new `SettingsUpdateResponse2AppearancePreferencesAccentTheme` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2AppearancePreferencesAccentTheme::new().with_theme_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            theme_id: None,
+            custom_surface: None,
+            custom_accent: None,
+            custom_intensity: None,
+            system_light: None,
+            system_dark: None,
+        }
+    }
+
+    /// Sets `theme_id`, which `new` leaves unset.
+    pub fn with_theme_id(mut self, value: impl Into<String>) -> Self {
+        self.theme_id = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_surface`, which `new` leaves unset.
+    pub fn with_custom_surface(mut self, value: impl Into<String>) -> Self {
+        self.custom_surface = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_accent`, which `new` leaves unset.
+    pub fn with_custom_accent(mut self, value: impl Into<String>) -> Self {
+        self.custom_accent = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_intensity`, which `new` leaves unset.
+    pub fn with_custom_intensity(mut self, value: f64) -> Self {
+        self.custom_intensity = Some(value);
+        self
+    }
+
+    /// Sets `system_light`, which `new` leaves unset.
+    pub fn with_system_light(mut self, value: impl Into<String>) -> Self {
+        self.system_light = Some(value.into());
+        self
+    }
+
+    /// Sets `system_dark`, which `new` leaves unset.
+    pub fn with_system_dark(mut self, value: impl Into<String>) -> Self {
+        self.system_dark = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2AppSidebarPreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2AppSidebarPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1031,7 +2170,84 @@ pub struct SettingsUpdateResponse2AppSidebarPreferences {
     pub width: Option<f64>,
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
     pub right_sidebar:
-        Option<std::collections::HashMap<String, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar>>,
+        Option<std::collections::BTreeMap<String, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar>>,
+}
+
+impl SettingsUpdateResponse2AppSidebarPreferences {
+    /// Creates a new `SettingsUpdateResponse2AppSidebarPreferences` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2AppSidebarPreferences::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            session_owner_scope: None,
+            session_sort_by: None,
+            session_organization: None,
+            show_archived_sessions: None,
+            show_activity: None,
+            width: None,
+            right_sidebar: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `session_owner_scope`, which `new` leaves unset.
+    pub fn with_session_owner_scope(
+        mut self,
+        value: SettingsUpdateResponse2AppSidebarPreferencesSessionOwnerScope,
+    ) -> Self {
+        self.session_owner_scope = Some(value);
+        self
+    }
+
+    /// Sets `session_sort_by`, which `new` leaves unset.
+    pub fn with_session_sort_by(mut self, value: SettingsUpdateResponse2AppSidebarPreferencesSessionSortBy) -> Self {
+        self.session_sort_by = Some(value);
+        self
+    }
+
+    /// Sets `session_organization`, which `new` leaves unset.
+    pub fn with_session_organization(
+        mut self,
+        value: SettingsUpdateResponse2AppSidebarPreferencesSessionOrganization,
+    ) -> Self {
+        self.session_organization = Some(value);
+        self
+    }
+
+    /// Sets `show_archived_sessions`, which `new` leaves unset.
+    pub fn with_show_archived_sessions(mut self, value: bool) -> Self {
+        self.show_archived_sessions = Some(value);
+        self
+    }
+
+    /// Sets `show_activity`, which `new` leaves unset.
+    pub fn with_show_activity(mut self, value: bool) -> Self {
+        self.show_activity = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: f64) -> Self {
+        self.width = Some(value);
+        self
+    }
+
+    /// Sets `right_sidebar`, which `new` leaves unset.
+    pub fn with_right_sidebar(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar>,
+    ) -> Self {
+        self.right_sidebar = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1163,10 +2379,13 @@ impl From<&str> for SettingsUpdateResponse2AppSidebarPreferencesSessionOrganizat
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2AppSidebarPreferencesRightSidebar::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2AppSidebarPreferencesRightSidebar {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1175,10 +2394,39 @@ pub struct SettingsUpdateResponse2AppSidebarPreferencesRightSidebar {
     pub width: Option<String>,
 }
 
+impl SettingsUpdateResponse2AppSidebarPreferencesRightSidebar {
+    /// Creates a new `SettingsUpdateResponse2AppSidebarPreferencesRightSidebar` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2AppSidebarPreferencesRightSidebar::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            width: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: impl Into<String>) -> Self {
+        self.width = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2DiffPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2DiffPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1201,6 +2449,88 @@ pub struct SettingsUpdateResponse2DiffPreferences {
     pub light_theme: Option<String>,
     #[serde(rename = "darkTheme", default, skip_serializing_if = "Option::is_none")]
     pub dark_theme: Option<String>,
+}
+
+impl SettingsUpdateResponse2DiffPreferences {
+    /// Creates a new `SettingsUpdateResponse2DiffPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2DiffPreferences::new().with_style(…)`.
+    pub fn new() -> Self {
+        Self {
+            style: None,
+            indicators: None,
+            overflow: None,
+            show_line_numbers: None,
+            expand_unchanged: None,
+            show_file_tree: None,
+            file_tree_position: None,
+            file_tree_view: None,
+            light_theme: None,
+            dark_theme: None,
+        }
+    }
+
+    /// Sets `style`, which `new` leaves unset.
+    pub fn with_style(mut self, value: SettingsUpdateResponse2DiffPreferencesStyle) -> Self {
+        self.style = Some(value);
+        self
+    }
+
+    /// Sets `indicators`, which `new` leaves unset.
+    pub fn with_indicators(mut self, value: SettingsUpdateResponse2DiffPreferencesIndicators) -> Self {
+        self.indicators = Some(value);
+        self
+    }
+
+    /// Sets `overflow`, which `new` leaves unset.
+    pub fn with_overflow(mut self, value: SettingsUpdateResponse2DiffPreferencesOverflow) -> Self {
+        self.overflow = Some(value);
+        self
+    }
+
+    /// Sets `show_line_numbers`, which `new` leaves unset.
+    pub fn with_show_line_numbers(mut self, value: bool) -> Self {
+        self.show_line_numbers = Some(value);
+        self
+    }
+
+    /// Sets `expand_unchanged`, which `new` leaves unset.
+    pub fn with_expand_unchanged(mut self, value: bool) -> Self {
+        self.expand_unchanged = Some(value);
+        self
+    }
+
+    /// Sets `show_file_tree`, which `new` leaves unset.
+    pub fn with_show_file_tree(mut self, value: bool) -> Self {
+        self.show_file_tree = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_position`, which `new` leaves unset.
+    pub fn with_file_tree_position(mut self, value: SettingsUpdateResponse2DiffPreferencesFileTreePosition) -> Self {
+        self.file_tree_position = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_view`, which `new` leaves unset.
+    pub fn with_file_tree_view(mut self, value: SettingsUpdateResponse2DiffPreferencesFileTreeView) -> Self {
+        self.file_tree_view = Some(value);
+        self
+    }
+
+    /// Sets `light_theme`, which `new` leaves unset.
+    pub fn with_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `dark_theme`, which `new` leaves unset.
+    pub fn with_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.dark_theme = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1422,20 +2752,43 @@ impl From<&str> for SettingsUpdateResponse2DiffPreferencesFileTreeView {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2DashboardPreferences::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2DashboardPreferences {
     #[serde(rename = "taskFilters", default, skip_serializing_if = "Option::is_none")]
     pub task_filters: Option<SettingsUpdateResponse2DashboardPreferencesTaskFilters>,
 }
 
+impl SettingsUpdateResponse2DashboardPreferences {
+    /// Creates a new `SettingsUpdateResponse2DashboardPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2DashboardPreferences::new().with_task_filters(…)`.
+    pub fn new() -> Self {
+        Self { task_filters: None }
+    }
+
+    /// Sets `task_filters`, which `new` leaves unset.
+    pub fn with_task_filters(mut self, value: SettingsUpdateResponse2DashboardPreferencesTaskFilters) -> Self {
+        self.task_filters = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2DashboardPreferencesTaskFilters::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2DashboardPreferencesTaskFilters {
     #[serde(rename = "statusFilter", default, skip_serializing_if = "Option::is_none")]
@@ -1456,6 +2809,81 @@ pub struct SettingsUpdateResponse2DashboardPreferencesTaskFilters {
     pub pr_status_filter: Option<Vec<String>>,
     #[serde(rename = "automationFilter", default, skip_serializing_if = "Option::is_none")]
     pub automation_filter: Option<Vec<String>>,
+}
+
+impl SettingsUpdateResponse2DashboardPreferencesTaskFilters {
+    /// Creates a new `SettingsUpdateResponse2DashboardPreferencesTaskFilters` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2DashboardPreferencesTaskFilters::new().with_status_filter(…)`.
+    pub fn new() -> Self {
+        Self {
+            status_filter: None,
+            sort_by: None,
+            search_query: None,
+            integration_type: None,
+            external_id: None,
+            project_filter: None,
+            author_filter: None,
+            pr_status_filter: None,
+            automation_filter: None,
+        }
+    }
+
+    /// Sets `status_filter`, which `new` leaves unset.
+    pub fn with_status_filter(mut self, value: Vec<String>) -> Self {
+        self.status_filter = Some(value);
+        self
+    }
+
+    /// Sets `sort_by`, which `new` leaves unset.
+    pub fn with_sort_by(mut self, value: SettingsUpdateResponse2DashboardPreferencesTaskFiltersSortBy) -> Self {
+        self.sort_by = Some(value);
+        self
+    }
+
+    /// Sets `search_query`, which `new` leaves unset.
+    pub fn with_search_query(mut self, value: impl Into<String>) -> Self {
+        self.search_query = Some(value.into());
+        self
+    }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: Vec<String>) -> Self {
+        self.integration_type = Some(value);
+        self
+    }
+
+    /// Sets `external_id`, which `new` leaves unset.
+    pub fn with_external_id(mut self, value: impl Into<String>) -> Self {
+        self.external_id = Some(value.into());
+        self
+    }
+
+    /// Sets `project_filter`, which `new` leaves unset.
+    pub fn with_project_filter(mut self, value: Vec<String>) -> Self {
+        self.project_filter = Some(value);
+        self
+    }
+
+    /// Sets `author_filter`, which `new` leaves unset.
+    pub fn with_author_filter(mut self, value: Vec<String>) -> Self {
+        self.author_filter = Some(value);
+        self
+    }
+
+    /// Sets `pr_status_filter`, which `new` leaves unset.
+    pub fn with_pr_status_filter(mut self, value: Vec<String>) -> Self {
+        self.pr_status_filter = Some(value);
+        self
+    }
+
+    /// Sets `automation_filter`, which `new` leaves unset.
+    pub fn with_automation_filter(mut self, value: Vec<String>) -> Self {
+        self.automation_filter = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1501,10 +2929,13 @@ impl From<&str> for SettingsUpdateResponse2DashboardPreferencesTaskFiltersSortBy
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2ComposerPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2ComposerPreferences {
     #[serde(
@@ -1515,9 +2946,31 @@ pub struct SettingsUpdateResponse2ComposerPreferences {
     pub last_selected_repositories: Option<Vec<SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository>>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SettingsUpdateResponse2ComposerPreferences {
+    /// Creates a new `SettingsUpdateResponse2ComposerPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2ComposerPreferences::new().with_last_selected_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            last_selected_repositories: None,
+        }
+    }
+
+    /// Sets `last_selected_repositories`, which `new` leaves unset.
+    pub fn with_last_selected_repositories(
+        mut self,
+        value: Vec<SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository>,
+    ) -> Self {
+        self.last_selected_repositories = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository {
@@ -1528,10 +2981,40 @@ pub struct SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository {
     pub r#type: Option<String>,
 }
 
+impl SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository {
+    /// Creates a new `SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2ComposerPreferencesLastSelectedRepository::new(id).with_name(…)`.
+    pub fn new(id: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: None,
+            r#type: None,
+        }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2ReviewPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2ReviewPreferences {
     #[serde(rename = "fileSortMode", default, skip_serializing_if = "Option::is_none")]
@@ -1539,11 +3022,58 @@ pub struct SettingsUpdateResponse2ReviewPreferences {
     #[serde(rename = "excludedFilePatterns", default, skip_serializing_if = "Option::is_none")]
     pub excluded_file_patterns: Option<Vec<String>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sections: Option<std::collections::HashMap<String, bool>>,
+    pub sections: Option<std::collections::BTreeMap<String, bool>>,
     #[serde(rename = "hideBotComments", default, skip_serializing_if = "Option::is_none")]
     pub hide_bot_comments: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub layout: Option<SettingsUpdateResponse2ReviewPreferencesLayout>,
+}
+
+impl SettingsUpdateResponse2ReviewPreferences {
+    /// Creates a new `SettingsUpdateResponse2ReviewPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2ReviewPreferences::new().with_file_sort_mode(…)`.
+    pub fn new() -> Self {
+        Self {
+            file_sort_mode: None,
+            excluded_file_patterns: None,
+            sections: None,
+            hide_bot_comments: None,
+            layout: None,
+        }
+    }
+
+    /// Sets `file_sort_mode`, which `new` leaves unset.
+    pub fn with_file_sort_mode(mut self, value: SettingsUpdateResponse2ReviewPreferencesFileSortMode) -> Self {
+        self.file_sort_mode = Some(value);
+        self
+    }
+
+    /// Sets `excluded_file_patterns`, which `new` leaves unset.
+    pub fn with_excluded_file_patterns(mut self, value: Vec<String>) -> Self {
+        self.excluded_file_patterns = Some(value);
+        self
+    }
+
+    /// Sets `sections`, which `new` leaves unset.
+    pub fn with_sections(mut self, value: std::collections::BTreeMap<String, bool>) -> Self {
+        self.sections = Some(value);
+        self
+    }
+
+    /// Sets `hide_bot_comments`, which `new` leaves unset.
+    pub fn with_hide_bot_comments(mut self, value: bool) -> Self {
+        self.hide_bot_comments = Some(value);
+        self
+    }
+
+    /// Sets `layout`, which `new` leaves unset.
+    pub fn with_layout(mut self, value: SettingsUpdateResponse2ReviewPreferencesLayout) -> Self {
+        self.layout = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1601,10 +3131,13 @@ impl From<&str> for SettingsUpdateResponse2ReviewPreferencesFileSortMode {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateResponse2ReviewPreferencesLayout::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponse2ReviewPreferencesLayout {
     #[serde(
@@ -1640,6 +3173,81 @@ pub struct SettingsUpdateResponse2ReviewPreferencesLayout {
         serialize_with = "crate::number::option::serialize"
     )]
     pub right_desktop_sidebar_width: Option<f64>,
+}
+
+impl SettingsUpdateResponse2ReviewPreferencesLayout {
+    /// Creates a new `SettingsUpdateResponse2ReviewPreferencesLayout` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponse2ReviewPreferencesLayout::new().with_focus_chat_height(…)`.
+    pub fn new() -> Self {
+        Self {
+            focus_chat_height: None,
+            active_tab: None,
+            active_view_mode: None,
+            focus_chat_open: None,
+            focus_mode: None,
+            left_desktop_sidebar_open: None,
+            left_desktop_sidebar_width: None,
+            right_desktop_sidebar_open: None,
+            right_desktop_sidebar_width: None,
+        }
+    }
+
+    /// Sets `focus_chat_height`, which `new` leaves unset.
+    pub fn with_focus_chat_height(mut self, value: f64) -> Self {
+        self.focus_chat_height = Some(value);
+        self
+    }
+
+    /// Sets `active_tab`, which `new` leaves unset.
+    pub fn with_active_tab(mut self, value: impl Into<String>) -> Self {
+        self.active_tab = Some(value.into());
+        self
+    }
+
+    /// Sets `active_view_mode`, which `new` leaves unset.
+    pub fn with_active_view_mode(mut self, value: impl Into<String>) -> Self {
+        self.active_view_mode = Some(value.into());
+        self
+    }
+
+    /// Sets `focus_chat_open`, which `new` leaves unset.
+    pub fn with_focus_chat_open(mut self, value: bool) -> Self {
+        self.focus_chat_open = Some(value);
+        self
+    }
+
+    /// Sets `focus_mode`, which `new` leaves unset.
+    pub fn with_focus_mode(mut self, value: bool) -> Self {
+        self.focus_mode = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.left_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.left_desktop_sidebar_width = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.right_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.right_desktop_sidebar_width = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1685,14 +3293,33 @@ impl From<&str> for SettingsUpdateResponse2FollowUpBehavior {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2 {
+    /// Default visibility for your new sessions, keyed by workspace ID.
+    #[serde(
+        rename = "defaultSessionVisibilityByWorkspace",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub default_session_visibility_by_workspace:
+        Option<std::collections::BTreeMap<String, SettingsUpdateBody2DefaultSessionVisibilityByWorkspace>>,
     /// Automatically restart a session VM when needed.
     #[serde(rename = "autoRestartVm", default, skip_serializing_if = "Option::is_none")]
     pub auto_restart_vm: Option<bool>,
     /// Default project environment for new sessions, or null to clear the preference.
-    #[serde(rename = "defaultProjectId", default, skip_serializing_if = "Option::is_none")]
-    pub default_project_id: Option<String>,
+    #[serde(
+        rename = "defaultProjectId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub default_project_id: Option<Option<String>>,
     /// GPG signing key configuration. This value is returned by retrieveUserSettings.
     #[serde(rename = "gpgKey", default, skip_serializing_if = "Option::is_none")]
     pub gpg_key: Option<String>,
@@ -1748,8 +3375,13 @@ pub struct SettingsUpdateBody2 {
     #[serde(rename = "diffDarkTheme", default, skip_serializing_if = "Option::is_none")]
     pub diff_dark_theme: Option<String>,
     /// Default coding agent and model key. Null clears the preference.
-    #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
-    pub default_agent: Option<String>,
+    #[serde(
+        rename = "defaultAgent",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub default_agent: Option<Option<String>>,
     /// Default follow-up delivery: queue a new turn or steer an active turn.
     #[serde(rename = "followUpBehavior", default, skip_serializing_if = "Option::is_none")]
     pub follow_up_behavior: Option<SettingsUpdateBody2FollowUpBehavior>,
@@ -1758,7 +3390,218 @@ pub struct SettingsUpdateBody2 {
     pub custom_system_prompt: Option<String>,
 }
 
+impl SettingsUpdateBody2 {
+    /// Creates a new `SettingsUpdateBody2` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2::new().with_default_session_visibility_by_workspace(…)`.
+    pub fn new() -> Self {
+        Self {
+            default_session_visibility_by_workspace: None,
+            auto_restart_vm: None,
+            default_project_id: None,
+            gpg_key: None,
+            include_tembo_commit_attribution: None,
+            desktop_notifications_enabled: None,
+            desktop_notification_preferences: None,
+            has_desktop_app: None,
+            open_links_in_desktop_app: None,
+            appearance_preferences: None,
+            app_sidebar_preferences: None,
+            diff_preferences: None,
+            dashboard_preferences: None,
+            composer_preferences: None,
+            review_preferences: None,
+            diff_light_theme: None,
+            diff_dark_theme: None,
+            default_agent: None,
+            follow_up_behavior: None,
+            custom_system_prompt: None,
+        }
+    }
+
+    /// Sets `default_session_visibility_by_workspace`, which `new` leaves unset.
+    pub fn with_default_session_visibility_by_workspace(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsUpdateBody2DefaultSessionVisibilityByWorkspace>,
+    ) -> Self {
+        self.default_session_visibility_by_workspace = Some(value);
+        self
+    }
+
+    /// Sets `auto_restart_vm`, which `new` leaves unset.
+    pub fn with_auto_restart_vm(mut self, value: bool) -> Self {
+        self.auto_restart_vm = Some(value);
+        self
+    }
+
+    /// Sets `default_project_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `default_project_id = Some(None)` on the built value.
+    pub fn with_default_project_id(mut self, value: impl Into<String>) -> Self {
+        self.default_project_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `gpg_key`, which `new` leaves unset.
+    pub fn with_gpg_key(mut self, value: impl Into<String>) -> Self {
+        self.gpg_key = Some(value.into());
+        self
+    }
+
+    /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
+    pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
+        self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notifications_enabled`, which `new` leaves unset.
+    pub fn with_desktop_notifications_enabled(mut self, value: bool) -> Self {
+        self.desktop_notifications_enabled = Some(value);
+        self
+    }
+
+    /// Sets `desktop_notification_preferences`, which `new` leaves unset.
+    pub fn with_desktop_notification_preferences(
+        mut self,
+        value: SettingsUpdateBody2DesktopNotificationPreferences,
+    ) -> Self {
+        self.desktop_notification_preferences = Some(value);
+        self
+    }
+
+    /// Sets `has_desktop_app`, which `new` leaves unset.
+    pub fn with_has_desktop_app(mut self, value: bool) -> Self {
+        self.has_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
+    pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
+        self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `appearance_preferences`, which `new` leaves unset.
+    pub fn with_appearance_preferences(mut self, value: SettingsUpdateBody2AppearancePreferences) -> Self {
+        self.appearance_preferences = Some(value);
+        self
+    }
+
+    /// Sets `app_sidebar_preferences`, which `new` leaves unset.
+    pub fn with_app_sidebar_preferences(mut self, value: SettingsUpdateBody2AppSidebarPreferences) -> Self {
+        self.app_sidebar_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_preferences`, which `new` leaves unset.
+    pub fn with_diff_preferences(mut self, value: SettingsUpdateBody2DiffPreferences) -> Self {
+        self.diff_preferences = Some(value);
+        self
+    }
+
+    /// Sets `dashboard_preferences`, which `new` leaves unset.
+    pub fn with_dashboard_preferences(mut self, value: SettingsUpdateBody2DashboardPreferences) -> Self {
+        self.dashboard_preferences = Some(value);
+        self
+    }
+
+    /// Sets `composer_preferences`, which `new` leaves unset.
+    pub fn with_composer_preferences(mut self, value: SettingsUpdateBody2ComposerPreferences) -> Self {
+        self.composer_preferences = Some(value);
+        self
+    }
+
+    /// Sets `review_preferences`, which `new` leaves unset.
+    pub fn with_review_preferences(mut self, value: SettingsUpdateBody2ReviewPreferences) -> Self {
+        self.review_preferences = Some(value);
+        self
+    }
+
+    /// Sets `diff_light_theme`, which `new` leaves unset.
+    pub fn with_diff_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `diff_dark_theme`, which `new` leaves unset.
+    pub fn with_diff_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.diff_dark_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `default_agent = Some(None)` on the built value.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `follow_up_behavior`, which `new` leaves unset.
+    pub fn with_follow_up_behavior(mut self, value: SettingsUpdateBody2FollowUpBehavior) -> Self {
+        self.follow_up_behavior = Some(value);
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SettingsUpdateBody2DefaultSessionVisibilityByWorkspace {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SettingsUpdateBody2DefaultSessionVisibilityByWorkspace {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Private => "private",
+            Self::Public => "public",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SettingsUpdateBody2DefaultSessionVisibilityByWorkspace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SettingsUpdateBody2DefaultSessionVisibilityByWorkspace {
+    fn from(value: &str) -> Self {
+        match value {
+            "private" => Self::Private,
+            "public" => Self::Public,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2DesktopNotificationPreferences::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2DesktopNotificationPreferences {
     #[serde(rename = "awaitingApproval", default, skip_serializing_if = "Option::is_none")]
     pub awaiting_approval: Option<bool>,
@@ -1772,12 +3615,78 @@ pub struct SettingsUpdateBody2DesktopNotificationPreferences {
     pub pull_request_review_requested: Option<bool>,
 }
 
+impl SettingsUpdateBody2DesktopNotificationPreferences {
+    /// Creates a new `SettingsUpdateBody2DesktopNotificationPreferences` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2DesktopNotificationPreferences::new().with_awaiting_approval(…)`.
+    pub fn new() -> Self {
+        Self {
+            awaiting_approval: None,
+            pull_request_opened: None,
+            pull_request_review_requested: None,
+        }
+    }
+
+    /// Sets `awaiting_approval`, which `new` leaves unset.
+    pub fn with_awaiting_approval(mut self, value: bool) -> Self {
+        self.awaiting_approval = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_opened`, which `new` leaves unset.
+    pub fn with_pull_request_opened(mut self, value: bool) -> Self {
+        self.pull_request_opened = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_review_requested`, which `new` leaves unset.
+    pub fn with_pull_request_review_requested(mut self, value: bool) -> Self {
+        self.pull_request_review_requested = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2AppearancePreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2AppearancePreferences {
     #[serde(rename = "appTheme", default, skip_serializing_if = "Option::is_none")]
     pub app_theme: Option<SettingsUpdateBody2AppearancePreferencesAppTheme>,
     #[serde(rename = "accentTheme", default, skip_serializing_if = "Option::is_none")]
     pub accent_theme: Option<SettingsUpdateBody2AppearancePreferencesAccentTheme>,
+}
+
+impl SettingsUpdateBody2AppearancePreferences {
+    /// Creates a new `SettingsUpdateBody2AppearancePreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2AppearancePreferences::new().with_app_theme(…)`.
+    pub fn new() -> Self {
+        Self {
+            app_theme: None,
+            accent_theme: None,
+        }
+    }
+
+    /// Sets `app_theme`, which `new` leaves unset.
+    pub fn with_app_theme(mut self, value: SettingsUpdateBody2AppearancePreferencesAppTheme) -> Self {
+        self.app_theme = Some(value);
+        self
+    }
+
+    /// Sets `accent_theme`, which `new` leaves unset.
+    pub fn with_accent_theme(mut self, value: SettingsUpdateBody2AppearancePreferencesAccentTheme) -> Self {
+        self.accent_theme = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1827,14 +3736,31 @@ impl From<&str> for SettingsUpdateBody2AppearancePreferencesAppTheme {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2AppearancePreferencesAccentTheme::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2AppearancePreferencesAccentTheme {
     #[serde(rename = "themeId", default, skip_serializing_if = "Option::is_none")]
     pub theme_id: Option<String>,
-    #[serde(rename = "customSurface", default, skip_serializing_if = "Option::is_none")]
-    pub custom_surface: Option<String>,
-    #[serde(rename = "customAccent", default, skip_serializing_if = "Option::is_none")]
-    pub custom_accent: Option<String>,
+    #[serde(
+        rename = "customSurface",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub custom_surface: Option<Option<String>>,
+    #[serde(
+        rename = "customAccent",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub custom_accent: Option<Option<String>>,
     #[serde(
         rename = "customIntensity",
         default,
@@ -1848,7 +3774,72 @@ pub struct SettingsUpdateBody2AppearancePreferencesAccentTheme {
     pub system_dark: Option<String>,
 }
 
+impl SettingsUpdateBody2AppearancePreferencesAccentTheme {
+    /// Creates a new `SettingsUpdateBody2AppearancePreferencesAccentTheme` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2AppearancePreferencesAccentTheme::new().with_theme_id(…)`.
+    pub fn new() -> Self {
+        Self {
+            theme_id: None,
+            custom_surface: None,
+            custom_accent: None,
+            custom_intensity: None,
+            system_light: None,
+            system_dark: None,
+        }
+    }
+
+    /// Sets `theme_id`, which `new` leaves unset.
+    pub fn with_theme_id(mut self, value: impl Into<String>) -> Self {
+        self.theme_id = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_surface`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `custom_surface = Some(None)` on the built value.
+    pub fn with_custom_surface(mut self, value: impl Into<String>) -> Self {
+        self.custom_surface = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `custom_accent`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `custom_accent = Some(None)` on the built value.
+    pub fn with_custom_accent(mut self, value: impl Into<String>) -> Self {
+        self.custom_accent = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `custom_intensity`, which `new` leaves unset.
+    pub fn with_custom_intensity(mut self, value: f64) -> Self {
+        self.custom_intensity = Some(value);
+        self
+    }
+
+    /// Sets `system_light`, which `new` leaves unset.
+    pub fn with_system_light(mut self, value: impl Into<String>) -> Self {
+        self.system_light = Some(value.into());
+        self
+    }
+
+    /// Sets `system_dark`, which `new` leaves unset.
+    pub fn with_system_dark(mut self, value: impl Into<String>) -> Self {
+        self.system_dark = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2AppSidebarPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2AppSidebarPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub open: Option<bool>,
@@ -1869,7 +3860,84 @@ pub struct SettingsUpdateBody2AppSidebarPreferences {
     )]
     pub width: Option<f64>,
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
-    pub right_sidebar: Option<std::collections::HashMap<String, SettingsUpdateBody2AppSidebarPreferencesRightSidebar>>,
+    pub right_sidebar: Option<std::collections::BTreeMap<String, SettingsUpdateBody2AppSidebarPreferencesRightSidebar>>,
+}
+
+impl SettingsUpdateBody2AppSidebarPreferences {
+    /// Creates a new `SettingsUpdateBody2AppSidebarPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2AppSidebarPreferences::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            session_owner_scope: None,
+            session_sort_by: None,
+            session_organization: None,
+            show_archived_sessions: None,
+            show_activity: None,
+            width: None,
+            right_sidebar: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `session_owner_scope`, which `new` leaves unset.
+    pub fn with_session_owner_scope(
+        mut self,
+        value: SettingsUpdateBody2AppSidebarPreferencesSessionOwnerScope,
+    ) -> Self {
+        self.session_owner_scope = Some(value);
+        self
+    }
+
+    /// Sets `session_sort_by`, which `new` leaves unset.
+    pub fn with_session_sort_by(mut self, value: SettingsUpdateBody2AppSidebarPreferencesSessionSortBy) -> Self {
+        self.session_sort_by = Some(value);
+        self
+    }
+
+    /// Sets `session_organization`, which `new` leaves unset.
+    pub fn with_session_organization(
+        mut self,
+        value: SettingsUpdateBody2AppSidebarPreferencesSessionOrganization,
+    ) -> Self {
+        self.session_organization = Some(value);
+        self
+    }
+
+    /// Sets `show_archived_sessions`, which `new` leaves unset.
+    pub fn with_show_archived_sessions(mut self, value: bool) -> Self {
+        self.show_archived_sessions = Some(value);
+        self
+    }
+
+    /// Sets `show_activity`, which `new` leaves unset.
+    pub fn with_show_activity(mut self, value: bool) -> Self {
+        self.show_activity = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: f64) -> Self {
+        self.width = Some(value);
+        self
+    }
+
+    /// Sets `right_sidebar`, which `new` leaves unset.
+    pub fn with_right_sidebar(
+        mut self,
+        value: std::collections::BTreeMap<String, SettingsUpdateBody2AppSidebarPreferencesRightSidebar>,
+    ) -> Self {
+        self.right_sidebar = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2001,7 +4069,14 @@ impl From<&str> for SettingsUpdateBody2AppSidebarPreferencesSessionOrganization 
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2AppSidebarPreferencesRightSidebar::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2AppSidebarPreferencesRightSidebar {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub open: Option<bool>,
@@ -2009,7 +4084,40 @@ pub struct SettingsUpdateBody2AppSidebarPreferencesRightSidebar {
     pub width: Option<String>,
 }
 
+impl SettingsUpdateBody2AppSidebarPreferencesRightSidebar {
+    /// Creates a new `SettingsUpdateBody2AppSidebarPreferencesRightSidebar` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2AppSidebarPreferencesRightSidebar::new().with_open(…)`.
+    pub fn new() -> Self {
+        Self {
+            open: None,
+            width: None,
+        }
+    }
+
+    /// Sets `open`, which `new` leaves unset.
+    pub fn with_open(mut self, value: bool) -> Self {
+        self.open = Some(value);
+        self
+    }
+
+    /// Sets `width`, which `new` leaves unset.
+    pub fn with_width(mut self, value: impl Into<String>) -> Self {
+        self.width = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2DiffPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2DiffPreferences {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub style: Option<SettingsUpdateBody2DiffPreferencesStyle>,
@@ -2031,6 +4139,87 @@ pub struct SettingsUpdateBody2DiffPreferences {
     pub light_theme: Option<String>,
     #[serde(rename = "darkTheme", default, skip_serializing_if = "Option::is_none")]
     pub dark_theme: Option<String>,
+}
+
+impl SettingsUpdateBody2DiffPreferences {
+    /// Creates a new `SettingsUpdateBody2DiffPreferences` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2DiffPreferences::new().with_style(…)`.
+    pub fn new() -> Self {
+        Self {
+            style: None,
+            indicators: None,
+            overflow: None,
+            show_line_numbers: None,
+            expand_unchanged: None,
+            show_file_tree: None,
+            file_tree_position: None,
+            file_tree_view: None,
+            light_theme: None,
+            dark_theme: None,
+        }
+    }
+
+    /// Sets `style`, which `new` leaves unset.
+    pub fn with_style(mut self, value: SettingsUpdateBody2DiffPreferencesStyle) -> Self {
+        self.style = Some(value);
+        self
+    }
+
+    /// Sets `indicators`, which `new` leaves unset.
+    pub fn with_indicators(mut self, value: SettingsUpdateBody2DiffPreferencesIndicators) -> Self {
+        self.indicators = Some(value);
+        self
+    }
+
+    /// Sets `overflow`, which `new` leaves unset.
+    pub fn with_overflow(mut self, value: SettingsUpdateBody2DiffPreferencesOverflow) -> Self {
+        self.overflow = Some(value);
+        self
+    }
+
+    /// Sets `show_line_numbers`, which `new` leaves unset.
+    pub fn with_show_line_numbers(mut self, value: bool) -> Self {
+        self.show_line_numbers = Some(value);
+        self
+    }
+
+    /// Sets `expand_unchanged`, which `new` leaves unset.
+    pub fn with_expand_unchanged(mut self, value: bool) -> Self {
+        self.expand_unchanged = Some(value);
+        self
+    }
+
+    /// Sets `show_file_tree`, which `new` leaves unset.
+    pub fn with_show_file_tree(mut self, value: bool) -> Self {
+        self.show_file_tree = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_position`, which `new` leaves unset.
+    pub fn with_file_tree_position(mut self, value: SettingsUpdateBody2DiffPreferencesFileTreePosition) -> Self {
+        self.file_tree_position = Some(value);
+        self
+    }
+
+    /// Sets `file_tree_view`, which `new` leaves unset.
+    pub fn with_file_tree_view(mut self, value: SettingsUpdateBody2DiffPreferencesFileTreeView) -> Self {
+        self.file_tree_view = Some(value);
+        self
+    }
+
+    /// Sets `light_theme`, which `new` leaves unset.
+    pub fn with_light_theme(mut self, value: impl Into<String>) -> Self {
+        self.light_theme = Some(value.into());
+        self
+    }
+
+    /// Sets `dark_theme`, which `new` leaves unset.
+    pub fn with_dark_theme(mut self, value: impl Into<String>) -> Self {
+        self.dark_theme = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2252,13 +4441,44 @@ impl From<&str> for SettingsUpdateBody2DiffPreferencesFileTreeView {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2DashboardPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2DashboardPreferences {
     #[serde(rename = "taskFilters", default, skip_serializing_if = "Option::is_none")]
     pub task_filters: Option<SettingsUpdateBody2DashboardPreferencesTaskFilters>,
 }
 
+impl SettingsUpdateBody2DashboardPreferences {
+    /// Creates a new `SettingsUpdateBody2DashboardPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2DashboardPreferences::new().with_task_filters(…)`.
+    pub fn new() -> Self {
+        Self { task_filters: None }
+    }
+
+    /// Sets `task_filters`, which `new` leaves unset.
+    pub fn with_task_filters(mut self, value: SettingsUpdateBody2DashboardPreferencesTaskFilters) -> Self {
+        self.task_filters = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2DashboardPreferencesTaskFilters::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2DashboardPreferencesTaskFilters {
     #[serde(rename = "statusFilter", default, skip_serializing_if = "Option::is_none")]
     pub status_filter: Option<Vec<String>>,
@@ -2278,6 +4498,81 @@ pub struct SettingsUpdateBody2DashboardPreferencesTaskFilters {
     pub pr_status_filter: Option<Vec<String>>,
     #[serde(rename = "automationFilter", default, skip_serializing_if = "Option::is_none")]
     pub automation_filter: Option<Vec<String>>,
+}
+
+impl SettingsUpdateBody2DashboardPreferencesTaskFilters {
+    /// Creates a new `SettingsUpdateBody2DashboardPreferencesTaskFilters` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2DashboardPreferencesTaskFilters::new().with_status_filter(…)`.
+    pub fn new() -> Self {
+        Self {
+            status_filter: None,
+            sort_by: None,
+            search_query: None,
+            integration_type: None,
+            external_id: None,
+            project_filter: None,
+            author_filter: None,
+            pr_status_filter: None,
+            automation_filter: None,
+        }
+    }
+
+    /// Sets `status_filter`, which `new` leaves unset.
+    pub fn with_status_filter(mut self, value: Vec<String>) -> Self {
+        self.status_filter = Some(value);
+        self
+    }
+
+    /// Sets `sort_by`, which `new` leaves unset.
+    pub fn with_sort_by(mut self, value: SettingsUpdateBody2DashboardPreferencesTaskFiltersSortBy) -> Self {
+        self.sort_by = Some(value);
+        self
+    }
+
+    /// Sets `search_query`, which `new` leaves unset.
+    pub fn with_search_query(mut self, value: impl Into<String>) -> Self {
+        self.search_query = Some(value.into());
+        self
+    }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: Vec<String>) -> Self {
+        self.integration_type = Some(value);
+        self
+    }
+
+    /// Sets `external_id`, which `new` leaves unset.
+    pub fn with_external_id(mut self, value: impl Into<String>) -> Self {
+        self.external_id = Some(value.into());
+        self
+    }
+
+    /// Sets `project_filter`, which `new` leaves unset.
+    pub fn with_project_filter(mut self, value: Vec<String>) -> Self {
+        self.project_filter = Some(value);
+        self
+    }
+
+    /// Sets `author_filter`, which `new` leaves unset.
+    pub fn with_author_filter(mut self, value: Vec<String>) -> Self {
+        self.author_filter = Some(value);
+        self
+    }
+
+    /// Sets `pr_status_filter`, which `new` leaves unset.
+    pub fn with_pr_status_filter(mut self, value: Vec<String>) -> Self {
+        self.pr_status_filter = Some(value);
+        self
+    }
+
+    /// Sets `automation_filter`, which `new` leaves unset.
+    pub fn with_automation_filter(mut self, value: Vec<String>) -> Self {
+        self.automation_filter = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2323,7 +4618,14 @@ impl From<&str> for SettingsUpdateBody2DashboardPreferencesTaskFiltersSortBy {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2ComposerPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2ComposerPreferences {
     #[serde(
         rename = "lastSelectedRepositories",
@@ -2333,7 +4635,33 @@ pub struct SettingsUpdateBody2ComposerPreferences {
     pub last_selected_repositories: Option<Vec<SettingsUpdateBody2ComposerPreferencesLastSelectedRepository>>,
 }
 
+impl SettingsUpdateBody2ComposerPreferences {
+    /// Creates a new `SettingsUpdateBody2ComposerPreferences` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2ComposerPreferences::new().with_last_selected_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            last_selected_repositories: None,
+        }
+    }
+
+    /// Sets `last_selected_repositories`, which `new` leaves unset.
+    pub fn with_last_selected_repositories(
+        mut self,
+        value: Vec<SettingsUpdateBody2ComposerPreferencesLastSelectedRepository>,
+    ) -> Self {
+        self.last_selected_repositories = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2ComposerPreferencesLastSelectedRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2ComposerPreferencesLastSelectedRepository {
     pub id: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2346,14 +4674,8 @@ impl SettingsUpdateBody2ComposerPreferencesLastSelectedRepository {
     /// Creates a new `SettingsUpdateBody2ComposerPreferencesLastSelectedRepository` from its required fields, leaving
     /// every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    ///
-    /// ```text
-    /// SettingsUpdateBody2ComposerPreferencesLastSelectedRepository {
-    ///     name: Some(…),
-    ///     ..SettingsUpdateBody2ComposerPreferencesLastSelectedRepository::new(id)
-    /// }
-    /// ```
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2ComposerPreferencesLastSelectedRepository::new(id).with_name(…)`.
     pub fn new(id: impl Into<String>) -> Self {
         Self {
             id: id.into(),
@@ -2361,20 +4683,85 @@ impl SettingsUpdateBody2ComposerPreferencesLastSelectedRepository {
             r#type: None,
         }
     }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2ReviewPreferences::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2ReviewPreferences {
     #[serde(rename = "fileSortMode", default, skip_serializing_if = "Option::is_none")]
     pub file_sort_mode: Option<SettingsUpdateBody2ReviewPreferencesFileSortMode>,
     #[serde(rename = "excludedFilePatterns", default, skip_serializing_if = "Option::is_none")]
     pub excluded_file_patterns: Option<Vec<String>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sections: Option<std::collections::HashMap<String, bool>>,
+    pub sections: Option<std::collections::BTreeMap<String, bool>>,
     #[serde(rename = "hideBotComments", default, skip_serializing_if = "Option::is_none")]
     pub hide_bot_comments: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub layout: Option<SettingsUpdateBody2ReviewPreferencesLayout>,
+}
+
+impl SettingsUpdateBody2ReviewPreferences {
+    /// Creates a new `SettingsUpdateBody2ReviewPreferences` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2ReviewPreferences::new().with_file_sort_mode(…)`.
+    pub fn new() -> Self {
+        Self {
+            file_sort_mode: None,
+            excluded_file_patterns: None,
+            sections: None,
+            hide_bot_comments: None,
+            layout: None,
+        }
+    }
+
+    /// Sets `file_sort_mode`, which `new` leaves unset.
+    pub fn with_file_sort_mode(mut self, value: SettingsUpdateBody2ReviewPreferencesFileSortMode) -> Self {
+        self.file_sort_mode = Some(value);
+        self
+    }
+
+    /// Sets `excluded_file_patterns`, which `new` leaves unset.
+    pub fn with_excluded_file_patterns(mut self, value: Vec<String>) -> Self {
+        self.excluded_file_patterns = Some(value);
+        self
+    }
+
+    /// Sets `sections`, which `new` leaves unset.
+    pub fn with_sections(mut self, value: std::collections::BTreeMap<String, bool>) -> Self {
+        self.sections = Some(value);
+        self
+    }
+
+    /// Sets `hide_bot_comments`, which `new` leaves unset.
+    pub fn with_hide_bot_comments(mut self, value: bool) -> Self {
+        self.hide_bot_comments = Some(value);
+        self
+    }
+
+    /// Sets `layout`, which `new` leaves unset.
+    pub fn with_layout(mut self, value: SettingsUpdateBody2ReviewPreferencesLayout) -> Self {
+        self.layout = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2432,7 +4819,14 @@ impl From<&str> for SettingsUpdateBody2ReviewPreferencesFileSortMode {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsUpdateBody2ReviewPreferencesLayout::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SettingsUpdateBody2ReviewPreferencesLayout {
     #[serde(
         rename = "focusChatHeight",
@@ -2467,6 +4861,81 @@ pub struct SettingsUpdateBody2ReviewPreferencesLayout {
         serialize_with = "crate::number::option::serialize"
     )]
     pub right_desktop_sidebar_width: Option<f64>,
+}
+
+impl SettingsUpdateBody2ReviewPreferencesLayout {
+    /// Creates a new `SettingsUpdateBody2ReviewPreferencesLayout` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateBody2ReviewPreferencesLayout::new().with_focus_chat_height(…)`.
+    pub fn new() -> Self {
+        Self {
+            focus_chat_height: None,
+            active_tab: None,
+            active_view_mode: None,
+            focus_chat_open: None,
+            focus_mode: None,
+            left_desktop_sidebar_open: None,
+            left_desktop_sidebar_width: None,
+            right_desktop_sidebar_open: None,
+            right_desktop_sidebar_width: None,
+        }
+    }
+
+    /// Sets `focus_chat_height`, which `new` leaves unset.
+    pub fn with_focus_chat_height(mut self, value: f64) -> Self {
+        self.focus_chat_height = Some(value);
+        self
+    }
+
+    /// Sets `active_tab`, which `new` leaves unset.
+    pub fn with_active_tab(mut self, value: impl Into<String>) -> Self {
+        self.active_tab = Some(value.into());
+        self
+    }
+
+    /// Sets `active_view_mode`, which `new` leaves unset.
+    pub fn with_active_view_mode(mut self, value: impl Into<String>) -> Self {
+        self.active_view_mode = Some(value.into());
+        self
+    }
+
+    /// Sets `focus_chat_open`, which `new` leaves unset.
+    pub fn with_focus_chat_open(mut self, value: bool) -> Self {
+        self.focus_chat_open = Some(value);
+        self
+    }
+
+    /// Sets `focus_mode`, which `new` leaves unset.
+    pub fn with_focus_mode(mut self, value: bool) -> Self {
+        self.focus_mode = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.left_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `left_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_left_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.left_desktop_sidebar_width = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_open`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_open(mut self, value: bool) -> Self {
+        self.right_desktop_sidebar_open = Some(value);
+        self
+    }
+
+    /// Sets `right_desktop_sidebar_width`, which `new` leaves unset.
+    pub fn with_right_desktop_sidebar_width(mut self, value: f64) -> Self {
+        self.right_desktop_sidebar_width = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

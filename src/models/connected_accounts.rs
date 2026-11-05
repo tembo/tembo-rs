@@ -5,9 +5,9 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ConnectedAccountsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ConnectedAccountsListResponse {
@@ -16,9 +16,19 @@ pub struct ConnectedAccountsListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ConnectedAccountsListResponse {
+    /// Creates a new `ConnectedAccountsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<ConnectedAccountsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ConnectedAccountsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ConnectedAccountsListResponseItem {
@@ -46,9 +56,38 @@ pub struct ConnectedAccountsListResponseItem {
     pub username: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl ConnectedAccountsListResponseItem {
+    /// Creates a new `ConnectedAccountsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        account_id: impl Into<String>,
+        created_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        provider_id: impl Into<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        email: Option<String>,
+        scopes: Vec<String>,
+        username: Option<String>,
+    ) -> Self {
+        Self {
+            account_id: account_id.into(),
+            created_at,
+            id: id.into(),
+            provider_id: provider_id.into(),
+            updated_at,
+            email,
+            scopes,
+            username,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ConnectedAccountsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct ConnectedAccountsRetrieveResponse {
@@ -74,4 +113,33 @@ pub struct ConnectedAccountsRetrieveResponse {
     pub scopes: Vec<String>,
     #[serde(default)]
     pub username: Option<String>,
+}
+
+impl ConnectedAccountsRetrieveResponse {
+    /// Creates a new `ConnectedAccountsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        account_id: impl Into<String>,
+        created_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        provider_id: impl Into<String>,
+        updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        email: Option<String>,
+        scopes: Vec<String>,
+        username: Option<String>,
+    ) -> Self {
+        Self {
+            account_id: account_id.into(),
+            created_at,
+            id: id.into(),
+            provider_id: provider_id.into(),
+            updated_at,
+            email,
+            scopes,
+            username,
+        }
+    }
 }

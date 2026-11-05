@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesListResponse {
@@ -16,9 +15,19 @@ pub struct SchedulesListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SchedulesListResponse {
+    /// Creates a new `SchedulesListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<SchedulesListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesListResponseItem {
@@ -52,9 +61,40 @@ pub struct SchedulesListResponseItem {
     pub project_id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SchedulesListResponseItem {
+    /// Creates a new `SchedulesListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        cron: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        next_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        timezone: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        project_id: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            cron: cron.into(),
+            enabled_at,
+            id: id.into(),
+            last_run_at,
+            next_run_at,
+            timezone,
+            updated_at,
+            project_id: project_id.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesCreateResponse {
@@ -88,7 +128,41 @@ pub struct SchedulesCreateResponse {
     pub project_id: String,
 }
 
+impl SchedulesCreateResponse {
+    /// Creates a new `SchedulesCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        cron: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        next_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        timezone: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        project_id: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            cron: cron.into(),
+            enabled_at,
+            id: id.into(),
+            last_run_at,
+            next_run_at,
+            timezone,
+            updated_at,
+            project_id: project_id.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SchedulesCreateBody {
     /// Cron expression for recurring project snapshot builds.
     pub cron: String,
@@ -100,19 +174,25 @@ pub struct SchedulesCreateBody {
 impl SchedulesCreateBody {
     /// Creates a new `SchedulesCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `SchedulesCreateBody { timezone: Some(…), ..SchedulesCreateBody::new(cron) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `SchedulesCreateBody::new(cron).with_timezone(…)`.
     pub fn new(cron: impl Into<String>) -> Self {
         Self {
             cron: cron.into(),
             timezone: None,
         }
     }
+
+    /// Sets `timezone`, which `new` leaves unset.
+    pub fn with_timezone(mut self, value: impl Into<String>) -> Self {
+        self.timezone = Some(value.into());
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesRetrieveResponse {
@@ -146,9 +226,40 @@ pub struct SchedulesRetrieveResponse {
     pub project_id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SchedulesRetrieveResponse {
+    /// Creates a new `SchedulesRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        cron: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        next_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        timezone: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        project_id: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            cron: cron.into(),
+            enabled_at,
+            id: id.into(),
+            last_run_at,
+            next_run_at,
+            timezone,
+            updated_at,
+            project_id: project_id.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesUpdateResponse {
@@ -182,7 +293,44 @@ pub struct SchedulesUpdateResponse {
     pub project_id: String,
 }
 
+impl SchedulesUpdateResponse {
+    /// Creates a new `SchedulesUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        cron: impl Into<String>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        id: impl Into<String>,
+        last_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        next_run_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        timezone: Option<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        project_id: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            cron: cron.into(),
+            enabled_at,
+            id: id.into(),
+            last_run_at,
+            next_run_at,
+            timezone,
+            updated_at,
+            project_id: project_id.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SchedulesUpdateBody {
     /// Replace the recurring project build cron expression.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -191,16 +339,64 @@ pub struct SchedulesUpdateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
     /// Timezone for the cron schedule, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timezone: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub timezone: Option<Option<String>>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SchedulesUpdateBody {
+    /// Creates a new `SchedulesUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SchedulesUpdateBody::new().with_cron(…)`.
+    pub fn new() -> Self {
+        Self {
+            cron: None,
+            enabled: None,
+            timezone: None,
+        }
+    }
+
+    /// Sets `cron`, which `new` leaves unset.
+    pub fn with_cron(mut self, value: impl Into<String>) -> Self {
+        self.cron = Some(value.into());
+        self
+    }
+
+    /// Sets `enabled`, which `new` leaves unset.
+    pub fn with_enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    /// Sets `timezone`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `timezone = Some(None)` on the built value.
+    pub fn with_timezone(mut self, value: impl Into<String>) -> Self {
+        self.timezone = Some(Some(value.into()));
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SchedulesDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SchedulesDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl SchedulesDeleteResponse {
+    /// Creates a new `SchedulesDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

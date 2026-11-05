@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 #[non_exhaustive]
 pub enum AgentOptionsInput {
-    RuntimeAgentOptions(std::collections::HashMap<String, serde_json::Value>),
+    RuntimeAgentOptions(std::collections::BTreeMap<String, serde_json::Value>),
     Variant1(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
@@ -22,11 +22,10 @@ pub enum AgentOptionsInput {
 }
 
 /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
-pub type AgentState = std::collections::HashMap<String, serde_json::Value>;
+pub type AgentState = std::collections::BTreeMap<String, serde_json::Value>;
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsListResponse {
@@ -37,9 +36,26 @@ pub struct AgentsListResponse {
     pub filter_options: AgentsListResponseFilterOptions,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsListResponse {
+    /// Creates a new `AgentsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        items: Vec<AgentsListResponseItem>,
+        next_cursor: Option<String>,
+        filter_options: AgentsListResponseFilterOptions,
+    ) -> Self {
+        Self {
+            items,
+            next_cursor,
+            filter_options,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsListResponseItem {
@@ -94,6 +110,61 @@ pub struct AgentsListResponseItem {
     pub integration_types: Vec<String>,
     #[serde(rename = "codeRepositoryCount")]
     pub code_repository_count: i64,
+}
+
+impl AgentsListResponseItem {
+    /// Creates a new `AgentsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        organization_id: Option<String>,
+        organization_name: Option<String>,
+        created_by: Option<String>,
+        name: impl Into<String>,
+        instructions: Option<TipTapDocument>,
+        agent: Option<String>,
+        mcp_servers: Vec<String>,
+        artifact_type: Option<AgentsListResponseItemArtifactType>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_run: Option<AgentsListResponseItemLastRun>,
+        run_count: i64,
+        schedule_count: i64,
+        trigger_count: i64,
+        has_paused_schedule: bool,
+        has_paused_trigger: bool,
+        integration_ids: Vec<String>,
+        integration_types: Vec<String>,
+        code_repository_count: i64,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            organization_id,
+            organization_name,
+            created_by,
+            name: name.into(),
+            instructions,
+            agent,
+            mcp_servers,
+            artifact_type,
+            created_at,
+            archived_at,
+            enabled_at,
+            last_run,
+            run_count,
+            schedule_count,
+            trigger_count,
+            has_paused_schedule,
+            has_paused_trigger,
+            integration_ids,
+            integration_types,
+            code_repository_count,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -152,9 +223,9 @@ impl From<&str> for AgentsListResponseItemArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsListResponseItemLastRun::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsListResponseItemLastRun {
@@ -173,9 +244,35 @@ pub struct AgentsListResponseItemLastRun {
     pub error_message: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsListResponseItemLastRun {
+    /// Creates a new `AgentsListResponseItemLastRun` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsListResponseFilterOptions::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsListResponseFilterOptions {
@@ -185,9 +282,21 @@ pub struct AgentsListResponseFilterOptions {
     pub integration_types: Vec<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsListResponseFilterOptions {
+    /// Creates a new `AgentsListResponseFilterOptions` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(total_count: i64, integration_types: Vec<String>) -> Self {
+        Self {
+            total_count,
+            integration_types,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsCreateResponse {
@@ -243,7 +352,7 @@ pub struct AgentsCreateResponse {
     pub mcp_servers: Vec<String>,
     /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
     #[serde(rename = "userState", default)]
-    pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(rename = "codeRepositories")]
     pub code_repositories: Vec<AgentsCreateResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
@@ -262,6 +371,79 @@ pub struct AgentsCreateResponse {
     pub integration_ids: Vec<String>,
     #[serde(rename = "integrationTypes")]
     pub integration_types: Vec<String>,
+}
+
+impl AgentsCreateResponse {
+    /// Creates a new `AgentsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        key: Option<String>,
+        sandbox_size: Option<AgentsCreateResponseSandboxSize>,
+        project_id: Option<String>,
+        template_id: Option<String>,
+        content_version: i64,
+        script: Option<String>,
+        artifact_type: Option<AgentsCreateResponseArtifactType>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        organization_id: Option<String>,
+        organization_name: Option<String>,
+        created_by: Option<String>,
+        instructions: Option<TipTapDocument>,
+        agent: Option<String>,
+        agent_options: AgentOptionsInput,
+        mcp_servers: Vec<String>,
+        user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
+        code_repositories: Vec<AgentsCreateResponseCodeRepository>,
+        last_run: Option<AgentsCreateResponseLastRun>,
+        run_count: i64,
+        schedule_count: i64,
+        trigger_count: i64,
+        has_paused_schedule: bool,
+        has_paused_trigger: bool,
+        integration_ids: Vec<String>,
+        integration_types: Vec<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            key,
+            sandbox_size,
+            project_id,
+            template_id,
+            content_version,
+            script,
+            artifact_type,
+            created_at,
+            updated_at,
+            archived_at,
+            enabled_at,
+            organization_id,
+            organization_name,
+            created_by,
+            instructions,
+            agent,
+            agent_options,
+            mcp_servers,
+            user_state,
+            code_repositories,
+            last_run,
+            run_count,
+            schedule_count,
+            trigger_count,
+            has_paused_schedule,
+            has_paused_trigger,
+            integration_ids,
+            integration_types,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -387,9 +569,9 @@ impl From<&str> for AgentsCreateResponseArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateResponseCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsCreateResponseCodeRepository {
@@ -403,9 +585,31 @@ pub struct AgentsCreateResponseCodeRepository {
     pub integration_type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsCreateResponseCodeRepository {
+    /// Creates a new `AgentsCreateResponseCodeRepository` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration_id: impl Into<String>,
+        integration_type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            integration_id: integration_id.into(),
+            integration_type: integration_type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateResponseLastRun::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsCreateResponseLastRun {
@@ -424,7 +628,39 @@ pub struct AgentsCreateResponseLastRun {
     pub error_message: Option<String>,
 }
 
+impl AgentsCreateResponseLastRun {
+    /// Creates a new `AgentsCreateResponseLastRun` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentsCreateBody {
     /// Agent display name. Required when creating from scratch.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -442,14 +678,29 @@ pub struct AgentsCreateBody {
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptionsInput>,
     /// Workspace VM size used for agent runs.
-    #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
-    pub sandbox_size: Option<AgentsCreateBodySandboxSize>,
+    #[serde(
+        rename = "sandboxSize",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub sandbox_size: Option<Option<AgentsCreateBodySandboxSize>>,
     /// Project environment used for agent runs.
-    #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
-    pub project_id: Option<AgentsCreateBodyProjectId>,
+    #[serde(
+        rename = "projectId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub project_id: Option<Option<AgentsCreateBodyProjectId>>,
     /// Artifact type produced by this agent.
-    #[serde(rename = "artifactType", default, skip_serializing_if = "Option::is_none")]
-    pub artifact_type: Option<AgentsCreateBodyArtifactType>,
+    #[serde(
+        rename = "artifactType",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub artifact_type: Option<Option<AgentsCreateBodyArtifactType>>,
     /// Repository IDs available to agent runs.
     #[serde(rename = "repositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub repository_ids: Option<Vec<String>>,
@@ -465,6 +716,114 @@ pub struct AgentsCreateBody {
     /// Duplicate an existing agent. Must be the only field; cannot be combined with templateName or overrides.
     #[serde(rename = "sourceAgentId", default, skip_serializing_if = "Option::is_none")]
     pub source_agent_id: Option<String>,
+}
+
+impl AgentsCreateBody {
+    /// Creates a new `AgentsCreateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AgentsCreateBody::new().with_name(…)`.
+    pub fn new() -> Self {
+        Self {
+            name: None,
+            instructions: None,
+            mcp_servers: None,
+            agent: None,
+            agent_options: None,
+            sandbox_size: None,
+            project_id: None,
+            artifact_type: None,
+            repository_ids: None,
+            triggers: None,
+            schedules: None,
+            template_name: None,
+            source_agent_id: None,
+        }
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `instructions`, which `new` leaves unset.
+    pub fn with_instructions(mut self, value: TipTapDocument) -> Self {
+        self.instructions = Some(value);
+        self
+    }
+
+    /// Sets `mcp_servers`, which `new` leaves unset.
+    pub fn with_mcp_servers(mut self, value: Vec<String>) -> Self {
+        self.mcp_servers = Some(value);
+        self
+    }
+
+    /// Sets `agent`, which `new` leaves unset.
+    pub fn with_agent(mut self, value: impl Into<String>) -> Self {
+        self.agent = Some(value.into());
+        self
+    }
+
+    /// Sets `agent_options`, which `new` leaves unset.
+    pub fn with_agent_options(mut self, value: AgentOptionsInput) -> Self {
+        self.agent_options = Some(value);
+        self
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `sandbox_size = Some(None)` on the built value.
+    pub fn with_sandbox_size(mut self, value: AgentsCreateBodySandboxSize) -> Self {
+        self.sandbox_size = Some(Some(value));
+        self
+    }
+
+    /// Sets `project_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `project_id = Some(None)` on the built value.
+    pub fn with_project_id(mut self, value: AgentsCreateBodyProjectId) -> Self {
+        self.project_id = Some(Some(value));
+        self
+    }
+
+    /// Sets `artifact_type`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `artifact_type = Some(None)` on the built value.
+    pub fn with_artifact_type(mut self, value: AgentsCreateBodyArtifactType) -> Self {
+        self.artifact_type = Some(Some(value));
+        self
+    }
+
+    /// Sets `repository_ids`, which `new` leaves unset.
+    pub fn with_repository_ids(mut self, value: Vec<String>) -> Self {
+        self.repository_ids = Some(value);
+        self
+    }
+
+    /// Sets `triggers`, which `new` leaves unset.
+    pub fn with_triggers(mut self, value: Vec<AgentsCreateBodyTrigger>) -> Self {
+        self.triggers = Some(value);
+        self
+    }
+
+    /// Sets `schedules`, which `new` leaves unset.
+    pub fn with_schedules(mut self, value: Vec<AgentsCreateBodySchedule>) -> Self {
+        self.schedules = Some(value);
+        self
+    }
+
+    /// Sets `template_name`, which `new` leaves unset.
+    pub fn with_template_name(mut self, value: AgentsCreateBodyTemplateName) -> Self {
+        self.template_name = Some(value);
+        self
+    }
+
+    /// Sets `source_agent_id`, which `new` leaves unset.
+    pub fn with_source_agent_id(mut self, value: impl Into<String>) -> Self {
+        self.source_agent_id = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -605,7 +964,11 @@ impl From<&str> for AgentsCreateBodyArtifactType {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateBodyTrigger::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentsCreateBodyTrigger {
     /// Integration event name. Use listIntegrationTriggers to discover supported triggers.
     pub name: String,
@@ -623,8 +986,8 @@ pub struct AgentsCreateBodyTrigger {
 impl AgentsCreateBodyTrigger {
     /// Creates a new `AgentsCreateBodyTrigger` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `AgentsCreateBodyTrigger { integration_type: Some(…), ..AgentsCreateBodyTrigger::new(name) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `AgentsCreateBodyTrigger::new(name).with_integration_type(…)`.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -633,12 +996,41 @@ impl AgentsCreateBodyTrigger {
             filters: None,
         }
     }
+
+    /// Sets `integration_type`, which `new` leaves unset.
+    pub fn with_integration_type(mut self, value: impl Into<String>) -> Self {
+        self.integration_type = Some(value.into());
+        self
+    }
+
+    /// Sets `integration_id`, which `new` leaves unset.
+    pub fn with_integration_id(mut self, value: impl Into<String>) -> Self {
+        self.integration_id = Some(value.into());
+        self
+    }
+
+    /// Sets `filters`, which `new` leaves unset.
+    pub fn with_filters(mut self, value: TriggerFilters) -> Self {
+        self.filters = Some(value);
+        self
+    }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsCreateBodySchedule::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentsCreateBodySchedule {
     /// Cron expression for recurring agent runs. Agent enabled and archived state controls whether the schedule runs.
     pub cron: String,
+}
+
+impl AgentsCreateBodySchedule {
+    /// Creates a new `AgentsCreateBodySchedule` from its required fields, leaving every optional one unset.
+    pub fn new(cron: impl Into<String>) -> Self {
+        Self { cron: cron.into() }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -824,9 +1216,8 @@ impl From<&str> for AgentsCreateBodyTemplateName {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsRetrieveResponse {
@@ -882,7 +1273,7 @@ pub struct AgentsRetrieveResponse {
     pub mcp_servers: Vec<String>,
     /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
     #[serde(rename = "userState", default)]
-    pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(rename = "codeRepositories")]
     pub code_repositories: Vec<AgentsRetrieveResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
@@ -901,6 +1292,79 @@ pub struct AgentsRetrieveResponse {
     pub integration_ids: Vec<String>,
     #[serde(rename = "integrationTypes")]
     pub integration_types: Vec<String>,
+}
+
+impl AgentsRetrieveResponse {
+    /// Creates a new `AgentsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        key: Option<String>,
+        sandbox_size: Option<AgentsRetrieveResponseSandboxSize>,
+        project_id: Option<String>,
+        template_id: Option<String>,
+        content_version: i64,
+        script: Option<String>,
+        artifact_type: Option<AgentsRetrieveResponseArtifactType>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        organization_id: Option<String>,
+        organization_name: Option<String>,
+        created_by: Option<String>,
+        instructions: Option<TipTapDocument>,
+        agent: Option<String>,
+        agent_options: AgentOptionsInput,
+        mcp_servers: Vec<String>,
+        user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
+        code_repositories: Vec<AgentsRetrieveResponseCodeRepository>,
+        last_run: Option<AgentsRetrieveResponseLastRun>,
+        run_count: i64,
+        schedule_count: i64,
+        trigger_count: i64,
+        has_paused_schedule: bool,
+        has_paused_trigger: bool,
+        integration_ids: Vec<String>,
+        integration_types: Vec<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            key,
+            sandbox_size,
+            project_id,
+            template_id,
+            content_version,
+            script,
+            artifact_type,
+            created_at,
+            updated_at,
+            archived_at,
+            enabled_at,
+            organization_id,
+            organization_name,
+            created_by,
+            instructions,
+            agent,
+            agent_options,
+            mcp_servers,
+            user_state,
+            code_repositories,
+            last_run,
+            run_count,
+            schedule_count,
+            trigger_count,
+            has_paused_schedule,
+            has_paused_trigger,
+            integration_ids,
+            integration_types,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1026,9 +1490,9 @@ impl From<&str> for AgentsRetrieveResponseArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsRetrieveResponseCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsRetrieveResponseCodeRepository {
@@ -1042,9 +1506,31 @@ pub struct AgentsRetrieveResponseCodeRepository {
     pub integration_type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsRetrieveResponseCodeRepository {
+    /// Creates a new `AgentsRetrieveResponseCodeRepository` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration_id: impl Into<String>,
+        integration_type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            integration_id: integration_id.into(),
+            integration_type: integration_type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsRetrieveResponseLastRun::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsRetrieveResponseLastRun {
@@ -1063,9 +1549,34 @@ pub struct AgentsRetrieveResponseLastRun {
     pub error_message: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsRetrieveResponseLastRun {
+    /// Creates a new `AgentsRetrieveResponseLastRun` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsUpdateResponse {
@@ -1121,7 +1632,7 @@ pub struct AgentsUpdateResponse {
     pub mcp_servers: Vec<String>,
     /// User-defined state keyed by name. Values may be any JSON value, including nested objects and arrays. No application-specific keys are required.
     #[serde(rename = "userState", default)]
-    pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(rename = "codeRepositories")]
     pub code_repositories: Vec<AgentsUpdateResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
@@ -1140,6 +1651,79 @@ pub struct AgentsUpdateResponse {
     pub integration_ids: Vec<String>,
     #[serde(rename = "integrationTypes")]
     pub integration_types: Vec<String>,
+}
+
+impl AgentsUpdateResponse {
+    /// Creates a new `AgentsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        key: Option<String>,
+        sandbox_size: Option<AgentsUpdateResponseSandboxSize>,
+        project_id: Option<String>,
+        template_id: Option<String>,
+        content_version: i64,
+        script: Option<String>,
+        artifact_type: Option<AgentsUpdateResponseArtifactType>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        organization_id: Option<String>,
+        organization_name: Option<String>,
+        created_by: Option<String>,
+        instructions: Option<TipTapDocument>,
+        agent: Option<String>,
+        agent_options: AgentOptionsInput,
+        mcp_servers: Vec<String>,
+        user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
+        code_repositories: Vec<AgentsUpdateResponseCodeRepository>,
+        last_run: Option<AgentsUpdateResponseLastRun>,
+        run_count: i64,
+        schedule_count: i64,
+        trigger_count: i64,
+        has_paused_schedule: bool,
+        has_paused_trigger: bool,
+        integration_ids: Vec<String>,
+        integration_types: Vec<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            key,
+            sandbox_size,
+            project_id,
+            template_id,
+            content_version,
+            script,
+            artifact_type,
+            created_at,
+            updated_at,
+            archived_at,
+            enabled_at,
+            organization_id,
+            organization_name,
+            created_by,
+            instructions,
+            agent,
+            agent_options,
+            mcp_servers,
+            user_state,
+            code_repositories,
+            last_run,
+            run_count,
+            schedule_count,
+            trigger_count,
+            has_paused_schedule,
+            has_paused_trigger,
+            integration_ids,
+            integration_types,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1265,9 +1849,9 @@ impl From<&str> for AgentsUpdateResponseArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsUpdateResponseCodeRepository::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsUpdateResponseCodeRepository {
@@ -1281,9 +1865,31 @@ pub struct AgentsUpdateResponseCodeRepository {
     pub integration_type: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl AgentsUpdateResponseCodeRepository {
+    /// Creates a new `AgentsUpdateResponseCodeRepository` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration_id: impl Into<String>,
+        integration_type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            integration_id: integration_id.into(),
+            integration_type: integration_type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsUpdateResponseLastRun::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsUpdateResponseLastRun {
@@ -1302,7 +1908,39 @@ pub struct AgentsUpdateResponseLastRun {
     pub error_message: Option<String>,
 }
 
+impl AgentsUpdateResponseLastRun {
+    /// Creates a new `AgentsUpdateResponseLastRun` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        session_id: Option<String>,
+        status: impl Into<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        duration_ms: i64,
+        error_message: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id,
+            status: status.into(),
+            created_at,
+            updated_at,
+            duration_ms,
+            error_message,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentsUpdateBody {
     /// Value of updatedAt from the last retrieved agent. A concurrent change causes a conflict instead of overwriting newer changes.
     #[serde(
@@ -1316,38 +1954,74 @@ pub struct AgentsUpdateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Change the agent lookup key, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub key: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub key: Option<Option<String>>,
     /// Replace the agent instruction document, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub instructions: Option<TipTapDocument>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub instructions: Option<Option<TipTapDocument>>,
     /// Replace the MCP server or connection IDs. An empty array clears the selection.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
     /// Change the coding agent and model key. Null clears the override.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub agent: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub agent: Option<Option<String>>,
     /// Change agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptionsInput>,
     /// Replace the user-managed persistent agent state.
     #[serde(rename = "userState", default, skip_serializing_if = "Option::is_none")]
-    pub user_state: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     /// Change the workspace VM size. Null clears the override.
-    #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
-    pub sandbox_size: Option<AgentsUpdateBodySandboxSize>,
+    #[serde(
+        rename = "sandboxSize",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub sandbox_size: Option<Option<AgentsUpdateBodySandboxSize>>,
     /// Change the project environment for runs. Null clears the override.
-    #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
-    pub project_id: Option<AgentsUpdateBodyProjectId>,
+    #[serde(
+        rename = "projectId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub project_id: Option<Option<AgentsUpdateBodyProjectId>>,
     /// Change the associated agent template identifier, or null to clear it.
-    #[serde(rename = "templateId", default, skip_serializing_if = "Option::is_none")]
-    pub template_id: Option<String>,
+    #[serde(
+        rename = "templateId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub template_id: Option<Option<String>>,
     /// Replace the agent script, or null to clear it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub script: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub script: Option<Option<String>>,
     /// Change the artifact type produced by the agent, or null to clear it.
-    #[serde(rename = "artifactType", default, skip_serializing_if = "Option::is_none")]
-    pub artifact_type: Option<AgentsUpdateBodyArtifactType>,
+    #[serde(
+        rename = "artifactType",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub artifact_type: Option<Option<AgentsUpdateBodyArtifactType>>,
     /// Replace repository associations. An empty array removes all associations.
     #[serde(rename = "repositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub repository_ids: Option<Vec<String>>,
@@ -1357,6 +2031,145 @@ pub struct AgentsUpdateBody {
     /// Archive with true or restore with false. Archiving disables schedules and triggers; restoring follows the agent enabled state.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub archived: Option<bool>,
+}
+
+impl AgentsUpdateBody {
+    /// Creates a new `AgentsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AgentsUpdateBody::new().with_expected_updated_at(…)`.
+    pub fn new() -> Self {
+        Self {
+            expected_updated_at: None,
+            name: None,
+            key: None,
+            instructions: None,
+            mcp_servers: None,
+            agent: None,
+            agent_options: None,
+            user_state: None,
+            sandbox_size: None,
+            project_id: None,
+            template_id: None,
+            script: None,
+            artifact_type: None,
+            repository_ids: None,
+            enabled: None,
+            archived: None,
+        }
+    }
+
+    /// Sets `expected_updated_at`, which `new` leaves unset.
+    pub fn with_expected_updated_at(mut self, value: chrono::DateTime<chrono::FixedOffset>) -> Self {
+        self.expected_updated_at = Some(value);
+        self
+    }
+
+    /// Sets `name`, which `new` leaves unset.
+    pub fn with_name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+
+    /// Sets `key`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `key = Some(None)` on the built value.
+    pub fn with_key(mut self, value: impl Into<String>) -> Self {
+        self.key = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `instructions`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `instructions = Some(None)` on the built value.
+    pub fn with_instructions(mut self, value: TipTapDocument) -> Self {
+        self.instructions = Some(Some(value));
+        self
+    }
+
+    /// Sets `mcp_servers`, which `new` leaves unset.
+    pub fn with_mcp_servers(mut self, value: Vec<String>) -> Self {
+        self.mcp_servers = Some(value);
+        self
+    }
+
+    /// Sets `agent`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `agent = Some(None)` on the built value.
+    pub fn with_agent(mut self, value: impl Into<String>) -> Self {
+        self.agent = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `agent_options`, which `new` leaves unset.
+    pub fn with_agent_options(mut self, value: AgentOptionsInput) -> Self {
+        self.agent_options = Some(value);
+        self
+    }
+
+    /// Sets `user_state`, which `new` leaves unset.
+    pub fn with_user_state(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.user_state = Some(value);
+        self
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `sandbox_size = Some(None)` on the built value.
+    pub fn with_sandbox_size(mut self, value: AgentsUpdateBodySandboxSize) -> Self {
+        self.sandbox_size = Some(Some(value));
+        self
+    }
+
+    /// Sets `project_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `project_id = Some(None)` on the built value.
+    pub fn with_project_id(mut self, value: AgentsUpdateBodyProjectId) -> Self {
+        self.project_id = Some(Some(value));
+        self
+    }
+
+    /// Sets `template_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `template_id = Some(None)` on the built value.
+    pub fn with_template_id(mut self, value: impl Into<String>) -> Self {
+        self.template_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `script`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `script = Some(None)` on the built value.
+    pub fn with_script(mut self, value: impl Into<String>) -> Self {
+        self.script = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `artifact_type`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `artifact_type = Some(None)` on the built value.
+    pub fn with_artifact_type(mut self, value: AgentsUpdateBodyArtifactType) -> Self {
+        self.artifact_type = Some(Some(value));
+        self
+    }
+
+    /// Sets `repository_ids`, which `new` leaves unset.
+    pub fn with_repository_ids(mut self, value: Vec<String>) -> Self {
+        self.repository_ids = Some(value);
+        self
+    }
+
+    /// Sets `enabled`, which `new` leaves unset.
+    pub fn with_enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    /// Sets `archived`, which `new` leaves unset.
+    pub fn with_archived(mut self, value: bool) -> Self {
+        self.archived = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1497,12 +2310,21 @@ impl From<&str> for AgentsUpdateBodyArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl AgentsDeleteResponse {
+    /// Creates a new `AgentsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

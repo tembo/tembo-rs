@@ -5,7 +5,13 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `AgentOptions::new`
+/// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentOptions {
     #[serde(rename = "reasoningLevel", default, skip_serializing_if = "Option::is_none")]
     pub reasoning_level: Option<String>,
@@ -22,25 +28,122 @@ pub struct AgentOptions {
     pub ultracode: Option<bool>,
 }
 
+impl AgentOptions {
+    /// Creates a new `AgentOptions` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AgentOptions::new().with_reasoning_level(…)`.
+    pub fn new() -> Self {
+        Self {
+            reasoning_level: None,
+            mode: None,
+            speed: None,
+            goal: None,
+            ultracode: None,
+        }
+    }
+
+    /// Sets `reasoning_level`, which `new` leaves unset.
+    pub fn with_reasoning_level(mut self, value: impl Into<String>) -> Self {
+        self.reasoning_level = Some(value.into());
+        self
+    }
+
+    /// Sets `mode`, which `new` leaves unset.
+    pub fn with_mode(mut self, value: AgentOptionsMode) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Sets `speed`, which `new` leaves unset.
+    pub fn with_speed(mut self, value: AgentOptionsSpeed) -> Self {
+        self.speed = Some(value);
+        self
+    }
+
+    /// Sets `goal`, which `new` leaves unset.
+    pub fn with_goal(mut self, value: AgentOptionsGoal) -> Self {
+        self.goal = Some(value);
+        self
+    }
+
+    /// Sets `ultracode`, which `new` leaves unset.
+    pub fn with_ultracode(mut self, value: bool) -> Self {
+        self.ultracode = Some(value);
+        self
+    }
+}
+
 pub type SessionTipTapDocument = serde_json::Value;
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionDocumentNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SessionDocumentNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub marks: Option<Vec<SessionDocumentNodeMark>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content: Option<Vec<SessionDocumentNode>>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionDocumentNode {
+    /// Creates a new `SessionDocumentNode` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionDocumentNode::new().with_type(…)`.
+    pub fn new() -> Self {
+        Self {
+            r#type: None,
+            text: None,
+            attrs: None,
+            marks: None,
+            content: None,
+        }
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<SessionDocumentNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<SessionDocumentNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionEventData::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionEventData {
@@ -77,9 +180,125 @@ pub struct SessionEventData {
     pub snapshot_created_at: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionEventData {
+    /// Creates a new `SessionEventData` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionEventData::new(r#type).with_scope(…)`.
+    pub fn new(r#type: impl Into<String>) -> Self {
+        Self {
+            r#type: r#type.into(),
+            scope: None,
+            source: None,
+            provider_event: None,
+            delivery: None,
+            event: None,
+            index: None,
+            item_id: None,
+            sequence_number: None,
+            accumulated_text: None,
+            delta_type: None,
+            response_phase: None,
+            tool_name: None,
+            tool_result: None,
+            snapshot_id: None,
+            snapshot_created_at: None,
+        }
+    }
+
+    /// Sets `scope`, which `new` leaves unset.
+    pub fn with_scope(mut self, value: SessionEventDataScope) -> Self {
+        self.scope = Some(value);
+        self
+    }
+
+    /// Sets `source`, which `new` leaves unset.
+    pub fn with_source(mut self, value: impl Into<String>) -> Self {
+        self.source = Some(value.into());
+        self
+    }
+
+    /// Sets `provider_event`, which `new` leaves unset.
+    pub fn with_provider_event(mut self, value: bool) -> Self {
+        self.provider_event = Some(value);
+        self
+    }
+
+    /// Sets `delivery`, which `new` leaves unset.
+    pub fn with_delivery(mut self, value: SessionEventDataDelivery) -> Self {
+        self.delivery = Some(value);
+        self
+    }
+
+    /// Sets `event`, which `new` leaves unset.
+    pub fn with_event(mut self, value: SessionEventDataEvent) -> Self {
+        self.event = Some(value);
+        self
+    }
+
+    /// Sets `index`, which `new` leaves unset.
+    pub fn with_index(mut self, value: i64) -> Self {
+        self.index = Some(value);
+        self
+    }
+
+    /// Sets `item_id`, which `new` leaves unset.
+    pub fn with_item_id(mut self, value: impl Into<String>) -> Self {
+        self.item_id = Some(value.into());
+        self
+    }
+
+    /// Sets `sequence_number`, which `new` leaves unset.
+    pub fn with_sequence_number(mut self, value: i64) -> Self {
+        self.sequence_number = Some(value);
+        self
+    }
+
+    /// Sets `accumulated_text`, which `new` leaves unset.
+    pub fn with_accumulated_text(mut self, value: impl Into<String>) -> Self {
+        self.accumulated_text = Some(value.into());
+        self
+    }
+
+    /// Sets `delta_type`, which `new` leaves unset.
+    pub fn with_delta_type(mut self, value: SessionEventDataDeltaType) -> Self {
+        self.delta_type = Some(value);
+        self
+    }
+
+    /// Sets `response_phase`, which `new` leaves unset.
+    pub fn with_response_phase(mut self, value: SessionEventDataResponsePhase) -> Self {
+        self.response_phase = Some(value);
+        self
+    }
+
+    /// Sets `tool_name`, which `new` leaves unset.
+    pub fn with_tool_name(mut self, value: impl Into<String>) -> Self {
+        self.tool_name = Some(value.into());
+        self
+    }
+
+    /// Sets `tool_result`, which `new` leaves unset.
+    pub fn with_tool_result(mut self, value: SessionEventDataToolResult) -> Self {
+        self.tool_result = Some(value);
+        self
+    }
+
+    /// Sets `snapshot_id`, which `new` leaves unset.
+    pub fn with_snapshot_id(mut self, value: impl Into<String>) -> Self {
+        self.snapshot_id = Some(value.into());
+        self
+    }
+
+    /// Sets `snapshot_created_at`, which `new` leaves unset.
+    pub fn with_snapshot_created_at(mut self, value: impl Into<String>) -> Self {
+        self.snapshot_created_at = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponse {
@@ -90,9 +309,32 @@ pub struct SessionsListResponse {
     pub total_count: Option<i64>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponse {
+    /// Creates a new `SessionsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsListResponse::new(items, next_cursor).with_total_count(…)`.
+    pub fn new(items: Vec<SessionsListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self {
+            items,
+            next_cursor,
+            total_count: None,
+        }
+    }
+
+    /// Sets `total_count`, which `new` leaves unset.
+    pub fn with_total_count(mut self, value: i64) -> Self {
+        self.total_count = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItem {
@@ -133,6 +375,59 @@ pub struct SessionsListResponseItem {
     #[serde(rename = "sourcePullRequest", default)]
     pub source_pull_request: Option<SessionsListResponseItemSourcePullRequest>,
     pub state: SessionsListResponseItemState,
+}
+
+impl SessionsListResponseItem {
+    /// Creates a new `SessionsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        project_id: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsListResponseItemVisibility,
+        artifacts: Vec<SessionsListResponseItemArtifact>,
+        diff_summary: Option<SessionsListResponseItemDiffSummary>,
+        is_pinned: bool,
+        project: Option<SessionsListResponseItemProject>,
+        session_source: SessionsListResponseItemSessionSource,
+        source_pull_request: Option<SessionsListResponseItemSourcePullRequest>,
+        state: SessionsListResponseItemState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            created_at,
+            external_id,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            project_id,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            diff_summary,
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -178,9 +473,9 @@ impl From<&str> for SessionsListResponseItemVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemArtifact {
@@ -190,9 +485,27 @@ pub struct SessionsListResponseItemArtifact {
     pub r#type: SessionsListResponseItemArtifactType,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponseItemArtifact {
+    /// Creates a new `SessionsListResponseItemArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        pull_requests: Vec<SessionsListResponseItemArtifactPullRequest>,
+        r#type: SessionsListResponseItemArtifactType,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            pull_requests,
+            r#type,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemArtifactPullRequest {
@@ -207,14 +520,53 @@ pub struct SessionsListResponseItemArtifactPullRequest {
     pub url: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponseItemArtifactPullRequest {
+    /// Creates a new `SessionsListResponseItemArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        agent: Option<String>,
+        code_repository: Option<SessionsListResponseItemArtifactPullRequestCodeRepository>,
+        id: impl Into<String>,
+        is_draft: bool,
+        status: SessionsListResponseItemArtifactPullRequestStatus,
+        url: impl Into<String>,
+    ) -> Self {
+        Self {
+            agent,
+            code_repository,
+            id: id.into(),
+            is_draft,
+            status,
+            url: url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemArtifactPullRequestCodeRepository {
     pub id: String,
     pub provider: String,
+}
+
+impl SessionsListResponseItemArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsListResponseItemArtifactPullRequestCodeRepository` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            provider: provider.into(),
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -320,9 +672,9 @@ impl From<&str> for SessionsListResponseItemArtifactType {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemDiffSummary {
@@ -330,9 +682,19 @@ pub struct SessionsListResponseItemDiffSummary {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponseItemDiffSummary {
+    /// Creates a new `SessionsListResponseItemDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemProject {
@@ -340,6 +702,26 @@ pub struct SessionsListResponseItemProject {
     pub name: String,
     pub icon: SessionsListResponseItemProjectIcon,
     pub color: SessionsListResponseItemProjectColor,
+}
+
+impl SessionsListResponseItemProject {
+    /// Creates a new `SessionsListResponseItemProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsListResponseItemProjectIcon,
+        color: SessionsListResponseItemProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -536,9 +918,9 @@ impl From<&str> for SessionsListResponseItemProjectColor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemSessionSource {
@@ -548,18 +930,47 @@ pub struct SessionsListResponseItemSessionSource {
     pub repositories: Vec<SessionsListResponseItemSessionSourceRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponseItemSessionSource {
+    /// Creates a new `SessionsListResponseItemSessionSource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsListResponseItemSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemSessionSourceRepository {
     pub id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListResponseItemSessionSourceRepository {
+    /// Creates a new `SessionsListResponseItemSessionSourceRepository` from its required fields, leaving every optional
+    /// one unset.
+    pub fn new(id: impl Into<String>) -> Self {
+        Self { id: id.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemSourcePullRequest {
@@ -570,6 +981,29 @@ pub struct SessionsListResponseItemSourcePullRequest {
     pub status: SessionsListResponseItemSourcePullRequestStatus,
     #[serde(rename = "isDraft")]
     pub is_draft: bool,
+}
+
+impl SessionsListResponseItemSourcePullRequest {
+    /// Creates a new `SessionsListResponseItemSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsListResponseItemSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -619,9 +1053,9 @@ impl From<&str> for SessionsListResponseItemSourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListResponseItemState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListResponseItemState {
@@ -637,6 +1071,32 @@ pub struct SessionsListResponseItemState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl SessionsListResponseItemState {
+    /// Creates a new `SessionsListResponseItemState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsListResponseItemState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsListResponseItemStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -694,9 +1154,8 @@ impl From<&str> for SessionsListResponseItemStateCurrent {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponse {
@@ -762,6 +1221,83 @@ pub struct SessionsCreateResponse {
     #[serde(rename = "sourcePullRequest", default)]
     pub source_pull_request: Option<SessionsCreateResponseSourcePullRequest>,
     pub state: SessionsCreateResponseState,
+}
+
+impl SessionsCreateResponse {
+    /// Creates a new `SessionsCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        artifact_type: Option<SessionsCreateResponseArtifactType>,
+        base_branch: Option<String>,
+        branch_name: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        mode: SessionsCreateResponseMode,
+        parent_session_id: Option<String>,
+        project_id: Option<String>,
+        sandbox_size: Option<SessionsCreateResponseSandboxSize>,
+        session_type: SessionsCreateResponseSessionType,
+        target_branch: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsCreateResponseVisibility,
+        artifacts: Vec<SessionsCreateResponseArtifact>,
+        automatic_sizing: bool,
+        description: Option<String>,
+        diff_summary: Option<SessionsCreateResponseDiffSummary>,
+        html_url: impl Into<String>,
+        is_pinned: bool,
+        project: Option<SessionsCreateResponseProject>,
+        session_source: SessionsCreateResponseSessionSource,
+        source_pull_request: Option<SessionsCreateResponseSourcePullRequest>,
+        state: SessionsCreateResponseState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            artifact_type,
+            base_branch,
+            branch_name,
+            created_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            mode,
+            parent_session_id,
+            project_id,
+            sandbox_size,
+            session_type,
+            target_branch,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            automatic_sizing,
+            description,
+            diff_summary,
+            html_url: html_url.into(),
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1014,9 +1550,9 @@ impl From<&str> for SessionsCreateResponseVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseArtifact {
@@ -1028,6 +1564,28 @@ pub struct SessionsCreateResponseArtifact {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "pullRequests")]
     pub pull_requests: Vec<SessionsCreateResponseArtifactPullRequest>,
+}
+
+impl SessionsCreateResponseArtifact {
+    /// Creates a new `SessionsCreateResponseArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        r#type: SessionsCreateResponseArtifactType2,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        pull_requests: Vec<SessionsCreateResponseArtifactPullRequest>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            r#type,
+            created_at,
+            updated_at,
+            pull_requests,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1086,9 +1644,9 @@ impl From<&str> for SessionsCreateResponseArtifactType2 {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseArtifactPullRequest {
@@ -1117,6 +1675,48 @@ pub struct SessionsCreateResponseArtifactPullRequest {
     pub author: Option<SessionsCreateResponseArtifactPullRequestAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<SessionsCreateResponseArtifactPullRequestCodeRepository>,
+}
+
+impl SessionsCreateResponseArtifactPullRequest {
+    /// Creates a new `SessionsCreateResponseArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsCreateResponseArtifactPullRequestStatus,
+        is_draft: bool,
+        source_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        agent: Option<String>,
+        diff: Option<SessionsCreateResponseArtifactPullRequestDiff>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        base_branch: Option<String>,
+        head_sha: Option<String>,
+        author: Option<SessionsCreateResponseArtifactPullRequestAuthor>,
+        code_repository: Option<SessionsCreateResponseArtifactPullRequestCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            source_branch,
+            created_at,
+            agent,
+            diff,
+            updated_at,
+            base_branch,
+            head_sha,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1166,10 +1766,13 @@ impl From<&str> for SessionsCreateResponseArtifactPullRequestStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseArtifactPullRequestDiff::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseArtifactPullRequestDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1180,9 +1783,42 @@ pub struct SessionsCreateResponseArtifactPullRequestDiff {
     pub data: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseArtifactPullRequestDiff {
+    /// Creates a new `SessionsCreateResponseArtifactPullRequestDiff` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsCreateResponseArtifactPullRequestDiff::new().with_additions(…)`.
+    pub fn new() -> Self {
+        Self {
+            additions: None,
+            deletions: None,
+            data: None,
+        }
+    }
+
+    /// Sets `additions`, which `new` leaves unset.
+    pub fn with_additions(mut self, value: i64) -> Self {
+        self.additions = Some(value);
+        self
+    }
+
+    /// Sets `deletions`, which `new` leaves unset.
+    pub fn with_deletions(mut self, value: i64) -> Self {
+        self.deletions = Some(value);
+        self
+    }
+
+    /// Sets `data`, which `new` leaves unset.
+    pub fn with_data(mut self, value: impl Into<String>) -> Self {
+        self.data = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseArtifactPullRequestAuthor::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseArtifactPullRequestAuthor {
@@ -1192,9 +1828,20 @@ pub struct SessionsCreateResponseArtifactPullRequestAuthor {
     pub login: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseArtifactPullRequestAuthor {
+    /// Creates a new `SessionsCreateResponseArtifactPullRequestAuthor` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(avatar_url: Option<String>, login: Option<String>) -> Self {
+        Self { avatar_url, login }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseArtifactPullRequestCodeRepository {
@@ -1207,9 +1854,32 @@ pub struct SessionsCreateResponseArtifactPullRequestCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsCreateResponseArtifactPullRequestCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseDiffSummary {
@@ -1217,9 +1887,19 @@ pub struct SessionsCreateResponseDiffSummary {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseDiffSummary {
+    /// Creates a new `SessionsCreateResponseDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseProject {
@@ -1227,6 +1907,26 @@ pub struct SessionsCreateResponseProject {
     pub name: String,
     pub icon: SessionsCreateResponseProjectIcon,
     pub color: SessionsCreateResponseProjectColor,
+}
+
+impl SessionsCreateResponseProject {
+    /// Creates a new `SessionsCreateResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsCreateResponseProjectIcon,
+        color: SessionsCreateResponseProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1423,9 +2123,9 @@ impl From<&str> for SessionsCreateResponseProjectColor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseSessionSource {
@@ -1435,9 +2135,29 @@ pub struct SessionsCreateResponseSessionSource {
     pub repositories: Vec<SessionsCreateResponseSessionSourceRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseSessionSource {
+    /// Creates a new `SessionsCreateResponseSessionSource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsCreateResponseSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseSessionSourceRepository {
@@ -1446,9 +2166,24 @@ pub struct SessionsCreateResponseSessionSourceRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsCreateResponseSessionSourceRepository {
+    /// Creates a new `SessionsCreateResponseSessionSourceRepository` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseSourcePullRequest {
@@ -1459,6 +2194,29 @@ pub struct SessionsCreateResponseSourcePullRequest {
     pub status: SessionsCreateResponseSourcePullRequestStatus,
     #[serde(rename = "isDraft")]
     pub is_draft: bool,
+}
+
+impl SessionsCreateResponseSourcePullRequest {
+    /// Creates a new `SessionsCreateResponseSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsCreateResponseSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1508,9 +2266,9 @@ impl From<&str> for SessionsCreateResponseSourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsCreateResponseState {
@@ -1526,6 +2284,32 @@ pub struct SessionsCreateResponseState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl SessionsCreateResponseState {
+    /// Creates a new `SessionsCreateResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsCreateResponseState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsCreateResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1583,26 +2367,44 @@ impl From<&str> for SessionsCreateResponseStateCurrent {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SessionsCreateBody {
     /// Agent and model key to run, such as claudeCode:claude-fable-5-1. Omit to use the default.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     /// Git branch to start work from. Omit or use null for the repository default.
-    #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
-    pub base_branch: Option<String>,
+    #[serde(
+        rename = "baseBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub base_branch: Option<Option<String>>,
     /// MCP server or connection IDs to enable for the session.
     #[serde(rename = "mcpServers", default, skip_serializing_if = "Option::is_none")]
     pub mcp_servers: Option<Vec<String>>,
     /// Project environment to use for the workspace. Omit or use null for the default.
-    #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
-    pub project_id: Option<String>,
+    #[serde(
+        rename = "projectId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub project_id: Option<Option<String>>,
     /// VM size for the session workspace.
     #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
     pub sandbox_size: Option<SessionsCreateBodySandboxSize>,
     /// Default target branch for pull requests created by the session.
-    #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
-    pub target_branch: Option<String>,
+    #[serde(
+        rename = "targetBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub target_branch: Option<Option<String>>,
     /// Session visibility: private or visible to workspace (public).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<SessionsCreateBodyVisibility>,
@@ -1610,8 +2412,13 @@ pub struct SessionsCreateBody {
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptions>,
     /// Git branch for this session. Omit or use null to generate a branch name.
-    #[serde(rename = "branchName", default, skip_serializing_if = "Option::is_none")]
-    pub branch_name: Option<String>,
+    #[serde(
+        rename = "branchName",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub branch_name: Option<Option<String>>,
     /// Repository IDs to make available in the session workspace.
     #[serde(rename = "codeRepositoryIds", default, skip_serializing_if = "Option::is_none")]
     pub code_repository_ids: Option<Vec<String>>,
@@ -1643,8 +2450,8 @@ pub struct SessionsCreateBody {
 impl SessionsCreateBody {
     /// Creates a new `SessionsCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `SessionsCreateBody { agent: Some(…), ..SessionsCreateBody::new(description) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsCreateBody::new(description).with_agent(…)`.
     pub fn new(description: impl Into<String>) -> Self {
         Self {
             agent: None,
@@ -1666,6 +2473,116 @@ impl SessionsCreateBody {
             session_mode: None,
             startup_agent: None,
         }
+    }
+
+    /// Sets `agent`, which `new` leaves unset.
+    pub fn with_agent(mut self, value: impl Into<String>) -> Self {
+        self.agent = Some(value.into());
+        self
+    }
+
+    /// Sets `base_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `base_branch = Some(None)` on the built value.
+    pub fn with_base_branch(mut self, value: impl Into<String>) -> Self {
+        self.base_branch = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `mcp_servers`, which `new` leaves unset.
+    pub fn with_mcp_servers(mut self, value: Vec<String>) -> Self {
+        self.mcp_servers = Some(value);
+        self
+    }
+
+    /// Sets `project_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `project_id = Some(None)` on the built value.
+    pub fn with_project_id(mut self, value: impl Into<String>) -> Self {
+        self.project_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    pub fn with_sandbox_size(mut self, value: SessionsCreateBodySandboxSize) -> Self {
+        self.sandbox_size = Some(value);
+        self
+    }
+
+    /// Sets `target_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `target_branch = Some(None)` on the built value.
+    pub fn with_target_branch(mut self, value: impl Into<String>) -> Self {
+        self.target_branch = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: SessionsCreateBodyVisibility) -> Self {
+        self.visibility = Some(value);
+        self
+    }
+
+    /// Sets `agent_options`, which `new` leaves unset.
+    pub fn with_agent_options(mut self, value: AgentOptions) -> Self {
+        self.agent_options = Some(value);
+        self
+    }
+
+    /// Sets `branch_name`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `branch_name = Some(None)` on the built value.
+    pub fn with_branch_name(mut self, value: impl Into<String>) -> Self {
+        self.branch_name = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `code_repository_ids`, which `new` leaves unset.
+    pub fn with_code_repository_ids(mut self, value: Vec<String>) -> Self {
+        self.code_repository_ids = Some(value);
+        self
+    }
+
+    /// Sets `id`, which `new` leaves unset.
+    pub fn with_id(mut self, value: impl Into<String>) -> Self {
+        self.id = Some(value.into());
+        self
+    }
+
+    /// Sets `rich_content`, which `new` leaves unset.
+    pub fn with_rich_content(mut self, value: SessionTipTapDocument) -> Self {
+        self.rich_content = Some(value);
+        self
+    }
+
+    /// Sets `pull_request_id`, which `new` leaves unset.
+    pub fn with_pull_request_id(mut self, value: impl Into<String>) -> Self {
+        self.pull_request_id = Some(value.into());
+        self
+    }
+
+    /// Sets `queue_right_away`, which `new` leaves unset.
+    pub fn with_queue_right_away(mut self, value: bool) -> Self {
+        self.queue_right_away = Some(value);
+        self
+    }
+
+    /// Sets `automatic_sizing`, which `new` leaves unset.
+    pub fn with_automatic_sizing(mut self, value: bool) -> Self {
+        self.automatic_sizing = Some(value);
+        self
+    }
+
+    /// Sets `session_mode`, which `new` leaves unset.
+    pub fn with_session_mode(mut self, value: SessionsCreateBodySessionMode) -> Self {
+        self.session_mode = Some(value);
+        self
+    }
+
+    /// Sets `startup_agent`, which `new` leaves unset.
+    pub fn with_startup_agent(mut self, value: SessionsCreateBodyStartupAgent) -> Self {
+        self.startup_agent = Some(value);
+        self
     }
 }
 
@@ -1881,9 +2798,9 @@ impl From<&str> for SessionsCreateBodyStartupAgent {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponse {
@@ -1949,6 +2866,83 @@ pub struct SessionsRetrieveResponse {
     #[serde(rename = "sourcePullRequest", default)]
     pub source_pull_request: Option<SessionsRetrieveResponseSourcePullRequest>,
     pub state: SessionsRetrieveResponseState,
+}
+
+impl SessionsRetrieveResponse {
+    /// Creates a new `SessionsRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        artifact_type: Option<SessionsRetrieveResponseArtifactType>,
+        base_branch: Option<String>,
+        branch_name: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        mode: SessionsRetrieveResponseMode,
+        parent_session_id: Option<String>,
+        project_id: Option<String>,
+        sandbox_size: Option<SessionsRetrieveResponseSandboxSize>,
+        session_type: SessionsRetrieveResponseSessionType,
+        target_branch: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsRetrieveResponseVisibility,
+        artifacts: Vec<SessionsRetrieveResponseArtifact>,
+        automatic_sizing: bool,
+        description: Option<String>,
+        diff_summary: Option<SessionsRetrieveResponseDiffSummary>,
+        html_url: impl Into<String>,
+        is_pinned: bool,
+        project: Option<SessionsRetrieveResponseProject>,
+        session_source: SessionsRetrieveResponseSessionSource,
+        source_pull_request: Option<SessionsRetrieveResponseSourcePullRequest>,
+        state: SessionsRetrieveResponseState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            artifact_type,
+            base_branch,
+            branch_name,
+            created_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            mode,
+            parent_session_id,
+            project_id,
+            sandbox_size,
+            session_type,
+            target_branch,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            automatic_sizing,
+            description,
+            diff_summary,
+            html_url: html_url.into(),
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2201,9 +3195,9 @@ impl From<&str> for SessionsRetrieveResponseVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseArtifact {
@@ -2215,6 +3209,28 @@ pub struct SessionsRetrieveResponseArtifact {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "pullRequests")]
     pub pull_requests: Vec<SessionsRetrieveResponseArtifactPullRequest>,
+}
+
+impl SessionsRetrieveResponseArtifact {
+    /// Creates a new `SessionsRetrieveResponseArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        r#type: SessionsRetrieveResponseArtifactType2,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        pull_requests: Vec<SessionsRetrieveResponseArtifactPullRequest>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            r#type,
+            created_at,
+            updated_at,
+            pull_requests,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2273,9 +3289,9 @@ impl From<&str> for SessionsRetrieveResponseArtifactType2 {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseArtifactPullRequest {
@@ -2304,6 +3320,48 @@ pub struct SessionsRetrieveResponseArtifactPullRequest {
     pub author: Option<SessionsRetrieveResponseArtifactPullRequestAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<SessionsRetrieveResponseArtifactPullRequestCodeRepository>,
+}
+
+impl SessionsRetrieveResponseArtifactPullRequest {
+    /// Creates a new `SessionsRetrieveResponseArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsRetrieveResponseArtifactPullRequestStatus,
+        is_draft: bool,
+        source_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        agent: Option<String>,
+        diff: Option<SessionsRetrieveResponseArtifactPullRequestDiff>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        base_branch: Option<String>,
+        head_sha: Option<String>,
+        author: Option<SessionsRetrieveResponseArtifactPullRequestAuthor>,
+        code_repository: Option<SessionsRetrieveResponseArtifactPullRequestCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            source_branch,
+            created_at,
+            agent,
+            diff,
+            updated_at,
+            base_branch,
+            head_sha,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2353,10 +3411,13 @@ impl From<&str> for SessionsRetrieveResponseArtifactPullRequestStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseArtifactPullRequestDiff::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseArtifactPullRequestDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2367,9 +3428,42 @@ pub struct SessionsRetrieveResponseArtifactPullRequestDiff {
     pub data: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseArtifactPullRequestDiff {
+    /// Creates a new `SessionsRetrieveResponseArtifactPullRequestDiff` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsRetrieveResponseArtifactPullRequestDiff::new().with_additions(…)`.
+    pub fn new() -> Self {
+        Self {
+            additions: None,
+            deletions: None,
+            data: None,
+        }
+    }
+
+    /// Sets `additions`, which `new` leaves unset.
+    pub fn with_additions(mut self, value: i64) -> Self {
+        self.additions = Some(value);
+        self
+    }
+
+    /// Sets `deletions`, which `new` leaves unset.
+    pub fn with_deletions(mut self, value: i64) -> Self {
+        self.deletions = Some(value);
+        self
+    }
+
+    /// Sets `data`, which `new` leaves unset.
+    pub fn with_data(mut self, value: impl Into<String>) -> Self {
+        self.data = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseArtifactPullRequestAuthor::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseArtifactPullRequestAuthor {
@@ -2379,9 +3473,20 @@ pub struct SessionsRetrieveResponseArtifactPullRequestAuthor {
     pub login: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseArtifactPullRequestAuthor {
+    /// Creates a new `SessionsRetrieveResponseArtifactPullRequestAuthor` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(avatar_url: Option<String>, login: Option<String>) -> Self {
+        Self { avatar_url, login }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseArtifactPullRequestCodeRepository {
@@ -2394,9 +3499,32 @@ pub struct SessionsRetrieveResponseArtifactPullRequestCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsRetrieveResponseArtifactPullRequestCodeRepository` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseDiffSummary {
@@ -2404,9 +3532,19 @@ pub struct SessionsRetrieveResponseDiffSummary {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseDiffSummary {
+    /// Creates a new `SessionsRetrieveResponseDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseProject {
@@ -2414,6 +3552,26 @@ pub struct SessionsRetrieveResponseProject {
     pub name: String,
     pub icon: SessionsRetrieveResponseProjectIcon,
     pub color: SessionsRetrieveResponseProjectColor,
+}
+
+impl SessionsRetrieveResponseProject {
+    /// Creates a new `SessionsRetrieveResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsRetrieveResponseProjectIcon,
+        color: SessionsRetrieveResponseProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2610,9 +3768,9 @@ impl From<&str> for SessionsRetrieveResponseProjectColor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseSessionSource {
@@ -2622,9 +3780,30 @@ pub struct SessionsRetrieveResponseSessionSource {
     pub repositories: Vec<SessionsRetrieveResponseSessionSourceRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseSessionSource {
+    /// Creates a new `SessionsRetrieveResponseSessionSource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsRetrieveResponseSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseSessionSourceRepository {
@@ -2633,9 +3812,24 @@ pub struct SessionsRetrieveResponseSessionSourceRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsRetrieveResponseSessionSourceRepository {
+    /// Creates a new `SessionsRetrieveResponseSessionSourceRepository` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseSourcePullRequest {
@@ -2646,6 +3840,29 @@ pub struct SessionsRetrieveResponseSourcePullRequest {
     pub status: SessionsRetrieveResponseSourcePullRequestStatus,
     #[serde(rename = "isDraft")]
     pub is_draft: bool,
+}
+
+impl SessionsRetrieveResponseSourcePullRequest {
+    /// Creates a new `SessionsRetrieveResponseSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsRetrieveResponseSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2695,9 +3912,9 @@ impl From<&str> for SessionsRetrieveResponseSourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsRetrieveResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsRetrieveResponseState {
@@ -2713,6 +3930,32 @@ pub struct SessionsRetrieveResponseState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl SessionsRetrieveResponseState {
+    /// Creates a new `SessionsRetrieveResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsRetrieveResponseState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsRetrieveResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2770,9 +4013,8 @@ impl From<&str> for SessionsRetrieveResponseStateCurrent {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponse {
@@ -2838,6 +4080,83 @@ pub struct SessionsUpdateResponse {
     #[serde(rename = "sourcePullRequest", default)]
     pub source_pull_request: Option<SessionsUpdateResponseSourcePullRequest>,
     pub state: SessionsUpdateResponseState,
+}
+
+impl SessionsUpdateResponse {
+    /// Creates a new `SessionsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        artifact_type: Option<SessionsUpdateResponseArtifactType>,
+        base_branch: Option<String>,
+        branch_name: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        mode: SessionsUpdateResponseMode,
+        parent_session_id: Option<String>,
+        project_id: Option<String>,
+        sandbox_size: Option<SessionsUpdateResponseSandboxSize>,
+        session_type: SessionsUpdateResponseSessionType,
+        target_branch: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsUpdateResponseVisibility,
+        artifacts: Vec<SessionsUpdateResponseArtifact>,
+        automatic_sizing: bool,
+        description: Option<String>,
+        diff_summary: Option<SessionsUpdateResponseDiffSummary>,
+        html_url: impl Into<String>,
+        is_pinned: bool,
+        project: Option<SessionsUpdateResponseProject>,
+        session_source: SessionsUpdateResponseSessionSource,
+        source_pull_request: Option<SessionsUpdateResponseSourcePullRequest>,
+        state: SessionsUpdateResponseState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            artifact_type,
+            base_branch,
+            branch_name,
+            created_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            mode,
+            parent_session_id,
+            project_id,
+            sandbox_size,
+            session_type,
+            target_branch,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            automatic_sizing,
+            description,
+            diff_summary,
+            html_url: html_url.into(),
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3090,9 +4409,9 @@ impl From<&str> for SessionsUpdateResponseVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseArtifact {
@@ -3104,6 +4423,28 @@ pub struct SessionsUpdateResponseArtifact {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "pullRequests")]
     pub pull_requests: Vec<SessionsUpdateResponseArtifactPullRequest>,
+}
+
+impl SessionsUpdateResponseArtifact {
+    /// Creates a new `SessionsUpdateResponseArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        r#type: SessionsUpdateResponseArtifactType2,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        pull_requests: Vec<SessionsUpdateResponseArtifactPullRequest>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            r#type,
+            created_at,
+            updated_at,
+            pull_requests,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3162,9 +4503,9 @@ impl From<&str> for SessionsUpdateResponseArtifactType2 {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseArtifactPullRequest {
@@ -3193,6 +4534,48 @@ pub struct SessionsUpdateResponseArtifactPullRequest {
     pub author: Option<SessionsUpdateResponseArtifactPullRequestAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<SessionsUpdateResponseArtifactPullRequestCodeRepository>,
+}
+
+impl SessionsUpdateResponseArtifactPullRequest {
+    /// Creates a new `SessionsUpdateResponseArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsUpdateResponseArtifactPullRequestStatus,
+        is_draft: bool,
+        source_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        agent: Option<String>,
+        diff: Option<SessionsUpdateResponseArtifactPullRequestDiff>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        base_branch: Option<String>,
+        head_sha: Option<String>,
+        author: Option<SessionsUpdateResponseArtifactPullRequestAuthor>,
+        code_repository: Option<SessionsUpdateResponseArtifactPullRequestCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            source_branch,
+            created_at,
+            agent,
+            diff,
+            updated_at,
+            base_branch,
+            head_sha,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3242,10 +4625,13 @@ impl From<&str> for SessionsUpdateResponseArtifactPullRequestStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseArtifactPullRequestDiff::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseArtifactPullRequestDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -3256,9 +4642,42 @@ pub struct SessionsUpdateResponseArtifactPullRequestDiff {
     pub data: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseArtifactPullRequestDiff {
+    /// Creates a new `SessionsUpdateResponseArtifactPullRequestDiff` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsUpdateResponseArtifactPullRequestDiff::new().with_additions(…)`.
+    pub fn new() -> Self {
+        Self {
+            additions: None,
+            deletions: None,
+            data: None,
+        }
+    }
+
+    /// Sets `additions`, which `new` leaves unset.
+    pub fn with_additions(mut self, value: i64) -> Self {
+        self.additions = Some(value);
+        self
+    }
+
+    /// Sets `deletions`, which `new` leaves unset.
+    pub fn with_deletions(mut self, value: i64) -> Self {
+        self.deletions = Some(value);
+        self
+    }
+
+    /// Sets `data`, which `new` leaves unset.
+    pub fn with_data(mut self, value: impl Into<String>) -> Self {
+        self.data = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseArtifactPullRequestAuthor::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseArtifactPullRequestAuthor {
@@ -3268,9 +4687,20 @@ pub struct SessionsUpdateResponseArtifactPullRequestAuthor {
     pub login: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseArtifactPullRequestAuthor {
+    /// Creates a new `SessionsUpdateResponseArtifactPullRequestAuthor` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(avatar_url: Option<String>, login: Option<String>) -> Self {
+        Self { avatar_url, login }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseArtifactPullRequestCodeRepository {
@@ -3283,9 +4713,32 @@ pub struct SessionsUpdateResponseArtifactPullRequestCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsUpdateResponseArtifactPullRequestCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseDiffSummary {
@@ -3293,9 +4746,19 @@ pub struct SessionsUpdateResponseDiffSummary {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseDiffSummary {
+    /// Creates a new `SessionsUpdateResponseDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseProject {
@@ -3303,6 +4766,26 @@ pub struct SessionsUpdateResponseProject {
     pub name: String,
     pub icon: SessionsUpdateResponseProjectIcon,
     pub color: SessionsUpdateResponseProjectColor,
+}
+
+impl SessionsUpdateResponseProject {
+    /// Creates a new `SessionsUpdateResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsUpdateResponseProjectIcon,
+        color: SessionsUpdateResponseProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3499,9 +4982,9 @@ impl From<&str> for SessionsUpdateResponseProjectColor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseSessionSource {
@@ -3511,9 +4994,29 @@ pub struct SessionsUpdateResponseSessionSource {
     pub repositories: Vec<SessionsUpdateResponseSessionSourceRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseSessionSource {
+    /// Creates a new `SessionsUpdateResponseSessionSource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsUpdateResponseSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseSessionSourceRepository {
@@ -3522,9 +5025,24 @@ pub struct SessionsUpdateResponseSessionSourceRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsUpdateResponseSessionSourceRepository {
+    /// Creates a new `SessionsUpdateResponseSessionSourceRepository` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseSourcePullRequest {
@@ -3535,6 +5053,29 @@ pub struct SessionsUpdateResponseSourcePullRequest {
     pub status: SessionsUpdateResponseSourcePullRequestStatus,
     #[serde(rename = "isDraft")]
     pub is_draft: bool,
+}
+
+impl SessionsUpdateResponseSourcePullRequest {
+    /// Creates a new `SessionsUpdateResponseSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsUpdateResponseSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3584,9 +5125,9 @@ impl From<&str> for SessionsUpdateResponseSourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateResponseState {
@@ -3602,6 +5143,32 @@ pub struct SessionsUpdateResponseState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl SessionsUpdateResponseState {
+    /// Creates a new `SessionsUpdateResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsUpdateResponseState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsUpdateResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3659,29 +5226,54 @@ impl From<&str> for SessionsUpdateResponseStateCurrent {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SessionsUpdateBody {
     /// Request in-place memory growth for a running adaptive sandbox, within project limits. Submit separately from other session changes. Returns the session while the resize runs asynchronously; sandbox metrics report its progress.
     #[serde(rename = "memoryMb", default, skip_serializing_if = "Option::is_none")]
     pub memory_mb: Option<i64>,
     /// Change the agent and model key. Null clears the session override.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub agent: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub agent: Option<Option<String>>,
     /// Change agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptions>,
     /// Change the starting Git branch. Null clears the session override.
-    #[serde(rename = "baseBranch", default, skip_serializing_if = "Option::is_none")]
-    pub base_branch: Option<String>,
+    #[serde(
+        rename = "baseBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub base_branch: Option<Option<String>>,
     /// Change the session Git branch name. Null clears the stored name.
-    #[serde(rename = "branchName", default, skip_serializing_if = "Option::is_none")]
-    pub branch_name: Option<String>,
+    #[serde(
+        rename = "branchName",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub branch_name: Option<Option<String>>,
     /// Replace the initial task prompt; only the session creator can change it. Use createMessage to send a follow-up task.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// Replace the initial prompt rich-text document, or null to clear it. Only the session creator can change it.
-    #[serde(rename = "richContent", default, skip_serializing_if = "Option::is_none")]
-    pub rich_content: Option<SessionTipTapDocument>,
+    #[serde(
+        rename = "richContent",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub rich_content: Option<Option<SessionTipTapDocument>>,
     /// Archive or restore the session and set its priority: 0 archives and stops its VM; 1 restores without restarting work; 2–100 also keep it unarchived and set its priority level. Omit to preserve the current level.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub level: Option<i64>,
@@ -3692,20 +5284,165 @@ pub struct SessionsUpdateBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<SessionsUpdateBodyMode>,
     /// Change the project environment used for the workspace. Null clears the session override.
-    #[serde(rename = "projectId", default, skip_serializing_if = "Option::is_none")]
-    pub project_id: Option<String>,
+    #[serde(
+        rename = "projectId",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub project_id: Option<Option<String>>,
     /// Change the workspace VM size. Null clears the session override.
-    #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
-    pub sandbox_size: Option<SessionsUpdateBodySandboxSize>,
+    #[serde(
+        rename = "sandboxSize",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub sandbox_size: Option<Option<SessionsUpdateBodySandboxSize>>,
     /// Change the default pull request target branch. Null clears the session override.
-    #[serde(rename = "targetBranch", default, skip_serializing_if = "Option::is_none")]
-    pub target_branch: Option<String>,
+    #[serde(
+        rename = "targetBranch",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub target_branch: Option<Option<String>>,
     /// Rename the session.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     /// Change session visibility: private or visible to workspace (public). Only the session creator can change it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub visibility: Option<SessionsUpdateBodyVisibility>,
+}
+
+impl SessionsUpdateBody {
+    /// Creates a new `SessionsUpdateBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsUpdateBody::new().with_memory_mb(…)`.
+    pub fn new() -> Self {
+        Self {
+            memory_mb: None,
+            agent: None,
+            agent_options: None,
+            base_branch: None,
+            branch_name: None,
+            description: None,
+            rich_content: None,
+            level: None,
+            mcp_servers: None,
+            mode: None,
+            project_id: None,
+            sandbox_size: None,
+            target_branch: None,
+            title: None,
+            visibility: None,
+        }
+    }
+
+    /// Sets `memory_mb`, which `new` leaves unset.
+    pub fn with_memory_mb(mut self, value: i64) -> Self {
+        self.memory_mb = Some(value);
+        self
+    }
+
+    /// Sets `agent`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `agent = Some(None)` on the built value.
+    pub fn with_agent(mut self, value: impl Into<String>) -> Self {
+        self.agent = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `agent_options`, which `new` leaves unset.
+    pub fn with_agent_options(mut self, value: AgentOptions) -> Self {
+        self.agent_options = Some(value);
+        self
+    }
+
+    /// Sets `base_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `base_branch = Some(None)` on the built value.
+    pub fn with_base_branch(mut self, value: impl Into<String>) -> Self {
+        self.base_branch = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `branch_name`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `branch_name = Some(None)` on the built value.
+    pub fn with_branch_name(mut self, value: impl Into<String>) -> Self {
+        self.branch_name = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `description`, which `new` leaves unset.
+    pub fn with_description(mut self, value: impl Into<String>) -> Self {
+        self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `rich_content`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `rich_content = Some(None)` on the built value.
+    pub fn with_rich_content(mut self, value: SessionTipTapDocument) -> Self {
+        self.rich_content = Some(Some(value));
+        self
+    }
+
+    /// Sets `level`, which `new` leaves unset.
+    pub fn with_level(mut self, value: i64) -> Self {
+        self.level = Some(value);
+        self
+    }
+
+    /// Sets `mcp_servers`, which `new` leaves unset.
+    pub fn with_mcp_servers(mut self, value: Vec<String>) -> Self {
+        self.mcp_servers = Some(value);
+        self
+    }
+
+    /// Sets `mode`, which `new` leaves unset.
+    pub fn with_mode(mut self, value: SessionsUpdateBodyMode) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Sets `project_id`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `project_id = Some(None)` on the built value.
+    pub fn with_project_id(mut self, value: impl Into<String>) -> Self {
+        self.project_id = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `sandbox_size = Some(None)` on the built value.
+    pub fn with_sandbox_size(mut self, value: SessionsUpdateBodySandboxSize) -> Self {
+        self.sandbox_size = Some(Some(value));
+        self
+    }
+
+    /// Sets `target_branch`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `target_branch = Some(None)` on the built value.
+    pub fn with_target_branch(mut self, value: impl Into<String>) -> Self {
+        self.target_branch = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `title`, which `new` leaves unset.
+    pub fn with_title(mut self, value: impl Into<String>) -> Self {
+        self.title = Some(value.into());
+        self
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: SessionsUpdateBodyVisibility) -> Self {
+        self.visibility = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -3861,9 +5598,8 @@ impl From<&str> for SessionsUpdateBodyVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsDeleteResponse {
@@ -3871,9 +5607,18 @@ pub struct SessionsDeleteResponse {
     pub id: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsDeleteResponse {
+    /// Creates a new `SessionsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponse {
@@ -3939,6 +5684,83 @@ pub struct SessionsForkResponse {
     #[serde(rename = "sourcePullRequest", default)]
     pub source_pull_request: Option<SessionsForkResponseSourcePullRequest>,
     pub state: SessionsForkResponseState,
+}
+
+impl SessionsForkResponse {
+    /// Creates a new `SessionsForkResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        artifact_type: Option<SessionsForkResponseArtifactType>,
+        base_branch: Option<String>,
+        branch_name: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        mode: SessionsForkResponseMode,
+        parent_session_id: Option<String>,
+        project_id: Option<String>,
+        sandbox_size: Option<SessionsForkResponseSandboxSize>,
+        session_type: SessionsForkResponseSessionType,
+        target_branch: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsForkResponseVisibility,
+        artifacts: Vec<SessionsForkResponseArtifact>,
+        automatic_sizing: bool,
+        description: Option<String>,
+        diff_summary: Option<SessionsForkResponseDiffSummary>,
+        html_url: impl Into<String>,
+        is_pinned: bool,
+        project: Option<SessionsForkResponseProject>,
+        session_source: SessionsForkResponseSessionSource,
+        source_pull_request: Option<SessionsForkResponseSourcePullRequest>,
+        state: SessionsForkResponseState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            artifact_type,
+            base_branch,
+            branch_name,
+            created_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            mode,
+            parent_session_id,
+            project_id,
+            sandbox_size,
+            session_type,
+            target_branch,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            automatic_sizing,
+            description,
+            diff_summary,
+            html_url: html_url.into(),
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4191,9 +6013,9 @@ impl From<&str> for SessionsForkResponseVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseArtifact {
@@ -4205,6 +6027,28 @@ pub struct SessionsForkResponseArtifact {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "pullRequests")]
     pub pull_requests: Vec<SessionsForkResponseArtifactPullRequest>,
+}
+
+impl SessionsForkResponseArtifact {
+    /// Creates a new `SessionsForkResponseArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        r#type: SessionsForkResponseArtifactType2,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        pull_requests: Vec<SessionsForkResponseArtifactPullRequest>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            r#type,
+            created_at,
+            updated_at,
+            pull_requests,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4263,9 +6107,9 @@ impl From<&str> for SessionsForkResponseArtifactType2 {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseArtifactPullRequest {
@@ -4294,6 +6138,48 @@ pub struct SessionsForkResponseArtifactPullRequest {
     pub author: Option<SessionsForkResponseArtifactPullRequestAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<SessionsForkResponseArtifactPullRequestCodeRepository>,
+}
+
+impl SessionsForkResponseArtifactPullRequest {
+    /// Creates a new `SessionsForkResponseArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsForkResponseArtifactPullRequestStatus,
+        is_draft: bool,
+        source_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        agent: Option<String>,
+        diff: Option<SessionsForkResponseArtifactPullRequestDiff>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        base_branch: Option<String>,
+        head_sha: Option<String>,
+        author: Option<SessionsForkResponseArtifactPullRequestAuthor>,
+        code_repository: Option<SessionsForkResponseArtifactPullRequestCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            source_branch,
+            created_at,
+            agent,
+            diff,
+            updated_at,
+            base_branch,
+            head_sha,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4343,10 +6229,13 @@ impl From<&str> for SessionsForkResponseArtifactPullRequestStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseArtifactPullRequestDiff::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 ///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseArtifactPullRequestDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -4357,9 +6246,42 @@ pub struct SessionsForkResponseArtifactPullRequestDiff {
     pub data: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseArtifactPullRequestDiff {
+    /// Creates a new `SessionsForkResponseArtifactPullRequestDiff` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsForkResponseArtifactPullRequestDiff::new().with_additions(…)`.
+    pub fn new() -> Self {
+        Self {
+            additions: None,
+            deletions: None,
+            data: None,
+        }
+    }
+
+    /// Sets `additions`, which `new` leaves unset.
+    pub fn with_additions(mut self, value: i64) -> Self {
+        self.additions = Some(value);
+        self
+    }
+
+    /// Sets `deletions`, which `new` leaves unset.
+    pub fn with_deletions(mut self, value: i64) -> Self {
+        self.deletions = Some(value);
+        self
+    }
+
+    /// Sets `data`, which `new` leaves unset.
+    pub fn with_data(mut self, value: impl Into<String>) -> Self {
+        self.data = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseArtifactPullRequestAuthor::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseArtifactPullRequestAuthor {
@@ -4369,9 +6291,20 @@ pub struct SessionsForkResponseArtifactPullRequestAuthor {
     pub login: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseArtifactPullRequestAuthor {
+    /// Creates a new `SessionsForkResponseArtifactPullRequestAuthor` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(avatar_url: Option<String>, login: Option<String>) -> Self {
+        Self { avatar_url, login }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseArtifactPullRequestCodeRepository {
@@ -4384,9 +6317,32 @@ pub struct SessionsForkResponseArtifactPullRequestCodeRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsForkResponseArtifactPullRequestCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseDiffSummary {
@@ -4394,9 +6350,19 @@ pub struct SessionsForkResponseDiffSummary {
     pub deletions: i64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseDiffSummary {
+    /// Creates a new `SessionsForkResponseDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseProject {
@@ -4404,6 +6370,26 @@ pub struct SessionsForkResponseProject {
     pub name: String,
     pub icon: SessionsForkResponseProjectIcon,
     pub color: SessionsForkResponseProjectColor,
+}
+
+impl SessionsForkResponseProject {
+    /// Creates a new `SessionsForkResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsForkResponseProjectIcon,
+        color: SessionsForkResponseProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4600,9 +6586,9 @@ impl From<&str> for SessionsForkResponseProjectColor {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseSessionSource {
@@ -4612,9 +6598,29 @@ pub struct SessionsForkResponseSessionSource {
     pub repositories: Vec<SessionsForkResponseSessionSourceRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseSessionSource {
+    /// Creates a new `SessionsForkResponseSessionSource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsForkResponseSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseSessionSourceRepository {
@@ -4623,9 +6629,24 @@ pub struct SessionsForkResponseSessionSourceRepository {
     pub provider: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkResponseSessionSourceRepository {
+    /// Creates a new `SessionsForkResponseSessionSourceRepository` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseSourcePullRequest {
@@ -4636,6 +6657,29 @@ pub struct SessionsForkResponseSourcePullRequest {
     pub status: SessionsForkResponseSourcePullRequestStatus,
     #[serde(rename = "isDraft")]
     pub is_draft: bool,
+}
+
+impl SessionsForkResponseSourcePullRequest {
+    /// Creates a new `SessionsForkResponseSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsForkResponseSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4685,9 +6729,9 @@ impl From<&str> for SessionsForkResponseSourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsForkResponseState {
@@ -4703,6 +6747,32 @@ pub struct SessionsForkResponseState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl SessionsForkResponseState {
+    /// Creates a new `SessionsForkResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsForkResponseState::new(is_queued, is_cancelled, is_completed, is_failed, in_progress).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsForkResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4760,7 +6830,13 @@ impl From<&str> for SessionsForkResponseStateCurrent {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsForkBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SessionsForkBody {
     /// Optional first task for the independent fork. Existing messages are not replayed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -4773,9 +6849,40 @@ pub struct SessionsForkBody {
     pub queue_right_away: Option<bool>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsForkBody {
+    /// Creates a new `SessionsForkBody` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsForkBody::new().with_prompt(…)`.
+    pub fn new() -> Self {
+        Self {
+            prompt: None,
+            title: None,
+            queue_right_away: None,
+        }
+    }
+
+    /// Sets `prompt`, which `new` leaves unset.
+    pub fn with_prompt(mut self, value: impl Into<String>) -> Self {
+        self.prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `title`, which `new` leaves unset.
+    pub fn with_title(mut self, value: impl Into<String>) -> Self {
+        self.title = Some(value.into());
+        self
+    }
+
+    /// Sets `queue_right_away`, which `new` leaves unset.
+    pub fn with_queue_right_away(mut self, value: bool) -> Self {
+        self.queue_right_away = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsStopResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsStopResponse {
@@ -4789,11 +6896,147 @@ pub struct SessionsStopResponse {
     pub interrupted_runtime_turns: i64,
     #[serde(rename = "cancelledRuntimeTurns")]
     pub cancelled_runtime_turns: i64,
+    /// Canonical session state after stopping and reconciling queued work.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub state: Option<SessionsStopResponseState>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsStopResponse {
+    /// Creates a new `SessionsStopResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsStopResponse::new(…).with_state(…)`.
+    pub fn new(
+        cancelled_sessions: i64,
+        cancelled_jobs: i64,
+        stopped_runtime_sessions: i64,
+        interrupted_runtime_turns: i64,
+        cancelled_runtime_turns: i64,
+    ) -> Self {
+        Self {
+            cancelled_sessions,
+            cancelled_jobs,
+            stopped_runtime_sessions,
+            interrupted_runtime_turns,
+            cancelled_runtime_turns,
+            state: None,
+        }
+    }
+
+    /// Sets `state`, which `new` leaves unset.
+    pub fn with_state(mut self, value: SessionsStopResponseState) -> Self {
+        self.state = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsStopResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsStopResponseState {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current: Option<SessionsStopResponseStateCurrent>,
+    #[serde(rename = "isQueued")]
+    pub is_queued: bool,
+    #[serde(rename = "isCancelled")]
+    pub is_cancelled: bool,
+    #[serde(rename = "isCompleted")]
+    pub is_completed: bool,
+    #[serde(rename = "isFailed")]
+    pub is_failed: bool,
+    #[serde(rename = "inProgress")]
+    pub in_progress: bool,
+}
+
+impl SessionsStopResponseState {
+    /// Creates a new `SessionsStopResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsStopResponseState::new(is_queued, is_cancelled, is_completed, is_failed, in_progress).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsStopResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsStopResponseStateCurrent {
+    #[serde(rename = "inProgress")]
+    InProgress,
+    #[serde(rename = "queued")]
+    Queued,
+    #[serde(rename = "completed")]
+    Completed,
+    #[serde(rename = "failed")]
+    Failed,
+    #[serde(rename = "cancelled")]
+    Cancelled,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsStopResponseStateCurrent {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::InProgress => "inProgress",
+            Self::Queued => "queued",
+            Self::Completed => "completed",
+            Self::Failed => "failed",
+            Self::Cancelled => "cancelled",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsStopResponseStateCurrent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsStopResponseStateCurrent {
+    fn from(value: &str) -> Self {
+        match value {
+            "inProgress" => Self::InProgress,
+            "queued" => Self::Queued,
+            "completed" => Self::Completed,
+            "failed" => Self::Failed,
+            "cancelled" => Self::Cancelled,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListEventsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListEventsResponse {
@@ -4802,9 +7045,19 @@ pub struct SessionsListEventsResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl SessionsListEventsResponse {
+    /// Creates a new `SessionsListEventsResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<SessionsListEventsResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsListEventsResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsListEventsResponseItem {
@@ -4820,6 +7073,32 @@ pub struct SessionsListEventsResponseItem {
     pub session_id: String,
     #[serde(rename = "eventData")]
     pub event_data: SessionEventData,
+}
+
+impl SessionsListEventsResponseItem {
+    /// Creates a new `SessionsListEventsResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        event_type: impl Into<String>,
+        id: i64,
+        message_id: Option<String>,
+        provider: SessionsListEventsResponseItemProvider,
+        session_id: impl Into<String>,
+        event_data: SessionEventData,
+    ) -> Self {
+        Self {
+            created_at,
+            event_type: event_type.into(),
+            id,
+            message_id,
+            provider,
+            session_id: session_id.into(),
+            event_data,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -4967,7 +7246,13 @@ impl From<&str> for AgentOptionsSpeed {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AgentOptionsGoal::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AgentOptionsGoal {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
@@ -4975,29 +7260,63 @@ pub struct AgentOptionsGoal {
     pub objective: Option<String>,
 }
 
+impl AgentOptionsGoal {
+    /// Creates a new `AgentOptionsGoal` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AgentOptionsGoal::new().with_enabled(…)`.
+    pub fn new() -> Self {
+        Self {
+            enabled: None,
+            objective: None,
+        }
+    }
+
+    /// Sets `enabled`, which `new` leaves unset.
+    pub fn with_enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    /// Sets `objective`, which `new` leaves unset.
+    pub fn with_objective(mut self, value: impl Into<String>) -> Self {
+        self.objective = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionDocumentNodeMark::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct SessionDocumentNodeMark {
     pub r#type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<std::collections::HashMap<String, serde_json::Value>>,
+    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
 }
 
 impl SessionDocumentNodeMark {
     /// Creates a new `SessionDocumentNodeMark` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `SessionDocumentNodeMark { attrs: Some(…), ..SessionDocumentNodeMark::new(r#type) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionDocumentNodeMark::new(r#type).with_attrs(…)`.
     pub fn new(r#type: impl Into<String>) -> Self {
         Self {
             r#type: r#type.into(),
             attrs: None,
         }
     }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.attrs = Some(value);
+        self
+    }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionEventDataScope::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionEventDataScope {
@@ -5006,6 +7325,32 @@ pub struct SessionEventDataScope {
     pub parent_tool_use_id: Option<String>,
     #[serde(rename = "taskId", default, skip_serializing_if = "Option::is_none")]
     pub task_id: Option<String>,
+}
+
+impl SessionEventDataScope {
+    /// Creates a new `SessionEventDataScope` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionEventDataScope::new(kind).with_parent_tool_use_id(…)`.
+    pub fn new(kind: SessionEventDataScopeKind) -> Self {
+        Self {
+            kind,
+            parent_tool_use_id: None,
+            task_id: None,
+        }
+    }
+
+    /// Sets `parent_tool_use_id`, which `new` leaves unset.
+    pub fn with_parent_tool_use_id(mut self, value: impl Into<String>) -> Self {
+        self.parent_tool_use_id = Some(value.into());
+        self
+    }
+
+    /// Sets `task_id`, which `new` leaves unset.
+    pub fn with_task_id(mut self, value: impl Into<String>) -> Self {
+        self.task_id = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -5098,9 +7443,8 @@ impl From<&str> for SessionEventDataDelivery {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionEventDataEvent::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionEventDataEvent {
@@ -5110,6 +7454,36 @@ pub struct SessionEventDataEvent {
     pub provider: Option<String>,
     #[serde(rename = "messageId", default, skip_serializing_if = "Option::is_none")]
     pub message_id: Option<String>,
+}
+
+impl SessionEventDataEvent {
+    /// Creates a new `SessionEventDataEvent` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionEventDataEvent::new(event, message).with_provider(…)`.
+    pub fn new(event: impl Into<String>, message: impl Into<String>) -> Self {
+        Self {
+            event: event.into(),
+            message: message.into(),
+            provider: None,
+            message_id: None,
+        }
+    }
+
+    /// Sets `provider`, which `new` leaves unset.
+    pub fn with_provider(mut self, value: impl Into<String>) -> Self {
+        self.provider = Some(value.into());
+        self
+    }
+
+    /// Sets `message_id`, which `new` leaves unset.
+    pub fn with_message_id(mut self, value: impl Into<String>) -> Self {
+        self.message_id = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -5198,9 +7572,9 @@ impl From<&str> for SessionEventDataResponsePhase {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionEventDataToolResult::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionEventDataToolResult {
@@ -5216,6 +7590,39 @@ pub struct SessionEventDataToolResult {
     pub exit_code: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
+}
+
+impl SessionEventDataToolResult {
+    /// Creates a new `SessionEventDataToolResult` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionEventDataToolResult::new(status).with_output(…)`.
+    pub fn new(status: SessionEventDataToolResultStatus) -> Self {
+        Self {
+            status,
+            output: None,
+            exit_code: None,
+            error: None,
+        }
+    }
+
+    /// Sets `output`, which `new` leaves unset.
+    pub fn with_output(mut self, value: impl Into<String>) -> Self {
+        self.output = Some(value.into());
+        self
+    }
+
+    /// Sets `exit_code`, which `new` leaves unset.
+    pub fn with_exit_code(mut self, value: f64) -> Self {
+        self.exit_code = Some(value);
+        self
+    }
+
+    /// Sets `error`, which `new` leaves unset.
+    pub fn with_error(mut self, value: impl Into<String>) -> Self {
+        self.error = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value

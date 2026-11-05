@@ -10,10 +10,8 @@ fn warm_pool_schedule_distinguishes_omitted_null_and_set() {
     let omitted = ProjectsUpdateBody::default();
     assert_eq!(serde_json::to_value(&omitted).unwrap(), json!({}));
 
-    let cleared = ProjectsUpdateBody {
-        warm_pool_schedule: Some(None),
-        ..Default::default()
-    };
+    let mut cleared = ProjectsUpdateBody::default();
+    cleared.warm_pool_schedule = Some(None);
     assert_eq!(
         serde_json::to_value(&cleared).unwrap(),
         json!({ "warmPoolSchedule": null })

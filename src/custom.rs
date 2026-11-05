@@ -3,16 +3,6 @@
 use serde::de::{Error, Unexpected};
 use serde::{Deserialize, Deserializer};
 
-/// Keeps an explicit `null` distinct from an omitted field: omitted is `None`
-/// (via `#[serde(default)]`), `null` is `Some(None)`.
-pub(crate) fn nullable<'de, T, D>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
-where
-    T: Deserialize<'de>,
-    D: Deserializer<'de>,
-{
-    Option::<T>::deserialize(deserializer).map(Some)
-}
-
 /// Accepts only `true`, so untagged unions can select a `const: true` variant.
 pub(crate) fn literal_true<'de, D: Deserializer<'de>>(deserializer: D) -> Result<bool, D::Error> {
     literal(deserializer, true)

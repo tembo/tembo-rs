@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersListResponse {
@@ -16,9 +15,19 @@ pub struct MembersListResponse {
     pub next_cursor: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl MembersListResponse {
+    /// Creates a new `MembersListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<MembersListResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersListResponseItem {
@@ -39,6 +48,39 @@ pub struct MembersListResponseItem {
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
     pub status: MembersListResponseItemStatus,
+}
+
+impl MembersListResponseItem {
+    /// Creates a new `MembersListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        role: MembersListResponseItemRole,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: Option<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        status: MembersListResponseItemStatus,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            role,
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            status,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -127,9 +169,8 @@ impl From<&str> for MembersListResponseItemStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersCreateResponse {
@@ -150,6 +191,39 @@ pub struct MembersCreateResponse {
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
     pub status: MembersCreateResponseStatus,
+}
+
+impl MembersCreateResponse {
+    /// Creates a new `MembersCreateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        role: MembersCreateResponseRole,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: Option<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        status: MembersCreateResponseStatus,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            role,
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            status,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -238,7 +312,10 @@ impl From<&str> for MembersCreateResponseStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct MembersCreateBody {
     /// Email address of the user to add or invite.
     #[serde(rename = "emailAddress")]
@@ -251,13 +328,19 @@ pub struct MembersCreateBody {
 impl MembersCreateBody {
     /// Creates a new `MembersCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `MembersCreateBody { role: Some(…), ..MembersCreateBody::new(email_address) }`.
+    /// Set an optional field with its `with_*` setter:
+    /// `MembersCreateBody::new(email_address).with_role(…)`.
     pub fn new(email_address: impl Into<String>) -> Self {
         Self {
             email_address: email_address.into(),
             role: None,
         }
+    }
+
+    /// Sets `role`, which `new` leaves unset.
+    pub fn with_role(mut self, value: MembersCreateBodyRole) -> Self {
+        self.role = Some(value);
+        self
     }
 }
 
@@ -304,9 +387,9 @@ impl From<&str> for MembersCreateBodyRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersRetrieveResponse {
@@ -327,6 +410,39 @@ pub struct MembersRetrieveResponse {
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
     pub status: MembersRetrieveResponseStatus,
+}
+
+impl MembersRetrieveResponse {
+    /// Creates a new `MembersRetrieveResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        role: MembersRetrieveResponseRole,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: Option<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        status: MembersRetrieveResponseStatus,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            role,
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            status,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -415,9 +531,8 @@ impl From<&str> for MembersRetrieveResponseStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersUpdateResponse {
@@ -438,6 +553,39 @@ pub struct MembersUpdateResponse {
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
     pub status: MembersUpdateResponseStatus,
+}
+
+impl MembersUpdateResponse {
+    /// Creates a new `MembersUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        role: MembersUpdateResponseRole,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: Option<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        status: MembersUpdateResponseStatus,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            role,
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            status,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -526,10 +674,20 @@ impl From<&str> for MembersUpdateResponseStatus {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct MembersUpdateBody {
     /// New organization role: org:admin or org:member.
     pub role: MembersUpdateBodyRole,
+}
+
+impl MembersUpdateBody {
+    /// Creates a new `MembersUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(role: MembersUpdateBodyRole) -> Self {
+        Self { role }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -575,12 +733,21 @@ impl From<&str> for MembersUpdateBodyRole {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersDeleteResponse {
     pub deleted: bool,
     pub id: String,
+}
+
+impl MembersDeleteResponse {
+    /// Creates a new `MembersDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(deleted: bool, id: impl Into<String>) -> Self {
+        Self { deleted, id: id.into() }
+    }
 }

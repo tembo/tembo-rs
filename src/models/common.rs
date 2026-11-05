@@ -5,7 +5,14 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `AtlassianIssueCommentCreatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct AtlassianIssueCommentCreatedFilters {
     /// Only trigger if the issue is in one of the specified projects
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -21,14 +28,83 @@ pub struct AtlassianIssueCommentCreatedFilters {
     pub labels: Option<Vec<String>>,
 }
 
+impl AtlassianIssueCommentCreatedFilters {
+    /// Creates a new `AtlassianIssueCommentCreatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `AtlassianIssueCommentCreatedFilters::new().with_projects(…)`.
+    pub fn new() -> Self {
+        Self {
+            projects: None,
+            commented_by: None,
+            message_contains: None,
+            labels: None,
+        }
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `commented_by`, which `new` leaves unset.
+    pub fn with_commented_by(mut self, value: Vec<String>) -> Self {
+        self.commented_by = Some(value);
+        self
+    }
+
+    /// Sets `message_contains`, which `new` leaves unset.
+    pub fn with_message_contains(mut self, value: Vec<String>) -> Self {
+        self.message_contains = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubReleasePublishedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubReleasePublishedFilters {
     /// Only trigger if the release is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub repositories: Option<Vec<String>>,
 }
 
+impl GithubReleasePublishedFilters {
+    /// Creates a new `GithubReleasePublishedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubReleasePublishedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self { repositories: None }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubWorkflowRunCompletedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct GithubWorkflowRunCompletedFilters {
     /// Only trigger if the workflow run is in one of the repositories
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -45,4 +121,50 @@ pub struct GithubWorkflowRunCompletedFilters {
     /// Only trigger for these originating GitHub events; use schedule for cron runs, not push or pull_request
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub events: Option<Vec<String>>,
+}
+
+impl GithubWorkflowRunCompletedFilters {
+    /// Creates a new `GithubWorkflowRunCompletedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubWorkflowRunCompletedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            workflow_names: None,
+            branches: None,
+            conclusions: None,
+            events: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `workflow_names`, which `new` leaves unset.
+    pub fn with_workflow_names(mut self, value: Vec<String>) -> Self {
+        self.workflow_names = Some(value);
+        self
+    }
+
+    /// Sets `branches`, which `new` leaves unset.
+    pub fn with_branches(mut self, value: Vec<String>) -> Self {
+        self.branches = Some(value);
+        self
+    }
+
+    /// Sets `conclusions`, which `new` leaves unset.
+    pub fn with_conclusions(mut self, value: Vec<GithubWorkflowRunCompletedFiltersConclusion>) -> Self {
+        self.conclusions = Some(value);
+        self
+    }
+
+    /// Sets `events`, which `new` leaves unset.
+    pub fn with_events(mut self, value: Vec<String>) -> Self {
+        self.events = Some(value);
+        self
+    }
 }

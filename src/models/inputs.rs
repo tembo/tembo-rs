@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsListResponse {
@@ -16,9 +15,18 @@ pub struct InputsListResponse {
     pub next_cursor: serde_json::Value,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InputsListResponse {
+    /// Creates a new `InputsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<InputsListResponseItem>, next_cursor: serde_json::Value) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsListResponseItem {
@@ -27,6 +35,26 @@ pub struct InputsListResponseItem {
     pub tool_call_id: String,
     pub status: InputsListResponseItemStatus,
     pub questions: Vec<InputsListResponseItemQuestion>,
+}
+
+impl InputsListResponseItem {
+    /// Creates a new `InputsListResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        tool_call_id: impl Into<String>,
+        status: InputsListResponseItemStatus,
+        questions: Vec<InputsListResponseItemQuestion>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            tool_call_id: tool_call_id.into(),
+            status,
+            questions,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -72,9 +100,9 @@ impl From<&str> for InputsListResponseItemStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsListResponseItemQuestion::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsListResponseItemQuestion {
@@ -88,9 +116,33 @@ pub struct InputsListResponseItemQuestion {
     pub options: Vec<InputsListResponseItemQuestionOption>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InputsListResponseItemQuestion {
+    /// Creates a new `InputsListResponseItemQuestion` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        header: impl Into<String>,
+        question: impl Into<String>,
+        is_other: bool,
+        is_secret: bool,
+        options: Vec<InputsListResponseItemQuestionOption>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            header: header.into(),
+            question: question.into(),
+            is_other,
+            is_secret,
+            options,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsListResponseItemQuestionOption::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsListResponseItemQuestionOption {
@@ -98,9 +150,21 @@ pub struct InputsListResponseItemQuestionOption {
     pub description: String,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InputsListResponseItemQuestionOption {
+    /// Creates a new `InputsListResponseItemQuestionOption` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(label: impl Into<String>, description: impl Into<String>) -> Self {
+        Self {
+            label: label.into(),
+            description: description.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsUpdateResponse {
@@ -109,6 +173,26 @@ pub struct InputsUpdateResponse {
     pub tool_call_id: String,
     pub status: InputsUpdateResponseStatus,
     pub questions: Vec<InputsUpdateResponseQuestion>,
+}
+
+impl InputsUpdateResponse {
+    /// Creates a new `InputsUpdateResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        tool_call_id: impl Into<String>,
+        status: InputsUpdateResponseStatus,
+        questions: Vec<InputsUpdateResponseQuestion>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            tool_call_id: tool_call_id.into(),
+            status,
+            questions,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -154,9 +238,9 @@ impl From<&str> for InputsUpdateResponseStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsUpdateResponseQuestion::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsUpdateResponseQuestion {
@@ -170,9 +254,33 @@ pub struct InputsUpdateResponseQuestion {
     pub options: Vec<InputsUpdateResponseQuestionOption>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl InputsUpdateResponseQuestion {
+    /// Creates a new `InputsUpdateResponseQuestion` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        header: impl Into<String>,
+        question: impl Into<String>,
+        is_other: bool,
+        is_secret: bool,
+        options: Vec<InputsUpdateResponseQuestionOption>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            header: header.into(),
+            question: question.into(),
+            is_other,
+            is_secret,
+            options,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsUpdateResponseQuestionOption::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InputsUpdateResponseQuestionOption {
@@ -180,8 +288,31 @@ pub struct InputsUpdateResponseQuestionOption {
     pub description: String,
 }
 
+impl InputsUpdateResponseQuestionOption {
+    /// Creates a new `InputsUpdateResponseQuestionOption` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(label: impl Into<String>, description: impl Into<String>) -> Self {
+        Self {
+            label: label.into(),
+            description: description.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InputsUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct InputsUpdateBody {
     /// Answers keyed by question ID. Send an empty object to skip the questions.
-    pub answers: std::collections::HashMap<String, Vec<String>>,
+    pub answers: std::collections::BTreeMap<String, Vec<String>>,
+}
+
+impl InputsUpdateBody {
+    /// Creates a new `InputsUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(answers: std::collections::BTreeMap<String, Vec<String>>) -> Self {
+        Self { answers }
+    }
 }

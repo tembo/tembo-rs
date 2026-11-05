@@ -5,9 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponse {
@@ -16,6 +15,16 @@ pub struct PinsListResponse {
     /// Cursor for the next page, even when resources is empty; null at the end.
     #[serde(rename = "nextCursor", default)]
     pub next_cursor: Option<String>,
+}
+
+impl PinsListResponse {
+    /// Creates a new `PinsListResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(resources: Vec<PinsListResponseResource>, next_cursor: Option<String>) -> Self {
+        Self { resources, next_cursor }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -34,9 +43,9 @@ pub enum PinsListResponseResource {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1 {
@@ -44,9 +53,22 @@ pub struct PinsListResponseResourceVariant1 {
     pub resource: PinsListResponseResourceVariant1Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1 {
+    /// Creates a new `PinsListResponseResourceVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsListResponseResourceVariant1Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1Resource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1Resource {
@@ -85,6 +107,64 @@ pub struct PinsListResponseResourceVariant1Resource {
     /// Whether the latest turn finished after the caller last viewed the session.
     #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
     pub is_unread: Option<bool>,
+}
+
+impl PinsListResponseResourceVariant1Resource {
+    /// Creates a new `PinsListResponseResourceVariant1Resource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PinsListResponseResourceVariant1Resource::new(…).with_is_unread(…)`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        kind: impl Into<String>,
+        external_id: Option<String>,
+        agent_id: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_by: Option<String>,
+        project_id: Option<String>,
+        level: i64,
+        visibility: PinsListResponseResourceVariant1ResourceVisibility,
+        vm: Option<PinsListResponseResourceVariant1ResourceVm>,
+        session_source: PinsListResponseResourceVariant1ResourceSessionSource,
+        pull_requests: Vec<PinsListResponseResourceVariant1ResourcePullRequest>,
+        diff_summary: Option<PinsListResponseResourceVariant1ResourceDiffSummary>,
+        state: PinsListResponseResourceVariant1ResourceState,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            kind: kind.into(),
+            external_id,
+            agent_id,
+            created_at,
+            updated_at,
+            last_queued_at,
+            created_by,
+            project_id,
+            level,
+            visibility,
+            vm,
+            session_source,
+            pull_requests,
+            diff_summary,
+            state,
+            is_unread: None,
+        }
+    }
+
+    /// Sets `is_unread`, which `new` leaves unset.
+    pub fn with_is_unread(mut self, value: bool) -> Self {
+        self.is_unread = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -130,14 +210,25 @@ impl From<&str> for PinsListResponseResourceVariant1ResourceVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceVm::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceVm {
     pub id: String,
     pub status: PinsListResponseResourceVariant1ResourceVmStatus,
+}
+
+impl PinsListResponseResourceVariant1ResourceVm {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceVm` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, status: PinsListResponseResourceVariant1ResourceVmStatus) -> Self {
+        Self { id: id.into(), status }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -193,9 +284,9 @@ impl From<&str> for PinsListResponseResourceVariant1ResourceVmStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceSessionSource::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceSessionSource {
@@ -206,9 +297,30 @@ pub struct PinsListResponseResourceVariant1ResourceSessionSource {
         Vec<PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1ResourceSessionSource {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceSessionSource` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        r#type: impl Into<String>,
+        name: impl Into<String>,
+        session_source_code_repositories: Vec<
+            PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository,
+        >,
+    ) -> Self {
+        Self {
+            r#type: r#type.into(),
+            name: name.into(),
+            session_source_code_repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository::new` and the `with_*` setters
+/// rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository {
@@ -216,9 +328,19 @@ pub struct PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCod
     pub code_repository: PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepository` from its
+    /// required fields, leaving every optional one unset.
+    pub fn new(
+        code_repository: PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository,
+    ) -> Self {
+        Self { code_repository }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository::new` and the
+/// `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository {
@@ -228,14 +350,44 @@ pub struct PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCod
         PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository`
+    /// from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        integration: PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            integration,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration::new` and
+/// the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration {
     pub r#type:
         PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegrationType,
+}
+
+impl PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration {
+    /// Creates a new
+    /// `PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration` from
+    /// its required fields, leaving every optional one unset.
+    pub fn new(
+        r#type: PinsListResponseResourceVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegrationType,
+    ) -> Self {
+        Self { r#type }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -289,9 +441,9 @@ impl From<&str>
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourcePullRequest::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourcePullRequest {
@@ -300,6 +452,25 @@ pub struct PinsListResponseResourceVariant1ResourcePullRequest {
     pub is_draft: bool,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsListResponseResourceVariant1ResourcePullRequestDiffSummary>,
+}
+
+impl PinsListResponseResourceVariant1ResourcePullRequest {
+    /// Creates a new `PinsListResponseResourceVariant1ResourcePullRequest` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: PinsListResponseResourceVariant1ResourcePullRequestStatus,
+        is_draft: bool,
+        diff_summary: Option<PinsListResponseResourceVariant1ResourcePullRequestDiffSummary>,
+    ) -> Self {
+        Self {
+            status,
+            is_draft,
+            diff_summary,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -349,9 +520,9 @@ impl From<&str> for PinsListResponseResourceVariant1ResourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourcePullRequestDiffSummary::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourcePullRequestDiffSummary {
@@ -361,9 +532,20 @@ pub struct PinsListResponseResourceVariant1ResourcePullRequestDiffSummary {
     pub deletions: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1ResourcePullRequestDiffSummary {
+    /// Creates a new `PinsListResponseResourceVariant1ResourcePullRequestDiffSummary` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: f64, deletions: f64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceDiffSummary::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceDiffSummary {
@@ -373,9 +555,20 @@ pub struct PinsListResponseResourceVariant1ResourceDiffSummary {
     pub deletions: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant1ResourceDiffSummary {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceDiffSummary` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: f64, deletions: f64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant1ResourceState::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant1ResourceState {
@@ -391,6 +584,33 @@ pub struct PinsListResponseResourceVariant1ResourceState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl PinsListResponseResourceVariant1ResourceState {
+    /// Creates a new `PinsListResponseResourceVariant1ResourceState` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PinsListResponseResourceVariant1ResourceState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: PinsListResponseResourceVariant1ResourceStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -448,9 +668,9 @@ impl From<&str> for PinsListResponseResourceVariant1ResourceStateCurrent {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant2 {
@@ -458,9 +678,22 @@ pub struct PinsListResponseResourceVariant2 {
     pub resource: PinsListResponseResourceVariant2Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant2 {
+    /// Creates a new `PinsListResponseResourceVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsListResponseResourceVariant2Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant2Resource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant2Resource {
@@ -475,6 +708,33 @@ pub struct PinsListResponseResourceVariant2Resource {
     pub author: Option<PinsListResponseResourceVariant2ResourceAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<PinsListResponseResourceVariant2ResourceCodeRepository>,
+}
+
+impl PinsListResponseResourceVariant2Resource {
+    /// Creates a new `PinsListResponseResourceVariant2Resource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: PinsListResponseResourceVariant2ResourceStatus,
+        is_draft: bool,
+        author: Option<PinsListResponseResourceVariant2ResourceAuthor>,
+        code_repository: Option<PinsListResponseResourceVariant2ResourceCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -524,9 +784,9 @@ impl From<&str> for PinsListResponseResourceVariant2ResourceStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant2ResourceAuthor::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant2ResourceAuthor {
@@ -536,9 +796,20 @@ pub struct PinsListResponseResourceVariant2ResourceAuthor {
     pub avatar_url: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant2ResourceAuthor {
+    /// Creates a new `PinsListResponseResourceVariant2ResourceAuthor` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(login: Option<String>, avatar_url: Option<String>) -> Self {
+        Self { login, avatar_url }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant2ResourceCodeRepository::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant2ResourceCodeRepository {
@@ -548,13 +819,40 @@ pub struct PinsListResponseResourceVariant2ResourceCodeRepository {
     pub integration: PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant2ResourceCodeRepository {
+    /// Creates a new `PinsListResponseResourceVariant2ResourceCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration: PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            owner,
+            integration,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration {
     pub r#type: PinsListResponseResourceVariant2ResourceCodeRepositoryIntegrationType,
+}
+
+impl PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration {
+    /// Creates a new `PinsListResponseResourceVariant2ResourceCodeRepositoryIntegration` from its required fields,
+    /// leaving every optional one unset.
+    pub fn new(r#type: PinsListResponseResourceVariant2ResourceCodeRepositoryIntegrationType) -> Self {
+        Self { r#type }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -604,9 +902,9 @@ impl From<&str> for PinsListResponseResourceVariant2ResourceCodeRepositoryIntegr
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant3 {
@@ -614,9 +912,22 @@ pub struct PinsListResponseResourceVariant3 {
     pub resource: PinsListResponseResourceVariant3Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsListResponseResourceVariant3 {
+    /// Creates a new `PinsListResponseResourceVariant3` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsListResponseResourceVariant3Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant3Resource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsListResponseResourceVariant3Resource {
@@ -624,6 +935,27 @@ pub struct PinsListResponseResourceVariant3Resource {
     pub name: String,
     pub icon: PinsListResponseResourceVariant3ResourceIcon,
     pub color: PinsListResponseResourceVariant3ResourceColor,
+}
+
+impl PinsListResponseResourceVariant3Resource {
+    /// Creates a new `PinsListResponseResourceVariant3Resource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: PinsListResponseResourceVariant3ResourceIcon,
+        color: PinsListResponseResourceVariant3ResourceColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -836,9 +1168,9 @@ pub enum PinsCreateResponse {
     Unknown(serde_json::Value),
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1 {
@@ -846,9 +1178,22 @@ pub struct PinsCreateResponseVariant1 {
     pub resource: PinsCreateResponseVariant1Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1 {
+    /// Creates a new `PinsCreateResponseVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsCreateResponseVariant1Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1Resource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1Resource {
@@ -887,6 +1232,63 @@ pub struct PinsCreateResponseVariant1Resource {
     /// Whether the latest turn finished after the caller last viewed the session.
     #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
     pub is_unread: Option<bool>,
+}
+
+impl PinsCreateResponseVariant1Resource {
+    /// Creates a new `PinsCreateResponseVariant1Resource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PinsCreateResponseVariant1Resource::new(…).with_is_unread(…)`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        title: impl Into<String>,
+        kind: impl Into<String>,
+        external_id: Option<String>,
+        agent_id: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        created_by: Option<String>,
+        project_id: Option<String>,
+        level: i64,
+        visibility: PinsCreateResponseVariant1ResourceVisibility,
+        vm: Option<PinsCreateResponseVariant1ResourceVm>,
+        session_source: PinsCreateResponseVariant1ResourceSessionSource,
+        pull_requests: Vec<PinsCreateResponseVariant1ResourcePullRequest>,
+        diff_summary: Option<PinsCreateResponseVariant1ResourceDiffSummary>,
+        state: PinsCreateResponseVariant1ResourceState,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            title: title.into(),
+            kind: kind.into(),
+            external_id,
+            agent_id,
+            created_at,
+            updated_at,
+            last_queued_at,
+            created_by,
+            project_id,
+            level,
+            visibility,
+            vm,
+            session_source,
+            pull_requests,
+            diff_summary,
+            state,
+            is_unread: None,
+        }
+    }
+
+    /// Sets `is_unread`, which `new` leaves unset.
+    pub fn with_is_unread(mut self, value: bool) -> Self {
+        self.is_unread = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -932,14 +1334,24 @@ impl From<&str> for PinsCreateResponseVariant1ResourceVisibility {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceVm::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceVm {
     pub id: String,
     pub status: PinsCreateResponseVariant1ResourceVmStatus,
+}
+
+impl PinsCreateResponseVariant1ResourceVm {
+    /// Creates a new `PinsCreateResponseVariant1ResourceVm` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, status: PinsCreateResponseVariant1ResourceVmStatus) -> Self {
+        Self { id: id.into(), status }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -995,9 +1407,9 @@ impl From<&str> for PinsCreateResponseVariant1ResourceVmStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceSessionSource::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceSessionSource {
@@ -1008,9 +1420,30 @@ pub struct PinsCreateResponseVariant1ResourceSessionSource {
         Vec<PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1ResourceSessionSource {
+    /// Creates a new `PinsCreateResponseVariant1ResourceSessionSource` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        r#type: impl Into<String>,
+        name: impl Into<String>,
+        session_source_code_repositories: Vec<
+            PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository,
+        >,
+    ) -> Self {
+        Self {
+            r#type: r#type.into(),
+            name: name.into(),
+            session_source_code_repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository::new` and the `with_*` setters rather
+/// than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository {
@@ -1018,9 +1451,19 @@ pub struct PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepos
     pub code_repository: PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository {
+    /// Creates a new `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepository` from its required
+    /// fields, leaving every optional one unset.
+    pub fn new(
+        code_repository: PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository,
+    ) -> Self {
+        Self { code_repository }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository::new` and the `with_*`
+/// setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository {
@@ -1030,13 +1473,43 @@ pub struct PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepos
         PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository {
+    /// Creates a new `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepository` from
+    /// its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        integration: PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            integration,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration::new` and the
+/// `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration {
     pub r#type: PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegrationType,
+}
+
+impl PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration {
+    /// Creates a new
+    /// `PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegration` from its
+    /// required fields, leaving every optional one unset.
+    pub fn new(
+        r#type: PinsCreateResponseVariant1ResourceSessionSourceSessionSourceCodeRepositoryCodeRepositoryIntegrationType,
+    ) -> Self {
+        Self { r#type }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1090,9 +1563,9 @@ impl From<&str>
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourcePullRequest {
@@ -1101,6 +1574,25 @@ pub struct PinsCreateResponseVariant1ResourcePullRequest {
     pub is_draft: bool,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsCreateResponseVariant1ResourcePullRequestDiffSummary>,
+}
+
+impl PinsCreateResponseVariant1ResourcePullRequest {
+    /// Creates a new `PinsCreateResponseVariant1ResourcePullRequest` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        status: PinsCreateResponseVariant1ResourcePullRequestStatus,
+        is_draft: bool,
+        diff_summary: Option<PinsCreateResponseVariant1ResourcePullRequestDiffSummary>,
+    ) -> Self {
+        Self {
+            status,
+            is_draft,
+            diff_summary,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1150,9 +1642,9 @@ impl From<&str> for PinsCreateResponseVariant1ResourcePullRequestStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourcePullRequestDiffSummary::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourcePullRequestDiffSummary {
@@ -1162,9 +1654,20 @@ pub struct PinsCreateResponseVariant1ResourcePullRequestDiffSummary {
     pub deletions: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1ResourcePullRequestDiffSummary {
+    /// Creates a new `PinsCreateResponseVariant1ResourcePullRequestDiffSummary` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: f64, deletions: f64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceDiffSummary {
@@ -1174,9 +1677,20 @@ pub struct PinsCreateResponseVariant1ResourceDiffSummary {
     pub deletions: f64,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant1ResourceDiffSummary {
+    /// Creates a new `PinsCreateResponseVariant1ResourceDiffSummary` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: f64, deletions: f64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant1ResourceState::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant1ResourceState {
@@ -1192,6 +1706,33 @@ pub struct PinsCreateResponseVariant1ResourceState {
     pub is_failed: bool,
     #[serde(rename = "inProgress")]
     pub in_progress: bool,
+}
+
+impl PinsCreateResponseVariant1ResourceState {
+    /// Creates a new `PinsCreateResponseVariant1ResourceState` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PinsCreateResponseVariant1ResourceState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: PinsCreateResponseVariant1ResourceStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1249,9 +1790,9 @@ impl From<&str> for PinsCreateResponseVariant1ResourceStateCurrent {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant2 {
@@ -1259,9 +1800,22 @@ pub struct PinsCreateResponseVariant2 {
     pub resource: PinsCreateResponseVariant2Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant2 {
+    /// Creates a new `PinsCreateResponseVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsCreateResponseVariant2Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant2Resource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant2Resource {
@@ -1276,6 +1830,32 @@ pub struct PinsCreateResponseVariant2Resource {
     pub author: Option<PinsCreateResponseVariant2ResourceAuthor>,
     #[serde(rename = "codeRepository", default)]
     pub code_repository: Option<PinsCreateResponseVariant2ResourceCodeRepository>,
+}
+
+impl PinsCreateResponseVariant2Resource {
+    /// Creates a new `PinsCreateResponseVariant2Resource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: PinsCreateResponseVariant2ResourceStatus,
+        is_draft: bool,
+        author: Option<PinsCreateResponseVariant2ResourceAuthor>,
+        code_repository: Option<PinsCreateResponseVariant2ResourceCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            author,
+            code_repository,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1325,9 +1905,9 @@ impl From<&str> for PinsCreateResponseVariant2ResourceStatus {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant2ResourceAuthor::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant2ResourceAuthor {
@@ -1337,9 +1917,20 @@ pub struct PinsCreateResponseVariant2ResourceAuthor {
     pub avatar_url: Option<String>,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant2ResourceAuthor {
+    /// Creates a new `PinsCreateResponseVariant2ResourceAuthor` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(login: Option<String>, avatar_url: Option<String>) -> Self {
+        Self { login, avatar_url }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant2ResourceCodeRepository::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant2ResourceCodeRepository {
@@ -1349,13 +1940,40 @@ pub struct PinsCreateResponseVariant2ResourceCodeRepository {
     pub integration: PinsCreateResponseVariant2ResourceCodeRepositoryIntegration,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant2ResourceCodeRepository {
+    /// Creates a new `PinsCreateResponseVariant2ResourceCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        name: impl Into<String>,
+        owner: Option<String>,
+        integration: PinsCreateResponseVariant2ResourceCodeRepositoryIntegration,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            owner,
+            integration,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant2ResourceCodeRepositoryIntegration::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant2ResourceCodeRepositoryIntegration {
     pub r#type: PinsCreateResponseVariant2ResourceCodeRepositoryIntegrationType,
+}
+
+impl PinsCreateResponseVariant2ResourceCodeRepositoryIntegration {
+    /// Creates a new `PinsCreateResponseVariant2ResourceCodeRepositoryIntegration` from its required fields, leaving
+    /// every optional one unset.
+    pub fn new(r#type: PinsCreateResponseVariant2ResourceCodeRepositoryIntegrationType) -> Self {
+        Self { r#type }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1405,9 +2023,9 @@ impl From<&str> for PinsCreateResponseVariant2ResourceCodeRepositoryIntegrationT
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant3 {
@@ -1415,9 +2033,22 @@ pub struct PinsCreateResponseVariant3 {
     pub resource: PinsCreateResponseVariant3Resource,
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+impl PinsCreateResponseVariant3 {
+    /// Creates a new `PinsCreateResponseVariant3` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsCreateResponseVariant3Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant3Resource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateResponseVariant3Resource {
@@ -1425,6 +2056,26 @@ pub struct PinsCreateResponseVariant3Resource {
     pub name: String,
     pub icon: PinsCreateResponseVariant3ResourceIcon,
     pub color: PinsCreateResponseVariant3ResourceColor,
+}
+
+impl PinsCreateResponseVariant3Resource {
+    /// Creates a new `PinsCreateResponseVariant3Resource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: PinsCreateResponseVariant3ResourceIcon,
+        color: PinsCreateResponseVariant3ResourceColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1621,7 +2272,10 @@ impl From<&str> for PinsCreateResponseVariant3ResourceColor {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `PinsCreateBody::new`
+/// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsCreateBody {
     /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsCreateBodyType,
@@ -1635,14 +2289,23 @@ pub struct PinsCreateBody {
 impl PinsCreateBody {
     /// Creates a new `PinsCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Pair it with struct-update syntax to set only the optionals you need:
-    /// `PinsCreateBody { placement: Some(…), ..PinsCreateBody::new(r#type, id) }`.
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `PinsCreateBody::new(r#type, id).with_placement(…)`.
     pub fn new(r#type: PinsCreateBodyType, id: impl Into<String>) -> Self {
         Self {
             r#type,
             id: id.into(),
             placement: None,
         }
+    }
+
+    /// Sets `placement`, which `new` leaves unset.
+    pub fn with_placement(mut self, value: PinsCreateBodyPlacement) -> Self {
+        self.placement = Some(value);
+        self
     }
 }
 
@@ -1693,7 +2356,11 @@ impl From<&str> for PinsCreateBodyType {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateBodyPlacement::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsCreateBodyPlacement {
     /// Existing pin to place this pin next to.
     pub target: PinsCreateBodyPlacementTarget,
@@ -1701,12 +2368,36 @@ pub struct PinsCreateBodyPlacement {
     pub position: PinsCreateBodyPlacementPosition,
 }
 
+impl PinsCreateBodyPlacement {
+    /// Creates a new `PinsCreateBodyPlacement` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(target: PinsCreateBodyPlacementTarget, position: PinsCreateBodyPlacementPosition) -> Self {
+        Self { target, position }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateBodyPlacementTarget::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsCreateBodyPlacementTarget {
     /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsCreateBodyPlacementTargetType,
     /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
+}
+
+impl PinsCreateBodyPlacementTarget {
+    /// Creates a new `PinsCreateBodyPlacementTarget` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: PinsCreateBodyPlacementTargetType, id: impl Into<String>) -> Self {
+        Self { r#type, id: id.into() }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1799,22 +2490,42 @@ impl From<&str> for PinsCreateBodyPlacementPosition {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsUpdateResponse {
     pub updated: bool,
 }
 
+impl PinsUpdateResponse {
+    /// Creates a new `PinsUpdateResponse` from its required fields, leaving every optional one unset.
+    pub fn new(updated: bool) -> Self {
+        Self { updated }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `PinsUpdateBody::new`
+/// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsUpdateBody {
     /// Reorder an existing pin before or after another pin. Use createPin to pin a resource and deletePin to unpin it.
     pub placement: PinsUpdateBodyPlacement,
 }
 
+impl PinsUpdateBody {
+    /// Creates a new `PinsUpdateBody` from its required fields, leaving every optional one unset.
+    pub fn new(placement: PinsUpdateBodyPlacement) -> Self {
+        Self { placement }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsUpdateBodyPlacement::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsUpdateBodyPlacement {
     /// Existing pin to place this pin next to.
     pub target: PinsUpdateBodyPlacementTarget,
@@ -1822,12 +2533,36 @@ pub struct PinsUpdateBodyPlacement {
     pub position: PinsUpdateBodyPlacementPosition,
 }
 
+impl PinsUpdateBodyPlacement {
+    /// Creates a new `PinsUpdateBodyPlacement` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(target: PinsUpdateBodyPlacementTarget, position: PinsUpdateBodyPlacementPosition) -> Self {
+        Self { target, position }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsUpdateBodyPlacementTarget::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct PinsUpdateBodyPlacementTarget {
     /// Kind of resource to pin or unpin: session, pull_request, or project.
     pub r#type: PinsUpdateBodyPlacementTargetType,
     /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
+}
+
+impl PinsUpdateBodyPlacementTarget {
+    /// Creates a new `PinsUpdateBodyPlacementTarget` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: PinsUpdateBodyPlacementTargetType, id: impl Into<String>) -> Self {
+        Self { r#type, id: id.into() }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -1920,9 +2655,8 @@ impl From<&str> for PinsUpdateBodyPlacementPosition {
     }
 }
 
-///
-/// Response-only model, marked `#[non_exhaustive]`: fields may be added
-/// additively in future versions without a breaking release.
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsDeleteResponse {
@@ -1931,6 +2665,20 @@ pub struct PinsDeleteResponse {
     /// ID of the session, pull request, or project, not a separate pin ID.
     pub id: String,
     pub deleted: bool,
+}
+
+impl PinsDeleteResponse {
+    /// Creates a new `PinsDeleteResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: PinsDeleteResponseType, id: impl Into<String>, deleted: bool) -> Self {
+        Self {
+            r#type,
+            id: id.into(),
+            deleted,
+        }
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
