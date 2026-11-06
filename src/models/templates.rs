@@ -37,6 +37,8 @@ pub enum TriggerFilters {
     GithubWorkflowRunFailedFilters(GithubWorkflowRunFailedFilters),
     GitlabIssueClosedFilters(GitlabIssueClosedFilters),
     GitlabIssueOpenedFilters(GitlabIssueOpenedFilters),
+    GitlabIssueLabelAddedFilters(GitlabIssueLabelAddedFilters),
+    GitlabIssueUpdatedFilters(GitlabIssueUpdatedFilters),
     GitlabMergeRequestClosedFilters(GitlabMergeRequestClosedFilters),
     GitlabMergeRequestMergedFilters(GitlabMergeRequestMergedFilters),
     GitlabMergeRequestOpenedFilters(GitlabMergeRequestOpenedFilters),
@@ -48,11 +50,11 @@ pub enum TriggerFilters {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant38(serde_json::Value),
-    Variant39(serde_json::Value),
     Variant40(serde_json::Value),
     Variant41(serde_json::Value),
     Variant42(serde_json::Value),
+    Variant43(serde_json::Value),
+    Variant44(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an

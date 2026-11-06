@@ -170,6 +170,8 @@ pub struct SessionEventData {
     pub delta_type: Option<SessionEventDataDeltaType>,
     #[serde(rename = "responsePhase", default, skip_serializing_if = "Option::is_none")]
     pub response_phase: Option<SessionEventDataResponsePhase>,
+    #[serde(rename = "isProgressUpdate", default, skip_serializing_if = "Option::is_none")]
+    pub is_progress_update: Option<bool>,
     #[serde(rename = "toolName", default, skip_serializing_if = "Option::is_none")]
     pub tool_name: Option<String>,
     #[serde(rename = "toolResult", default, skip_serializing_if = "Option::is_none")]
@@ -199,6 +201,7 @@ impl SessionEventData {
             accumulated_text: None,
             delta_type: None,
             response_phase: None,
+            is_progress_update: None,
             tool_name: None,
             tool_result: None,
             snapshot_id: None,
@@ -269,6 +272,12 @@ impl SessionEventData {
     /// Sets `response_phase`, which `new` leaves unset.
     pub fn with_response_phase(mut self, value: SessionEventDataResponsePhase) -> Self {
         self.response_phase = Some(value);
+        self
+    }
+
+    /// Sets `is_progress_update`, which `new` leaves unset.
+    pub fn with_is_progress_update(mut self, value: bool) -> Self {
+        self.is_progress_update = Some(value);
         self
     }
 

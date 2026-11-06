@@ -94,8 +94,6 @@ pub struct AgentsListResponseItem {
     pub enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
     #[serde(rename = "lastRun", default)]
     pub last_run: Option<AgentsListResponseItemLastRun>,
-    #[serde(rename = "runCount")]
-    pub run_count: i64,
     #[serde(rename = "scheduleCount")]
     pub schedule_count: i64,
     #[serde(rename = "triggerCount")]
@@ -132,7 +130,6 @@ impl AgentsListResponseItem {
         archived_at: Option<chrono::DateTime<chrono::FixedOffset>>,
         enabled_at: Option<chrono::DateTime<chrono::FixedOffset>>,
         last_run: Option<AgentsListResponseItemLastRun>,
-        run_count: i64,
         schedule_count: i64,
         trigger_count: i64,
         has_paused_schedule: bool,
@@ -155,7 +152,6 @@ impl AgentsListResponseItem {
             archived_at,
             enabled_at,
             last_run,
-            run_count,
             schedule_count,
             trigger_count,
             has_paused_schedule,
@@ -276,8 +272,8 @@ impl AgentsListResponseItemLastRun {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct AgentsListResponseFilterOptions {
-    #[serde(rename = "totalCount")]
-    pub total_count: i64,
+    #[serde(rename = "hasAgents")]
+    pub has_agents: bool,
     #[serde(rename = "integrationTypes")]
     pub integration_types: Vec<String>,
 }
@@ -287,9 +283,9 @@ impl AgentsListResponseFilterOptions {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    pub fn new(total_count: i64, integration_types: Vec<String>) -> Self {
+    pub fn new(has_agents: bool, integration_types: Vec<String>) -> Self {
         Self {
-            total_count,
+            has_agents,
             integration_types,
         }
     }
@@ -357,8 +353,6 @@ pub struct AgentsCreateResponse {
     pub code_repositories: Vec<AgentsCreateResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
     pub last_run: Option<AgentsCreateResponseLastRun>,
-    #[serde(rename = "runCount")]
-    pub run_count: i64,
     #[serde(rename = "scheduleCount")]
     pub schedule_count: i64,
     #[serde(rename = "triggerCount")]
@@ -403,7 +397,6 @@ impl AgentsCreateResponse {
         user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
         code_repositories: Vec<AgentsCreateResponseCodeRepository>,
         last_run: Option<AgentsCreateResponseLastRun>,
-        run_count: i64,
         schedule_count: i64,
         trigger_count: i64,
         has_paused_schedule: bool,
@@ -435,7 +428,6 @@ impl AgentsCreateResponse {
             user_state,
             code_repositories,
             last_run,
-            run_count,
             schedule_count,
             trigger_count,
             has_paused_schedule,
@@ -1278,8 +1270,6 @@ pub struct AgentsRetrieveResponse {
     pub code_repositories: Vec<AgentsRetrieveResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
     pub last_run: Option<AgentsRetrieveResponseLastRun>,
-    #[serde(rename = "runCount")]
-    pub run_count: i64,
     #[serde(rename = "scheduleCount")]
     pub schedule_count: i64,
     #[serde(rename = "triggerCount")]
@@ -1324,7 +1314,6 @@ impl AgentsRetrieveResponse {
         user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
         code_repositories: Vec<AgentsRetrieveResponseCodeRepository>,
         last_run: Option<AgentsRetrieveResponseLastRun>,
-        run_count: i64,
         schedule_count: i64,
         trigger_count: i64,
         has_paused_schedule: bool,
@@ -1356,7 +1345,6 @@ impl AgentsRetrieveResponse {
             user_state,
             code_repositories,
             last_run,
-            run_count,
             schedule_count,
             trigger_count,
             has_paused_schedule,
@@ -1637,8 +1625,6 @@ pub struct AgentsUpdateResponse {
     pub code_repositories: Vec<AgentsUpdateResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
     pub last_run: Option<AgentsUpdateResponseLastRun>,
-    #[serde(rename = "runCount")]
-    pub run_count: i64,
     #[serde(rename = "scheduleCount")]
     pub schedule_count: i64,
     #[serde(rename = "triggerCount")]
@@ -1683,7 +1669,6 @@ impl AgentsUpdateResponse {
         user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
         code_repositories: Vec<AgentsUpdateResponseCodeRepository>,
         last_run: Option<AgentsUpdateResponseLastRun>,
-        run_count: i64,
         schedule_count: i64,
         trigger_count: i64,
         has_paused_schedule: bool,
@@ -1715,7 +1700,6 @@ impl AgentsUpdateResponse {
             user_state,
             code_repositories,
             last_run,
-            run_count,
             schedule_count,
             trigger_count,
             has_paused_schedule,

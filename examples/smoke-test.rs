@@ -2368,6 +2368,7 @@ async fn main() {
                         .with_default_project_id("x".to_string())
                         .with_gpg_key("".to_string())
                         .with_include_tembo_commit_attribution(false)
+                        .with_open_pull_requests_as_bot(false)
                         .with_desktop_notifications_enabled(false)
                         .with_desktop_notification_preferences(SettingsUpdateBody2DesktopNotificationPreferences::new())
                         .with_has_desktop_app(false)
@@ -2381,6 +2382,7 @@ async fn main() {
                         .with_diff_light_theme("".to_string())
                         .with_diff_dark_theme("".to_string())
                         .with_default_agent("".to_string())
+                        .with_default_fast_mode(false)
                         .with_follow_up_behavior(SettingsUpdateBody2FollowUpBehavior::Queue)
                         .with_custom_system_prompt("".to_string()),
                 )
@@ -6929,6 +6931,7 @@ async fn main() {
                 .created_before(chrono::Utc::now().fixed_offset())
                 .created_by(vec!["createdBy".to_string()])
                 .models(vec!["model".to_string()])
+                .agent_ids(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()])
                 .send()
                 .await?;
             Ok(())

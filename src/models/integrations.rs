@@ -1226,8 +1226,8 @@ impl IntegrationsSyncAllBody {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsRetrieveSyncStatusResponse {
-    #[serde(rename = "activeJobCount")]
-    pub active_job_count: i64,
+    #[serde(rename = "hasActiveJobs")]
+    pub has_active_jobs: bool,
     #[serde(rename = "eligibleIntegrationCount")]
     pub eligible_integration_count: i64,
 }
@@ -1238,9 +1238,9 @@ impl IntegrationsRetrieveSyncStatusResponse {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    pub fn new(active_job_count: i64, eligible_integration_count: i64) -> Self {
+    pub fn new(has_active_jobs: bool, eligible_integration_count: i64) -> Self {
         Self {
-            active_job_count,
+            has_active_jobs,
             eligible_integration_count,
         }
     }
