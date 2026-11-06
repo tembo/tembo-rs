@@ -1822,6 +1822,32 @@ async fn smoke() {
         let result: Result<(), Error> = async {
             let _ = client
                 .sessions()
+                .import(SessionsImportBody::new(
+                    "conductor".to_string(),
+                    "x".to_string(),
+                    "x".to_string(),
+                    vec![SessionsImportBodyMessage::new(
+                        "x".to_string(),
+                        SessionsImportBodyMessageRole::User,
+                        "".to_string(),
+                        chrono::Utc::now().fixed_offset(),
+                    )],
+                ))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/sessions/import"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
                 .stop("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .send()
                 .await?;

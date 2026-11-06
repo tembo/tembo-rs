@@ -602,6 +602,15 @@ Fork a session
 - Response body: `application/json`
 - Errors: `400, 401, 403, 404, 409, 500, 502`
 
+### client.sessions().import(…)
+
+Import a chat as a session
+
+- HTTP: `POST /v1/sessions/import`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 401, 403, 404, 409, 500, 502`
+
 ### client.sessions().stop(…)
 
 Stop a session
