@@ -33,6 +33,8 @@ pub struct SettingsRetrieveResponse2 {
         skip_serializing_if = "Option::is_none"
     )]
     pub include_tembo_commit_attribution: Option<bool>,
+    #[serde(rename = "openPullRequestsAsBot", default, skip_serializing_if = "Option::is_none")]
+    pub open_pull_requests_as_bot: Option<bool>,
     #[serde(
         rename = "desktopNotificationsEnabled",
         default,
@@ -67,6 +69,8 @@ pub struct SettingsRetrieveResponse2 {
     pub diff_dark_theme: Option<String>,
     #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
+    #[serde(rename = "defaultFastMode", default, skip_serializing_if = "Option::is_none")]
+    pub default_fast_mode: Option<bool>,
     #[serde(rename = "followUpBehavior", default, skip_serializing_if = "Option::is_none")]
     pub follow_up_behavior: Option<SettingsRetrieveResponse2FollowUpBehavior>,
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
@@ -85,6 +89,7 @@ impl SettingsRetrieveResponse2 {
             default_session_visibility_by_workspace: None,
             gpg_key: None,
             include_tembo_commit_attribution: None,
+            open_pull_requests_as_bot: None,
             desktop_notifications_enabled: None,
             desktop_notification_preferences: None,
             has_desktop_app: None,
@@ -98,6 +103,7 @@ impl SettingsRetrieveResponse2 {
             diff_light_theme: None,
             diff_dark_theme: None,
             default_agent: None,
+            default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
         }
@@ -133,6 +139,12 @@ impl SettingsRetrieveResponse2 {
     /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
     pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
         self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_requests_as_bot`, which `new` leaves unset.
+    pub fn with_open_pull_requests_as_bot(mut self, value: bool) -> Self {
+        self.open_pull_requests_as_bot = Some(value);
         self
     }
 
@@ -214,6 +226,12 @@ impl SettingsRetrieveResponse2 {
     /// Sets `default_agent`, which `new` leaves unset.
     pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
         self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `default_fast_mode`, which `new` leaves unset.
+    pub fn with_default_fast_mode(mut self, value: bool) -> Self {
+        self.default_fast_mode = Some(value);
         self
     }
 
@@ -1677,6 +1695,8 @@ pub struct SettingsUpdateResponse2 {
         skip_serializing_if = "Option::is_none"
     )]
     pub include_tembo_commit_attribution: Option<bool>,
+    #[serde(rename = "openPullRequestsAsBot", default, skip_serializing_if = "Option::is_none")]
+    pub open_pull_requests_as_bot: Option<bool>,
     #[serde(
         rename = "desktopNotificationsEnabled",
         default,
@@ -1711,6 +1731,8 @@ pub struct SettingsUpdateResponse2 {
     pub diff_dark_theme: Option<String>,
     #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
+    #[serde(rename = "defaultFastMode", default, skip_serializing_if = "Option::is_none")]
+    pub default_fast_mode: Option<bool>,
     #[serde(rename = "followUpBehavior", default, skip_serializing_if = "Option::is_none")]
     pub follow_up_behavior: Option<SettingsUpdateResponse2FollowUpBehavior>,
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
@@ -1729,6 +1751,7 @@ impl SettingsUpdateResponse2 {
             default_session_visibility_by_workspace: None,
             gpg_key: None,
             include_tembo_commit_attribution: None,
+            open_pull_requests_as_bot: None,
             desktop_notifications_enabled: None,
             desktop_notification_preferences: None,
             has_desktop_app: None,
@@ -1742,6 +1765,7 @@ impl SettingsUpdateResponse2 {
             diff_light_theme: None,
             diff_dark_theme: None,
             default_agent: None,
+            default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
         }
@@ -1777,6 +1801,12 @@ impl SettingsUpdateResponse2 {
     /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
     pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
         self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_requests_as_bot`, which `new` leaves unset.
+    pub fn with_open_pull_requests_as_bot(mut self, value: bool) -> Self {
+        self.open_pull_requests_as_bot = Some(value);
         self
     }
 
@@ -1858,6 +1888,12 @@ impl SettingsUpdateResponse2 {
     /// Sets `default_agent`, which `new` leaves unset.
     pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
         self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `default_fast_mode`, which `new` leaves unset.
+    pub fn with_default_fast_mode(mut self, value: bool) -> Self {
+        self.default_fast_mode = Some(value);
         self
     }
 
@@ -3330,6 +3366,9 @@ pub struct SettingsUpdateBody2 {
         skip_serializing_if = "Option::is_none"
     )]
     pub include_tembo_commit_attribution: Option<bool>,
+    /// Open GitHub pull requests as the Tembo bot instead of your personal account.
+    #[serde(rename = "openPullRequestsAsBot", default, skip_serializing_if = "Option::is_none")]
+    pub open_pull_requests_as_bot: Option<bool>,
     /// Enable or disable desktop notifications.
     #[serde(
         rename = "desktopNotificationsEnabled",
@@ -3382,6 +3421,9 @@ pub struct SettingsUpdateBody2 {
         with = "crate::explicit_null::double_option"
     )]
     pub default_agent: Option<Option<String>>,
+    /// Enable Fast mode by default for new sessions with supported agents.
+    #[serde(rename = "defaultFastMode", default, skip_serializing_if = "Option::is_none")]
+    pub default_fast_mode: Option<bool>,
     /// Default follow-up delivery: queue a new turn or steer an active turn.
     #[serde(rename = "followUpBehavior", default, skip_serializing_if = "Option::is_none")]
     pub follow_up_behavior: Option<SettingsUpdateBody2FollowUpBehavior>,
@@ -3402,6 +3444,7 @@ impl SettingsUpdateBody2 {
             default_project_id: None,
             gpg_key: None,
             include_tembo_commit_attribution: None,
+            open_pull_requests_as_bot: None,
             desktop_notifications_enabled: None,
             desktop_notification_preferences: None,
             has_desktop_app: None,
@@ -3415,6 +3458,7 @@ impl SettingsUpdateBody2 {
             diff_light_theme: None,
             diff_dark_theme: None,
             default_agent: None,
+            default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
         }
@@ -3452,6 +3496,12 @@ impl SettingsUpdateBody2 {
     /// Sets `include_tembo_commit_attribution`, which `new` leaves unset.
     pub fn with_include_tembo_commit_attribution(mut self, value: bool) -> Self {
         self.include_tembo_commit_attribution = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_requests_as_bot`, which `new` leaves unset.
+    pub fn with_open_pull_requests_as_bot(mut self, value: bool) -> Self {
+        self.open_pull_requests_as_bot = Some(value);
         self
     }
 
@@ -3535,6 +3585,12 @@ impl SettingsUpdateBody2 {
     /// To send an explicit `null` instead, assign `default_agent = Some(None)` on the built value.
     pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
         self.default_agent = Some(Some(value.into()));
+        self
+    }
+
+    /// Sets `default_fast_mode`, which `new` leaves unset.
+    pub fn with_default_fast_mode(mut self, value: bool) -> Self {
+        self.default_fast_mode = Some(value);
         self
     }
 

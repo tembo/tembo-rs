@@ -1366,6 +1366,8 @@ Live resource subscriptions
 - `GitlabBotMergeRequestCommentFilters`
 - `GitlabIssueClosedFilters`
 - `GitlabIssueOpenedFilters`
+- `GitlabIssueLabelAddedFilters`
+- `GitlabIssueUpdatedFilters`
 - `GitlabMergeRequestClosedFilters`
 - `GitlabMergeRequestMergedFilters`
 - `GitlabMergeRequestOpenedFilters`
