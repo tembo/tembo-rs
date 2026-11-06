@@ -1458,6 +1458,7 @@ async fn main() {
                         .with_clone_depth(1)
                         .with_commit_instructions("".to_string())
                         .with_cursor_api_key("".to_string())
+                        .with_custom_review_bots(vec!["x".to_string()])
                         .with_custom_system_prompt("".to_string())
                         .with_default_agent("".to_string())
                         .with_default_keep_alive_minutes(0)

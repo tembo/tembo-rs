@@ -41,6 +41,9 @@ pub struct SettingsRetrieveResponseSettings {
     /// Organization instructions for agent commit messages.
     #[serde(rename = "commitInstructions")]
     pub commit_instructions: String,
+    /// Additional GitHub bot logins Tembo responds to without an @tembo mention.
+    #[serde(rename = "customReviewBots")]
+    pub custom_review_bots: Vec<String>,
     /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt")]
     pub custom_system_prompt: String,
@@ -132,6 +135,7 @@ impl SettingsRetrieveResponseSettings {
     pub fn new(
         clone_depth: i64,
         commit_instructions: impl Into<String>,
+        custom_review_bots: Vec<String>,
         custom_system_prompt: impl Into<String>,
         default_agent: impl Into<String>,
         default_keep_alive_minutes: i64,
@@ -163,6 +167,7 @@ impl SettingsRetrieveResponseSettings {
         Self {
             clone_depth,
             commit_instructions: commit_instructions.into(),
+            custom_review_bots,
             custom_system_prompt: custom_system_prompt.into(),
             default_agent: default_agent.into(),
             default_keep_alive_minutes,
@@ -296,6 +301,9 @@ pub struct SettingsUpdateResponseSettings {
     /// Organization instructions for agent commit messages.
     #[serde(rename = "commitInstructions")]
     pub commit_instructions: String,
+    /// Additional GitHub bot logins Tembo responds to without an @tembo mention.
+    #[serde(rename = "customReviewBots")]
+    pub custom_review_bots: Vec<String>,
     /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt")]
     pub custom_system_prompt: String,
@@ -387,6 +395,7 @@ impl SettingsUpdateResponseSettings {
     pub fn new(
         clone_depth: i64,
         commit_instructions: impl Into<String>,
+        custom_review_bots: Vec<String>,
         custom_system_prompt: impl Into<String>,
         default_agent: impl Into<String>,
         default_keep_alive_minutes: i64,
@@ -418,6 +427,7 @@ impl SettingsUpdateResponseSettings {
         Self {
             clone_depth,
             commit_instructions: commit_instructions.into(),
+            custom_review_bots,
             custom_system_prompt: custom_system_prompt.into(),
             default_agent: default_agent.into(),
             default_keep_alive_minutes,
@@ -552,6 +562,9 @@ pub struct SettingsUpdateBody {
     /// API key for Cursor agent access.
     #[serde(rename = "cursorApiKey", default, skip_serializing_if = "Option::is_none")]
     pub cursor_api_key: Option<String>,
+    /// Additional GitHub bot logins Tembo responds to without an @tembo mention.
+    #[serde(rename = "customReviewBots", default, skip_serializing_if = "Option::is_none")]
+    pub custom_review_bots: Option<Vec<String>>,
     /// Custom system instructions supplied to organization agents.
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
@@ -690,6 +703,7 @@ impl SettingsUpdateBody {
             clone_depth: None,
             commit_instructions: None,
             cursor_api_key: None,
+            custom_review_bots: None,
             custom_system_prompt: None,
             default_agent: None,
             default_keep_alive_minutes: None,
@@ -770,6 +784,12 @@ impl SettingsUpdateBody {
     /// Sets `cursor_api_key`, which `new` leaves unset.
     pub fn with_cursor_api_key(mut self, value: impl Into<String>) -> Self {
         self.cursor_api_key = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_review_bots`, which `new` leaves unset.
+    pub fn with_custom_review_bots(mut self, value: Vec<String>) -> Self {
+        self.custom_review_bots = Some(value);
         self
     }
 
