@@ -6891,6 +6891,1336 @@ impl SessionsForkBody {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponse {
+    #[serde(default)]
+    pub agent: Option<String>,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
+    #[serde(rename = "artifactType", default)]
+    pub artifact_type: Option<SessionsImportResponseArtifactType>,
+    #[serde(rename = "baseBranch", default)]
+    pub base_branch: Option<String>,
+    #[serde(rename = "branchName", default)]
+    pub branch_name: Option<String>,
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "externalId", default)]
+    pub external_id: Option<String>,
+    #[serde(rename = "externalUrl", default)]
+    pub external_url: Option<String>,
+    pub id: String,
+    pub kind: String,
+    #[serde(
+        rename = "lastQueuedAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    #[serde(rename = "lastSeenAt", deserialize_with = "crate::datetime::deserialize")]
+    pub last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+    pub level: i64,
+    pub mode: SessionsImportResponseMode,
+    /// The session whose agent created this session.
+    #[serde(rename = "parentSessionId", default)]
+    pub parent_session_id: Option<String>,
+    #[serde(rename = "projectId", default)]
+    pub project_id: Option<String>,
+    #[serde(rename = "sandboxSize", default)]
+    pub sandbox_size: Option<SessionsImportResponseSandboxSize>,
+    #[serde(rename = "sessionType")]
+    pub session_type: SessionsImportResponseSessionType,
+    #[serde(rename = "targetBranch", default)]
+    pub target_branch: Option<String>,
+    pub title: String,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    pub visibility: SessionsImportResponseVisibility,
+    pub artifacts: Vec<SessionsImportResponseArtifact>,
+    /// Whether the session VM is sized automatically.
+    #[serde(rename = "automaticSizing")]
+    pub automatic_sizing: bool,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(rename = "diffSummary", default)]
+    pub diff_summary: Option<SessionsImportResponseDiffSummary>,
+    #[serde(rename = "htmlUrl")]
+    pub html_url: String,
+    #[serde(rename = "isPinned")]
+    pub is_pinned: bool,
+    #[serde(default)]
+    pub project: Option<SessionsImportResponseProject>,
+    #[serde(rename = "sessionSource")]
+    pub session_source: SessionsImportResponseSessionSource,
+    #[serde(rename = "sourcePullRequest", default)]
+    pub source_pull_request: Option<SessionsImportResponseSourcePullRequest>,
+    pub state: SessionsImportResponseState,
+}
+
+impl SessionsImportResponse {
+    /// Creates a new `SessionsImportResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        agent: Option<String>,
+        agent_id: Option<String>,
+        artifact_type: Option<SessionsImportResponseArtifactType>,
+        base_branch: Option<String>,
+        branch_name: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        external_id: Option<String>,
+        external_url: Option<String>,
+        id: impl Into<String>,
+        kind: impl Into<String>,
+        last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        last_seen_at: chrono::DateTime<chrono::FixedOffset>,
+        level: i64,
+        mode: SessionsImportResponseMode,
+        parent_session_id: Option<String>,
+        project_id: Option<String>,
+        sandbox_size: Option<SessionsImportResponseSandboxSize>,
+        session_type: SessionsImportResponseSessionType,
+        target_branch: Option<String>,
+        title: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        visibility: SessionsImportResponseVisibility,
+        artifacts: Vec<SessionsImportResponseArtifact>,
+        automatic_sizing: bool,
+        description: Option<String>,
+        diff_summary: Option<SessionsImportResponseDiffSummary>,
+        html_url: impl Into<String>,
+        is_pinned: bool,
+        project: Option<SessionsImportResponseProject>,
+        session_source: SessionsImportResponseSessionSource,
+        source_pull_request: Option<SessionsImportResponseSourcePullRequest>,
+        state: SessionsImportResponseState,
+    ) -> Self {
+        Self {
+            agent,
+            agent_id,
+            artifact_type,
+            base_branch,
+            branch_name,
+            created_at,
+            external_id,
+            external_url,
+            id: id.into(),
+            kind: kind.into(),
+            last_queued_at,
+            last_seen_at,
+            level,
+            mode,
+            parent_session_id,
+            project_id,
+            sandbox_size,
+            session_type,
+            target_branch,
+            title: title.into(),
+            updated_at,
+            visibility,
+            artifacts,
+            automatic_sizing,
+            description,
+            diff_summary,
+            html_url: html_url.into(),
+            is_pinned,
+            project,
+            session_source,
+            source_pull_request,
+            state,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseArtifactType {
+    PullRequest,
+    ToolCall,
+    Plan,
+    Response,
+    File,
+    Service,
+    Source,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseArtifactType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::PullRequest => "PullRequest",
+            Self::ToolCall => "ToolCall",
+            Self::Plan => "Plan",
+            Self::Response => "Response",
+            Self::File => "File",
+            Self::Service => "Service",
+            Self::Source => "Source",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseArtifactType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseArtifactType {
+    fn from(value: &str) -> Self {
+        match value {
+            "PullRequest" => Self::PullRequest,
+            "ToolCall" => Self::ToolCall,
+            "Plan" => Self::Plan,
+            "Response" => Self::Response,
+            "File" => Self::File,
+            "Service" => Self::Service,
+            "Source" => Self::Source,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseMode {
+    #[serde(rename = "normal")]
+    Normal,
+    #[serde(rename = "planning")]
+    Planning,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseMode {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Normal => "normal",
+            Self::Planning => "planning",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseMode {
+    fn from(value: &str) -> Self {
+        match value {
+            "normal" => Self::Normal,
+            "planning" => Self::Planning,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseSandboxSize {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "small")]
+    Small,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseSandboxSize {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseSandboxSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseSandboxSize {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "small" => Self::Small,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseSessionType {
+    Chat,
+    Terminal,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseSessionType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Chat => "Chat",
+            Self::Terminal => "Terminal",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseSessionType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseSessionType {
+    fn from(value: &str) -> Self {
+        match value {
+            "Chat" => Self::Chat,
+            "Terminal" => Self::Terminal,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseVisibility {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "private")]
+    Private,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseVisibility {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Private => "private",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseVisibility {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseVisibility {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "private" => Self::Private,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseArtifact::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseArtifact {
+    pub id: String,
+    pub r#type: SessionsImportResponseArtifactType2,
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "pullRequests")]
+    pub pull_requests: Vec<SessionsImportResponseArtifactPullRequest>,
+}
+
+impl SessionsImportResponseArtifact {
+    /// Creates a new `SessionsImportResponseArtifact` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        r#type: SessionsImportResponseArtifactType2,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        pull_requests: Vec<SessionsImportResponseArtifactPullRequest>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            r#type,
+            created_at,
+            updated_at,
+            pull_requests,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseArtifactType2 {
+    PullRequest,
+    ToolCall,
+    Plan,
+    Response,
+    File,
+    Service,
+    Source,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseArtifactType2 {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::PullRequest => "PullRequest",
+            Self::ToolCall => "ToolCall",
+            Self::Plan => "Plan",
+            Self::Response => "Response",
+            Self::File => "File",
+            Self::Service => "Service",
+            Self::Source => "Source",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseArtifactType2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseArtifactType2 {
+    fn from(value: &str) -> Self {
+        match value {
+            "PullRequest" => Self::PullRequest,
+            "ToolCall" => Self::ToolCall,
+            "Plan" => Self::Plan,
+            "Response" => Self::Response,
+            "File" => Self::File,
+            "Service" => Self::Service,
+            "Source" => Self::Source,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseArtifactPullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseArtifactPullRequest {
+    pub id: String,
+    pub url: String,
+    #[serde(default)]
+    pub title: Option<String>,
+    pub status: SessionsImportResponseArtifactPullRequestStatus,
+    #[serde(rename = "isDraft")]
+    pub is_draft: bool,
+    #[serde(rename = "sourceBranch", default)]
+    pub source_branch: Option<String>,
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(default)]
+    pub agent: Option<String>,
+    #[serde(default)]
+    pub diff: Option<SessionsImportResponseArtifactPullRequestDiff>,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "baseBranch", default)]
+    pub base_branch: Option<String>,
+    #[serde(rename = "headSha", default)]
+    pub head_sha: Option<String>,
+    #[serde(default)]
+    pub author: Option<SessionsImportResponseArtifactPullRequestAuthor>,
+    #[serde(rename = "codeRepository", default)]
+    pub code_repository: Option<SessionsImportResponseArtifactPullRequestCodeRepository>,
+}
+
+impl SessionsImportResponseArtifactPullRequest {
+    /// Creates a new `SessionsImportResponseArtifactPullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsImportResponseArtifactPullRequestStatus,
+        is_draft: bool,
+        source_branch: Option<String>,
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        agent: Option<String>,
+        diff: Option<SessionsImportResponseArtifactPullRequestDiff>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        base_branch: Option<String>,
+        head_sha: Option<String>,
+        author: Option<SessionsImportResponseArtifactPullRequestAuthor>,
+        code_repository: Option<SessionsImportResponseArtifactPullRequestCodeRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+            source_branch,
+            created_at,
+            agent,
+            diff,
+            updated_at,
+            base_branch,
+            head_sha,
+            author,
+            code_repository,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseArtifactPullRequestStatus {
+    #[serde(rename = "open")]
+    Open,
+    #[serde(rename = "merged")]
+    Merged,
+    #[serde(rename = "closed")]
+    Closed,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseArtifactPullRequestStatus {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Open => "open",
+            Self::Merged => "merged",
+            Self::Closed => "closed",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseArtifactPullRequestStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseArtifactPullRequestStatus {
+    fn from(value: &str) -> Self {
+        match value {
+            "open" => Self::Open,
+            "merged" => Self::Merged,
+            "closed" => Self::Closed,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseArtifactPullRequestDiff::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseArtifactPullRequestDiff {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub additions: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deletions: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub data: Option<String>,
+}
+
+impl SessionsImportResponseArtifactPullRequestDiff {
+    /// Creates a new `SessionsImportResponseArtifactPullRequestDiff` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsImportResponseArtifactPullRequestDiff::new().with_additions(…)`.
+    pub fn new() -> Self {
+        Self {
+            additions: None,
+            deletions: None,
+            data: None,
+        }
+    }
+
+    /// Sets `additions`, which `new` leaves unset.
+    pub fn with_additions(mut self, value: i64) -> Self {
+        self.additions = Some(value);
+        self
+    }
+
+    /// Sets `deletions`, which `new` leaves unset.
+    pub fn with_deletions(mut self, value: i64) -> Self {
+        self.deletions = Some(value);
+        self
+    }
+
+    /// Sets `data`, which `new` leaves unset.
+    pub fn with_data(mut self, value: impl Into<String>) -> Self {
+        self.data = Some(value.into());
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseArtifactPullRequestAuthor::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseArtifactPullRequestAuthor {
+    #[serde(rename = "avatarUrl", default)]
+    pub avatar_url: Option<String>,
+    #[serde(default)]
+    pub login: Option<String>,
+}
+
+impl SessionsImportResponseArtifactPullRequestAuthor {
+    /// Creates a new `SessionsImportResponseArtifactPullRequestAuthor` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(avatar_url: Option<String>, login: Option<String>) -> Self {
+        Self { avatar_url, login }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseArtifactPullRequestCodeRepository::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseArtifactPullRequestCodeRepository {
+    pub id: String,
+    pub name: String,
+    #[serde(default)]
+    pub owner: Option<String>,
+    #[serde(rename = "baseBranch", default)]
+    pub base_branch: Option<String>,
+    pub provider: String,
+}
+
+impl SessionsImportResponseArtifactPullRequestCodeRepository {
+    /// Creates a new `SessionsImportResponseArtifactPullRequestCodeRepository` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        owner: Option<String>,
+        base_branch: Option<String>,
+        provider: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            owner,
+            base_branch,
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseDiffSummary::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseDiffSummary {
+    pub additions: i64,
+    pub deletions: i64,
+}
+
+impl SessionsImportResponseDiffSummary {
+    /// Creates a new `SessionsImportResponseDiffSummary` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(additions: i64, deletions: i64) -> Self {
+        Self { additions, deletions }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseProject::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseProject {
+    pub id: String,
+    pub name: String,
+    pub icon: SessionsImportResponseProjectIcon,
+    pub color: SessionsImportResponseProjectColor,
+}
+
+impl SessionsImportResponseProject {
+    /// Creates a new `SessionsImportResponseProject` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        icon: SessionsImportResponseProjectIcon,
+        color: SessionsImportResponseProjectColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            icon,
+            color,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseProjectIcon {
+    #[serde(rename = "folder")]
+    Folder,
+    #[serde(rename = "code")]
+    Code,
+    #[serde(rename = "terminal")]
+    Terminal,
+    #[serde(rename = "book")]
+    Book,
+    #[serde(rename = "brain")]
+    Brain,
+    #[serde(rename = "bug")]
+    Bug,
+    #[serde(rename = "building")]
+    Building,
+    #[serde(rename = "cloud")]
+    Cloud,
+    #[serde(rename = "globe")]
+    Globe,
+    #[serde(rename = "idea")]
+    Idea,
+    #[serde(rename = "tools")]
+    Tools,
+    #[serde(rename = "magic")]
+    Magic,
+    #[serde(rename = "processor")]
+    Processor,
+    #[serde(rename = "sandbox")]
+    Sandbox,
+    #[serde(rename = "server")]
+    Server,
+    #[serde(rename = "tasks")]
+    Tasks,
+    #[serde(rename = "tactics")]
+    Tactics,
+    #[serde(rename = "images")]
+    Images,
+    #[serde(rename = "database")]
+    Database,
+    #[serde(rename = "api")]
+    Api,
+    #[serde(rename = "mobile")]
+    Mobile,
+    #[serde(rename = "package")]
+    Package,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseProjectIcon {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Folder => "folder",
+            Self::Code => "code",
+            Self::Terminal => "terminal",
+            Self::Book => "book",
+            Self::Brain => "brain",
+            Self::Bug => "bug",
+            Self::Building => "building",
+            Self::Cloud => "cloud",
+            Self::Globe => "globe",
+            Self::Idea => "idea",
+            Self::Tools => "tools",
+            Self::Magic => "magic",
+            Self::Processor => "processor",
+            Self::Sandbox => "sandbox",
+            Self::Server => "server",
+            Self::Tasks => "tasks",
+            Self::Tactics => "tactics",
+            Self::Images => "images",
+            Self::Database => "database",
+            Self::Api => "api",
+            Self::Mobile => "mobile",
+            Self::Package => "package",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseProjectIcon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseProjectIcon {
+    fn from(value: &str) -> Self {
+        match value {
+            "folder" => Self::Folder,
+            "code" => Self::Code,
+            "terminal" => Self::Terminal,
+            "book" => Self::Book,
+            "brain" => Self::Brain,
+            "bug" => Self::Bug,
+            "building" => Self::Building,
+            "cloud" => Self::Cloud,
+            "globe" => Self::Globe,
+            "idea" => Self::Idea,
+            "tools" => Self::Tools,
+            "magic" => Self::Magic,
+            "processor" => Self::Processor,
+            "sandbox" => Self::Sandbox,
+            "server" => Self::Server,
+            "tasks" => Self::Tasks,
+            "tactics" => Self::Tactics,
+            "images" => Self::Images,
+            "database" => Self::Database,
+            "api" => Self::Api,
+            "mobile" => Self::Mobile,
+            "package" => Self::Package,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseProjectColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseProjectColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseProjectColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseProjectColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseSessionSource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseSessionSource {
+    pub id: String,
+    pub name: String,
+    pub r#type: String,
+    pub repositories: Vec<SessionsImportResponseSessionSourceRepository>,
+}
+
+impl SessionsImportResponseSessionSource {
+    /// Creates a new `SessionsImportResponseSessionSource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        r#type: impl Into<String>,
+        repositories: Vec<SessionsImportResponseSessionSourceRepository>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            r#type: r#type.into(),
+            repositories,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseSessionSourceRepository::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseSessionSourceRepository {
+    pub id: String,
+    pub name: String,
+    pub provider: String,
+}
+
+impl SessionsImportResponseSessionSourceRepository {
+    /// Creates a new `SessionsImportResponseSessionSourceRepository` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, provider: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            provider: provider.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseSourcePullRequest::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseSourcePullRequest {
+    pub id: String,
+    pub url: String,
+    #[serde(default)]
+    pub title: Option<String>,
+    pub status: SessionsImportResponseSourcePullRequestStatus,
+    #[serde(rename = "isDraft")]
+    pub is_draft: bool,
+}
+
+impl SessionsImportResponseSourcePullRequest {
+    /// Creates a new `SessionsImportResponseSourcePullRequest` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        url: impl Into<String>,
+        title: Option<String>,
+        status: SessionsImportResponseSourcePullRequestStatus,
+        is_draft: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            url: url.into(),
+            title,
+            status,
+            is_draft,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseSourcePullRequestStatus {
+    #[serde(rename = "open")]
+    Open,
+    #[serde(rename = "merged")]
+    Merged,
+    #[serde(rename = "closed")]
+    Closed,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseSourcePullRequestStatus {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Open => "open",
+            Self::Merged => "merged",
+            Self::Closed => "closed",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseSourcePullRequestStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseSourcePullRequestStatus {
+    fn from(value: &str) -> Self {
+        match value {
+            "open" => Self::Open,
+            "merged" => Self::Merged,
+            "closed" => Self::Closed,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportResponseState::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportResponseState {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current: Option<SessionsImportResponseStateCurrent>,
+    #[serde(rename = "isQueued")]
+    pub is_queued: bool,
+    #[serde(rename = "isCancelled")]
+    pub is_cancelled: bool,
+    #[serde(rename = "isCompleted")]
+    pub is_completed: bool,
+    #[serde(rename = "isFailed")]
+    pub is_failed: bool,
+    #[serde(rename = "inProgress")]
+    pub in_progress: bool,
+}
+
+impl SessionsImportResponseState {
+    /// Creates a new `SessionsImportResponseState` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SessionsImportResponseState::new(…).with_current(…)`.
+    pub fn new(is_queued: bool, is_cancelled: bool, is_completed: bool, is_failed: bool, in_progress: bool) -> Self {
+        Self {
+            current: None,
+            is_queued,
+            is_cancelled,
+            is_completed,
+            is_failed,
+            in_progress,
+        }
+    }
+
+    /// Sets `current`, which `new` leaves unset.
+    pub fn with_current(mut self, value: SessionsImportResponseStateCurrent) -> Self {
+        self.current = Some(value);
+        self
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportResponseStateCurrent {
+    #[serde(rename = "inProgress")]
+    InProgress,
+    #[serde(rename = "queued")]
+    Queued,
+    #[serde(rename = "completed")]
+    Completed,
+    #[serde(rename = "failed")]
+    Failed,
+    #[serde(rename = "cancelled")]
+    Cancelled,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportResponseStateCurrent {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::InProgress => "inProgress",
+            Self::Queued => "queued",
+            Self::Completed => "completed",
+            Self::Failed => "failed",
+            Self::Cancelled => "cancelled",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportResponseStateCurrent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportResponseStateCurrent {
+    fn from(value: &str) -> Self {
+        match value {
+            "inProgress" => Self::InProgress,
+            "queued" => Self::Queued,
+            "completed" => Self::Completed,
+            "failed" => Self::Failed,
+            "cancelled" => Self::Cancelled,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportBody {
+    /// Application the chat is imported from.
+    pub source: String,
+    /// Chat ID in the source application. Importing the same chat again returns the existing session.
+    #[serde(rename = "externalId")]
+    pub external_id: String,
+    /// Title of the chat.
+    pub title: String,
+    /// Chat messages in the order they were sent.
+    pub messages: Vec<SessionsImportBodyMessage>,
+}
+
+impl SessionsImportBody {
+    /// Creates a new `SessionsImportBody` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        source: impl Into<String>,
+        external_id: impl Into<String>,
+        title: impl Into<String>,
+        messages: Vec<SessionsImportBodyMessage>,
+    ) -> Self {
+        Self {
+            source: source.into(),
+            external_id: external_id.into(),
+            title: title.into(),
+            messages,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SessionsImportBodyMessage::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SessionsImportBodyMessage {
+    pub id: String,
+    /// Who wrote the row. Assistant rows hold a Claude Agent SDK message as JSON.
+    pub role: SessionsImportBodyMessageRole,
+    pub content: String,
+    #[serde(rename = "sentAt", deserialize_with = "crate::datetime::deserialize")]
+    pub sent_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl SessionsImportBodyMessage {
+    /// Creates a new `SessionsImportBodyMessage` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        role: SessionsImportBodyMessageRole,
+        content: impl Into<String>,
+        sent_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            role,
+            content: content.into(),
+            sent_at,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportBodyMessageRole {
+    #[serde(rename = "user")]
+    User,
+    #[serde(rename = "assistant")]
+    Assistant,
+    #[serde(rename = "summary")]
+    Summary,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportBodyMessageRole {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::User => "user",
+            Self::Assistant => "assistant",
+            Self::Summary => "summary",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportBodyMessageRole {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportBodyMessageRole {
+    fn from(value: &str) -> Self {
+        match value {
+            "user" => Self::User,
+            "assistant" => Self::Assistant,
+            "summary" => Self::Summary,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SessionsStopResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]

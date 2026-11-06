@@ -3058,6 +3058,45 @@ async fn main() {
             error,
         });
     }
+    if selected(&filter, "import", "/v1/sessions/import") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .import(SessionsImportBody::new(
+                    "conductor".to_string(),
+                    "x".to_string(),
+                    "x".to_string(),
+                    vec![SessionsImportBodyMessage::new(
+                        "x".to_string(),
+                        SessionsImportBodyMessageRole::User,
+                        "".to_string(),
+                        chrono::Utc::now().fixed_offset(),
+                    )],
+                ))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "import".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/sessions/import".to_string(),
+            label: "".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
     if selected(&filter, "stop", "/v1/sessions/{sessionId}/stop") {
         let started = std::time::Instant::now();
         let result: Result<(), Error> = async {
