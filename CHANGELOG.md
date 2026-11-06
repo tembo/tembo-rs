@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/tembo/tembo-rs/compare/v0.8.0...v0.9.0) (2026-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** Schema `trigger_filters` shape changed.
+
+### Features
+
+* **api:** add operation sessions.import ([75aef76](https://github.com/tembo/tembo-rs/commit/75aef7622c0728b152a71bd1d5cc351deacc2d7f))
+* **api:** update schema trigger_filters (+6 more changes) ([d401579](https://github.com/tembo/tembo-rs/commit/d401579bdd941efeaadfa5bc5cc9df6b7a6f6fa2))
+
 ## [0.8.0](https://github.com/tembo/tembo-rs/compare/v0.7.0...v0.8.0) (2026-11-05)
 
 

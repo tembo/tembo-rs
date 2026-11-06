@@ -168,3 +168,107 @@ impl GithubWorkflowRunCompletedFilters {
         self
     }
 }
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabIssueLabelAddedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GitlabIssueLabelAddedFilters {
+    /// Only trigger if the issue is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger if one of the added labels matches these labels
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labels: Option<Vec<String>>,
+    /// Only trigger if the label was added by one of the specified users
+    #[serde(rename = "addedBy", default, skip_serializing_if = "Option::is_none")]
+    pub added_by: Option<Vec<String>>,
+}
+
+impl GitlabIssueLabelAddedFilters {
+    /// Creates a new `GitlabIssueLabelAddedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabIssueLabelAddedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            labels: None,
+            added_by: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `added_by`, which `new` leaves unset.
+    pub fn with_added_by(mut self, value: Vec<String>) -> Self {
+        self.added_by = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabIssueUpdatedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GitlabIssueUpdatedFilters {
+    /// Only trigger if the issue is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger if the issue has at least one of the specified labels
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labels: Option<Vec<String>>,
+    /// Only trigger if the issue was updated by one of the specified users
+    #[serde(rename = "updatedBy", default, skip_serializing_if = "Option::is_none")]
+    pub updated_by: Option<Vec<String>>,
+}
+
+impl GitlabIssueUpdatedFilters {
+    /// Creates a new `GitlabIssueUpdatedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabIssueUpdatedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            labels: None,
+            updated_by: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `updated_by`, which `new` leaves unset.
+    pub fn with_updated_by(mut self, value: Vec<String>) -> Self {
+        self.updated_by = Some(value);
+        self
+    }
+}

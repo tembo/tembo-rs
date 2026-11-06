@@ -178,8 +178,6 @@ pub struct ContentRevisionsRestoreResponse {
     pub code_repositories: Vec<ContentRevisionsRestoreResponseCodeRepository>,
     #[serde(rename = "lastRun", default)]
     pub last_run: Option<ContentRevisionsRestoreResponseLastRun>,
-    #[serde(rename = "runCount")]
-    pub run_count: i64,
     #[serde(rename = "scheduleCount")]
     pub schedule_count: i64,
     #[serde(rename = "triggerCount")]
@@ -224,7 +222,6 @@ impl ContentRevisionsRestoreResponse {
         user_state: Option<std::collections::BTreeMap<String, serde_json::Value>>,
         code_repositories: Vec<ContentRevisionsRestoreResponseCodeRepository>,
         last_run: Option<ContentRevisionsRestoreResponseLastRun>,
-        run_count: i64,
         schedule_count: i64,
         trigger_count: i64,
         has_paused_schedule: bool,
@@ -256,7 +253,6 @@ impl ContentRevisionsRestoreResponse {
             user_state,
             code_repositories,
             last_run,
-            run_count,
             schedule_count,
             trigger_count,
             has_paused_schedule,

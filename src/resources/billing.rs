@@ -101,6 +101,7 @@ pub struct ListUsageRequestBuilder {
     created_before: Option<chrono::DateTime<chrono::FixedOffset>>,
     created_by: Option<Vec<String>>,
     models: Option<Vec<String>>,
+    agent_ids: Option<Vec<String>>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -117,6 +118,7 @@ impl ListUsageRequestBuilder {
             created_before: None,
             created_by: None,
             models: None,
+            agent_ids: None,
             timeout: None,
             max_retries: None,
         }
@@ -167,6 +169,12 @@ impl ListUsageRequestBuilder {
     /// Filter by model names, supplied as a comma-separated list.
     pub fn models(mut self, value: Vec<String>) -> Self {
         self.models = Some(value);
+        self
+    }
+
+    /// Filter by the agents that created sessions, supplied as a comma-separated list of agent IDs.
+    pub fn agent_ids(mut self, value: Vec<String>) -> Self {
+        self.agent_ids = Some(value);
         self
     }
 
@@ -227,6 +235,11 @@ impl ListUsageRequestBuilder {
         if let Some(values) = &self.models {
             for item in values {
                 query.push(("models".to_string(), crate::http::scalar_value(item)));
+            }
+        }
+        if let Some(values) = &self.agent_ids {
+            for item in values {
+                query.push(("agentIds".to_string(), crate::http::scalar_value(item)));
             }
         }
         let headers: Vec<(String, String)> = Vec::new();

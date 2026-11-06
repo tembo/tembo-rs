@@ -124,6 +124,8 @@ pub enum SubscriptionsRetrieveResponse2ChatgptUsagePlanType {
     Pro,
     #[serde(rename = "prolite")]
     Prolite,
+    #[serde(rename = "promax")]
+    Promax,
     #[serde(rename = "team")]
     Team,
     #[serde(rename = "self_serve_business_prolite")]
@@ -162,6 +164,7 @@ impl SubscriptionsRetrieveResponse2ChatgptUsagePlanType {
             Self::Plus => "plus",
             Self::Pro => "pro",
             Self::Prolite => "prolite",
+            Self::Promax => "promax",
             Self::Team => "team",
             Self::SelfServeBusinessProlite => "self_serve_business_prolite",
             Self::SelfServeBusinessUsageBased => "self_serve_business_usage_based",
@@ -193,6 +196,7 @@ impl From<&str> for SubscriptionsRetrieveResponse2ChatgptUsagePlanType {
             "plus" => Self::Plus,
             "pro" => Self::Pro,
             "prolite" => Self::Prolite,
+            "promax" => Self::Promax,
             "team" => Self::Team,
             "self_serve_business_prolite" => Self::SelfServeBusinessProlite,
             "self_serve_business_usage_based" => Self::SelfServeBusinessUsageBased,
@@ -285,6 +289,8 @@ pub enum SubscriptionsRetrieveResponse2ChatgptUsageRateLimitPlanType {
     Pro,
     #[serde(rename = "prolite")]
     Prolite,
+    #[serde(rename = "promax")]
+    Promax,
     #[serde(rename = "team")]
     Team,
     #[serde(rename = "self_serve_business_prolite")]
@@ -323,6 +329,7 @@ impl SubscriptionsRetrieveResponse2ChatgptUsageRateLimitPlanType {
             Self::Plus => "plus",
             Self::Pro => "pro",
             Self::Prolite => "prolite",
+            Self::Promax => "promax",
             Self::Team => "team",
             Self::SelfServeBusinessProlite => "self_serve_business_prolite",
             Self::SelfServeBusinessUsageBased => "self_serve_business_usage_based",
@@ -354,6 +361,7 @@ impl From<&str> for SubscriptionsRetrieveResponse2ChatgptUsageRateLimitPlanType 
             "plus" => Self::Plus,
             "pro" => Self::Pro,
             "prolite" => Self::Prolite,
+            "promax" => Self::Promax,
             "team" => Self::Team,
             "self_serve_business_prolite" => Self::SelfServeBusinessProlite,
             "self_serve_business_usage_based" => Self::SelfServeBusinessUsageBased,

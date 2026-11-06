@@ -2368,6 +2368,7 @@ async fn main() {
                         .with_default_project_id("x".to_string())
                         .with_gpg_key("".to_string())
                         .with_include_tembo_commit_attribution(false)
+                        .with_open_pull_requests_as_bot(false)
                         .with_desktop_notifications_enabled(false)
                         .with_desktop_notification_preferences(SettingsUpdateBody2DesktopNotificationPreferences::new())
                         .with_has_desktop_app(false)
@@ -2381,6 +2382,7 @@ async fn main() {
                         .with_diff_light_theme("".to_string())
                         .with_diff_dark_theme("".to_string())
                         .with_default_agent("".to_string())
+                        .with_default_fast_mode(false)
                         .with_follow_up_behavior(SettingsUpdateBody2FollowUpBehavior::Queue)
                         .with_custom_system_prompt("".to_string()),
                 )
@@ -3051,6 +3053,45 @@ async fn main() {
             method: "POST".to_string(),
             path: "/v1/sessions/{sessionId}/fork".to_string(),
             label: "all params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(&filter, "import", "/v1/sessions/import") {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .sessions()
+                .import(SessionsImportBody::new(
+                    "conductor".to_string(),
+                    "x".to_string(),
+                    "x".to_string(),
+                    vec![SessionsImportBodyMessage::new(
+                        "x".to_string(),
+                        SessionsImportBodyMessageRole::User,
+                        "".to_string(),
+                        chrono::Utc::now().fixed_offset(),
+                    )],
+                ))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "import".to_string(),
+            method: "POST".to_string(),
+            path: "/v1/sessions/import".to_string(),
+            label: "".to_string(),
             status: status.to_string(),
             duration_ms,
             error,
@@ -6929,6 +6970,7 @@ async fn main() {
                 .created_before(chrono::Utc::now().fixed_offset())
                 .created_by(vec!["createdBy".to_string()])
                 .models(vec!["model".to_string()])
+                .agent_ids(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()])
                 .send()
                 .await?;
             Ok(())
