@@ -87,12 +87,27 @@ impl OrganizationsCreateBody {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum OrganizationsRetrieveResponse {
+    OrganizationsRetrieveResponseVariant1(OrganizationsRetrieveResponseVariant1),
+    OrganizationsRetrieveResponseVariant2(OrganizationsRetrieveResponseVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `OrganizationsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
-/// reading.
+/// `OrganizationsRetrieveResponseVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct OrganizationsRetrieveResponse {
+pub struct OrganizationsRetrieveResponseVariant1 {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
@@ -109,13 +124,18 @@ pub struct OrganizationsRetrieveResponse {
     pub logo_url: Option<String>,
     #[serde(rename = "memberCount")]
     pub member_count: i64,
+    #[serde(rename = "currentMembership", default)]
+    pub current_membership: Option<OrganizationsRetrieveResponseVariant1CurrentMembership>,
+    pub access: OrganizationsRetrieveResponseVariant1Access,
 }
 
-impl OrganizationsRetrieveResponse {
-    /// Creates a new `OrganizationsRetrieveResponse` from its required fields, leaving every optional one unset.
+impl OrganizationsRetrieveResponseVariant1 {
+    /// Creates a new `OrganizationsRetrieveResponseVariant1` from its required fields, leaving every optional one
+    /// unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
         id: impl Into<String>,
@@ -124,6 +144,8 @@ impl OrganizationsRetrieveResponse {
         updated_at: Option<chrono::DateTime<chrono::FixedOffset>>,
         logo_url: Option<String>,
         member_count: i64,
+        current_membership: Option<OrganizationsRetrieveResponseVariant1CurrentMembership>,
+        access: OrganizationsRetrieveResponseVariant1Access,
     ) -> Self {
         Self {
             created_at,
@@ -133,6 +155,2191 @@ impl OrganizationsRetrieveResponse {
             updated_at,
             logo_url,
             member_count,
+            current_membership,
+            access,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponseVariant1CurrentMembership::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct OrganizationsRetrieveResponseVariant1CurrentMembership {
+    #[serde(rename = "userId")]
+    pub user_id: String,
+    pub permissions: Vec<OrganizationsRetrieveResponseVariant1CurrentMembershipPermission>,
+}
+
+impl OrganizationsRetrieveResponseVariant1CurrentMembership {
+    /// Creates a new `OrganizationsRetrieveResponseVariant1CurrentMembership` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        user_id: impl Into<String>,
+        permissions: Vec<OrganizationsRetrieveResponseVariant1CurrentMembershipPermission>,
+    ) -> Self {
+        Self {
+            user_id: user_id.into(),
+            permissions,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
+    #[serde(rename = "organization:read")]
+    OrganizationRead,
+    #[serde(rename = "organization:write")]
+    OrganizationWrite,
+    #[serde(rename = "organization:member:read")]
+    OrganizationMemberRead,
+    #[serde(rename = "organization:member:write")]
+    OrganizationMemberWrite,
+    #[serde(rename = "organization:invitation:read")]
+    OrganizationInvitationRead,
+    #[serde(rename = "organization:invitation:write")]
+    OrganizationInvitationWrite,
+    #[serde(rename = "organization:role:read")]
+    OrganizationRoleRead,
+    #[serde(rename = "organization:role:write")]
+    OrganizationRoleWrite,
+    #[serde(rename = "organization:secret:read")]
+    OrganizationSecretRead,
+    #[serde(rename = "organization:secret:write")]
+    OrganizationSecretWrite,
+    #[serde(rename = "organization:setting:read")]
+    OrganizationSettingRead,
+    #[serde(rename = "organization:setting:write")]
+    OrganizationSettingWrite,
+    #[serde(rename = "organization:configuration:read")]
+    OrganizationConfigurationRead,
+    #[serde(rename = "organization:configuration:write")]
+    OrganizationConfigurationWrite,
+    #[serde(rename = "organization:subscription:read")]
+    OrganizationSubscriptionRead,
+    #[serde(rename = "organization:subscription:write")]
+    OrganizationSubscriptionWrite,
+    #[serde(rename = "organization:onboarding:read")]
+    OrganizationOnboardingRead,
+    #[serde(rename = "organization:onboarding:write")]
+    OrganizationOnboardingWrite,
+    #[serde(rename = "organization:logo:read")]
+    OrganizationLogoRead,
+    #[serde(rename = "organization:logo:write")]
+    OrganizationLogoWrite,
+    #[serde(rename = "organization:slack_connect:read")]
+    OrganizationSlackConnectRead,
+    #[serde(rename = "organization:slack_connect:write")]
+    OrganizationSlackConnectWrite,
+    #[serde(rename = "billing:read")]
+    BillingRead,
+    #[serde(rename = "billing:write")]
+    BillingWrite,
+    #[serde(rename = "billing:trial:read")]
+    BillingTrialRead,
+    #[serde(rename = "billing:trial:write")]
+    BillingTrialWrite,
+    #[serde(rename = "billing:usage:read")]
+    BillingUsageRead,
+    #[serde(rename = "billing:usage:write")]
+    BillingUsageWrite,
+    #[serde(rename = "billing:payment:read")]
+    BillingPaymentRead,
+    #[serde(rename = "billing:payment:write")]
+    BillingPaymentWrite,
+    #[serde(rename = "billing:payment_method:read")]
+    BillingPaymentMethodRead,
+    #[serde(rename = "billing:payment_method:write")]
+    BillingPaymentMethodWrite,
+    #[serde(rename = "billing:checkout:read")]
+    BillingCheckoutRead,
+    #[serde(rename = "billing:checkout:write")]
+    BillingCheckoutWrite,
+    #[serde(rename = "billing:subscription_checkout:read")]
+    BillingSubscriptionCheckoutRead,
+    #[serde(rename = "billing:subscription_checkout:write")]
+    BillingSubscriptionCheckoutWrite,
+    #[serde(rename = "billing:portal:read")]
+    BillingPortalRead,
+    #[serde(rename = "billing:portal:write")]
+    BillingPortalWrite,
+    #[serde(rename = "billing:on_demand:read")]
+    BillingOnDemandRead,
+    #[serde(rename = "billing:on_demand:write")]
+    BillingOnDemandWrite,
+    #[serde(rename = "billing:credit:read")]
+    BillingCreditRead,
+    #[serde(rename = "billing:credit:write")]
+    BillingCreditWrite,
+    #[serde(rename = "billing:custom_price:read")]
+    BillingCustomPriceRead,
+    #[serde(rename = "billing:custom_price:write")]
+    BillingCustomPriceWrite,
+    #[serde(rename = "billing:custom_plan:read")]
+    BillingCustomPlanRead,
+    #[serde(rename = "billing:custom_plan:write")]
+    BillingCustomPlanWrite,
+    #[serde(rename = "billing:overage_report:read")]
+    BillingOverageReportRead,
+    #[serde(rename = "billing:overage_report:write")]
+    BillingOverageReportWrite,
+    #[serde(rename = "api_key:read")]
+    ApiKeyRead,
+    #[serde(rename = "api_key:write")]
+    ApiKeyWrite,
+    #[serde(rename = "user:read")]
+    UserRead,
+    #[serde(rename = "user:write")]
+    UserWrite,
+    #[serde(rename = "user:setting:read")]
+    UserSettingRead,
+    #[serde(rename = "user:setting:write")]
+    UserSettingWrite,
+    #[serde(rename = "user:environment_variable:read")]
+    UserEnvironmentVariableRead,
+    #[serde(rename = "user:environment_variable:write")]
+    UserEnvironmentVariableWrite,
+    #[serde(rename = "user:subscription:read")]
+    UserSubscriptionRead,
+    #[serde(rename = "user:subscription:write")]
+    UserSubscriptionWrite,
+    #[serde(rename = "user:connected_account:read")]
+    UserConnectedAccountRead,
+    #[serde(rename = "user:connected_account:write")]
+    UserConnectedAccountWrite,
+    #[serde(rename = "user:organization:read")]
+    UserOrganizationRead,
+    #[serde(rename = "user:organization:write")]
+    UserOrganizationWrite,
+    #[serde(rename = "user:profile_picture:read")]
+    UserProfilePictureRead,
+    #[serde(rename = "user:profile_picture:write")]
+    UserProfilePictureWrite,
+    #[serde(rename = "user:deletion:read")]
+    UserDeletionRead,
+    #[serde(rename = "user:deletion:write")]
+    UserDeletionWrite,
+    #[serde(rename = "agent:read")]
+    AgentRead,
+    #[serde(rename = "agent:write")]
+    AgentWrite,
+    #[serde(rename = "agent:schedule:read")]
+    AgentScheduleRead,
+    #[serde(rename = "agent:schedule:write")]
+    AgentScheduleWrite,
+    #[serde(rename = "agent:trigger:read")]
+    AgentTriggerRead,
+    #[serde(rename = "agent:trigger:write")]
+    AgentTriggerWrite,
+    #[serde(rename = "agent:run:read")]
+    AgentRunRead,
+    #[serde(rename = "agent:run:write")]
+    AgentRunWrite,
+    #[serde(rename = "agent:instruction_revision:read")]
+    AgentInstructionRevisionRead,
+    #[serde(rename = "agent:instruction_revision:write")]
+    AgentInstructionRevisionWrite,
+    #[serde(rename = "agent:template:read")]
+    AgentTemplateRead,
+    #[serde(rename = "agent:template:write")]
+    AgentTemplateWrite,
+    #[serde(rename = "session:read")]
+    SessionRead,
+    #[serde(rename = "session:write")]
+    SessionWrite,
+    #[serde(rename = "session:message:read")]
+    SessionMessageRead,
+    #[serde(rename = "session:message:write")]
+    SessionMessageWrite,
+    #[serde(rename = "session:artifact:read")]
+    SessionArtifactRead,
+    #[serde(rename = "session:artifact:write")]
+    SessionArtifactWrite,
+    #[serde(rename = "session:source:read")]
+    SessionSourceRead,
+    #[serde(rename = "session:source:write")]
+    SessionSourceWrite,
+    #[serde(rename = "session:command:read")]
+    SessionCommandRead,
+    #[serde(rename = "session:command:write")]
+    SessionCommandWrite,
+    #[serde(rename = "session:input:read")]
+    SessionInputRead,
+    #[serde(rename = "session:input:write")]
+    SessionInputWrite,
+    #[serde(rename = "session:queue:read")]
+    SessionQueueRead,
+    #[serde(rename = "session:queue:write")]
+    SessionQueueWrite,
+    #[serde(rename = "session:event:read")]
+    SessionEventRead,
+    #[serde(rename = "session:event:write")]
+    SessionEventWrite,
+    #[serde(rename = "session:file:read")]
+    SessionFileRead,
+    #[serde(rename = "session:file:write")]
+    SessionFileWrite,
+    #[serde(rename = "session:diff:read")]
+    SessionDiffRead,
+    #[serde(rename = "session:diff:write")]
+    SessionDiffWrite,
+    #[serde(rename = "session:workspace:read")]
+    SessionWorkspaceRead,
+    #[serde(rename = "session:workspace:write")]
+    SessionWorkspaceWrite,
+    #[serde(rename = "session:workspace_file:read")]
+    SessionWorkspaceFileRead,
+    #[serde(rename = "session:workspace_file:write")]
+    SessionWorkspaceFileWrite,
+    #[serde(rename = "session:workspace_diff:read")]
+    SessionWorkspaceDiffRead,
+    #[serde(rename = "session:workspace_diff:write")]
+    SessionWorkspaceDiffWrite,
+    #[serde(rename = "session:workspace_preview:read")]
+    SessionWorkspacePreviewRead,
+    #[serde(rename = "session:workspace_preview:write")]
+    SessionWorkspacePreviewWrite,
+    #[serde(rename = "pull_request:read")]
+    PullRequestRead,
+    #[serde(rename = "pull_request:write")]
+    PullRequestWrite,
+    #[serde(rename = "pull_request:merge:read")]
+    PullRequestMergeRead,
+    #[serde(rename = "pull_request:merge:write")]
+    PullRequestMergeWrite,
+    #[serde(rename = "pull_request:attachment:read")]
+    PullRequestAttachmentRead,
+    #[serde(rename = "pull_request:attachment:write")]
+    PullRequestAttachmentWrite,
+    #[serde(rename = "pull_request:session:read")]
+    PullRequestSessionRead,
+    #[serde(rename = "pull_request:session:write")]
+    PullRequestSessionWrite,
+    #[serde(rename = "pull_request:message:read")]
+    PullRequestMessageRead,
+    #[serde(rename = "pull_request:message:write")]
+    PullRequestMessageWrite,
+    #[serde(rename = "pull_request:comment:read")]
+    PullRequestCommentRead,
+    #[serde(rename = "pull_request:comment:write")]
+    PullRequestCommentWrite,
+    #[serde(rename = "pull_request:review:read")]
+    PullRequestReviewRead,
+    #[serde(rename = "pull_request:review:write")]
+    PullRequestReviewWrite,
+    #[serde(rename = "pull_request:reaction:read")]
+    PullRequestReactionRead,
+    #[serde(rename = "pull_request:reaction:write")]
+    PullRequestReactionWrite,
+    #[serde(rename = "pull_request:commit:read")]
+    PullRequestCommitRead,
+    #[serde(rename = "pull_request:commit:write")]
+    PullRequestCommitWrite,
+    #[serde(rename = "pull_request:check:read")]
+    PullRequestCheckRead,
+    #[serde(rename = "pull_request:check:write")]
+    PullRequestCheckWrite,
+    #[serde(rename = "pull_request:file:read")]
+    PullRequestFileRead,
+    #[serde(rename = "pull_request:file:write")]
+    PullRequestFileWrite,
+    #[serde(rename = "pull_request:reviewer:read")]
+    PullRequestReviewerRead,
+    #[serde(rename = "pull_request:reviewer:write")]
+    PullRequestReviewerWrite,
+    #[serde(rename = "pull_request:label:read")]
+    PullRequestLabelRead,
+    #[serde(rename = "pull_request:label:write")]
+    PullRequestLabelWrite,
+    #[serde(rename = "pull_request:thread:read")]
+    PullRequestThreadRead,
+    #[serde(rename = "pull_request:thread:write")]
+    PullRequestThreadWrite,
+    #[serde(rename = "pull_request:tour:read")]
+    PullRequestTourRead,
+    #[serde(rename = "pull_request:tour:write")]
+    PullRequestTourWrite,
+    #[serde(rename = "pull_request:branch_status:read")]
+    PullRequestBranchStatusRead,
+    #[serde(rename = "pull_request:branch_status:write")]
+    PullRequestBranchStatusWrite,
+    #[serde(rename = "pull_request:stack:read")]
+    PullRequestStackRead,
+    #[serde(rename = "pull_request:stack:write")]
+    PullRequestStackWrite,
+    #[serde(rename = "repository:read")]
+    RepositoryRead,
+    #[serde(rename = "repository:write")]
+    RepositoryWrite,
+    #[serde(rename = "repository:branch:read")]
+    RepositoryBranchRead,
+    #[serde(rename = "repository:branch:write")]
+    RepositoryBranchWrite,
+    #[serde(rename = "repository:file:read")]
+    RepositoryFileRead,
+    #[serde(rename = "repository:file:write")]
+    RepositoryFileWrite,
+    #[serde(rename = "repository:pull_request:read")]
+    RepositoryPullRequestRead,
+    #[serde(rename = "repository:pull_request:write")]
+    RepositoryPullRequestWrite,
+    #[serde(rename = "repository:user:read")]
+    RepositoryUserRead,
+    #[serde(rename = "repository:user:write")]
+    RepositoryUserWrite,
+    #[serde(rename = "repository:label:read")]
+    RepositoryLabelRead,
+    #[serde(rename = "repository:label:write")]
+    RepositoryLabelWrite,
+    #[serde(rename = "integration:read")]
+    IntegrationRead,
+    #[serde(rename = "integration:write")]
+    IntegrationWrite,
+    #[serde(rename = "integration:trigger:read")]
+    IntegrationTriggerRead,
+    #[serde(rename = "integration:trigger:write")]
+    IntegrationTriggerWrite,
+    #[serde(rename = "integration:provider:read")]
+    IntegrationProviderRead,
+    #[serde(rename = "integration:provider:write")]
+    IntegrationProviderWrite,
+    #[serde(rename = "integration:configuration:read")]
+    IntegrationConfigurationRead,
+    #[serde(rename = "integration:configuration:write")]
+    IntegrationConfigurationWrite,
+    #[serde(rename = "integration:snyk_organization:read")]
+    IntegrationSnykOrganizationRead,
+    #[serde(rename = "integration:snyk_organization:write")]
+    IntegrationSnykOrganizationWrite,
+    #[serde(rename = "integration:sentry_environment:read")]
+    IntegrationSentryEnvironmentRead,
+    #[serde(rename = "integration:sentry_environment:write")]
+    IntegrationSentryEnvironmentWrite,
+    #[serde(rename = "integration:slack_channel:read")]
+    IntegrationSlackChannelRead,
+    #[serde(rename = "integration:slack_channel:write")]
+    IntegrationSlackChannelWrite,
+    #[serde(rename = "integration:rate_limit:read")]
+    IntegrationRateLimitRead,
+    #[serde(rename = "integration:rate_limit:write")]
+    IntegrationRateLimitWrite,
+    #[serde(rename = "mcp_connection:read")]
+    McpConnectionRead,
+    #[serde(rename = "mcp_connection:write")]
+    McpConnectionWrite,
+    #[serde(rename = "mcp_connection:shared:read")]
+    McpConnectionSharedRead,
+    #[serde(rename = "mcp_connection:shared:write")]
+    McpConnectionSharedWrite,
+    #[serde(rename = "model:read")]
+    ModelRead,
+    #[serde(rename = "model:write")]
+    ModelWrite,
+    #[serde(rename = "project:read")]
+    ProjectRead,
+    #[serde(rename = "project:write")]
+    ProjectWrite,
+    #[serde(rename = "project:environment_variable:read")]
+    ProjectEnvironmentVariableRead,
+    #[serde(rename = "project:environment_variable:write")]
+    ProjectEnvironmentVariableWrite,
+    #[serde(rename = "project:snapshot:read")]
+    ProjectSnapshotRead,
+    #[serde(rename = "project:snapshot:write")]
+    ProjectSnapshotWrite,
+    #[serde(rename = "project:build:read")]
+    ProjectBuildRead,
+    #[serde(rename = "project:build:write")]
+    ProjectBuildWrite,
+    #[serde(rename = "project:build_detail:read")]
+    ProjectBuildDetailRead,
+    #[serde(rename = "project:build_detail:write")]
+    ProjectBuildDetailWrite,
+    #[serde(rename = "project:schedule:read")]
+    ProjectScheduleRead,
+    #[serde(rename = "project:schedule:write")]
+    ProjectScheduleWrite,
+    #[serde(rename = "project:default:read")]
+    ProjectDefaultRead,
+    #[serde(rename = "project:default:write")]
+    ProjectDefaultWrite,
+    #[serde(rename = "project:system_snapshot:read")]
+    ProjectSystemSnapshotRead,
+    #[serde(rename = "project:system_snapshot:write")]
+    ProjectSystemSnapshotWrite,
+    #[serde(rename = "project:organization_snapshot:read")]
+    ProjectOrganizationSnapshotRead,
+    #[serde(rename = "project:organization_snapshot:write")]
+    ProjectOrganizationSnapshotWrite,
+    #[serde(rename = "sandbox:read")]
+    SandboxRead,
+    #[serde(rename = "sandbox:write")]
+    SandboxWrite,
+    #[serde(rename = "sandbox:metric:read")]
+    SandboxMetricRead,
+    #[serde(rename = "sandbox:metric:write")]
+    SandboxMetricWrite,
+    #[serde(rename = "sandbox:event:read")]
+    SandboxEventRead,
+    #[serde(rename = "sandbox:event:write")]
+    SandboxEventWrite,
+    #[serde(rename = "sandbox:size:read")]
+    SandboxSizeRead,
+    #[serde(rename = "sandbox:size:write")]
+    SandboxSizeWrite,
+    #[serde(rename = "sandbox:virtual_machine:read")]
+    SandboxVirtualMachineRead,
+    #[serde(rename = "sandbox:virtual_machine:write")]
+    SandboxVirtualMachineWrite,
+    #[serde(rename = "device:read")]
+    DeviceRead,
+    #[serde(rename = "device:write")]
+    DeviceWrite,
+    #[serde(rename = "skill:read")]
+    SkillRead,
+    #[serde(rename = "skill:write")]
+    SkillWrite,
+    #[serde(rename = "skill:marketplace:read")]
+    SkillMarketplaceRead,
+    #[serde(rename = "skill:marketplace:write")]
+    SkillMarketplaceWrite,
+    #[serde(rename = "insight:read")]
+    InsightRead,
+    #[serde(rename = "insight:write")]
+    InsightWrite,
+    #[serde(rename = "insight:member:read")]
+    InsightMemberRead,
+    #[serde(rename = "insight:member:write")]
+    InsightMemberWrite,
+    #[serde(rename = "insight:repository:read")]
+    InsightRepositoryRead,
+    #[serde(rename = "insight:repository:write")]
+    InsightRepositoryWrite,
+    #[serde(rename = "insight:usage:read")]
+    InsightUsageRead,
+    #[serde(rename = "insight:usage:write")]
+    InsightUsageWrite,
+    #[serde(rename = "file:read")]
+    FileRead,
+    #[serde(rename = "file:write")]
+    FileWrite,
+    #[serde(rename = "pin:read")]
+    PinRead,
+    #[serde(rename = "pin:write")]
+    PinWrite,
+    #[serde(rename = "queue:job:read")]
+    QueueJobRead,
+    #[serde(rename = "queue:job:write")]
+    QueueJobWrite,
+    #[serde(rename = "queue:host_manager_job:read")]
+    QueueHostManagerJobRead,
+    #[serde(rename = "queue:host_manager_job:write")]
+    QueueHostManagerJobWrite,
+    #[serde(rename = "queue:worker:read")]
+    QueueWorkerRead,
+    #[serde(rename = "queue:worker:write")]
+    QueueWorkerWrite,
+    #[serde(rename = "queue:scheduled_job:read")]
+    QueueScheduledJobRead,
+    #[serde(rename = "queue:scheduled_job:write")]
+    QueueScheduledJobWrite,
+    #[serde(rename = "queue:triggered_job:read")]
+    QueueTriggeredJobRead,
+    #[serde(rename = "queue:triggered_job:write")]
+    QueueTriggeredJobWrite,
+    #[serde(rename = "runtime:read")]
+    RuntimeRead,
+    #[serde(rename = "runtime:write")]
+    RuntimeWrite,
+    #[serde(rename = "session:source_credential:read")]
+    SessionSourceCredentialRead,
+    #[serde(rename = "session:source_credential:write")]
+    SessionSourceCredentialWrite,
+    #[serde(rename = "device:all:write")]
+    DeviceAllWrite,
+    #[serde(rename = "insight:user:read")]
+    InsightUserRead,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::OrganizationRead => "organization:read",
+            Self::OrganizationWrite => "organization:write",
+            Self::OrganizationMemberRead => "organization:member:read",
+            Self::OrganizationMemberWrite => "organization:member:write",
+            Self::OrganizationInvitationRead => "organization:invitation:read",
+            Self::OrganizationInvitationWrite => "organization:invitation:write",
+            Self::OrganizationRoleRead => "organization:role:read",
+            Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationSecretRead => "organization:secret:read",
+            Self::OrganizationSecretWrite => "organization:secret:write",
+            Self::OrganizationSettingRead => "organization:setting:read",
+            Self::OrganizationSettingWrite => "organization:setting:write",
+            Self::OrganizationConfigurationRead => "organization:configuration:read",
+            Self::OrganizationConfigurationWrite => "organization:configuration:write",
+            Self::OrganizationSubscriptionRead => "organization:subscription:read",
+            Self::OrganizationSubscriptionWrite => "organization:subscription:write",
+            Self::OrganizationOnboardingRead => "organization:onboarding:read",
+            Self::OrganizationOnboardingWrite => "organization:onboarding:write",
+            Self::OrganizationLogoRead => "organization:logo:read",
+            Self::OrganizationLogoWrite => "organization:logo:write",
+            Self::OrganizationSlackConnectRead => "organization:slack_connect:read",
+            Self::OrganizationSlackConnectWrite => "organization:slack_connect:write",
+            Self::BillingRead => "billing:read",
+            Self::BillingWrite => "billing:write",
+            Self::BillingTrialRead => "billing:trial:read",
+            Self::BillingTrialWrite => "billing:trial:write",
+            Self::BillingUsageRead => "billing:usage:read",
+            Self::BillingUsageWrite => "billing:usage:write",
+            Self::BillingPaymentRead => "billing:payment:read",
+            Self::BillingPaymentWrite => "billing:payment:write",
+            Self::BillingPaymentMethodRead => "billing:payment_method:read",
+            Self::BillingPaymentMethodWrite => "billing:payment_method:write",
+            Self::BillingCheckoutRead => "billing:checkout:read",
+            Self::BillingCheckoutWrite => "billing:checkout:write",
+            Self::BillingSubscriptionCheckoutRead => "billing:subscription_checkout:read",
+            Self::BillingSubscriptionCheckoutWrite => "billing:subscription_checkout:write",
+            Self::BillingPortalRead => "billing:portal:read",
+            Self::BillingPortalWrite => "billing:portal:write",
+            Self::BillingOnDemandRead => "billing:on_demand:read",
+            Self::BillingOnDemandWrite => "billing:on_demand:write",
+            Self::BillingCreditRead => "billing:credit:read",
+            Self::BillingCreditWrite => "billing:credit:write",
+            Self::BillingCustomPriceRead => "billing:custom_price:read",
+            Self::BillingCustomPriceWrite => "billing:custom_price:write",
+            Self::BillingCustomPlanRead => "billing:custom_plan:read",
+            Self::BillingCustomPlanWrite => "billing:custom_plan:write",
+            Self::BillingOverageReportRead => "billing:overage_report:read",
+            Self::BillingOverageReportWrite => "billing:overage_report:write",
+            Self::ApiKeyRead => "api_key:read",
+            Self::ApiKeyWrite => "api_key:write",
+            Self::UserRead => "user:read",
+            Self::UserWrite => "user:write",
+            Self::UserSettingRead => "user:setting:read",
+            Self::UserSettingWrite => "user:setting:write",
+            Self::UserEnvironmentVariableRead => "user:environment_variable:read",
+            Self::UserEnvironmentVariableWrite => "user:environment_variable:write",
+            Self::UserSubscriptionRead => "user:subscription:read",
+            Self::UserSubscriptionWrite => "user:subscription:write",
+            Self::UserConnectedAccountRead => "user:connected_account:read",
+            Self::UserConnectedAccountWrite => "user:connected_account:write",
+            Self::UserOrganizationRead => "user:organization:read",
+            Self::UserOrganizationWrite => "user:organization:write",
+            Self::UserProfilePictureRead => "user:profile_picture:read",
+            Self::UserProfilePictureWrite => "user:profile_picture:write",
+            Self::UserDeletionRead => "user:deletion:read",
+            Self::UserDeletionWrite => "user:deletion:write",
+            Self::AgentRead => "agent:read",
+            Self::AgentWrite => "agent:write",
+            Self::AgentScheduleRead => "agent:schedule:read",
+            Self::AgentScheduleWrite => "agent:schedule:write",
+            Self::AgentTriggerRead => "agent:trigger:read",
+            Self::AgentTriggerWrite => "agent:trigger:write",
+            Self::AgentRunRead => "agent:run:read",
+            Self::AgentRunWrite => "agent:run:write",
+            Self::AgentInstructionRevisionRead => "agent:instruction_revision:read",
+            Self::AgentInstructionRevisionWrite => "agent:instruction_revision:write",
+            Self::AgentTemplateRead => "agent:template:read",
+            Self::AgentTemplateWrite => "agent:template:write",
+            Self::SessionRead => "session:read",
+            Self::SessionWrite => "session:write",
+            Self::SessionMessageRead => "session:message:read",
+            Self::SessionMessageWrite => "session:message:write",
+            Self::SessionArtifactRead => "session:artifact:read",
+            Self::SessionArtifactWrite => "session:artifact:write",
+            Self::SessionSourceRead => "session:source:read",
+            Self::SessionSourceWrite => "session:source:write",
+            Self::SessionCommandRead => "session:command:read",
+            Self::SessionCommandWrite => "session:command:write",
+            Self::SessionInputRead => "session:input:read",
+            Self::SessionInputWrite => "session:input:write",
+            Self::SessionQueueRead => "session:queue:read",
+            Self::SessionQueueWrite => "session:queue:write",
+            Self::SessionEventRead => "session:event:read",
+            Self::SessionEventWrite => "session:event:write",
+            Self::SessionFileRead => "session:file:read",
+            Self::SessionFileWrite => "session:file:write",
+            Self::SessionDiffRead => "session:diff:read",
+            Self::SessionDiffWrite => "session:diff:write",
+            Self::SessionWorkspaceRead => "session:workspace:read",
+            Self::SessionWorkspaceWrite => "session:workspace:write",
+            Self::SessionWorkspaceFileRead => "session:workspace_file:read",
+            Self::SessionWorkspaceFileWrite => "session:workspace_file:write",
+            Self::SessionWorkspaceDiffRead => "session:workspace_diff:read",
+            Self::SessionWorkspaceDiffWrite => "session:workspace_diff:write",
+            Self::SessionWorkspacePreviewRead => "session:workspace_preview:read",
+            Self::SessionWorkspacePreviewWrite => "session:workspace_preview:write",
+            Self::PullRequestRead => "pull_request:read",
+            Self::PullRequestWrite => "pull_request:write",
+            Self::PullRequestMergeRead => "pull_request:merge:read",
+            Self::PullRequestMergeWrite => "pull_request:merge:write",
+            Self::PullRequestAttachmentRead => "pull_request:attachment:read",
+            Self::PullRequestAttachmentWrite => "pull_request:attachment:write",
+            Self::PullRequestSessionRead => "pull_request:session:read",
+            Self::PullRequestSessionWrite => "pull_request:session:write",
+            Self::PullRequestMessageRead => "pull_request:message:read",
+            Self::PullRequestMessageWrite => "pull_request:message:write",
+            Self::PullRequestCommentRead => "pull_request:comment:read",
+            Self::PullRequestCommentWrite => "pull_request:comment:write",
+            Self::PullRequestReviewRead => "pull_request:review:read",
+            Self::PullRequestReviewWrite => "pull_request:review:write",
+            Self::PullRequestReactionRead => "pull_request:reaction:read",
+            Self::PullRequestReactionWrite => "pull_request:reaction:write",
+            Self::PullRequestCommitRead => "pull_request:commit:read",
+            Self::PullRequestCommitWrite => "pull_request:commit:write",
+            Self::PullRequestCheckRead => "pull_request:check:read",
+            Self::PullRequestCheckWrite => "pull_request:check:write",
+            Self::PullRequestFileRead => "pull_request:file:read",
+            Self::PullRequestFileWrite => "pull_request:file:write",
+            Self::PullRequestReviewerRead => "pull_request:reviewer:read",
+            Self::PullRequestReviewerWrite => "pull_request:reviewer:write",
+            Self::PullRequestLabelRead => "pull_request:label:read",
+            Self::PullRequestLabelWrite => "pull_request:label:write",
+            Self::PullRequestThreadRead => "pull_request:thread:read",
+            Self::PullRequestThreadWrite => "pull_request:thread:write",
+            Self::PullRequestTourRead => "pull_request:tour:read",
+            Self::PullRequestTourWrite => "pull_request:tour:write",
+            Self::PullRequestBranchStatusRead => "pull_request:branch_status:read",
+            Self::PullRequestBranchStatusWrite => "pull_request:branch_status:write",
+            Self::PullRequestStackRead => "pull_request:stack:read",
+            Self::PullRequestStackWrite => "pull_request:stack:write",
+            Self::RepositoryRead => "repository:read",
+            Self::RepositoryWrite => "repository:write",
+            Self::RepositoryBranchRead => "repository:branch:read",
+            Self::RepositoryBranchWrite => "repository:branch:write",
+            Self::RepositoryFileRead => "repository:file:read",
+            Self::RepositoryFileWrite => "repository:file:write",
+            Self::RepositoryPullRequestRead => "repository:pull_request:read",
+            Self::RepositoryPullRequestWrite => "repository:pull_request:write",
+            Self::RepositoryUserRead => "repository:user:read",
+            Self::RepositoryUserWrite => "repository:user:write",
+            Self::RepositoryLabelRead => "repository:label:read",
+            Self::RepositoryLabelWrite => "repository:label:write",
+            Self::IntegrationRead => "integration:read",
+            Self::IntegrationWrite => "integration:write",
+            Self::IntegrationTriggerRead => "integration:trigger:read",
+            Self::IntegrationTriggerWrite => "integration:trigger:write",
+            Self::IntegrationProviderRead => "integration:provider:read",
+            Self::IntegrationProviderWrite => "integration:provider:write",
+            Self::IntegrationConfigurationRead => "integration:configuration:read",
+            Self::IntegrationConfigurationWrite => "integration:configuration:write",
+            Self::IntegrationSnykOrganizationRead => "integration:snyk_organization:read",
+            Self::IntegrationSnykOrganizationWrite => "integration:snyk_organization:write",
+            Self::IntegrationSentryEnvironmentRead => "integration:sentry_environment:read",
+            Self::IntegrationSentryEnvironmentWrite => "integration:sentry_environment:write",
+            Self::IntegrationSlackChannelRead => "integration:slack_channel:read",
+            Self::IntegrationSlackChannelWrite => "integration:slack_channel:write",
+            Self::IntegrationRateLimitRead => "integration:rate_limit:read",
+            Self::IntegrationRateLimitWrite => "integration:rate_limit:write",
+            Self::McpConnectionRead => "mcp_connection:read",
+            Self::McpConnectionWrite => "mcp_connection:write",
+            Self::McpConnectionSharedRead => "mcp_connection:shared:read",
+            Self::McpConnectionSharedWrite => "mcp_connection:shared:write",
+            Self::ModelRead => "model:read",
+            Self::ModelWrite => "model:write",
+            Self::ProjectRead => "project:read",
+            Self::ProjectWrite => "project:write",
+            Self::ProjectEnvironmentVariableRead => "project:environment_variable:read",
+            Self::ProjectEnvironmentVariableWrite => "project:environment_variable:write",
+            Self::ProjectSnapshotRead => "project:snapshot:read",
+            Self::ProjectSnapshotWrite => "project:snapshot:write",
+            Self::ProjectBuildRead => "project:build:read",
+            Self::ProjectBuildWrite => "project:build:write",
+            Self::ProjectBuildDetailRead => "project:build_detail:read",
+            Self::ProjectBuildDetailWrite => "project:build_detail:write",
+            Self::ProjectScheduleRead => "project:schedule:read",
+            Self::ProjectScheduleWrite => "project:schedule:write",
+            Self::ProjectDefaultRead => "project:default:read",
+            Self::ProjectDefaultWrite => "project:default:write",
+            Self::ProjectSystemSnapshotRead => "project:system_snapshot:read",
+            Self::ProjectSystemSnapshotWrite => "project:system_snapshot:write",
+            Self::ProjectOrganizationSnapshotRead => "project:organization_snapshot:read",
+            Self::ProjectOrganizationSnapshotWrite => "project:organization_snapshot:write",
+            Self::SandboxRead => "sandbox:read",
+            Self::SandboxWrite => "sandbox:write",
+            Self::SandboxMetricRead => "sandbox:metric:read",
+            Self::SandboxMetricWrite => "sandbox:metric:write",
+            Self::SandboxEventRead => "sandbox:event:read",
+            Self::SandboxEventWrite => "sandbox:event:write",
+            Self::SandboxSizeRead => "sandbox:size:read",
+            Self::SandboxSizeWrite => "sandbox:size:write",
+            Self::SandboxVirtualMachineRead => "sandbox:virtual_machine:read",
+            Self::SandboxVirtualMachineWrite => "sandbox:virtual_machine:write",
+            Self::DeviceRead => "device:read",
+            Self::DeviceWrite => "device:write",
+            Self::SkillRead => "skill:read",
+            Self::SkillWrite => "skill:write",
+            Self::SkillMarketplaceRead => "skill:marketplace:read",
+            Self::SkillMarketplaceWrite => "skill:marketplace:write",
+            Self::InsightRead => "insight:read",
+            Self::InsightWrite => "insight:write",
+            Self::InsightMemberRead => "insight:member:read",
+            Self::InsightMemberWrite => "insight:member:write",
+            Self::InsightRepositoryRead => "insight:repository:read",
+            Self::InsightRepositoryWrite => "insight:repository:write",
+            Self::InsightUsageRead => "insight:usage:read",
+            Self::InsightUsageWrite => "insight:usage:write",
+            Self::FileRead => "file:read",
+            Self::FileWrite => "file:write",
+            Self::PinRead => "pin:read",
+            Self::PinWrite => "pin:write",
+            Self::QueueJobRead => "queue:job:read",
+            Self::QueueJobWrite => "queue:job:write",
+            Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
+            Self::QueueHostManagerJobWrite => "queue:host_manager_job:write",
+            Self::QueueWorkerRead => "queue:worker:read",
+            Self::QueueWorkerWrite => "queue:worker:write",
+            Self::QueueScheduledJobRead => "queue:scheduled_job:read",
+            Self::QueueScheduledJobWrite => "queue:scheduled_job:write",
+            Self::QueueTriggeredJobRead => "queue:triggered_job:read",
+            Self::QueueTriggeredJobWrite => "queue:triggered_job:write",
+            Self::RuntimeRead => "runtime:read",
+            Self::RuntimeWrite => "runtime:write",
+            Self::SessionSourceCredentialRead => "session:source_credential:read",
+            Self::SessionSourceCredentialWrite => "session:source_credential:write",
+            Self::DeviceAllWrite => "device:all:write",
+            Self::InsightUserRead => "insight:user:read",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
+    fn from(value: &str) -> Self {
+        match value {
+            "organization:read" => Self::OrganizationRead,
+            "organization:write" => Self::OrganizationWrite,
+            "organization:member:read" => Self::OrganizationMemberRead,
+            "organization:member:write" => Self::OrganizationMemberWrite,
+            "organization:invitation:read" => Self::OrganizationInvitationRead,
+            "organization:invitation:write" => Self::OrganizationInvitationWrite,
+            "organization:role:read" => Self::OrganizationRoleRead,
+            "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:secret:read" => Self::OrganizationSecretRead,
+            "organization:secret:write" => Self::OrganizationSecretWrite,
+            "organization:setting:read" => Self::OrganizationSettingRead,
+            "organization:setting:write" => Self::OrganizationSettingWrite,
+            "organization:configuration:read" => Self::OrganizationConfigurationRead,
+            "organization:configuration:write" => Self::OrganizationConfigurationWrite,
+            "organization:subscription:read" => Self::OrganizationSubscriptionRead,
+            "organization:subscription:write" => Self::OrganizationSubscriptionWrite,
+            "organization:onboarding:read" => Self::OrganizationOnboardingRead,
+            "organization:onboarding:write" => Self::OrganizationOnboardingWrite,
+            "organization:logo:read" => Self::OrganizationLogoRead,
+            "organization:logo:write" => Self::OrganizationLogoWrite,
+            "organization:slack_connect:read" => Self::OrganizationSlackConnectRead,
+            "organization:slack_connect:write" => Self::OrganizationSlackConnectWrite,
+            "billing:read" => Self::BillingRead,
+            "billing:write" => Self::BillingWrite,
+            "billing:trial:read" => Self::BillingTrialRead,
+            "billing:trial:write" => Self::BillingTrialWrite,
+            "billing:usage:read" => Self::BillingUsageRead,
+            "billing:usage:write" => Self::BillingUsageWrite,
+            "billing:payment:read" => Self::BillingPaymentRead,
+            "billing:payment:write" => Self::BillingPaymentWrite,
+            "billing:payment_method:read" => Self::BillingPaymentMethodRead,
+            "billing:payment_method:write" => Self::BillingPaymentMethodWrite,
+            "billing:checkout:read" => Self::BillingCheckoutRead,
+            "billing:checkout:write" => Self::BillingCheckoutWrite,
+            "billing:subscription_checkout:read" => Self::BillingSubscriptionCheckoutRead,
+            "billing:subscription_checkout:write" => Self::BillingSubscriptionCheckoutWrite,
+            "billing:portal:read" => Self::BillingPortalRead,
+            "billing:portal:write" => Self::BillingPortalWrite,
+            "billing:on_demand:read" => Self::BillingOnDemandRead,
+            "billing:on_demand:write" => Self::BillingOnDemandWrite,
+            "billing:credit:read" => Self::BillingCreditRead,
+            "billing:credit:write" => Self::BillingCreditWrite,
+            "billing:custom_price:read" => Self::BillingCustomPriceRead,
+            "billing:custom_price:write" => Self::BillingCustomPriceWrite,
+            "billing:custom_plan:read" => Self::BillingCustomPlanRead,
+            "billing:custom_plan:write" => Self::BillingCustomPlanWrite,
+            "billing:overage_report:read" => Self::BillingOverageReportRead,
+            "billing:overage_report:write" => Self::BillingOverageReportWrite,
+            "api_key:read" => Self::ApiKeyRead,
+            "api_key:write" => Self::ApiKeyWrite,
+            "user:read" => Self::UserRead,
+            "user:write" => Self::UserWrite,
+            "user:setting:read" => Self::UserSettingRead,
+            "user:setting:write" => Self::UserSettingWrite,
+            "user:environment_variable:read" => Self::UserEnvironmentVariableRead,
+            "user:environment_variable:write" => Self::UserEnvironmentVariableWrite,
+            "user:subscription:read" => Self::UserSubscriptionRead,
+            "user:subscription:write" => Self::UserSubscriptionWrite,
+            "user:connected_account:read" => Self::UserConnectedAccountRead,
+            "user:connected_account:write" => Self::UserConnectedAccountWrite,
+            "user:organization:read" => Self::UserOrganizationRead,
+            "user:organization:write" => Self::UserOrganizationWrite,
+            "user:profile_picture:read" => Self::UserProfilePictureRead,
+            "user:profile_picture:write" => Self::UserProfilePictureWrite,
+            "user:deletion:read" => Self::UserDeletionRead,
+            "user:deletion:write" => Self::UserDeletionWrite,
+            "agent:read" => Self::AgentRead,
+            "agent:write" => Self::AgentWrite,
+            "agent:schedule:read" => Self::AgentScheduleRead,
+            "agent:schedule:write" => Self::AgentScheduleWrite,
+            "agent:trigger:read" => Self::AgentTriggerRead,
+            "agent:trigger:write" => Self::AgentTriggerWrite,
+            "agent:run:read" => Self::AgentRunRead,
+            "agent:run:write" => Self::AgentRunWrite,
+            "agent:instruction_revision:read" => Self::AgentInstructionRevisionRead,
+            "agent:instruction_revision:write" => Self::AgentInstructionRevisionWrite,
+            "agent:template:read" => Self::AgentTemplateRead,
+            "agent:template:write" => Self::AgentTemplateWrite,
+            "session:read" => Self::SessionRead,
+            "session:write" => Self::SessionWrite,
+            "session:message:read" => Self::SessionMessageRead,
+            "session:message:write" => Self::SessionMessageWrite,
+            "session:artifact:read" => Self::SessionArtifactRead,
+            "session:artifact:write" => Self::SessionArtifactWrite,
+            "session:source:read" => Self::SessionSourceRead,
+            "session:source:write" => Self::SessionSourceWrite,
+            "session:command:read" => Self::SessionCommandRead,
+            "session:command:write" => Self::SessionCommandWrite,
+            "session:input:read" => Self::SessionInputRead,
+            "session:input:write" => Self::SessionInputWrite,
+            "session:queue:read" => Self::SessionQueueRead,
+            "session:queue:write" => Self::SessionQueueWrite,
+            "session:event:read" => Self::SessionEventRead,
+            "session:event:write" => Self::SessionEventWrite,
+            "session:file:read" => Self::SessionFileRead,
+            "session:file:write" => Self::SessionFileWrite,
+            "session:diff:read" => Self::SessionDiffRead,
+            "session:diff:write" => Self::SessionDiffWrite,
+            "session:workspace:read" => Self::SessionWorkspaceRead,
+            "session:workspace:write" => Self::SessionWorkspaceWrite,
+            "session:workspace_file:read" => Self::SessionWorkspaceFileRead,
+            "session:workspace_file:write" => Self::SessionWorkspaceFileWrite,
+            "session:workspace_diff:read" => Self::SessionWorkspaceDiffRead,
+            "session:workspace_diff:write" => Self::SessionWorkspaceDiffWrite,
+            "session:workspace_preview:read" => Self::SessionWorkspacePreviewRead,
+            "session:workspace_preview:write" => Self::SessionWorkspacePreviewWrite,
+            "pull_request:read" => Self::PullRequestRead,
+            "pull_request:write" => Self::PullRequestWrite,
+            "pull_request:merge:read" => Self::PullRequestMergeRead,
+            "pull_request:merge:write" => Self::PullRequestMergeWrite,
+            "pull_request:attachment:read" => Self::PullRequestAttachmentRead,
+            "pull_request:attachment:write" => Self::PullRequestAttachmentWrite,
+            "pull_request:session:read" => Self::PullRequestSessionRead,
+            "pull_request:session:write" => Self::PullRequestSessionWrite,
+            "pull_request:message:read" => Self::PullRequestMessageRead,
+            "pull_request:message:write" => Self::PullRequestMessageWrite,
+            "pull_request:comment:read" => Self::PullRequestCommentRead,
+            "pull_request:comment:write" => Self::PullRequestCommentWrite,
+            "pull_request:review:read" => Self::PullRequestReviewRead,
+            "pull_request:review:write" => Self::PullRequestReviewWrite,
+            "pull_request:reaction:read" => Self::PullRequestReactionRead,
+            "pull_request:reaction:write" => Self::PullRequestReactionWrite,
+            "pull_request:commit:read" => Self::PullRequestCommitRead,
+            "pull_request:commit:write" => Self::PullRequestCommitWrite,
+            "pull_request:check:read" => Self::PullRequestCheckRead,
+            "pull_request:check:write" => Self::PullRequestCheckWrite,
+            "pull_request:file:read" => Self::PullRequestFileRead,
+            "pull_request:file:write" => Self::PullRequestFileWrite,
+            "pull_request:reviewer:read" => Self::PullRequestReviewerRead,
+            "pull_request:reviewer:write" => Self::PullRequestReviewerWrite,
+            "pull_request:label:read" => Self::PullRequestLabelRead,
+            "pull_request:label:write" => Self::PullRequestLabelWrite,
+            "pull_request:thread:read" => Self::PullRequestThreadRead,
+            "pull_request:thread:write" => Self::PullRequestThreadWrite,
+            "pull_request:tour:read" => Self::PullRequestTourRead,
+            "pull_request:tour:write" => Self::PullRequestTourWrite,
+            "pull_request:branch_status:read" => Self::PullRequestBranchStatusRead,
+            "pull_request:branch_status:write" => Self::PullRequestBranchStatusWrite,
+            "pull_request:stack:read" => Self::PullRequestStackRead,
+            "pull_request:stack:write" => Self::PullRequestStackWrite,
+            "repository:read" => Self::RepositoryRead,
+            "repository:write" => Self::RepositoryWrite,
+            "repository:branch:read" => Self::RepositoryBranchRead,
+            "repository:branch:write" => Self::RepositoryBranchWrite,
+            "repository:file:read" => Self::RepositoryFileRead,
+            "repository:file:write" => Self::RepositoryFileWrite,
+            "repository:pull_request:read" => Self::RepositoryPullRequestRead,
+            "repository:pull_request:write" => Self::RepositoryPullRequestWrite,
+            "repository:user:read" => Self::RepositoryUserRead,
+            "repository:user:write" => Self::RepositoryUserWrite,
+            "repository:label:read" => Self::RepositoryLabelRead,
+            "repository:label:write" => Self::RepositoryLabelWrite,
+            "integration:read" => Self::IntegrationRead,
+            "integration:write" => Self::IntegrationWrite,
+            "integration:trigger:read" => Self::IntegrationTriggerRead,
+            "integration:trigger:write" => Self::IntegrationTriggerWrite,
+            "integration:provider:read" => Self::IntegrationProviderRead,
+            "integration:provider:write" => Self::IntegrationProviderWrite,
+            "integration:configuration:read" => Self::IntegrationConfigurationRead,
+            "integration:configuration:write" => Self::IntegrationConfigurationWrite,
+            "integration:snyk_organization:read" => Self::IntegrationSnykOrganizationRead,
+            "integration:snyk_organization:write" => Self::IntegrationSnykOrganizationWrite,
+            "integration:sentry_environment:read" => Self::IntegrationSentryEnvironmentRead,
+            "integration:sentry_environment:write" => Self::IntegrationSentryEnvironmentWrite,
+            "integration:slack_channel:read" => Self::IntegrationSlackChannelRead,
+            "integration:slack_channel:write" => Self::IntegrationSlackChannelWrite,
+            "integration:rate_limit:read" => Self::IntegrationRateLimitRead,
+            "integration:rate_limit:write" => Self::IntegrationRateLimitWrite,
+            "mcp_connection:read" => Self::McpConnectionRead,
+            "mcp_connection:write" => Self::McpConnectionWrite,
+            "mcp_connection:shared:read" => Self::McpConnectionSharedRead,
+            "mcp_connection:shared:write" => Self::McpConnectionSharedWrite,
+            "model:read" => Self::ModelRead,
+            "model:write" => Self::ModelWrite,
+            "project:read" => Self::ProjectRead,
+            "project:write" => Self::ProjectWrite,
+            "project:environment_variable:read" => Self::ProjectEnvironmentVariableRead,
+            "project:environment_variable:write" => Self::ProjectEnvironmentVariableWrite,
+            "project:snapshot:read" => Self::ProjectSnapshotRead,
+            "project:snapshot:write" => Self::ProjectSnapshotWrite,
+            "project:build:read" => Self::ProjectBuildRead,
+            "project:build:write" => Self::ProjectBuildWrite,
+            "project:build_detail:read" => Self::ProjectBuildDetailRead,
+            "project:build_detail:write" => Self::ProjectBuildDetailWrite,
+            "project:schedule:read" => Self::ProjectScheduleRead,
+            "project:schedule:write" => Self::ProjectScheduleWrite,
+            "project:default:read" => Self::ProjectDefaultRead,
+            "project:default:write" => Self::ProjectDefaultWrite,
+            "project:system_snapshot:read" => Self::ProjectSystemSnapshotRead,
+            "project:system_snapshot:write" => Self::ProjectSystemSnapshotWrite,
+            "project:organization_snapshot:read" => Self::ProjectOrganizationSnapshotRead,
+            "project:organization_snapshot:write" => Self::ProjectOrganizationSnapshotWrite,
+            "sandbox:read" => Self::SandboxRead,
+            "sandbox:write" => Self::SandboxWrite,
+            "sandbox:metric:read" => Self::SandboxMetricRead,
+            "sandbox:metric:write" => Self::SandboxMetricWrite,
+            "sandbox:event:read" => Self::SandboxEventRead,
+            "sandbox:event:write" => Self::SandboxEventWrite,
+            "sandbox:size:read" => Self::SandboxSizeRead,
+            "sandbox:size:write" => Self::SandboxSizeWrite,
+            "sandbox:virtual_machine:read" => Self::SandboxVirtualMachineRead,
+            "sandbox:virtual_machine:write" => Self::SandboxVirtualMachineWrite,
+            "device:read" => Self::DeviceRead,
+            "device:write" => Self::DeviceWrite,
+            "skill:read" => Self::SkillRead,
+            "skill:write" => Self::SkillWrite,
+            "skill:marketplace:read" => Self::SkillMarketplaceRead,
+            "skill:marketplace:write" => Self::SkillMarketplaceWrite,
+            "insight:read" => Self::InsightRead,
+            "insight:write" => Self::InsightWrite,
+            "insight:member:read" => Self::InsightMemberRead,
+            "insight:member:write" => Self::InsightMemberWrite,
+            "insight:repository:read" => Self::InsightRepositoryRead,
+            "insight:repository:write" => Self::InsightRepositoryWrite,
+            "insight:usage:read" => Self::InsightUsageRead,
+            "insight:usage:write" => Self::InsightUsageWrite,
+            "file:read" => Self::FileRead,
+            "file:write" => Self::FileWrite,
+            "pin:read" => Self::PinRead,
+            "pin:write" => Self::PinWrite,
+            "queue:job:read" => Self::QueueJobRead,
+            "queue:job:write" => Self::QueueJobWrite,
+            "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
+            "queue:host_manager_job:write" => Self::QueueHostManagerJobWrite,
+            "queue:worker:read" => Self::QueueWorkerRead,
+            "queue:worker:write" => Self::QueueWorkerWrite,
+            "queue:scheduled_job:read" => Self::QueueScheduledJobRead,
+            "queue:scheduled_job:write" => Self::QueueScheduledJobWrite,
+            "queue:triggered_job:read" => Self::QueueTriggeredJobRead,
+            "queue:triggered_job:write" => Self::QueueTriggeredJobWrite,
+            "runtime:read" => Self::RuntimeRead,
+            "runtime:write" => Self::RuntimeWrite,
+            "session:source_credential:read" => Self::SessionSourceCredentialRead,
+            "session:source_credential:write" => Self::SessionSourceCredentialWrite,
+            "device:all:write" => Self::DeviceAllWrite,
+            "insight:user:read" => Self::InsightUserRead,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponseVariant1Access::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct OrganizationsRetrieveResponseVariant1Access {
+    pub state: OrganizationsRetrieveResponseVariant1AccessState,
+    #[serde(rename = "canExecute")]
+    pub can_execute: bool,
+}
+
+impl OrganizationsRetrieveResponseVariant1Access {
+    /// Creates a new `OrganizationsRetrieveResponseVariant1Access` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(state: OrganizationsRetrieveResponseVariant1AccessState, can_execute: bool) -> Self {
+        Self { state, can_execute }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum OrganizationsRetrieveResponseVariant1AccessState {
+    #[serde(rename = "blocked")]
+    Blocked,
+    #[serde(rename = "trial")]
+    Trial,
+    #[serde(rename = "paid")]
+    Paid,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl OrganizationsRetrieveResponseVariant1AccessState {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Blocked => "blocked",
+            Self::Trial => "trial",
+            Self::Paid => "paid",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for OrganizationsRetrieveResponseVariant1AccessState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for OrganizationsRetrieveResponseVariant1AccessState {
+    fn from(value: &str) -> Self {
+        match value {
+            "blocked" => Self::Blocked,
+            "trial" => Self::Trial,
+            "paid" => Self::Paid,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponseVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct OrganizationsRetrieveResponseVariant2 {
+    pub id: String,
+    #[serde(rename = "currentMembership", default)]
+    pub current_membership: Option<OrganizationsRetrieveResponseVariant2CurrentMembership>,
+    pub access: OrganizationsRetrieveResponseVariant2Access,
+}
+
+impl OrganizationsRetrieveResponseVariant2 {
+    /// Creates a new `OrganizationsRetrieveResponseVariant2` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        current_membership: Option<OrganizationsRetrieveResponseVariant2CurrentMembership>,
+        access: OrganizationsRetrieveResponseVariant2Access,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            current_membership,
+            access,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponseVariant2CurrentMembership::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct OrganizationsRetrieveResponseVariant2CurrentMembership {
+    #[serde(rename = "userId")]
+    pub user_id: String,
+    pub permissions: Vec<OrganizationsRetrieveResponseVariant2CurrentMembershipPermission>,
+}
+
+impl OrganizationsRetrieveResponseVariant2CurrentMembership {
+    /// Creates a new `OrganizationsRetrieveResponseVariant2CurrentMembership` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        user_id: impl Into<String>,
+        permissions: Vec<OrganizationsRetrieveResponseVariant2CurrentMembershipPermission>,
+    ) -> Self {
+        Self {
+            user_id: user_id.into(),
+            permissions,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
+    #[serde(rename = "organization:read")]
+    OrganizationRead,
+    #[serde(rename = "organization:write")]
+    OrganizationWrite,
+    #[serde(rename = "organization:member:read")]
+    OrganizationMemberRead,
+    #[serde(rename = "organization:member:write")]
+    OrganizationMemberWrite,
+    #[serde(rename = "organization:invitation:read")]
+    OrganizationInvitationRead,
+    #[serde(rename = "organization:invitation:write")]
+    OrganizationInvitationWrite,
+    #[serde(rename = "organization:role:read")]
+    OrganizationRoleRead,
+    #[serde(rename = "organization:role:write")]
+    OrganizationRoleWrite,
+    #[serde(rename = "organization:secret:read")]
+    OrganizationSecretRead,
+    #[serde(rename = "organization:secret:write")]
+    OrganizationSecretWrite,
+    #[serde(rename = "organization:setting:read")]
+    OrganizationSettingRead,
+    #[serde(rename = "organization:setting:write")]
+    OrganizationSettingWrite,
+    #[serde(rename = "organization:configuration:read")]
+    OrganizationConfigurationRead,
+    #[serde(rename = "organization:configuration:write")]
+    OrganizationConfigurationWrite,
+    #[serde(rename = "organization:subscription:read")]
+    OrganizationSubscriptionRead,
+    #[serde(rename = "organization:subscription:write")]
+    OrganizationSubscriptionWrite,
+    #[serde(rename = "organization:onboarding:read")]
+    OrganizationOnboardingRead,
+    #[serde(rename = "organization:onboarding:write")]
+    OrganizationOnboardingWrite,
+    #[serde(rename = "organization:logo:read")]
+    OrganizationLogoRead,
+    #[serde(rename = "organization:logo:write")]
+    OrganizationLogoWrite,
+    #[serde(rename = "organization:slack_connect:read")]
+    OrganizationSlackConnectRead,
+    #[serde(rename = "organization:slack_connect:write")]
+    OrganizationSlackConnectWrite,
+    #[serde(rename = "billing:read")]
+    BillingRead,
+    #[serde(rename = "billing:write")]
+    BillingWrite,
+    #[serde(rename = "billing:trial:read")]
+    BillingTrialRead,
+    #[serde(rename = "billing:trial:write")]
+    BillingTrialWrite,
+    #[serde(rename = "billing:usage:read")]
+    BillingUsageRead,
+    #[serde(rename = "billing:usage:write")]
+    BillingUsageWrite,
+    #[serde(rename = "billing:payment:read")]
+    BillingPaymentRead,
+    #[serde(rename = "billing:payment:write")]
+    BillingPaymentWrite,
+    #[serde(rename = "billing:payment_method:read")]
+    BillingPaymentMethodRead,
+    #[serde(rename = "billing:payment_method:write")]
+    BillingPaymentMethodWrite,
+    #[serde(rename = "billing:checkout:read")]
+    BillingCheckoutRead,
+    #[serde(rename = "billing:checkout:write")]
+    BillingCheckoutWrite,
+    #[serde(rename = "billing:subscription_checkout:read")]
+    BillingSubscriptionCheckoutRead,
+    #[serde(rename = "billing:subscription_checkout:write")]
+    BillingSubscriptionCheckoutWrite,
+    #[serde(rename = "billing:portal:read")]
+    BillingPortalRead,
+    #[serde(rename = "billing:portal:write")]
+    BillingPortalWrite,
+    #[serde(rename = "billing:on_demand:read")]
+    BillingOnDemandRead,
+    #[serde(rename = "billing:on_demand:write")]
+    BillingOnDemandWrite,
+    #[serde(rename = "billing:credit:read")]
+    BillingCreditRead,
+    #[serde(rename = "billing:credit:write")]
+    BillingCreditWrite,
+    #[serde(rename = "billing:custom_price:read")]
+    BillingCustomPriceRead,
+    #[serde(rename = "billing:custom_price:write")]
+    BillingCustomPriceWrite,
+    #[serde(rename = "billing:custom_plan:read")]
+    BillingCustomPlanRead,
+    #[serde(rename = "billing:custom_plan:write")]
+    BillingCustomPlanWrite,
+    #[serde(rename = "billing:overage_report:read")]
+    BillingOverageReportRead,
+    #[serde(rename = "billing:overage_report:write")]
+    BillingOverageReportWrite,
+    #[serde(rename = "api_key:read")]
+    ApiKeyRead,
+    #[serde(rename = "api_key:write")]
+    ApiKeyWrite,
+    #[serde(rename = "user:read")]
+    UserRead,
+    #[serde(rename = "user:write")]
+    UserWrite,
+    #[serde(rename = "user:setting:read")]
+    UserSettingRead,
+    #[serde(rename = "user:setting:write")]
+    UserSettingWrite,
+    #[serde(rename = "user:environment_variable:read")]
+    UserEnvironmentVariableRead,
+    #[serde(rename = "user:environment_variable:write")]
+    UserEnvironmentVariableWrite,
+    #[serde(rename = "user:subscription:read")]
+    UserSubscriptionRead,
+    #[serde(rename = "user:subscription:write")]
+    UserSubscriptionWrite,
+    #[serde(rename = "user:connected_account:read")]
+    UserConnectedAccountRead,
+    #[serde(rename = "user:connected_account:write")]
+    UserConnectedAccountWrite,
+    #[serde(rename = "user:organization:read")]
+    UserOrganizationRead,
+    #[serde(rename = "user:organization:write")]
+    UserOrganizationWrite,
+    #[serde(rename = "user:profile_picture:read")]
+    UserProfilePictureRead,
+    #[serde(rename = "user:profile_picture:write")]
+    UserProfilePictureWrite,
+    #[serde(rename = "user:deletion:read")]
+    UserDeletionRead,
+    #[serde(rename = "user:deletion:write")]
+    UserDeletionWrite,
+    #[serde(rename = "agent:read")]
+    AgentRead,
+    #[serde(rename = "agent:write")]
+    AgentWrite,
+    #[serde(rename = "agent:schedule:read")]
+    AgentScheduleRead,
+    #[serde(rename = "agent:schedule:write")]
+    AgentScheduleWrite,
+    #[serde(rename = "agent:trigger:read")]
+    AgentTriggerRead,
+    #[serde(rename = "agent:trigger:write")]
+    AgentTriggerWrite,
+    #[serde(rename = "agent:run:read")]
+    AgentRunRead,
+    #[serde(rename = "agent:run:write")]
+    AgentRunWrite,
+    #[serde(rename = "agent:instruction_revision:read")]
+    AgentInstructionRevisionRead,
+    #[serde(rename = "agent:instruction_revision:write")]
+    AgentInstructionRevisionWrite,
+    #[serde(rename = "agent:template:read")]
+    AgentTemplateRead,
+    #[serde(rename = "agent:template:write")]
+    AgentTemplateWrite,
+    #[serde(rename = "session:read")]
+    SessionRead,
+    #[serde(rename = "session:write")]
+    SessionWrite,
+    #[serde(rename = "session:message:read")]
+    SessionMessageRead,
+    #[serde(rename = "session:message:write")]
+    SessionMessageWrite,
+    #[serde(rename = "session:artifact:read")]
+    SessionArtifactRead,
+    #[serde(rename = "session:artifact:write")]
+    SessionArtifactWrite,
+    #[serde(rename = "session:source:read")]
+    SessionSourceRead,
+    #[serde(rename = "session:source:write")]
+    SessionSourceWrite,
+    #[serde(rename = "session:command:read")]
+    SessionCommandRead,
+    #[serde(rename = "session:command:write")]
+    SessionCommandWrite,
+    #[serde(rename = "session:input:read")]
+    SessionInputRead,
+    #[serde(rename = "session:input:write")]
+    SessionInputWrite,
+    #[serde(rename = "session:queue:read")]
+    SessionQueueRead,
+    #[serde(rename = "session:queue:write")]
+    SessionQueueWrite,
+    #[serde(rename = "session:event:read")]
+    SessionEventRead,
+    #[serde(rename = "session:event:write")]
+    SessionEventWrite,
+    #[serde(rename = "session:file:read")]
+    SessionFileRead,
+    #[serde(rename = "session:file:write")]
+    SessionFileWrite,
+    #[serde(rename = "session:diff:read")]
+    SessionDiffRead,
+    #[serde(rename = "session:diff:write")]
+    SessionDiffWrite,
+    #[serde(rename = "session:workspace:read")]
+    SessionWorkspaceRead,
+    #[serde(rename = "session:workspace:write")]
+    SessionWorkspaceWrite,
+    #[serde(rename = "session:workspace_file:read")]
+    SessionWorkspaceFileRead,
+    #[serde(rename = "session:workspace_file:write")]
+    SessionWorkspaceFileWrite,
+    #[serde(rename = "session:workspace_diff:read")]
+    SessionWorkspaceDiffRead,
+    #[serde(rename = "session:workspace_diff:write")]
+    SessionWorkspaceDiffWrite,
+    #[serde(rename = "session:workspace_preview:read")]
+    SessionWorkspacePreviewRead,
+    #[serde(rename = "session:workspace_preview:write")]
+    SessionWorkspacePreviewWrite,
+    #[serde(rename = "pull_request:read")]
+    PullRequestRead,
+    #[serde(rename = "pull_request:write")]
+    PullRequestWrite,
+    #[serde(rename = "pull_request:merge:read")]
+    PullRequestMergeRead,
+    #[serde(rename = "pull_request:merge:write")]
+    PullRequestMergeWrite,
+    #[serde(rename = "pull_request:attachment:read")]
+    PullRequestAttachmentRead,
+    #[serde(rename = "pull_request:attachment:write")]
+    PullRequestAttachmentWrite,
+    #[serde(rename = "pull_request:session:read")]
+    PullRequestSessionRead,
+    #[serde(rename = "pull_request:session:write")]
+    PullRequestSessionWrite,
+    #[serde(rename = "pull_request:message:read")]
+    PullRequestMessageRead,
+    #[serde(rename = "pull_request:message:write")]
+    PullRequestMessageWrite,
+    #[serde(rename = "pull_request:comment:read")]
+    PullRequestCommentRead,
+    #[serde(rename = "pull_request:comment:write")]
+    PullRequestCommentWrite,
+    #[serde(rename = "pull_request:review:read")]
+    PullRequestReviewRead,
+    #[serde(rename = "pull_request:review:write")]
+    PullRequestReviewWrite,
+    #[serde(rename = "pull_request:reaction:read")]
+    PullRequestReactionRead,
+    #[serde(rename = "pull_request:reaction:write")]
+    PullRequestReactionWrite,
+    #[serde(rename = "pull_request:commit:read")]
+    PullRequestCommitRead,
+    #[serde(rename = "pull_request:commit:write")]
+    PullRequestCommitWrite,
+    #[serde(rename = "pull_request:check:read")]
+    PullRequestCheckRead,
+    #[serde(rename = "pull_request:check:write")]
+    PullRequestCheckWrite,
+    #[serde(rename = "pull_request:file:read")]
+    PullRequestFileRead,
+    #[serde(rename = "pull_request:file:write")]
+    PullRequestFileWrite,
+    #[serde(rename = "pull_request:reviewer:read")]
+    PullRequestReviewerRead,
+    #[serde(rename = "pull_request:reviewer:write")]
+    PullRequestReviewerWrite,
+    #[serde(rename = "pull_request:label:read")]
+    PullRequestLabelRead,
+    #[serde(rename = "pull_request:label:write")]
+    PullRequestLabelWrite,
+    #[serde(rename = "pull_request:thread:read")]
+    PullRequestThreadRead,
+    #[serde(rename = "pull_request:thread:write")]
+    PullRequestThreadWrite,
+    #[serde(rename = "pull_request:tour:read")]
+    PullRequestTourRead,
+    #[serde(rename = "pull_request:tour:write")]
+    PullRequestTourWrite,
+    #[serde(rename = "pull_request:branch_status:read")]
+    PullRequestBranchStatusRead,
+    #[serde(rename = "pull_request:branch_status:write")]
+    PullRequestBranchStatusWrite,
+    #[serde(rename = "pull_request:stack:read")]
+    PullRequestStackRead,
+    #[serde(rename = "pull_request:stack:write")]
+    PullRequestStackWrite,
+    #[serde(rename = "repository:read")]
+    RepositoryRead,
+    #[serde(rename = "repository:write")]
+    RepositoryWrite,
+    #[serde(rename = "repository:branch:read")]
+    RepositoryBranchRead,
+    #[serde(rename = "repository:branch:write")]
+    RepositoryBranchWrite,
+    #[serde(rename = "repository:file:read")]
+    RepositoryFileRead,
+    #[serde(rename = "repository:file:write")]
+    RepositoryFileWrite,
+    #[serde(rename = "repository:pull_request:read")]
+    RepositoryPullRequestRead,
+    #[serde(rename = "repository:pull_request:write")]
+    RepositoryPullRequestWrite,
+    #[serde(rename = "repository:user:read")]
+    RepositoryUserRead,
+    #[serde(rename = "repository:user:write")]
+    RepositoryUserWrite,
+    #[serde(rename = "repository:label:read")]
+    RepositoryLabelRead,
+    #[serde(rename = "repository:label:write")]
+    RepositoryLabelWrite,
+    #[serde(rename = "integration:read")]
+    IntegrationRead,
+    #[serde(rename = "integration:write")]
+    IntegrationWrite,
+    #[serde(rename = "integration:trigger:read")]
+    IntegrationTriggerRead,
+    #[serde(rename = "integration:trigger:write")]
+    IntegrationTriggerWrite,
+    #[serde(rename = "integration:provider:read")]
+    IntegrationProviderRead,
+    #[serde(rename = "integration:provider:write")]
+    IntegrationProviderWrite,
+    #[serde(rename = "integration:configuration:read")]
+    IntegrationConfigurationRead,
+    #[serde(rename = "integration:configuration:write")]
+    IntegrationConfigurationWrite,
+    #[serde(rename = "integration:snyk_organization:read")]
+    IntegrationSnykOrganizationRead,
+    #[serde(rename = "integration:snyk_organization:write")]
+    IntegrationSnykOrganizationWrite,
+    #[serde(rename = "integration:sentry_environment:read")]
+    IntegrationSentryEnvironmentRead,
+    #[serde(rename = "integration:sentry_environment:write")]
+    IntegrationSentryEnvironmentWrite,
+    #[serde(rename = "integration:slack_channel:read")]
+    IntegrationSlackChannelRead,
+    #[serde(rename = "integration:slack_channel:write")]
+    IntegrationSlackChannelWrite,
+    #[serde(rename = "integration:rate_limit:read")]
+    IntegrationRateLimitRead,
+    #[serde(rename = "integration:rate_limit:write")]
+    IntegrationRateLimitWrite,
+    #[serde(rename = "mcp_connection:read")]
+    McpConnectionRead,
+    #[serde(rename = "mcp_connection:write")]
+    McpConnectionWrite,
+    #[serde(rename = "mcp_connection:shared:read")]
+    McpConnectionSharedRead,
+    #[serde(rename = "mcp_connection:shared:write")]
+    McpConnectionSharedWrite,
+    #[serde(rename = "model:read")]
+    ModelRead,
+    #[serde(rename = "model:write")]
+    ModelWrite,
+    #[serde(rename = "project:read")]
+    ProjectRead,
+    #[serde(rename = "project:write")]
+    ProjectWrite,
+    #[serde(rename = "project:environment_variable:read")]
+    ProjectEnvironmentVariableRead,
+    #[serde(rename = "project:environment_variable:write")]
+    ProjectEnvironmentVariableWrite,
+    #[serde(rename = "project:snapshot:read")]
+    ProjectSnapshotRead,
+    #[serde(rename = "project:snapshot:write")]
+    ProjectSnapshotWrite,
+    #[serde(rename = "project:build:read")]
+    ProjectBuildRead,
+    #[serde(rename = "project:build:write")]
+    ProjectBuildWrite,
+    #[serde(rename = "project:build_detail:read")]
+    ProjectBuildDetailRead,
+    #[serde(rename = "project:build_detail:write")]
+    ProjectBuildDetailWrite,
+    #[serde(rename = "project:schedule:read")]
+    ProjectScheduleRead,
+    #[serde(rename = "project:schedule:write")]
+    ProjectScheduleWrite,
+    #[serde(rename = "project:default:read")]
+    ProjectDefaultRead,
+    #[serde(rename = "project:default:write")]
+    ProjectDefaultWrite,
+    #[serde(rename = "project:system_snapshot:read")]
+    ProjectSystemSnapshotRead,
+    #[serde(rename = "project:system_snapshot:write")]
+    ProjectSystemSnapshotWrite,
+    #[serde(rename = "project:organization_snapshot:read")]
+    ProjectOrganizationSnapshotRead,
+    #[serde(rename = "project:organization_snapshot:write")]
+    ProjectOrganizationSnapshotWrite,
+    #[serde(rename = "sandbox:read")]
+    SandboxRead,
+    #[serde(rename = "sandbox:write")]
+    SandboxWrite,
+    #[serde(rename = "sandbox:metric:read")]
+    SandboxMetricRead,
+    #[serde(rename = "sandbox:metric:write")]
+    SandboxMetricWrite,
+    #[serde(rename = "sandbox:event:read")]
+    SandboxEventRead,
+    #[serde(rename = "sandbox:event:write")]
+    SandboxEventWrite,
+    #[serde(rename = "sandbox:size:read")]
+    SandboxSizeRead,
+    #[serde(rename = "sandbox:size:write")]
+    SandboxSizeWrite,
+    #[serde(rename = "sandbox:virtual_machine:read")]
+    SandboxVirtualMachineRead,
+    #[serde(rename = "sandbox:virtual_machine:write")]
+    SandboxVirtualMachineWrite,
+    #[serde(rename = "device:read")]
+    DeviceRead,
+    #[serde(rename = "device:write")]
+    DeviceWrite,
+    #[serde(rename = "skill:read")]
+    SkillRead,
+    #[serde(rename = "skill:write")]
+    SkillWrite,
+    #[serde(rename = "skill:marketplace:read")]
+    SkillMarketplaceRead,
+    #[serde(rename = "skill:marketplace:write")]
+    SkillMarketplaceWrite,
+    #[serde(rename = "insight:read")]
+    InsightRead,
+    #[serde(rename = "insight:write")]
+    InsightWrite,
+    #[serde(rename = "insight:member:read")]
+    InsightMemberRead,
+    #[serde(rename = "insight:member:write")]
+    InsightMemberWrite,
+    #[serde(rename = "insight:repository:read")]
+    InsightRepositoryRead,
+    #[serde(rename = "insight:repository:write")]
+    InsightRepositoryWrite,
+    #[serde(rename = "insight:usage:read")]
+    InsightUsageRead,
+    #[serde(rename = "insight:usage:write")]
+    InsightUsageWrite,
+    #[serde(rename = "file:read")]
+    FileRead,
+    #[serde(rename = "file:write")]
+    FileWrite,
+    #[serde(rename = "pin:read")]
+    PinRead,
+    #[serde(rename = "pin:write")]
+    PinWrite,
+    #[serde(rename = "queue:job:read")]
+    QueueJobRead,
+    #[serde(rename = "queue:job:write")]
+    QueueJobWrite,
+    #[serde(rename = "queue:host_manager_job:read")]
+    QueueHostManagerJobRead,
+    #[serde(rename = "queue:host_manager_job:write")]
+    QueueHostManagerJobWrite,
+    #[serde(rename = "queue:worker:read")]
+    QueueWorkerRead,
+    #[serde(rename = "queue:worker:write")]
+    QueueWorkerWrite,
+    #[serde(rename = "queue:scheduled_job:read")]
+    QueueScheduledJobRead,
+    #[serde(rename = "queue:scheduled_job:write")]
+    QueueScheduledJobWrite,
+    #[serde(rename = "queue:triggered_job:read")]
+    QueueTriggeredJobRead,
+    #[serde(rename = "queue:triggered_job:write")]
+    QueueTriggeredJobWrite,
+    #[serde(rename = "runtime:read")]
+    RuntimeRead,
+    #[serde(rename = "runtime:write")]
+    RuntimeWrite,
+    #[serde(rename = "session:source_credential:read")]
+    SessionSourceCredentialRead,
+    #[serde(rename = "session:source_credential:write")]
+    SessionSourceCredentialWrite,
+    #[serde(rename = "device:all:write")]
+    DeviceAllWrite,
+    #[serde(rename = "insight:user:read")]
+    InsightUserRead,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::OrganizationRead => "organization:read",
+            Self::OrganizationWrite => "organization:write",
+            Self::OrganizationMemberRead => "organization:member:read",
+            Self::OrganizationMemberWrite => "organization:member:write",
+            Self::OrganizationInvitationRead => "organization:invitation:read",
+            Self::OrganizationInvitationWrite => "organization:invitation:write",
+            Self::OrganizationRoleRead => "organization:role:read",
+            Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationSecretRead => "organization:secret:read",
+            Self::OrganizationSecretWrite => "organization:secret:write",
+            Self::OrganizationSettingRead => "organization:setting:read",
+            Self::OrganizationSettingWrite => "organization:setting:write",
+            Self::OrganizationConfigurationRead => "organization:configuration:read",
+            Self::OrganizationConfigurationWrite => "organization:configuration:write",
+            Self::OrganizationSubscriptionRead => "organization:subscription:read",
+            Self::OrganizationSubscriptionWrite => "organization:subscription:write",
+            Self::OrganizationOnboardingRead => "organization:onboarding:read",
+            Self::OrganizationOnboardingWrite => "organization:onboarding:write",
+            Self::OrganizationLogoRead => "organization:logo:read",
+            Self::OrganizationLogoWrite => "organization:logo:write",
+            Self::OrganizationSlackConnectRead => "organization:slack_connect:read",
+            Self::OrganizationSlackConnectWrite => "organization:slack_connect:write",
+            Self::BillingRead => "billing:read",
+            Self::BillingWrite => "billing:write",
+            Self::BillingTrialRead => "billing:trial:read",
+            Self::BillingTrialWrite => "billing:trial:write",
+            Self::BillingUsageRead => "billing:usage:read",
+            Self::BillingUsageWrite => "billing:usage:write",
+            Self::BillingPaymentRead => "billing:payment:read",
+            Self::BillingPaymentWrite => "billing:payment:write",
+            Self::BillingPaymentMethodRead => "billing:payment_method:read",
+            Self::BillingPaymentMethodWrite => "billing:payment_method:write",
+            Self::BillingCheckoutRead => "billing:checkout:read",
+            Self::BillingCheckoutWrite => "billing:checkout:write",
+            Self::BillingSubscriptionCheckoutRead => "billing:subscription_checkout:read",
+            Self::BillingSubscriptionCheckoutWrite => "billing:subscription_checkout:write",
+            Self::BillingPortalRead => "billing:portal:read",
+            Self::BillingPortalWrite => "billing:portal:write",
+            Self::BillingOnDemandRead => "billing:on_demand:read",
+            Self::BillingOnDemandWrite => "billing:on_demand:write",
+            Self::BillingCreditRead => "billing:credit:read",
+            Self::BillingCreditWrite => "billing:credit:write",
+            Self::BillingCustomPriceRead => "billing:custom_price:read",
+            Self::BillingCustomPriceWrite => "billing:custom_price:write",
+            Self::BillingCustomPlanRead => "billing:custom_plan:read",
+            Self::BillingCustomPlanWrite => "billing:custom_plan:write",
+            Self::BillingOverageReportRead => "billing:overage_report:read",
+            Self::BillingOverageReportWrite => "billing:overage_report:write",
+            Self::ApiKeyRead => "api_key:read",
+            Self::ApiKeyWrite => "api_key:write",
+            Self::UserRead => "user:read",
+            Self::UserWrite => "user:write",
+            Self::UserSettingRead => "user:setting:read",
+            Self::UserSettingWrite => "user:setting:write",
+            Self::UserEnvironmentVariableRead => "user:environment_variable:read",
+            Self::UserEnvironmentVariableWrite => "user:environment_variable:write",
+            Self::UserSubscriptionRead => "user:subscription:read",
+            Self::UserSubscriptionWrite => "user:subscription:write",
+            Self::UserConnectedAccountRead => "user:connected_account:read",
+            Self::UserConnectedAccountWrite => "user:connected_account:write",
+            Self::UserOrganizationRead => "user:organization:read",
+            Self::UserOrganizationWrite => "user:organization:write",
+            Self::UserProfilePictureRead => "user:profile_picture:read",
+            Self::UserProfilePictureWrite => "user:profile_picture:write",
+            Self::UserDeletionRead => "user:deletion:read",
+            Self::UserDeletionWrite => "user:deletion:write",
+            Self::AgentRead => "agent:read",
+            Self::AgentWrite => "agent:write",
+            Self::AgentScheduleRead => "agent:schedule:read",
+            Self::AgentScheduleWrite => "agent:schedule:write",
+            Self::AgentTriggerRead => "agent:trigger:read",
+            Self::AgentTriggerWrite => "agent:trigger:write",
+            Self::AgentRunRead => "agent:run:read",
+            Self::AgentRunWrite => "agent:run:write",
+            Self::AgentInstructionRevisionRead => "agent:instruction_revision:read",
+            Self::AgentInstructionRevisionWrite => "agent:instruction_revision:write",
+            Self::AgentTemplateRead => "agent:template:read",
+            Self::AgentTemplateWrite => "agent:template:write",
+            Self::SessionRead => "session:read",
+            Self::SessionWrite => "session:write",
+            Self::SessionMessageRead => "session:message:read",
+            Self::SessionMessageWrite => "session:message:write",
+            Self::SessionArtifactRead => "session:artifact:read",
+            Self::SessionArtifactWrite => "session:artifact:write",
+            Self::SessionSourceRead => "session:source:read",
+            Self::SessionSourceWrite => "session:source:write",
+            Self::SessionCommandRead => "session:command:read",
+            Self::SessionCommandWrite => "session:command:write",
+            Self::SessionInputRead => "session:input:read",
+            Self::SessionInputWrite => "session:input:write",
+            Self::SessionQueueRead => "session:queue:read",
+            Self::SessionQueueWrite => "session:queue:write",
+            Self::SessionEventRead => "session:event:read",
+            Self::SessionEventWrite => "session:event:write",
+            Self::SessionFileRead => "session:file:read",
+            Self::SessionFileWrite => "session:file:write",
+            Self::SessionDiffRead => "session:diff:read",
+            Self::SessionDiffWrite => "session:diff:write",
+            Self::SessionWorkspaceRead => "session:workspace:read",
+            Self::SessionWorkspaceWrite => "session:workspace:write",
+            Self::SessionWorkspaceFileRead => "session:workspace_file:read",
+            Self::SessionWorkspaceFileWrite => "session:workspace_file:write",
+            Self::SessionWorkspaceDiffRead => "session:workspace_diff:read",
+            Self::SessionWorkspaceDiffWrite => "session:workspace_diff:write",
+            Self::SessionWorkspacePreviewRead => "session:workspace_preview:read",
+            Self::SessionWorkspacePreviewWrite => "session:workspace_preview:write",
+            Self::PullRequestRead => "pull_request:read",
+            Self::PullRequestWrite => "pull_request:write",
+            Self::PullRequestMergeRead => "pull_request:merge:read",
+            Self::PullRequestMergeWrite => "pull_request:merge:write",
+            Self::PullRequestAttachmentRead => "pull_request:attachment:read",
+            Self::PullRequestAttachmentWrite => "pull_request:attachment:write",
+            Self::PullRequestSessionRead => "pull_request:session:read",
+            Self::PullRequestSessionWrite => "pull_request:session:write",
+            Self::PullRequestMessageRead => "pull_request:message:read",
+            Self::PullRequestMessageWrite => "pull_request:message:write",
+            Self::PullRequestCommentRead => "pull_request:comment:read",
+            Self::PullRequestCommentWrite => "pull_request:comment:write",
+            Self::PullRequestReviewRead => "pull_request:review:read",
+            Self::PullRequestReviewWrite => "pull_request:review:write",
+            Self::PullRequestReactionRead => "pull_request:reaction:read",
+            Self::PullRequestReactionWrite => "pull_request:reaction:write",
+            Self::PullRequestCommitRead => "pull_request:commit:read",
+            Self::PullRequestCommitWrite => "pull_request:commit:write",
+            Self::PullRequestCheckRead => "pull_request:check:read",
+            Self::PullRequestCheckWrite => "pull_request:check:write",
+            Self::PullRequestFileRead => "pull_request:file:read",
+            Self::PullRequestFileWrite => "pull_request:file:write",
+            Self::PullRequestReviewerRead => "pull_request:reviewer:read",
+            Self::PullRequestReviewerWrite => "pull_request:reviewer:write",
+            Self::PullRequestLabelRead => "pull_request:label:read",
+            Self::PullRequestLabelWrite => "pull_request:label:write",
+            Self::PullRequestThreadRead => "pull_request:thread:read",
+            Self::PullRequestThreadWrite => "pull_request:thread:write",
+            Self::PullRequestTourRead => "pull_request:tour:read",
+            Self::PullRequestTourWrite => "pull_request:tour:write",
+            Self::PullRequestBranchStatusRead => "pull_request:branch_status:read",
+            Self::PullRequestBranchStatusWrite => "pull_request:branch_status:write",
+            Self::PullRequestStackRead => "pull_request:stack:read",
+            Self::PullRequestStackWrite => "pull_request:stack:write",
+            Self::RepositoryRead => "repository:read",
+            Self::RepositoryWrite => "repository:write",
+            Self::RepositoryBranchRead => "repository:branch:read",
+            Self::RepositoryBranchWrite => "repository:branch:write",
+            Self::RepositoryFileRead => "repository:file:read",
+            Self::RepositoryFileWrite => "repository:file:write",
+            Self::RepositoryPullRequestRead => "repository:pull_request:read",
+            Self::RepositoryPullRequestWrite => "repository:pull_request:write",
+            Self::RepositoryUserRead => "repository:user:read",
+            Self::RepositoryUserWrite => "repository:user:write",
+            Self::RepositoryLabelRead => "repository:label:read",
+            Self::RepositoryLabelWrite => "repository:label:write",
+            Self::IntegrationRead => "integration:read",
+            Self::IntegrationWrite => "integration:write",
+            Self::IntegrationTriggerRead => "integration:trigger:read",
+            Self::IntegrationTriggerWrite => "integration:trigger:write",
+            Self::IntegrationProviderRead => "integration:provider:read",
+            Self::IntegrationProviderWrite => "integration:provider:write",
+            Self::IntegrationConfigurationRead => "integration:configuration:read",
+            Self::IntegrationConfigurationWrite => "integration:configuration:write",
+            Self::IntegrationSnykOrganizationRead => "integration:snyk_organization:read",
+            Self::IntegrationSnykOrganizationWrite => "integration:snyk_organization:write",
+            Self::IntegrationSentryEnvironmentRead => "integration:sentry_environment:read",
+            Self::IntegrationSentryEnvironmentWrite => "integration:sentry_environment:write",
+            Self::IntegrationSlackChannelRead => "integration:slack_channel:read",
+            Self::IntegrationSlackChannelWrite => "integration:slack_channel:write",
+            Self::IntegrationRateLimitRead => "integration:rate_limit:read",
+            Self::IntegrationRateLimitWrite => "integration:rate_limit:write",
+            Self::McpConnectionRead => "mcp_connection:read",
+            Self::McpConnectionWrite => "mcp_connection:write",
+            Self::McpConnectionSharedRead => "mcp_connection:shared:read",
+            Self::McpConnectionSharedWrite => "mcp_connection:shared:write",
+            Self::ModelRead => "model:read",
+            Self::ModelWrite => "model:write",
+            Self::ProjectRead => "project:read",
+            Self::ProjectWrite => "project:write",
+            Self::ProjectEnvironmentVariableRead => "project:environment_variable:read",
+            Self::ProjectEnvironmentVariableWrite => "project:environment_variable:write",
+            Self::ProjectSnapshotRead => "project:snapshot:read",
+            Self::ProjectSnapshotWrite => "project:snapshot:write",
+            Self::ProjectBuildRead => "project:build:read",
+            Self::ProjectBuildWrite => "project:build:write",
+            Self::ProjectBuildDetailRead => "project:build_detail:read",
+            Self::ProjectBuildDetailWrite => "project:build_detail:write",
+            Self::ProjectScheduleRead => "project:schedule:read",
+            Self::ProjectScheduleWrite => "project:schedule:write",
+            Self::ProjectDefaultRead => "project:default:read",
+            Self::ProjectDefaultWrite => "project:default:write",
+            Self::ProjectSystemSnapshotRead => "project:system_snapshot:read",
+            Self::ProjectSystemSnapshotWrite => "project:system_snapshot:write",
+            Self::ProjectOrganizationSnapshotRead => "project:organization_snapshot:read",
+            Self::ProjectOrganizationSnapshotWrite => "project:organization_snapshot:write",
+            Self::SandboxRead => "sandbox:read",
+            Self::SandboxWrite => "sandbox:write",
+            Self::SandboxMetricRead => "sandbox:metric:read",
+            Self::SandboxMetricWrite => "sandbox:metric:write",
+            Self::SandboxEventRead => "sandbox:event:read",
+            Self::SandboxEventWrite => "sandbox:event:write",
+            Self::SandboxSizeRead => "sandbox:size:read",
+            Self::SandboxSizeWrite => "sandbox:size:write",
+            Self::SandboxVirtualMachineRead => "sandbox:virtual_machine:read",
+            Self::SandboxVirtualMachineWrite => "sandbox:virtual_machine:write",
+            Self::DeviceRead => "device:read",
+            Self::DeviceWrite => "device:write",
+            Self::SkillRead => "skill:read",
+            Self::SkillWrite => "skill:write",
+            Self::SkillMarketplaceRead => "skill:marketplace:read",
+            Self::SkillMarketplaceWrite => "skill:marketplace:write",
+            Self::InsightRead => "insight:read",
+            Self::InsightWrite => "insight:write",
+            Self::InsightMemberRead => "insight:member:read",
+            Self::InsightMemberWrite => "insight:member:write",
+            Self::InsightRepositoryRead => "insight:repository:read",
+            Self::InsightRepositoryWrite => "insight:repository:write",
+            Self::InsightUsageRead => "insight:usage:read",
+            Self::InsightUsageWrite => "insight:usage:write",
+            Self::FileRead => "file:read",
+            Self::FileWrite => "file:write",
+            Self::PinRead => "pin:read",
+            Self::PinWrite => "pin:write",
+            Self::QueueJobRead => "queue:job:read",
+            Self::QueueJobWrite => "queue:job:write",
+            Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
+            Self::QueueHostManagerJobWrite => "queue:host_manager_job:write",
+            Self::QueueWorkerRead => "queue:worker:read",
+            Self::QueueWorkerWrite => "queue:worker:write",
+            Self::QueueScheduledJobRead => "queue:scheduled_job:read",
+            Self::QueueScheduledJobWrite => "queue:scheduled_job:write",
+            Self::QueueTriggeredJobRead => "queue:triggered_job:read",
+            Self::QueueTriggeredJobWrite => "queue:triggered_job:write",
+            Self::RuntimeRead => "runtime:read",
+            Self::RuntimeWrite => "runtime:write",
+            Self::SessionSourceCredentialRead => "session:source_credential:read",
+            Self::SessionSourceCredentialWrite => "session:source_credential:write",
+            Self::DeviceAllWrite => "device:all:write",
+            Self::InsightUserRead => "insight:user:read",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
+    fn from(value: &str) -> Self {
+        match value {
+            "organization:read" => Self::OrganizationRead,
+            "organization:write" => Self::OrganizationWrite,
+            "organization:member:read" => Self::OrganizationMemberRead,
+            "organization:member:write" => Self::OrganizationMemberWrite,
+            "organization:invitation:read" => Self::OrganizationInvitationRead,
+            "organization:invitation:write" => Self::OrganizationInvitationWrite,
+            "organization:role:read" => Self::OrganizationRoleRead,
+            "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:secret:read" => Self::OrganizationSecretRead,
+            "organization:secret:write" => Self::OrganizationSecretWrite,
+            "organization:setting:read" => Self::OrganizationSettingRead,
+            "organization:setting:write" => Self::OrganizationSettingWrite,
+            "organization:configuration:read" => Self::OrganizationConfigurationRead,
+            "organization:configuration:write" => Self::OrganizationConfigurationWrite,
+            "organization:subscription:read" => Self::OrganizationSubscriptionRead,
+            "organization:subscription:write" => Self::OrganizationSubscriptionWrite,
+            "organization:onboarding:read" => Self::OrganizationOnboardingRead,
+            "organization:onboarding:write" => Self::OrganizationOnboardingWrite,
+            "organization:logo:read" => Self::OrganizationLogoRead,
+            "organization:logo:write" => Self::OrganizationLogoWrite,
+            "organization:slack_connect:read" => Self::OrganizationSlackConnectRead,
+            "organization:slack_connect:write" => Self::OrganizationSlackConnectWrite,
+            "billing:read" => Self::BillingRead,
+            "billing:write" => Self::BillingWrite,
+            "billing:trial:read" => Self::BillingTrialRead,
+            "billing:trial:write" => Self::BillingTrialWrite,
+            "billing:usage:read" => Self::BillingUsageRead,
+            "billing:usage:write" => Self::BillingUsageWrite,
+            "billing:payment:read" => Self::BillingPaymentRead,
+            "billing:payment:write" => Self::BillingPaymentWrite,
+            "billing:payment_method:read" => Self::BillingPaymentMethodRead,
+            "billing:payment_method:write" => Self::BillingPaymentMethodWrite,
+            "billing:checkout:read" => Self::BillingCheckoutRead,
+            "billing:checkout:write" => Self::BillingCheckoutWrite,
+            "billing:subscription_checkout:read" => Self::BillingSubscriptionCheckoutRead,
+            "billing:subscription_checkout:write" => Self::BillingSubscriptionCheckoutWrite,
+            "billing:portal:read" => Self::BillingPortalRead,
+            "billing:portal:write" => Self::BillingPortalWrite,
+            "billing:on_demand:read" => Self::BillingOnDemandRead,
+            "billing:on_demand:write" => Self::BillingOnDemandWrite,
+            "billing:credit:read" => Self::BillingCreditRead,
+            "billing:credit:write" => Self::BillingCreditWrite,
+            "billing:custom_price:read" => Self::BillingCustomPriceRead,
+            "billing:custom_price:write" => Self::BillingCustomPriceWrite,
+            "billing:custom_plan:read" => Self::BillingCustomPlanRead,
+            "billing:custom_plan:write" => Self::BillingCustomPlanWrite,
+            "billing:overage_report:read" => Self::BillingOverageReportRead,
+            "billing:overage_report:write" => Self::BillingOverageReportWrite,
+            "api_key:read" => Self::ApiKeyRead,
+            "api_key:write" => Self::ApiKeyWrite,
+            "user:read" => Self::UserRead,
+            "user:write" => Self::UserWrite,
+            "user:setting:read" => Self::UserSettingRead,
+            "user:setting:write" => Self::UserSettingWrite,
+            "user:environment_variable:read" => Self::UserEnvironmentVariableRead,
+            "user:environment_variable:write" => Self::UserEnvironmentVariableWrite,
+            "user:subscription:read" => Self::UserSubscriptionRead,
+            "user:subscription:write" => Self::UserSubscriptionWrite,
+            "user:connected_account:read" => Self::UserConnectedAccountRead,
+            "user:connected_account:write" => Self::UserConnectedAccountWrite,
+            "user:organization:read" => Self::UserOrganizationRead,
+            "user:organization:write" => Self::UserOrganizationWrite,
+            "user:profile_picture:read" => Self::UserProfilePictureRead,
+            "user:profile_picture:write" => Self::UserProfilePictureWrite,
+            "user:deletion:read" => Self::UserDeletionRead,
+            "user:deletion:write" => Self::UserDeletionWrite,
+            "agent:read" => Self::AgentRead,
+            "agent:write" => Self::AgentWrite,
+            "agent:schedule:read" => Self::AgentScheduleRead,
+            "agent:schedule:write" => Self::AgentScheduleWrite,
+            "agent:trigger:read" => Self::AgentTriggerRead,
+            "agent:trigger:write" => Self::AgentTriggerWrite,
+            "agent:run:read" => Self::AgentRunRead,
+            "agent:run:write" => Self::AgentRunWrite,
+            "agent:instruction_revision:read" => Self::AgentInstructionRevisionRead,
+            "agent:instruction_revision:write" => Self::AgentInstructionRevisionWrite,
+            "agent:template:read" => Self::AgentTemplateRead,
+            "agent:template:write" => Self::AgentTemplateWrite,
+            "session:read" => Self::SessionRead,
+            "session:write" => Self::SessionWrite,
+            "session:message:read" => Self::SessionMessageRead,
+            "session:message:write" => Self::SessionMessageWrite,
+            "session:artifact:read" => Self::SessionArtifactRead,
+            "session:artifact:write" => Self::SessionArtifactWrite,
+            "session:source:read" => Self::SessionSourceRead,
+            "session:source:write" => Self::SessionSourceWrite,
+            "session:command:read" => Self::SessionCommandRead,
+            "session:command:write" => Self::SessionCommandWrite,
+            "session:input:read" => Self::SessionInputRead,
+            "session:input:write" => Self::SessionInputWrite,
+            "session:queue:read" => Self::SessionQueueRead,
+            "session:queue:write" => Self::SessionQueueWrite,
+            "session:event:read" => Self::SessionEventRead,
+            "session:event:write" => Self::SessionEventWrite,
+            "session:file:read" => Self::SessionFileRead,
+            "session:file:write" => Self::SessionFileWrite,
+            "session:diff:read" => Self::SessionDiffRead,
+            "session:diff:write" => Self::SessionDiffWrite,
+            "session:workspace:read" => Self::SessionWorkspaceRead,
+            "session:workspace:write" => Self::SessionWorkspaceWrite,
+            "session:workspace_file:read" => Self::SessionWorkspaceFileRead,
+            "session:workspace_file:write" => Self::SessionWorkspaceFileWrite,
+            "session:workspace_diff:read" => Self::SessionWorkspaceDiffRead,
+            "session:workspace_diff:write" => Self::SessionWorkspaceDiffWrite,
+            "session:workspace_preview:read" => Self::SessionWorkspacePreviewRead,
+            "session:workspace_preview:write" => Self::SessionWorkspacePreviewWrite,
+            "pull_request:read" => Self::PullRequestRead,
+            "pull_request:write" => Self::PullRequestWrite,
+            "pull_request:merge:read" => Self::PullRequestMergeRead,
+            "pull_request:merge:write" => Self::PullRequestMergeWrite,
+            "pull_request:attachment:read" => Self::PullRequestAttachmentRead,
+            "pull_request:attachment:write" => Self::PullRequestAttachmentWrite,
+            "pull_request:session:read" => Self::PullRequestSessionRead,
+            "pull_request:session:write" => Self::PullRequestSessionWrite,
+            "pull_request:message:read" => Self::PullRequestMessageRead,
+            "pull_request:message:write" => Self::PullRequestMessageWrite,
+            "pull_request:comment:read" => Self::PullRequestCommentRead,
+            "pull_request:comment:write" => Self::PullRequestCommentWrite,
+            "pull_request:review:read" => Self::PullRequestReviewRead,
+            "pull_request:review:write" => Self::PullRequestReviewWrite,
+            "pull_request:reaction:read" => Self::PullRequestReactionRead,
+            "pull_request:reaction:write" => Self::PullRequestReactionWrite,
+            "pull_request:commit:read" => Self::PullRequestCommitRead,
+            "pull_request:commit:write" => Self::PullRequestCommitWrite,
+            "pull_request:check:read" => Self::PullRequestCheckRead,
+            "pull_request:check:write" => Self::PullRequestCheckWrite,
+            "pull_request:file:read" => Self::PullRequestFileRead,
+            "pull_request:file:write" => Self::PullRequestFileWrite,
+            "pull_request:reviewer:read" => Self::PullRequestReviewerRead,
+            "pull_request:reviewer:write" => Self::PullRequestReviewerWrite,
+            "pull_request:label:read" => Self::PullRequestLabelRead,
+            "pull_request:label:write" => Self::PullRequestLabelWrite,
+            "pull_request:thread:read" => Self::PullRequestThreadRead,
+            "pull_request:thread:write" => Self::PullRequestThreadWrite,
+            "pull_request:tour:read" => Self::PullRequestTourRead,
+            "pull_request:tour:write" => Self::PullRequestTourWrite,
+            "pull_request:branch_status:read" => Self::PullRequestBranchStatusRead,
+            "pull_request:branch_status:write" => Self::PullRequestBranchStatusWrite,
+            "pull_request:stack:read" => Self::PullRequestStackRead,
+            "pull_request:stack:write" => Self::PullRequestStackWrite,
+            "repository:read" => Self::RepositoryRead,
+            "repository:write" => Self::RepositoryWrite,
+            "repository:branch:read" => Self::RepositoryBranchRead,
+            "repository:branch:write" => Self::RepositoryBranchWrite,
+            "repository:file:read" => Self::RepositoryFileRead,
+            "repository:file:write" => Self::RepositoryFileWrite,
+            "repository:pull_request:read" => Self::RepositoryPullRequestRead,
+            "repository:pull_request:write" => Self::RepositoryPullRequestWrite,
+            "repository:user:read" => Self::RepositoryUserRead,
+            "repository:user:write" => Self::RepositoryUserWrite,
+            "repository:label:read" => Self::RepositoryLabelRead,
+            "repository:label:write" => Self::RepositoryLabelWrite,
+            "integration:read" => Self::IntegrationRead,
+            "integration:write" => Self::IntegrationWrite,
+            "integration:trigger:read" => Self::IntegrationTriggerRead,
+            "integration:trigger:write" => Self::IntegrationTriggerWrite,
+            "integration:provider:read" => Self::IntegrationProviderRead,
+            "integration:provider:write" => Self::IntegrationProviderWrite,
+            "integration:configuration:read" => Self::IntegrationConfigurationRead,
+            "integration:configuration:write" => Self::IntegrationConfigurationWrite,
+            "integration:snyk_organization:read" => Self::IntegrationSnykOrganizationRead,
+            "integration:snyk_organization:write" => Self::IntegrationSnykOrganizationWrite,
+            "integration:sentry_environment:read" => Self::IntegrationSentryEnvironmentRead,
+            "integration:sentry_environment:write" => Self::IntegrationSentryEnvironmentWrite,
+            "integration:slack_channel:read" => Self::IntegrationSlackChannelRead,
+            "integration:slack_channel:write" => Self::IntegrationSlackChannelWrite,
+            "integration:rate_limit:read" => Self::IntegrationRateLimitRead,
+            "integration:rate_limit:write" => Self::IntegrationRateLimitWrite,
+            "mcp_connection:read" => Self::McpConnectionRead,
+            "mcp_connection:write" => Self::McpConnectionWrite,
+            "mcp_connection:shared:read" => Self::McpConnectionSharedRead,
+            "mcp_connection:shared:write" => Self::McpConnectionSharedWrite,
+            "model:read" => Self::ModelRead,
+            "model:write" => Self::ModelWrite,
+            "project:read" => Self::ProjectRead,
+            "project:write" => Self::ProjectWrite,
+            "project:environment_variable:read" => Self::ProjectEnvironmentVariableRead,
+            "project:environment_variable:write" => Self::ProjectEnvironmentVariableWrite,
+            "project:snapshot:read" => Self::ProjectSnapshotRead,
+            "project:snapshot:write" => Self::ProjectSnapshotWrite,
+            "project:build:read" => Self::ProjectBuildRead,
+            "project:build:write" => Self::ProjectBuildWrite,
+            "project:build_detail:read" => Self::ProjectBuildDetailRead,
+            "project:build_detail:write" => Self::ProjectBuildDetailWrite,
+            "project:schedule:read" => Self::ProjectScheduleRead,
+            "project:schedule:write" => Self::ProjectScheduleWrite,
+            "project:default:read" => Self::ProjectDefaultRead,
+            "project:default:write" => Self::ProjectDefaultWrite,
+            "project:system_snapshot:read" => Self::ProjectSystemSnapshotRead,
+            "project:system_snapshot:write" => Self::ProjectSystemSnapshotWrite,
+            "project:organization_snapshot:read" => Self::ProjectOrganizationSnapshotRead,
+            "project:organization_snapshot:write" => Self::ProjectOrganizationSnapshotWrite,
+            "sandbox:read" => Self::SandboxRead,
+            "sandbox:write" => Self::SandboxWrite,
+            "sandbox:metric:read" => Self::SandboxMetricRead,
+            "sandbox:metric:write" => Self::SandboxMetricWrite,
+            "sandbox:event:read" => Self::SandboxEventRead,
+            "sandbox:event:write" => Self::SandboxEventWrite,
+            "sandbox:size:read" => Self::SandboxSizeRead,
+            "sandbox:size:write" => Self::SandboxSizeWrite,
+            "sandbox:virtual_machine:read" => Self::SandboxVirtualMachineRead,
+            "sandbox:virtual_machine:write" => Self::SandboxVirtualMachineWrite,
+            "device:read" => Self::DeviceRead,
+            "device:write" => Self::DeviceWrite,
+            "skill:read" => Self::SkillRead,
+            "skill:write" => Self::SkillWrite,
+            "skill:marketplace:read" => Self::SkillMarketplaceRead,
+            "skill:marketplace:write" => Self::SkillMarketplaceWrite,
+            "insight:read" => Self::InsightRead,
+            "insight:write" => Self::InsightWrite,
+            "insight:member:read" => Self::InsightMemberRead,
+            "insight:member:write" => Self::InsightMemberWrite,
+            "insight:repository:read" => Self::InsightRepositoryRead,
+            "insight:repository:write" => Self::InsightRepositoryWrite,
+            "insight:usage:read" => Self::InsightUsageRead,
+            "insight:usage:write" => Self::InsightUsageWrite,
+            "file:read" => Self::FileRead,
+            "file:write" => Self::FileWrite,
+            "pin:read" => Self::PinRead,
+            "pin:write" => Self::PinWrite,
+            "queue:job:read" => Self::QueueJobRead,
+            "queue:job:write" => Self::QueueJobWrite,
+            "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
+            "queue:host_manager_job:write" => Self::QueueHostManagerJobWrite,
+            "queue:worker:read" => Self::QueueWorkerRead,
+            "queue:worker:write" => Self::QueueWorkerWrite,
+            "queue:scheduled_job:read" => Self::QueueScheduledJobRead,
+            "queue:scheduled_job:write" => Self::QueueScheduledJobWrite,
+            "queue:triggered_job:read" => Self::QueueTriggeredJobRead,
+            "queue:triggered_job:write" => Self::QueueTriggeredJobWrite,
+            "runtime:read" => Self::RuntimeRead,
+            "runtime:write" => Self::RuntimeWrite,
+            "session:source_credential:read" => Self::SessionSourceCredentialRead,
+            "session:source_credential:write" => Self::SessionSourceCredentialWrite,
+            "device:all:write" => Self::DeviceAllWrite,
+            "insight:user:read" => Self::InsightUserRead,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `OrganizationsRetrieveResponseVariant2Access::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct OrganizationsRetrieveResponseVariant2Access {
+    pub state: OrganizationsRetrieveResponseVariant2AccessState,
+    #[serde(rename = "canExecute")]
+    pub can_execute: bool,
+}
+
+impl OrganizationsRetrieveResponseVariant2Access {
+    /// Creates a new `OrganizationsRetrieveResponseVariant2Access` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(state: OrganizationsRetrieveResponseVariant2AccessState, can_execute: bool) -> Self {
+        Self { state, can_execute }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum OrganizationsRetrieveResponseVariant2AccessState {
+    #[serde(rename = "blocked")]
+    Blocked,
+    #[serde(rename = "trial")]
+    Trial,
+    #[serde(rename = "paid")]
+    Paid,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl OrganizationsRetrieveResponseVariant2AccessState {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Blocked => "blocked",
+            Self::Trial => "trial",
+            Self::Paid => "paid",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for OrganizationsRetrieveResponseVariant2AccessState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for OrganizationsRetrieveResponseVariant2AccessState {
+    fn from(value: &str) -> Self {
+        match value {
+            "blocked" => Self::Blocked,
+            "trial" => Self::Trial,
+            "paid" => Self::Paid,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }
