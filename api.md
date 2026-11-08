@@ -491,7 +491,7 @@ let response = client
 
 ### Retrieve an organization
 
-Retrieve an organization profile.
+Return self membership and workspace eligibility; include the full profile with organization read permission.
 
 | Direction | Type |
 | --- | --- |

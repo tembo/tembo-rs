@@ -132,7 +132,7 @@ impl CreateRequestBuilder {
             .await
     }
 }
-/// Retrieve an organization profile.
+/// Return self membership and workspace eligibility; include the full profile with organization read permission.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct RetrieveRequestBuilder {
     client: crate::client::Tembo,
