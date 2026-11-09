@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.11.0](https://github.com/tembo/tembo-rs/compare/v0.10.1...v0.11.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** Removed optional property `session_event_data.isProgressUpdate`.
+* **api:** Schema `trigger_filters` shape changed.
+* **api:** 3 breaking changes to the SDK surface.
+    - Removed operation `organizations.subscriptions.reset` (`POST /v1/organizations/{organizationId}/subscriptions/reset`).
+    - Removed operation `users.delete` (`DELETE /v1/users/{userId}`).
+    - Removed operation `users.subscriptions.reset` (`POST /v1/users/{userId}/subscriptions/reset`).
+* **api:** Schema `agent_options_input` shape changed.
+
+### Features
+
+* **api:** add 403 error response on agents.runs.create (+1 more change) ([7a9e059](https://github.com/tembo/tembo-rs/commit/7a9e059605a197a37eb35e50468d5f87234b2a4b))
+* **api:** add body field expiresAt on apiKeys.create (+7 more changes) ([40e9940](https://github.com/tembo/tembo-rs/commit/40e994010ca20fe0bb1b04b378c12c16bffab2db))
+* **api:** add operation projects.duplicate (+4 more changes) ([df47091](https://github.com/tembo/tembo-rs/commit/df470918f14b1e279252d30485bbc9cd67bdd5ef))
+* **api:** add operation sessions.import ([75aef76](https://github.com/tembo/tembo-rs/commit/75aef7622c0728b152a71bd1d5cc351deacc2d7f))
+* **api:** add operation sessions.inputs.list (+3 more changes) ([aacd725](https://github.com/tembo/tembo-rs/commit/aacd7252b5d3edfded22f1f6f728c7e20416e7f5))
+* **api:** add query param parentSessionId on sessions.list ([0a81dc8](https://github.com/tembo/tembo-rs/commit/0a81dc83615cd4362dd65ec2302f4c1606c3970b))
+* **api:** add query param range on insights.retrieve (+2 more changes) ([c2946e2](https://github.com/tembo/tembo-rs/commit/c2946e23b804f346ce25b63e1bdd0e027c7aa1c6))
+* **api:** initial SDK generation ([41373fd](https://github.com/tembo/tembo-rs/commit/41373fd436c1ad6f070514ed245190107a07f1d5))
+* **api:** update schema agent_options_input (+7 more changes) ([ded6917](https://github.com/tembo/tembo-rs/commit/ded69178d849bcbbd107d3a32803c5564ed58dd6))
+* **api:** update schema trigger_filters (+6 more changes) ([d401579](https://github.com/tembo/tembo-rs/commit/d401579bdd941efeaadfa5bc5cc9df6b7a6f6fa2))
+* **api:** update SDK surface (1 change) ([1a602e1](https://github.com/tembo/tembo-rs/commit/1a602e13e58672b05dc8af2659ed187670f045fa))
+* **api:** update SDK surface (10 changes) ([2dfaad6](https://github.com/tembo/tembo-rs/commit/2dfaad6c6bb8bd666fcf456b89ce890dd1f70f1f))
+* **api:** update SDK surface (2 changes) ([de7ae1e](https://github.com/tembo/tembo-rs/commit/de7ae1eb76983fad6eb00a03b1e18ddf02e8d936))
+* **api:** update SDK surface (2 changes) ([b2ef088](https://github.com/tembo/tembo-rs/commit/b2ef088af77d564648ac16114910d7c78e479cdc))
+* **api:** update SDK surface (3 changes) ([cf4faea](https://github.com/tembo/tembo-rs/commit/cf4faeab1c3f3f3dc0d493f565e549825dde03a5))
+* **api:** update SDK surface (3 changes) ([64341c0](https://github.com/tembo/tembo-rs/commit/64341c0885049cfbc93f810a0ede9fb2d67ebffb))
+
+
+### Bug Fixes
+
+* **models:** allow clearing warmPoolSchedule, select resourceSettings variants ([d88c321](https://github.com/tembo/tembo-rs/commit/d88c321a1a32d697a56a227e88f0d2aad7b95de3))
+* **models:** allow clearing warmPoolSchedule, select resourceSettings variants ([02d56d8](https://github.com/tembo/tembo-rs/commit/02d56d8c1fe3678e9724298d84b406f7c2383d28))
+* **models:** allow module_inception for the models resource ([7effd3c](https://github.com/tembo/tembo-rs/commit/7effd3c3c5d483cf08c5b30ac23d8b85a56de3b6))
+* **models:** allow module_inception for the models resource ([3866856](https://github.com/tembo/tembo-rs/commit/3866856a0008af0eed3c3f02377842d864f8a281))
+* resolve Scalar conflict for generator 0.38.0 and smoke test stack overflow ([06005ba](https://github.com/tembo/tembo-rs/commit/06005ba4941eac4abe28da0e5afc42e9783d447b))
+* **tests:** raise test thread stack for generated smoke test ([17c9d98](https://github.com/tembo/tembo-rs/commit/17c9d98031ed47ae7621a2266e8f0868c1e6665b))
+
+
+### Chores
+
+* **api:** regenerate SDK ([7d4120a](https://github.com/tembo/tembo-rs/commit/7d4120a2b8b74f7aaa68eb5d0da76ed7917a9f67))
+* **api:** update generated SDK content ([791d052](https://github.com/tembo/tembo-rs/commit/791d052c1fbf1138f2eb0c6c041752ca7f55110d))
+* **api:** update generated SDK content ([489a947](https://github.com/tembo/tembo-rs/commit/489a94757c2a00bd531f5d8bf696bb1f0af6c2bd))
+
 ## [0.10.1](https://github.com/tembo/tembo-rs/compare/v0.10.0...v0.10.1) (2026-11-08)
 
 
