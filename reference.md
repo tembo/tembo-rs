@@ -211,6 +211,49 @@ Remove an organization member
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500, 503`
 
+### client.organizations().roles().list(…)
+
+List organization roles
+
+- HTTP: `GET /v1/organizations/{organizationId}/roles`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().roles().create(…)
+
+Create a organization role
+
+- HTTP: `POST /v1/organizations/{organizationId}/roles`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().roles().retrieve(…)
+
+Retrieve an organization role
+
+- HTTP: `GET /v1/organizations/{organizationId}/roles/{roleId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().roles().update(…)
+
+Update a organization role
+
+- HTTP: `PATCH /v1/organizations/{organizationId}/roles/{roleId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().roles().delete(…)
+
+Archive a role with an explicit replacement
+
+- HTTP: `DELETE /v1/organizations/{organizationId}/roles/{roleId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
 ### client.organizations().secrets().list(…)
 
 List organization secrets
@@ -367,6 +410,14 @@ Create an artifact
 Retrieve an artifact
 
 - HTTP: `GET /v1/artifacts/{artifactId}`
+- Response body: `application/json`
+- Errors: `400, 404, 500`
+
+### client.artifacts().retrieve_asset_url(…)
+
+Retrieve a signed asset URL
+
+- HTTP: `GET /v1/artifacts/assets/{assetId}`
 - Response body: `application/json`
 - Errors: `400, 404, 500`
 
@@ -699,6 +750,14 @@ Update project defaults
 
 - HTTP: `PUT /v1/projects/defaults`
 - Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409, 500`
+
+### client.projects().retrieve_defaults()
+
+Retrieve project defaults
+
+- HTTP: `GET /v1/projects/defaults`
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500`
 
@@ -1316,6 +1375,40 @@ List billing usage
 - HTTP: `GET /v1/billing/usage`
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 502`
+
+### client.folders().list()
+
+List folders
+
+- HTTP: `GET /v1/folders`
+- Response body: `application/json`
+- Errors: `400, 404, 409`
+
+### client.folders().create(…)
+
+Create a folder
+
+- HTTP: `POST /v1/folders`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409`
+
+### client.folders().update(…)
+
+Update a folder
+
+- HTTP: `PATCH /v1/folders/{folderId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409`
+
+### client.folders().delete(…)
+
+Delete a folder
+
+- HTTP: `DELETE /v1/folders/{folderId}`
+- Response body: `application/json`
+- Errors: `400, 404, 409`
 
 ### client.live().authorize()
 
