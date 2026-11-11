@@ -34,6 +34,7 @@ pub enum PinsListResponseResource {
     PinsListResponseResourceVariant1(PinsListResponseResourceVariant1),
     PinsListResponseResourceVariant2(PinsListResponseResourceVariant2),
     PinsListResponseResourceVariant3(PinsListResponseResourceVariant3),
+    PinsListResponseResourceVariant4(PinsListResponseResourceVariant4),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -103,6 +104,9 @@ pub struct PinsListResponseResourceVariant1Resource {
     pub pull_requests: Vec<PinsListResponseResourceVariant1ResourcePullRequest>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsListResponseResourceVariant1ResourceDiffSummary>,
+    /// Sidebar folder you filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     pub state: PinsListResponseResourceVariant1ResourceState,
     /// Whether the latest turn finished after the caller last viewed the session.
     #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
@@ -136,6 +140,7 @@ impl PinsListResponseResourceVariant1Resource {
         session_source: PinsListResponseResourceVariant1ResourceSessionSource,
         pull_requests: Vec<PinsListResponseResourceVariant1ResourcePullRequest>,
         diff_summary: Option<PinsListResponseResourceVariant1ResourceDiffSummary>,
+        folder_id: Option<String>,
         state: PinsListResponseResourceVariant1ResourceState,
     ) -> Self {
         Self {
@@ -155,6 +160,7 @@ impl PinsListResponseResourceVariant1Resource {
             session_source,
             pull_requests,
             diff_summary,
+            folder_id,
             state,
             is_unread: None,
         }
@@ -1152,6 +1158,130 @@ impl From<&str> for PinsListResponseResourceVariant3ResourceColor {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct PinsListResponseResourceVariant4 {
+    pub r#type: String,
+    pub resource: PinsListResponseResourceVariant4Resource,
+}
+
+impl PinsListResponseResourceVariant4 {
+    /// Creates a new `PinsListResponseResourceVariant4` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsListResponseResourceVariant4Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsListResponseResourceVariant4Resource::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct PinsListResponseResourceVariant4Resource {
+    pub id: String,
+    pub name: String,
+    pub color: PinsListResponseResourceVariant4ResourceColor,
+}
+
+impl PinsListResponseResourceVariant4Resource {
+    /// Creates a new `PinsListResponseResourceVariant4Resource` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        color: PinsListResponseResourceVariant4ResourceColor,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            color,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum PinsListResponseResourceVariant4ResourceColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl PinsListResponseResourceVariant4ResourceColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for PinsListResponseResourceVariant4ResourceColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for PinsListResponseResourceVariant4ResourceColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]
@@ -1159,6 +1289,7 @@ pub enum PinsCreateResponse {
     PinsCreateResponseVariant1(PinsCreateResponseVariant1),
     PinsCreateResponseVariant2(PinsCreateResponseVariant2),
     PinsCreateResponseVariant3(PinsCreateResponseVariant3),
+    PinsCreateResponseVariant4(PinsCreateResponseVariant4),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -1228,6 +1359,9 @@ pub struct PinsCreateResponseVariant1Resource {
     pub pull_requests: Vec<PinsCreateResponseVariant1ResourcePullRequest>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<PinsCreateResponseVariant1ResourceDiffSummary>,
+    /// Sidebar folder you filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     pub state: PinsCreateResponseVariant1ResourceState,
     /// Whether the latest turn finished after the caller last viewed the session.
     #[serde(rename = "isUnread", default, skip_serializing_if = "Option::is_none")]
@@ -1260,6 +1394,7 @@ impl PinsCreateResponseVariant1Resource {
         session_source: PinsCreateResponseVariant1ResourceSessionSource,
         pull_requests: Vec<PinsCreateResponseVariant1ResourcePullRequest>,
         diff_summary: Option<PinsCreateResponseVariant1ResourceDiffSummary>,
+        folder_id: Option<String>,
         state: PinsCreateResponseVariant1ResourceState,
     ) -> Self {
         Self {
@@ -1279,6 +1414,7 @@ impl PinsCreateResponseVariant1Resource {
             session_source,
             pull_requests,
             diff_summary,
+            folder_id,
             state,
             is_unread: None,
         }
@@ -2272,14 +2408,133 @@ impl From<&str> for PinsCreateResponseVariant3ResourceColor {
     }
 }
 
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant4::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct PinsCreateResponseVariant4 {
+    pub r#type: String,
+    pub resource: PinsCreateResponseVariant4Resource,
+}
+
+impl PinsCreateResponseVariant4 {
+    /// Creates a new `PinsCreateResponseVariant4` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(r#type: impl Into<String>, resource: PinsCreateResponseVariant4Resource) -> Self {
+        Self {
+            r#type: r#type.into(),
+            resource,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `PinsCreateResponseVariant4Resource::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct PinsCreateResponseVariant4Resource {
+    pub id: String,
+    pub name: String,
+    pub color: PinsCreateResponseVariant4ResourceColor,
+}
+
+impl PinsCreateResponseVariant4Resource {
+    /// Creates a new `PinsCreateResponseVariant4Resource` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>, color: PinsCreateResponseVariant4ResourceColor) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            color,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum PinsCreateResponseVariant4ResourceColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl PinsCreateResponseVariant4ResourceColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for PinsCreateResponseVariant4ResourceColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for PinsCreateResponseVariant4ResourceColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `PinsCreateBody::new`
 /// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateBody {
-    /// Kind of resource to pin or unpin: session, pull_request, or project.
+    /// Kind of resource to pin or unpin: session, pull_request, project, or folder.
     pub r#type: PinsCreateBodyType,
-    /// ID of the session, pull request, or project, not a separate pin ID.
+    /// ID of the session, pull request, project, or folder, not a separate pin ID.
     pub id: String,
     /// Position of a new pin relative to another pin. Omit to add it first. Ignored if the resource is already pinned; use updatePin to reorder.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2322,6 +2577,8 @@ pub enum PinsCreateBodyType {
     PullRequest,
     #[serde(rename = "project")]
     Project,
+    #[serde(rename = "folder")]
+    Folder,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -2334,6 +2591,7 @@ impl PinsCreateBodyType {
             Self::Session => "session",
             Self::PullRequest => "pull_request",
             Self::Project => "project",
+            Self::Folder => "folder",
             Self::Unknown(value) => value,
         }
     }
@@ -2351,6 +2609,7 @@ impl From<&str> for PinsCreateBodyType {
             "session" => Self::Session,
             "pull_request" => Self::PullRequest,
             "project" => Self::Project,
+            "folder" => Self::Folder,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -2384,9 +2643,9 @@ impl PinsCreateBodyPlacement {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsCreateBodyPlacementTarget {
-    /// Kind of resource to pin or unpin: session, pull_request, or project.
+    /// Kind of resource to pin or unpin: session, pull_request, project, or folder.
     pub r#type: PinsCreateBodyPlacementTargetType,
-    /// ID of the session, pull request, or project, not a separate pin ID.
+    /// ID of the session, pull request, project, or folder, not a separate pin ID.
     pub id: String,
 }
 
@@ -2413,6 +2672,8 @@ pub enum PinsCreateBodyPlacementTargetType {
     PullRequest,
     #[serde(rename = "project")]
     Project,
+    #[serde(rename = "folder")]
+    Folder,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -2425,6 +2686,7 @@ impl PinsCreateBodyPlacementTargetType {
             Self::Session => "session",
             Self::PullRequest => "pull_request",
             Self::Project => "project",
+            Self::Folder => "folder",
             Self::Unknown(value) => value,
         }
     }
@@ -2442,6 +2704,7 @@ impl From<&str> for PinsCreateBodyPlacementTargetType {
             "session" => Self::Session,
             "pull_request" => Self::PullRequest,
             "project" => Self::Project,
+            "folder" => Self::Folder,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -2549,9 +2812,9 @@ impl PinsUpdateBodyPlacement {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsUpdateBodyPlacementTarget {
-    /// Kind of resource to pin or unpin: session, pull_request, or project.
+    /// Kind of resource to pin or unpin: session, pull_request, project, or folder.
     pub r#type: PinsUpdateBodyPlacementTargetType,
-    /// ID of the session, pull request, or project, not a separate pin ID.
+    /// ID of the session, pull request, project, or folder, not a separate pin ID.
     pub id: String,
 }
 
@@ -2578,6 +2841,8 @@ pub enum PinsUpdateBodyPlacementTargetType {
     PullRequest,
     #[serde(rename = "project")]
     Project,
+    #[serde(rename = "folder")]
+    Folder,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -2590,6 +2855,7 @@ impl PinsUpdateBodyPlacementTargetType {
             Self::Session => "session",
             Self::PullRequest => "pull_request",
             Self::Project => "project",
+            Self::Folder => "folder",
             Self::Unknown(value) => value,
         }
     }
@@ -2607,6 +2873,7 @@ impl From<&str> for PinsUpdateBodyPlacementTargetType {
             "session" => Self::Session,
             "pull_request" => Self::PullRequest,
             "project" => Self::Project,
+            "folder" => Self::Folder,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -2660,9 +2927,9 @@ impl From<&str> for PinsUpdateBodyPlacementPosition {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct PinsDeleteResponse {
-    /// Kind of resource to pin or unpin: session, pull_request, or project.
+    /// Kind of resource to pin or unpin: session, pull_request, project, or folder.
     pub r#type: PinsDeleteResponseType,
-    /// ID of the session, pull request, or project, not a separate pin ID.
+    /// ID of the session, pull request, project, or folder, not a separate pin ID.
     pub id: String,
     pub deleted: bool,
 }
@@ -2694,6 +2961,8 @@ pub enum PinsDeleteResponseType {
     PullRequest,
     #[serde(rename = "project")]
     Project,
+    #[serde(rename = "folder")]
+    Folder,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -2706,6 +2975,7 @@ impl PinsDeleteResponseType {
             Self::Session => "session",
             Self::PullRequest => "pull_request",
             Self::Project => "project",
+            Self::Folder => "folder",
             Self::Unknown(value) => value,
         }
     }
@@ -2723,6 +2993,7 @@ impl From<&str> for PinsDeleteResponseType {
             "session" => Self::Session,
             "pull_request" => Self::PullRequest,
             "project" => Self::Project,
+            "folder" => Self::Folder,
             other => Self::Unknown(other.to_owned()),
         }
     }

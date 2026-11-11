@@ -989,39 +989,9 @@ async fn main() {
             let _ = client
                 .organizations()
                 .members()
-                .create("example", MembersCreateBody::new("user@example.com".to_string()))
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        let duration_ms = started.elapsed().as_millis() as i64;
-        let (status, error) = match result {
-            Ok(()) => ("passed", String::new()),
-            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
-            // A response came back (API error or decode mismatch): the request
-            // reached the server, which is what this smoke verifies.
-            Err(_) => ("passed", String::new()),
-        };
-        results.push(SmokeResult {
-            operation: "create".to_string(),
-            method: "POST".to_string(),
-            path: "/v1/organizations/{organizationId}/members".to_string(),
-            label: "required params".to_string(),
-            status: status.to_string(),
-            duration_ms,
-            error,
-        });
-    }
-    if selected(&filter, "create", "/v1/organizations/{organizationId}/members") {
-        let started = std::time::Instant::now();
-        let result: Result<(), Error> = async {
-            let _ = client
-                .organizations()
-                .members()
                 .create(
                     "example",
-                    MembersCreateBody::new("user@example.com".to_string()).with_role(MembersCreateBodyRole::OrgMember),
+                    MembersCreateBody::new("user@example.com".to_string(), "x".to_string()),
                 )
                 .send()
                 .await?;
@@ -1040,7 +1010,7 @@ async fn main() {
             operation: "create".to_string(),
             method: "POST".to_string(),
             path: "/v1/organizations/{organizationId}/members".to_string(),
-            label: "all params".to_string(),
+            label: "".to_string(),
             status: status.to_string(),
             duration_ms,
             error,
@@ -1090,10 +1060,44 @@ async fn main() {
             let _ = client
                 .organizations()
                 .members()
+                .update("example", "example", MembersUpdateBody::new())
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        let duration_ms = started.elapsed().as_millis() as i64;
+        let (status, error) = match result {
+            Ok(()) => ("passed", String::new()),
+            Err(error) if is_smoke_failure(&error) => ("failed", format!("{error}")),
+            // A response came back (API error or decode mismatch): the request
+            // reached the server, which is what this smoke verifies.
+            Err(_) => ("passed", String::new()),
+        };
+        results.push(SmokeResult {
+            operation: "update".to_string(),
+            method: "PATCH".to_string(),
+            path: "/v1/organizations/{organizationId}/members/{memberId}".to_string(),
+            label: "required params".to_string(),
+            status: status.to_string(),
+            duration_ms,
+            error,
+        });
+    }
+    if selected(
+        &filter,
+        "update",
+        "/v1/organizations/{organizationId}/members/{memberId}",
+    ) {
+        let started = std::time::Instant::now();
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .members()
                 .update(
                     "example",
                     "example",
-                    MembersUpdateBody::new(MembersUpdateBodyRole::OrgAdmin),
+                    MembersUpdateBody::new().with_role_id("".to_string()),
                 )
                 .send()
                 .await?;
@@ -1112,7 +1116,7 @@ async fn main() {
             operation: "update".to_string(),
             method: "PATCH".to_string(),
             path: "/v1/organizations/{organizationId}/members/{memberId}".to_string(),
-            label: "".to_string(),
+            label: "all params".to_string(),
             status: status.to_string(),
             duration_ms,
             error,
@@ -2740,9 +2744,11 @@ async fn main() {
                 .limit(50)
                 .exclude_pinned(true)
                 .external_ids(vec!["externalId".to_string()])
+                .folder_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .has_project(true)
                 .include_archived(true)
                 .include_total(false)
+                .in_folder(true)
                 .parent_session_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .participant(vec!["participant".to_string()])
                 .pending_reviewer_keys(vec!["pendingReviewerKey".to_string()])
@@ -3065,7 +3071,7 @@ async fn main() {
             let _ = client
                 .sessions()
                 .import(SessionsImportBody::new(
-                    "conductor".to_string(),
+                    SessionsImportBodySource::Conductor,
                     "x".to_string(),
                     "x".to_string(),
                     vec![SessionsImportBodyMessage::new(
