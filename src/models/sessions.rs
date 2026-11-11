@@ -366,6 +366,9 @@ pub struct SessionsListResponseItem {
     pub artifacts: Vec<SessionsListResponseItemArtifact>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsListResponseItemDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "isPinned")]
     pub is_pinned: bool,
     #[serde(default)]
@@ -399,6 +402,7 @@ impl SessionsListResponseItem {
         visibility: SessionsListResponseItemVisibility,
         artifacts: Vec<SessionsListResponseItemArtifact>,
         diff_summary: Option<SessionsListResponseItemDiffSummary>,
+        folder_id: Option<String>,
         is_pinned: bool,
         project: Option<SessionsListResponseItemProject>,
         session_source: SessionsListResponseItemSessionSource,
@@ -421,6 +425,7 @@ impl SessionsListResponseItem {
             visibility,
             artifacts,
             diff_summary,
+            folder_id,
             is_pinned,
             project,
             session_source,
@@ -1210,6 +1215,9 @@ pub struct SessionsCreateResponse {
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsCreateResponseDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
     #[serde(rename = "isPinned")]
@@ -1256,6 +1264,7 @@ impl SessionsCreateResponse {
         automatic_sizing: bool,
         description: Option<String>,
         diff_summary: Option<SessionsCreateResponseDiffSummary>,
+        folder_id: Option<String>,
         html_url: impl Into<String>,
         is_pinned: bool,
         project: Option<SessionsCreateResponseProject>,
@@ -1290,6 +1299,7 @@ impl SessionsCreateResponse {
             automatic_sizing,
             description,
             diff_summary,
+            folder_id,
             html_url: html_url.into(),
             is_pinned,
             project,
@@ -2855,6 +2865,9 @@ pub struct SessionsRetrieveResponse {
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsRetrieveResponseDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
     #[serde(rename = "isPinned")]
@@ -2901,6 +2914,7 @@ impl SessionsRetrieveResponse {
         automatic_sizing: bool,
         description: Option<String>,
         diff_summary: Option<SessionsRetrieveResponseDiffSummary>,
+        folder_id: Option<String>,
         html_url: impl Into<String>,
         is_pinned: bool,
         project: Option<SessionsRetrieveResponseProject>,
@@ -2935,6 +2949,7 @@ impl SessionsRetrieveResponse {
             automatic_sizing,
             description,
             diff_summary,
+            folder_id,
             html_url: html_url.into(),
             is_pinned,
             project,
@@ -4069,6 +4084,9 @@ pub struct SessionsUpdateResponse {
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsUpdateResponseDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
     #[serde(rename = "isPinned")]
@@ -4115,6 +4133,7 @@ impl SessionsUpdateResponse {
         automatic_sizing: bool,
         description: Option<String>,
         diff_summary: Option<SessionsUpdateResponseDiffSummary>,
+        folder_id: Option<String>,
         html_url: impl Into<String>,
         is_pinned: bool,
         project: Option<SessionsUpdateResponseProject>,
@@ -4149,6 +4168,7 @@ impl SessionsUpdateResponse {
             automatic_sizing,
             description,
             diff_summary,
+            folder_id,
             html_url: html_url.into(),
             is_pinned,
             project,
@@ -5673,6 +5693,9 @@ pub struct SessionsForkResponse {
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsForkResponseDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
     #[serde(rename = "isPinned")]
@@ -5719,6 +5742,7 @@ impl SessionsForkResponse {
         automatic_sizing: bool,
         description: Option<String>,
         diff_summary: Option<SessionsForkResponseDiffSummary>,
+        folder_id: Option<String>,
         html_url: impl Into<String>,
         is_pinned: bool,
         project: Option<SessionsForkResponseProject>,
@@ -5753,6 +5777,7 @@ impl SessionsForkResponse {
             automatic_sizing,
             description,
             diff_summary,
+            folder_id,
             html_url: html_url.into(),
             is_pinned,
             project,
@@ -6937,6 +6962,9 @@ pub struct SessionsImportResponse {
     pub description: Option<String>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsImportResponseDiffSummary>,
+    /// Sidebar folder the authenticated user filed this session in.
+    #[serde(rename = "folderId", default)]
+    pub folder_id: Option<String>,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
     #[serde(rename = "isPinned")]
@@ -6983,6 +7011,7 @@ impl SessionsImportResponse {
         automatic_sizing: bool,
         description: Option<String>,
         diff_summary: Option<SessionsImportResponseDiffSummary>,
+        folder_id: Option<String>,
         html_url: impl Into<String>,
         is_pinned: bool,
         project: Option<SessionsImportResponseProject>,
@@ -7017,6 +7046,7 @@ impl SessionsImportResponse {
             automatic_sizing,
             description,
             diff_summary,
+            folder_id,
             html_url: html_url.into(),
             is_pinned,
             project,
@@ -8100,7 +8130,7 @@ impl From<&str> for SessionsImportResponseStateCurrent {
 #[non_exhaustive]
 pub struct SessionsImportBody {
     /// Application the chat is imported from.
-    pub source: String,
+    pub source: SessionsImportBodySource,
     /// Chat ID in the source application. Importing the same chat again returns the existing session.
     #[serde(rename = "externalId")]
     pub external_id: String,
@@ -8116,16 +8146,67 @@ impl SessionsImportBody {
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
     pub fn new(
-        source: impl Into<String>,
+        source: SessionsImportBodySource,
         external_id: impl Into<String>,
         title: impl Into<String>,
         messages: Vec<SessionsImportBodyMessage>,
     ) -> Self {
         Self {
-            source: source.into(),
+            source,
             external_id: external_id.into(),
             title: title.into(),
             messages,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsImportBodySource {
+    #[serde(rename = "conductor")]
+    Conductor,
+    #[serde(rename = "chatgpt")]
+    Chatgpt,
+    #[serde(rename = "claude")]
+    Claude,
+    #[serde(rename = "devin")]
+    Devin,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsImportBodySource {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Conductor => "conductor",
+            Self::Chatgpt => "chatgpt",
+            Self::Claude => "claude",
+            Self::Devin => "devin",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsImportBodySource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsImportBodySource {
+    fn from(value: &str) -> Self {
+        match value {
+            "conductor" => Self::Conductor,
+            "chatgpt" => Self::Chatgpt,
+            "claude" => Self::Claude,
+            "devin" => Self::Devin,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }
@@ -8137,7 +8218,7 @@ impl SessionsImportBody {
 #[non_exhaustive]
 pub struct SessionsImportBodyMessage {
     pub id: String,
-    /// Who wrote the row. Assistant rows hold a Claude Agent SDK message as JSON.
+    /// Who wrote the row. Conductor assistant rows hold Claude Agent SDK JSON; local ChatGPT/Codex, Claude Code, and Devin rows hold native message JSON for API conversion.
     pub role: SessionsImportBodyMessageRole,
     pub content: String,
     #[serde(rename = "sentAt", deserialize_with = "crate::datetime::deserialize")]

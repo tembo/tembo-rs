@@ -548,29 +548,9 @@ async fn smoke() {
             let _ = client
                 .organizations()
                 .members()
-                .create("example", MembersCreateBody::new("user@example.com".to_string()))
-                .send()
-                .await?;
-            Ok(())
-        }
-        .await;
-        if let Err(error) = result {
-            if is_smoke_failure(&error) {
-                failures.push(format!(
-                    "{}: {error}",
-                    "POST /v1/organizations/{organizationId}/members [required params]"
-                ));
-            }
-        }
-    }
-    {
-        let result: Result<(), Error> = async {
-            let _ = client
-                .organizations()
-                .members()
                 .create(
                     "example",
-                    MembersCreateBody::new("user@example.com".to_string()).with_role(MembersCreateBodyRole::OrgMember),
+                    MembersCreateBody::new("user@example.com".to_string(), "x".to_string()),
                 )
                 .send()
                 .await?;
@@ -581,7 +561,7 @@ async fn smoke() {
             if is_smoke_failure(&error) {
                 failures.push(format!(
                     "{}: {error}",
-                    "POST /v1/organizations/{organizationId}/members [all params]"
+                    "POST /v1/organizations/{organizationId}/members"
                 ));
             }
         }
@@ -611,10 +591,30 @@ async fn smoke() {
             let _ = client
                 .organizations()
                 .members()
+                .update("example", "example", MembersUpdateBody::new())
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "PATCH /v1/organizations/{organizationId}/members/{memberId} [required params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .members()
                 .update(
                     "example",
                     "example",
-                    MembersUpdateBody::new(MembersUpdateBodyRole::OrgAdmin),
+                    MembersUpdateBody::new().with_role_id("".to_string()),
                 )
                 .send()
                 .await?;
@@ -625,7 +625,7 @@ async fn smoke() {
             if is_smoke_failure(&error) {
                 failures.push(format!(
                     "{}: {error}",
-                    "PATCH /v1/organizations/{organizationId}/members/{memberId}"
+                    "PATCH /v1/organizations/{organizationId}/members/{memberId} [all params]"
                 ));
             }
         }
@@ -1607,9 +1607,11 @@ async fn smoke() {
                 .limit(50)
                 .exclude_pinned(true)
                 .external_ids(vec!["externalId".to_string()])
+                .folder_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .has_project(true)
                 .include_archived(true)
                 .include_total(false)
+                .in_folder(true)
                 .parent_session_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .participant(vec!["participant".to_string()])
                 .pending_reviewer_keys(vec!["pendingReviewerKey".to_string()])
@@ -1824,7 +1826,7 @@ async fn smoke() {
             let _ = client
                 .sessions()
                 .import(SessionsImportBody::new(
-                    "conductor".to_string(),
+                    SessionsImportBodySource::Conductor,
                     "x".to_string(),
                     "x".to_string(),
                     vec![SessionsImportBodyMessage::new(

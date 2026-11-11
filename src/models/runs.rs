@@ -81,6 +81,9 @@ impl RunsListResponseItem {
 pub struct RunsCreateResponse {
     #[serde(rename = "jobId")]
     pub job_id: String,
+    /// ID of the agent run. Retrieve it with GET /v1/agents/{agentId}/runs/{runId}; its sessionId is set once the run starts its session.
+    #[serde(rename = "runId")]
+    pub run_id: String,
     #[serde(rename = "agentId")]
     pub agent_id: String,
     pub status: String,
@@ -91,9 +94,15 @@ impl RunsCreateResponse {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    pub fn new(job_id: impl Into<String>, agent_id: impl Into<String>, status: impl Into<String>) -> Self {
+    pub fn new(
+        job_id: impl Into<String>,
+        run_id: impl Into<String>,
+        agent_id: impl Into<String>,
+        status: impl Into<String>,
+    ) -> Self {
         Self {
             job_id: job_id.into(),
+            run_id: run_id.into(),
             agent_id: agent_id.into(),
             status: status.into(),
         }

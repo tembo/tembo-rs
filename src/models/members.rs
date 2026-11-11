@@ -25,20 +25,34 @@ impl MembersListResponse {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum MembersListResponseItem {
+    MembersListResponseItemVariant1(MembersListResponseItemVariant1),
+    MembersListResponseItemVariant2(MembersListResponseItemVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `MembersListResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// `MembersListResponseItemVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct MembersListResponseItem {
+pub struct MembersListResponseItemVariant1 {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
-    pub role: MembersListResponseItemRole,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
-    #[serde(rename = "userId", default)]
-    pub user_id: Option<String>,
+    #[serde(rename = "userId")]
+    pub user_id: String,
     #[serde(rename = "emailAddress")]
     pub email_address: String,
     #[serde(rename = "firstName", default)]
@@ -47,11 +61,12 @@ pub struct MembersListResponseItem {
     pub image_url: Option<String>,
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
-    pub status: MembersListResponseItemStatus,
+    pub role: MembersListResponseItemVariant1Role,
+    pub status: String,
 }
 
-impl MembersListResponseItem {
-    /// Creates a new `MembersListResponseItem` from its required fields, leaving every optional one unset.
+impl MembersListResponseItemVariant1 {
+    /// Creates a new `MembersListResponseItemVariant1` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
@@ -59,129 +74,66 @@ impl MembersListResponseItem {
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
         id: impl Into<String>,
-        role: MembersListResponseItemRole,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
-        user_id: Option<String>,
+        user_id: impl Into<String>,
         email_address: impl Into<String>,
         first_name: Option<String>,
         image_url: Option<String>,
         last_name: Option<String>,
-        status: MembersListResponseItemStatus,
+        role: MembersListResponseItemVariant1Role,
+        status: impl Into<String>,
     ) -> Self {
         Self {
             created_at,
             id: id.into(),
-            role,
             updated_at,
-            user_id,
+            user_id: user_id.into(),
             email_address: email_address.into(),
             first_name,
             image_url,
             last_name,
-            status,
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum MembersListResponseItemRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersListResponseItemRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersListResponseItemRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersListResponseItemRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum MembersListResponseItemStatus {
-    #[serde(rename = "active")]
-    Active,
-    #[serde(rename = "pending")]
-    Pending,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersListResponseItemStatus {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Active => "active",
-            Self::Pending => "pending",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersListResponseItemStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersListResponseItemStatus {
-    fn from(value: &str) -> Self {
-        match value {
-            "active" => Self::Active,
-            "pending" => Self::Pending,
-            other => Self::Unknown(other.to_owned()),
+            role,
+            status: status.into(),
         }
     }
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `MembersCreateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+/// `MembersListResponseItemVariant1Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct MembersCreateResponse {
+pub struct MembersListResponseItemVariant1Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersListResponseItemVariant1Role {
+    /// Creates a new `MembersListResponseItemVariant1Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersListResponseItemVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersListResponseItemVariant2 {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
-    pub role: MembersCreateResponseRole,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
-    #[serde(rename = "userId", default)]
-    pub user_id: Option<String>,
+    #[serde(rename = "userId")]
+    pub user_id: serde_json::Value,
     #[serde(rename = "emailAddress")]
     pub email_address: String,
     #[serde(rename = "firstName", default)]
@@ -190,11 +142,13 @@ pub struct MembersCreateResponse {
     pub image_url: Option<String>,
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
-    pub status: MembersCreateResponseStatus,
+    #[serde(default)]
+    pub role: Option<MembersListResponseItemVariant2Role>,
+    pub status: String,
 }
 
-impl MembersCreateResponse {
-    /// Creates a new `MembersCreateResponse` from its required fields, leaving every optional one unset.
+impl MembersListResponseItemVariant2 {
+    /// Creates a new `MembersListResponseItemVariant2` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
@@ -202,112 +156,227 @@ impl MembersCreateResponse {
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
         id: impl Into<String>,
-        role: MembersCreateResponseRole,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
-        user_id: Option<String>,
+        user_id: serde_json::Value,
         email_address: impl Into<String>,
         first_name: Option<String>,
         image_url: Option<String>,
         last_name: Option<String>,
-        status: MembersCreateResponseStatus,
+        role: Option<MembersListResponseItemVariant2Role>,
+        status: impl Into<String>,
     ) -> Self {
         Self {
             created_at,
             id: id.into(),
-            role,
             updated_at,
             user_id,
             email_address: email_address.into(),
             first_name,
             image_url,
             last_name,
-            status,
+            role,
+            status: status.into(),
         }
     }
 }
 
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersListResponseItemVariant2Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub enum MembersCreateResponseRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
+pub struct MembersListResponseItemVariant2Role {
+    pub id: String,
+    pub name: String,
 }
 
-impl MembersCreateResponseRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
+impl MembersListResponseItemVariant2Role {
+    /// Creates a new `MembersListResponseItemVariant2Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
         }
     }
 }
 
-impl std::fmt::Display for MembersCreateResponseRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersCreateResponseRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 #[non_exhaustive]
-pub enum MembersCreateResponseStatus {
-    #[serde(rename = "active")]
-    Active,
-    #[serde(rename = "pending")]
-    Pending,
-    /// A value not known to this version of the SDK, preserved verbatim.
+pub enum MembersCreateResponse {
+    MembersCreateResponseVariant1(MembersCreateResponseVariant1),
+    MembersCreateResponseVariant2(MembersCreateResponseVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
     #[serde(untagged)]
-    Unknown(String),
+    Unknown(serde_json::Value),
 }
 
-impl MembersCreateResponseStatus {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Active => "active",
-            Self::Pending => "pending",
-            Self::Unknown(value) => value,
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateResponseVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersCreateResponseVariant1 {
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    pub id: String,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "userId")]
+    pub user_id: String,
+    #[serde(rename = "emailAddress")]
+    pub email_address: String,
+    #[serde(rename = "firstName", default)]
+    pub first_name: Option<String>,
+    #[serde(rename = "imageUrl", default)]
+    pub image_url: Option<String>,
+    #[serde(rename = "lastName", default)]
+    pub last_name: Option<String>,
+    pub role: MembersCreateResponseVariant1Role,
+    pub status: String,
+}
+
+impl MembersCreateResponseVariant1 {
+    /// Creates a new `MembersCreateResponseVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        role: MembersCreateResponseVariant1Role,
+        status: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            updated_at,
+            user_id: user_id.into(),
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            role,
+            status: status.into(),
         }
     }
 }
 
-impl std::fmt::Display for MembersCreateResponseStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateResponseVariant1Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersCreateResponseVariant1Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersCreateResponseVariant1Role {
+    /// Creates a new `MembersCreateResponseVariant1Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+        }
     }
 }
 
-impl From<&str> for MembersCreateResponseStatus {
-    fn from(value: &str) -> Self {
-        match value {
-            "active" => Self::Active,
-            "pending" => Self::Pending,
-            other => Self::Unknown(other.to_owned()),
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateResponseVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersCreateResponseVariant2 {
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    pub id: String,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "userId")]
+    pub user_id: serde_json::Value,
+    #[serde(rename = "emailAddress")]
+    pub email_address: String,
+    #[serde(rename = "firstName", default)]
+    pub first_name: Option<String>,
+    #[serde(rename = "imageUrl", default)]
+    pub image_url: Option<String>,
+    #[serde(rename = "lastName", default)]
+    pub last_name: Option<String>,
+    #[serde(default)]
+    pub role: Option<MembersCreateResponseVariant2Role>,
+    pub status: String,
+}
+
+impl MembersCreateResponseVariant2 {
+    /// Creates a new `MembersCreateResponseVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: serde_json::Value,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        role: Option<MembersCreateResponseVariant2Role>,
+        status: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            role,
+            status: status.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersCreateResponseVariant2Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersCreateResponseVariant2Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersCreateResponseVariant2Role {
+    /// Creates a new `MembersCreateResponseVariant2Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
         }
     }
 }
@@ -320,87 +389,51 @@ pub struct MembersCreateBody {
     /// Email address of the user to add or invite.
     #[serde(rename = "emailAddress")]
     pub email_address: String,
-    /// Organization role to grant: org:admin or org:member.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub role: Option<MembersCreateBodyRole>,
+    #[serde(rename = "roleId")]
+    pub role_id: String,
 }
 
 impl MembersCreateBody {
     /// Creates a new `MembersCreateBody` from its required fields, leaving every optional one unset.
     ///
-    /// Set an optional field with its `with_*` setter:
-    /// `MembersCreateBody::new(email_address).with_role(…)`.
-    pub fn new(email_address: impl Into<String>) -> Self {
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(email_address: impl Into<String>, role_id: impl Into<String>) -> Self {
         Self {
             email_address: email_address.into(),
-            role: None,
+            role_id: role_id.into(),
         }
-    }
-
-    /// Sets `role`, which `new` leaves unset.
-    pub fn with_role(mut self, value: MembersCreateBodyRole) -> Self {
-        self.role = Some(value);
-        self
     }
 }
 
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 #[non_exhaustive]
-pub enum MembersCreateBodyRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
+pub enum MembersRetrieveResponse {
+    MembersRetrieveResponseVariant1(MembersRetrieveResponseVariant1),
+    MembersRetrieveResponseVariant2(MembersRetrieveResponseVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
     #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersCreateBodyRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersCreateBodyRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersCreateBodyRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
+    Unknown(serde_json::Value),
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `MembersRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// `MembersRetrieveResponseVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct MembersRetrieveResponse {
+pub struct MembersRetrieveResponseVariant1 {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
-    pub role: MembersRetrieveResponseRole,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
-    #[serde(rename = "userId", default)]
-    pub user_id: Option<String>,
+    #[serde(rename = "userId")]
+    pub user_id: String,
     #[serde(rename = "emailAddress")]
     pub email_address: String,
     #[serde(rename = "firstName", default)]
@@ -409,11 +442,12 @@ pub struct MembersRetrieveResponse {
     pub image_url: Option<String>,
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
-    pub status: MembersRetrieveResponseStatus,
+    pub role: MembersRetrieveResponseVariant1Role,
+    pub status: String,
 }
 
-impl MembersRetrieveResponse {
-    /// Creates a new `MembersRetrieveResponse` from its required fields, leaving every optional one unset.
+impl MembersRetrieveResponseVariant1 {
+    /// Creates a new `MembersRetrieveResponseVariant1` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
@@ -421,129 +455,66 @@ impl MembersRetrieveResponse {
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
         id: impl Into<String>,
-        role: MembersRetrieveResponseRole,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
-        user_id: Option<String>,
+        user_id: impl Into<String>,
         email_address: impl Into<String>,
         first_name: Option<String>,
         image_url: Option<String>,
         last_name: Option<String>,
-        status: MembersRetrieveResponseStatus,
+        role: MembersRetrieveResponseVariant1Role,
+        status: impl Into<String>,
     ) -> Self {
         Self {
             created_at,
             id: id.into(),
-            role,
             updated_at,
-            user_id,
+            user_id: user_id.into(),
             email_address: email_address.into(),
             first_name,
             image_url,
             last_name,
-            status,
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum MembersRetrieveResponseRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersRetrieveResponseRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersRetrieveResponseRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersRetrieveResponseRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum MembersRetrieveResponseStatus {
-    #[serde(rename = "active")]
-    Active,
-    #[serde(rename = "pending")]
-    Pending,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersRetrieveResponseStatus {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Active => "active",
-            Self::Pending => "pending",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersRetrieveResponseStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersRetrieveResponseStatus {
-    fn from(value: &str) -> Self {
-        match value {
-            "active" => Self::Active,
-            "pending" => Self::Pending,
-            other => Self::Unknown(other.to_owned()),
+            role,
+            status: status.into(),
         }
     }
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `MembersUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+/// `MembersRetrieveResponseVariant1Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct MembersUpdateResponse {
+pub struct MembersRetrieveResponseVariant1Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersRetrieveResponseVariant1Role {
+    /// Creates a new `MembersRetrieveResponseVariant1Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersRetrieveResponseVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersRetrieveResponseVariant2 {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     pub id: String,
-    pub role: MembersUpdateResponseRole,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
-    #[serde(rename = "userId", default)]
-    pub user_id: Option<String>,
+    #[serde(rename = "userId")]
+    pub user_id: serde_json::Value,
     #[serde(rename = "emailAddress")]
     pub email_address: String,
     #[serde(rename = "firstName", default)]
@@ -552,11 +523,13 @@ pub struct MembersUpdateResponse {
     pub image_url: Option<String>,
     #[serde(rename = "lastName", default)]
     pub last_name: Option<String>,
-    pub status: MembersUpdateResponseStatus,
+    #[serde(default)]
+    pub role: Option<MembersRetrieveResponseVariant2Role>,
+    pub status: String,
 }
 
-impl MembersUpdateResponse {
-    /// Creates a new `MembersUpdateResponse` from its required fields, leaving every optional one unset.
+impl MembersRetrieveResponseVariant2 {
+    /// Creates a new `MembersRetrieveResponseVariant2` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
@@ -564,172 +537,256 @@ impl MembersUpdateResponse {
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
         id: impl Into<String>,
-        role: MembersUpdateResponseRole,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
-        user_id: Option<String>,
+        user_id: serde_json::Value,
         email_address: impl Into<String>,
         first_name: Option<String>,
         image_url: Option<String>,
         last_name: Option<String>,
-        status: MembersUpdateResponseStatus,
+        role: Option<MembersRetrieveResponseVariant2Role>,
+        status: impl Into<String>,
     ) -> Self {
         Self {
             created_at,
             id: id.into(),
-            role,
             updated_at,
             user_id,
             email_address: email_address.into(),
             first_name,
             image_url,
             last_name,
-            status,
+            role,
+            status: status.into(),
         }
     }
 }
 
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersRetrieveResponseVariant2Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub enum MembersUpdateResponseRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
+pub struct MembersRetrieveResponseVariant2Role {
+    pub id: String,
+    pub name: String,
 }
 
-impl MembersUpdateResponseRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
+impl MembersRetrieveResponseVariant2Role {
+    /// Creates a new `MembersRetrieveResponseVariant2Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
         }
     }
 }
 
-impl std::fmt::Display for MembersUpdateResponseRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersUpdateResponseRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 #[non_exhaustive]
-pub enum MembersUpdateResponseStatus {
-    #[serde(rename = "active")]
-    Active,
-    #[serde(rename = "pending")]
-    Pending,
-    /// A value not known to this version of the SDK, preserved verbatim.
+pub enum MembersUpdateResponse {
+    MembersUpdateResponseVariant1(MembersUpdateResponseVariant1),
+    MembersUpdateResponseVariant2(MembersUpdateResponseVariant2),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
     #[serde(untagged)]
-    Unknown(String),
+    Unknown(serde_json::Value),
 }
 
-impl MembersUpdateResponseStatus {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Active => "active",
-            Self::Pending => "pending",
-            Self::Unknown(value) => value,
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateResponseVariant1::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersUpdateResponseVariant1 {
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    pub id: String,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "userId")]
+    pub user_id: String,
+    #[serde(rename = "emailAddress")]
+    pub email_address: String,
+    #[serde(rename = "firstName", default)]
+    pub first_name: Option<String>,
+    #[serde(rename = "imageUrl", default)]
+    pub image_url: Option<String>,
+    #[serde(rename = "lastName", default)]
+    pub last_name: Option<String>,
+    pub role: MembersUpdateResponseVariant1Role,
+    pub status: String,
+}
+
+impl MembersUpdateResponseVariant1 {
+    /// Creates a new `MembersUpdateResponseVariant1` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: impl Into<String>,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        role: MembersUpdateResponseVariant1Role,
+        status: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            updated_at,
+            user_id: user_id.into(),
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            role,
+            status: status.into(),
         }
     }
 }
 
-impl std::fmt::Display for MembersUpdateResponseStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateResponseVariant1Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersUpdateResponseVariant1Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersUpdateResponseVariant1Role {
+    /// Creates a new `MembersUpdateResponseVariant1Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+        }
     }
 }
 
-impl From<&str> for MembersUpdateResponseStatus {
-    fn from(value: &str) -> Self {
-        match value {
-            "active" => Self::Active,
-            "pending" => Self::Pending,
-            other => Self::Unknown(other.to_owned()),
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateResponseVariant2::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersUpdateResponseVariant2 {
+    #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
+    pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    pub id: String,
+    #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "userId")]
+    pub user_id: serde_json::Value,
+    #[serde(rename = "emailAddress")]
+    pub email_address: String,
+    #[serde(rename = "firstName", default)]
+    pub first_name: Option<String>,
+    #[serde(rename = "imageUrl", default)]
+    pub image_url: Option<String>,
+    #[serde(rename = "lastName", default)]
+    pub last_name: Option<String>,
+    #[serde(default)]
+    pub role: Option<MembersUpdateResponseVariant2Role>,
+    pub status: String,
+}
+
+impl MembersUpdateResponseVariant2 {
+    /// Creates a new `MembersUpdateResponseVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        created_at: chrono::DateTime<chrono::FixedOffset>,
+        id: impl Into<String>,
+        updated_at: chrono::DateTime<chrono::FixedOffset>,
+        user_id: serde_json::Value,
+        email_address: impl Into<String>,
+        first_name: Option<String>,
+        image_url: Option<String>,
+        last_name: Option<String>,
+        role: Option<MembersUpdateResponseVariant2Role>,
+        status: impl Into<String>,
+    ) -> Self {
+        Self {
+            created_at,
+            id: id.into(),
+            updated_at,
+            user_id,
+            email_address: email_address.into(),
+            first_name,
+            image_url,
+            last_name,
+            role,
+            status: status.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `MembersUpdateResponseVariant2Role::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct MembersUpdateResponseVariant2Role {
+    pub id: String,
+    pub name: String,
+}
+
+impl MembersUpdateResponseVariant2Role {
+    /// Creates a new `MembersUpdateResponseVariant2Role` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
         }
     }
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `MembersUpdateBody::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct MembersUpdateBody {
-    /// New organization role: org:admin or org:member.
-    pub role: MembersUpdateBodyRole,
+    #[serde(rename = "roleId", default, skip_serializing_if = "Option::is_none")]
+    pub role_id: Option<String>,
 }
 
 impl MembersUpdateBody {
     /// Creates a new `MembersUpdateBody` from its required fields, leaving every optional one unset.
-    pub fn new(role: MembersUpdateBodyRole) -> Self {
-        Self { role }
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MembersUpdateBody::new().with_role_id(…)`.
+    pub fn new() -> Self {
+        Self { role_id: None }
     }
-}
 
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum MembersUpdateBodyRole {
-    #[serde(rename = "org:admin")]
-    OrgAdmin,
-    #[serde(rename = "org:member")]
-    OrgMember,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl MembersUpdateBodyRole {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::OrgAdmin => "org:admin",
-            Self::OrgMember => "org:member",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for MembersUpdateBodyRole {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for MembersUpdateBodyRole {
-    fn from(value: &str) -> Self {
-        match value {
-            "org:admin" => Self::OrgAdmin,
-            "org:member" => Self::OrgMember,
-            other => Self::Unknown(other.to_owned()),
-        }
+    /// Sets `role_id`, which `new` leaves unset.
+    pub fn with_role_id(mut self, value: impl Into<String>) -> Self {
+        self.role_id = Some(value.into());
+        self
     }
 }
 

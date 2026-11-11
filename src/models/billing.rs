@@ -195,6 +195,8 @@ pub struct BillingRetrieveResponseTrial {
     pub allowance: f64,
     #[serde(rename = "remainingAllowance", serialize_with = "crate::number::serialize")]
     pub remaining_allowance: f64,
+    #[serde(rename = "purchasedCredits", serialize_with = "crate::number::serialize")]
+    pub purchased_credits: f64,
     pub exhausted: bool,
 }
 
@@ -209,6 +211,7 @@ impl BillingRetrieveResponseTrial {
         ends_at: chrono::DateTime<chrono::FixedOffset>,
         allowance: f64,
         remaining_allowance: f64,
+        purchased_credits: f64,
         exhausted: bool,
     ) -> Self {
         Self {
@@ -217,6 +220,7 @@ impl BillingRetrieveResponseTrial {
             ends_at,
             allowance,
             remaining_allowance,
+            purchased_credits,
             exhausted,
         }
     }

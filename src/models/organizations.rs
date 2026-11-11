@@ -636,6 +636,10 @@ pub enum OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
     PinRead,
     #[serde(rename = "pin:write")]
     PinWrite,
+    #[serde(rename = "folder:read")]
+    FolderRead,
+    #[serde(rename = "folder:write")]
+    FolderWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -897,6 +901,8 @@ impl OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
             Self::FileWrite => "file:write",
             Self::PinRead => "pin:read",
             Self::PinWrite => "pin:write",
+            Self::FolderRead => "folder:read",
+            Self::FolderWrite => "folder:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -1147,6 +1153,8 @@ impl From<&str> for OrganizationsRetrieveResponseVariant1CurrentMembershipPermis
             "file:write" => Self::FileWrite,
             "pin:read" => Self::PinRead,
             "pin:write" => Self::PinWrite,
+            "folder:read" => Self::FolderRead,
+            "folder:write" => Self::FolderWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
@@ -1743,6 +1751,10 @@ pub enum OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
     PinRead,
     #[serde(rename = "pin:write")]
     PinWrite,
+    #[serde(rename = "folder:read")]
+    FolderRead,
+    #[serde(rename = "folder:write")]
+    FolderWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -2004,6 +2016,8 @@ impl OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
             Self::FileWrite => "file:write",
             Self::PinRead => "pin:read",
             Self::PinWrite => "pin:write",
+            Self::FolderRead => "folder:read",
+            Self::FolderWrite => "folder:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -2254,6 +2268,8 @@ impl From<&str> for OrganizationsRetrieveResponseVariant2CurrentMembershipPermis
             "file:write" => Self::FileWrite,
             "pin:read" => Self::PinRead,
             "pin:write" => Self::PinWrite,
+            "folder:read" => Self::FolderRead,
+            "folder:write" => Self::FolderWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
