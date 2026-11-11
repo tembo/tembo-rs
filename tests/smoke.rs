@@ -652,6 +652,153 @@ async fn smoke() {
     }
     {
         let result: Result<(), Error> = async {
+            let _ = client.organizations().roles().list("example").send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/organizations/{organizationId}/roles"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .create(
+                    "example",
+                    RolesCreateBody::new("x".to_string(), vec![RolesCreateBodyPermission::OrganizationRead]),
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "POST /v1/organizations/{organizationId}/roles [required params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .create(
+                    "example",
+                    RolesCreateBody::new("x".to_string(), vec![RolesCreateBodyPermission::OrganizationRead])
+                        .with_description("".to_string()),
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "POST /v1/organizations/{organizationId}/roles [all params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .retrieve("example", "example")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "GET /v1/organizations/{organizationId}/roles/{roleId}"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .update("example", "example", RolesUpdateBody::new())
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "PATCH /v1/organizations/{organizationId}/roles/{roleId} [required params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .update(
+                    "example",
+                    "example",
+                    RolesUpdateBody::new()
+                        .with_name("x".to_string())
+                        .with_description("".to_string())
+                        .with_permissions(vec![RolesUpdateBodyPermission::OrganizationRead])
+                        .with_is_default(false),
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "PATCH /v1/organizations/{organizationId}/roles/{roleId} [all params]"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .organizations()
+                .roles()
+                .delete("example", "example", RolesDeleteBody::new("x".to_string()))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!(
+                    "{}: {error}",
+                    "DELETE /v1/organizations/{organizationId}/roles/{roleId}"
+                ));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
             let _ = client.organizations().secrets().list("example").send().await?;
             Ok(())
         }
@@ -1065,6 +1212,22 @@ async fn smoke() {
         if let Err(error) = result {
             if is_smoke_failure(&error) {
                 failures.push(format!("{}: {error}", "GET /v1/artifacts/{artifactId}"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .artifacts()
+                .retrieve_asset_url("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/artifacts/assets/{assetId}"));
             }
         }
     }
@@ -2158,6 +2321,18 @@ async fn smoke() {
         if let Err(error) = result {
             if is_smoke_failure(&error) {
                 failures.push(format!("{}: {error}", "PUT /v1/projects/defaults [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.projects().retrieve_defaults().send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/projects/defaults"));
             }
         }
     }
@@ -4273,6 +4448,113 @@ async fn smoke() {
         if let Err(error) = result {
             if is_smoke_failure(&error) {
                 failures.push(format!("{}: {error}", "GET /v1/billing/usage [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client.folders().list().send().await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "GET /v1/folders"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .folders()
+                .create(FoldersCreateBody::new("x".to_string()))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/folders [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .folders()
+                .create(FoldersCreateBody::new("x".to_string()).with_color(FoldersCreateBodyColor::Neutral))
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "POST /v1/folders [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .folders()
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", FoldersUpdateBody::new())
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "PATCH /v1/folders/{folderId} [required params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .folders()
+                .update(
+                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    FoldersUpdateBody::new()
+                        .with_name("x".to_string())
+                        .with_color(FoldersUpdateBodyColor::Neutral)
+                        .with_placement(FoldersUpdateBodyPlacement::new(
+                            "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                            FoldersUpdateBodyPlacementPosition::Before,
+                        ))
+                        .with_add_session(FoldersUpdateBodyAddSession::new(
+                            "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        ))
+                        .with_remove_session(FoldersUpdateBodyRemoveSession::new(
+                            "7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string(),
+                        )),
+                )
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "PATCH /v1/folders/{folderId} [all params]"));
+            }
+        }
+    }
+    {
+        let result: Result<(), Error> = async {
+            let _ = client
+                .folders()
+                .delete("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .send()
+                .await?;
+            Ok(())
+        }
+        .await;
+        if let Err(error) = result {
+            if is_smoke_failure(&error) {
+                failures.push(format!("{}: {error}", "DELETE /v1/folders/{folderId}"));
             }
         }
     }

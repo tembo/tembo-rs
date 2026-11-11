@@ -194,6 +194,170 @@ impl From<&str> for ProjectsUpdateDefaultsBodySandboxSize {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ProjectsRetrieveDefaultsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ProjectsRetrieveDefaultsResponse {
+    /// Default workspace VM size for the organization.
+    #[serde(rename = "sandboxSize")]
+    pub sandbox_size: ProjectsRetrieveDefaultsResponseSandboxSize,
+    /// Largest VM size the organization plan allows, or null when unlimited.
+    #[serde(rename = "maxSandboxSize", default)]
+    pub max_sandbox_size: Option<ProjectsRetrieveDefaultsResponseMaxSandboxSize>,
+}
+
+impl ProjectsRetrieveDefaultsResponse {
+    /// Creates a new `ProjectsRetrieveDefaultsResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        sandbox_size: ProjectsRetrieveDefaultsResponseSandboxSize,
+        max_sandbox_size: Option<ProjectsRetrieveDefaultsResponseMaxSandboxSize>,
+    ) -> Self {
+        Self {
+            sandbox_size,
+            max_sandbox_size,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsRetrieveDefaultsResponseSandboxSize {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "small")]
+    Small,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsRetrieveDefaultsResponseSandboxSize {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsRetrieveDefaultsResponseSandboxSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsRetrieveDefaultsResponseSandboxSize {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "small" => Self::Small,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum ProjectsRetrieveDefaultsResponseMaxSandboxSize {
+    #[serde(rename = "nano")]
+    Nano,
+    #[serde(rename = "micro")]
+    Micro,
+    #[serde(rename = "small")]
+    Small,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "large")]
+    Large,
+    #[serde(rename = "xl")]
+    Xl,
+    #[serde(rename = "xxl")]
+    Xxl,
+    #[serde(rename = "ultra")]
+    Ultra,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ProjectsRetrieveDefaultsResponseMaxSandboxSize {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Nano => "nano",
+            Self::Micro => "micro",
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+            Self::Xl => "xl",
+            Self::Xxl => "xxl",
+            Self::Ultra => "ultra",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for ProjectsRetrieveDefaultsResponseMaxSandboxSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for ProjectsRetrieveDefaultsResponseMaxSandboxSize {
+    fn from(value: &str) -> Self {
+        match value {
+            "nano" => Self::Nano,
+            "micro" => Self::Micro,
+            "small" => Self::Small,
+            "medium" => Self::Medium,
+            "large" => Self::Large,
+            "xl" => Self::Xl,
+            "xxl" => Self::Xxl,
+            "ultra" => Self::Ultra,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `ProjectsListResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]

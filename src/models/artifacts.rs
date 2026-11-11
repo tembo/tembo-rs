@@ -1641,6 +1641,31 @@ impl ArtifactsRetrieveResponseRuntime {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ArtifactsRetrieveAssetUrlResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public
+/// for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ArtifactsRetrieveAssetUrlResponse {
+    #[serde(rename = "assetId")]
+    pub asset_id: String,
+    #[serde(rename = "assetUrl")]
+    pub asset_url: String,
+}
+
+impl ArtifactsRetrieveAssetUrlResponse {
+    /// Creates a new `ArtifactsRetrieveAssetUrlResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(asset_id: impl Into<String>, asset_url: impl Into<String>) -> Self {
+        Self {
+            asset_id: asset_id.into(),
+            asset_url: asset_url.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `ArtifactsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
