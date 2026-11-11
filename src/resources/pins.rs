@@ -126,7 +126,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Pin a session, pull request, or project you have permission to access.
+/// Pin a session, pull request, or project you have permission to access, or one of your folders.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
@@ -206,7 +206,7 @@ impl CreateRequestBuilder {
             .await
     }
 }
-/// Reorder a pinned session, pull request, or project before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
+/// Reorder a pinned session, pull request, project, or folder before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -299,7 +299,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Unpin a session, pull request, or project for the authenticated user without deleting or archiving the resource.
+/// Unpin a session, pull request, project, or folder for the authenticated user without deleting or archiving the resource.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,

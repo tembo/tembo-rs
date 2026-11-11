@@ -204,8 +204,16 @@ pub struct InsightsRetrieveResponseDataSummary {
     pub prs_created: i64,
     #[serde(rename = "prsMerged")]
     pub prs_merged: i64,
+    /// Recorded model cost plus VM compute fees in USD across the organization divided by Tembo-created PRs in the selected sync window. Excludes subscription fees and inference billing markup. Null when there are no PRs or no recorded costs.
+    #[serde(
+        rename = "modelCostPerPrUsd",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub model_cost_per_pr_usd: Option<f64>,
     #[serde(rename = "temboContribution", serialize_with = "crate::number::serialize")]
     pub tembo_contribution: f64,
+    /// Recent period compared with the previous one. Null when the previous period has no baseline, such as when the organization joined during it.
     pub changes: InsightsRetrieveResponseDataSummaryChanges,
 }
 
@@ -218,6 +226,7 @@ impl InsightsRetrieveResponseDataSummary {
         tasks_completed: i64,
         prs_created: i64,
         prs_merged: i64,
+        model_cost_per_pr_usd: Option<f64>,
         tembo_contribution: f64,
         changes: InsightsRetrieveResponseDataSummaryChanges,
     ) -> Self {
@@ -225,6 +234,7 @@ impl InsightsRetrieveResponseDataSummary {
             tasks_completed,
             prs_created,
             prs_merged,
+            model_cost_per_pr_usd,
             tembo_contribution,
             changes,
         }
@@ -237,14 +247,22 @@ impl InsightsRetrieveResponseDataSummary {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsRetrieveResponseDataSummaryChanges {
-    #[serde(rename = "prsCreated", serialize_with = "crate::number::serialize")]
-    pub prs_created: f64,
-    #[serde(rename = "prsMerged", serialize_with = "crate::number::serialize")]
-    pub prs_merged: f64,
-    #[serde(rename = "tasksCompleted", serialize_with = "crate::number::serialize")]
-    pub tasks_completed: f64,
-    #[serde(rename = "temboContribution", serialize_with = "crate::number::serialize")]
-    pub tembo_contribution: f64,
+    #[serde(rename = "prsCreated", default, serialize_with = "crate::number::option::serialize")]
+    pub prs_created: Option<f64>,
+    #[serde(rename = "prsMerged", default, serialize_with = "crate::number::option::serialize")]
+    pub prs_merged: Option<f64>,
+    #[serde(
+        rename = "tasksCompleted",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub tasks_completed: Option<f64>,
+    #[serde(
+        rename = "temboContribution",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub tembo_contribution: Option<f64>,
 }
 
 impl InsightsRetrieveResponseDataSummaryChanges {
@@ -253,7 +271,12 @@ impl InsightsRetrieveResponseDataSummaryChanges {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    pub fn new(prs_created: f64, prs_merged: f64, tasks_completed: f64, tembo_contribution: f64) -> Self {
+    pub fn new(
+        prs_created: Option<f64>,
+        prs_merged: Option<f64>,
+        tasks_completed: Option<f64>,
+        tembo_contribution: Option<f64>,
+    ) -> Self {
         Self {
             prs_created,
             prs_merged,
@@ -505,8 +528,16 @@ pub struct InsightsUpdateResponseDataSummary {
     pub prs_created: i64,
     #[serde(rename = "prsMerged")]
     pub prs_merged: i64,
+    /// Recorded model cost plus VM compute fees in USD across the organization divided by Tembo-created PRs in the selected sync window. Excludes subscription fees and inference billing markup. Null when there are no PRs or no recorded costs.
+    #[serde(
+        rename = "modelCostPerPrUsd",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub model_cost_per_pr_usd: Option<f64>,
     #[serde(rename = "temboContribution", serialize_with = "crate::number::serialize")]
     pub tembo_contribution: f64,
+    /// Recent period compared with the previous one. Null when the previous period has no baseline, such as when the organization joined during it.
     pub changes: InsightsUpdateResponseDataSummaryChanges,
 }
 
@@ -519,6 +550,7 @@ impl InsightsUpdateResponseDataSummary {
         tasks_completed: i64,
         prs_created: i64,
         prs_merged: i64,
+        model_cost_per_pr_usd: Option<f64>,
         tembo_contribution: f64,
         changes: InsightsUpdateResponseDataSummaryChanges,
     ) -> Self {
@@ -526,6 +558,7 @@ impl InsightsUpdateResponseDataSummary {
             tasks_completed,
             prs_created,
             prs_merged,
+            model_cost_per_pr_usd,
             tembo_contribution,
             changes,
         }
@@ -538,14 +571,22 @@ impl InsightsUpdateResponseDataSummary {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct InsightsUpdateResponseDataSummaryChanges {
-    #[serde(rename = "prsCreated", serialize_with = "crate::number::serialize")]
-    pub prs_created: f64,
-    #[serde(rename = "prsMerged", serialize_with = "crate::number::serialize")]
-    pub prs_merged: f64,
-    #[serde(rename = "tasksCompleted", serialize_with = "crate::number::serialize")]
-    pub tasks_completed: f64,
-    #[serde(rename = "temboContribution", serialize_with = "crate::number::serialize")]
-    pub tembo_contribution: f64,
+    #[serde(rename = "prsCreated", default, serialize_with = "crate::number::option::serialize")]
+    pub prs_created: Option<f64>,
+    #[serde(rename = "prsMerged", default, serialize_with = "crate::number::option::serialize")]
+    pub prs_merged: Option<f64>,
+    #[serde(
+        rename = "tasksCompleted",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub tasks_completed: Option<f64>,
+    #[serde(
+        rename = "temboContribution",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub tembo_contribution: Option<f64>,
 }
 
 impl InsightsUpdateResponseDataSummaryChanges {
@@ -554,7 +595,12 @@ impl InsightsUpdateResponseDataSummaryChanges {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    pub fn new(prs_created: f64, prs_merged: f64, tasks_completed: f64, tembo_contribution: f64) -> Self {
+    pub fn new(
+        prs_created: Option<f64>,
+        prs_merged: Option<f64>,
+        tasks_completed: Option<f64>,
+        tembo_contribution: Option<f64>,
+    ) -> Self {
         Self {
             prs_created,
             prs_merged,

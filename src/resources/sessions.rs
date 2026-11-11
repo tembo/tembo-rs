@@ -92,9 +92,11 @@ pub struct ListRequestBuilder {
     limit: Option<i64>,
     exclude_pinned: Option<bool>,
     external_ids: Option<Vec<String>>,
+    folder_id: Option<String>,
     has_project: Option<bool>,
     include_archived: Option<bool>,
     include_total: Option<bool>,
+    in_folder: Option<bool>,
     parent_session_id: Option<String>,
     participant: Option<Vec<String>>,
     pending_reviewer_keys: Option<Vec<String>>,
@@ -121,9 +123,11 @@ impl ListRequestBuilder {
             limit: None,
             exclude_pinned: None,
             external_ids: None,
+            folder_id: None,
             has_project: None,
             include_archived: None,
             include_total: None,
+            in_folder: None,
             parent_session_id: None,
             participant: None,
             pending_reviewer_keys: None,
@@ -182,6 +186,12 @@ impl ListRequestBuilder {
         self
     }
 
+    /// Only sessions in this sidebar folder of the authenticated user. Takes precedence over inFolder.
+    pub fn folder_id(mut self, value: impl Into<String>) -> Self {
+        self.folder_id = Some(value.into());
+        self
+    }
+
     /// Filter by whether a session has an assigned project.
     pub fn has_project(mut self, value: bool) -> Self {
         self.has_project = Some(value);
@@ -197,6 +207,12 @@ impl ListRequestBuilder {
     /// Include totalCount. Not supported with state=active.
     pub fn include_total(mut self, value: bool) -> Self {
         self.include_total = Some(value);
+        self
+    }
+
+    /// Filter by whether a session is in one of the authenticated user's sidebar folders.
+    pub fn in_folder(mut self, value: bool) -> Self {
+        self.in_folder = Some(value);
         self
     }
 
@@ -322,6 +338,9 @@ impl ListRequestBuilder {
                 query.push(("externalIds".to_string(), crate::http::scalar_value(item)));
             }
         }
+        if let Some(value) = &self.folder_id {
+            query.push(("folderId".to_string(), crate::http::scalar_value(value)));
+        }
         if let Some(value) = &self.has_project {
             query.push(("hasProject".to_string(), crate::http::scalar_value(value)));
         }
@@ -330,6 +349,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.include_total {
             query.push(("includeTotal".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.in_folder {
+            query.push(("inFolder".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(value) = &self.parent_session_id {
             query.push(("parentSessionId".to_string(), crate::http::scalar_value(value)));

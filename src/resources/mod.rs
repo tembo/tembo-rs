@@ -12,6 +12,7 @@ pub mod commands;
 pub mod connected_accounts;
 pub mod content_revisions;
 pub mod diffs;
+pub mod folders;
 pub mod inputs;
 pub mod insights;
 pub mod integrations;
@@ -34,6 +35,7 @@ pub mod providers;
 pub mod pull_requests;
 pub mod queue;
 pub mod repositories;
+pub mod roles;
 pub mod runs;
 pub mod runtimes;
 pub mod secrets;
@@ -118,6 +120,10 @@ impl crate::client::Tembo {
 
     pub fn billing(&self) -> crate::resources::billing::BillingResource {
         crate::resources::billing::BillingResource::new(self.clone())
+    }
+
+    pub fn folders(&self) -> crate::resources::folders::FoldersResource {
+        crate::resources::folders::FoldersResource::new(self.clone())
     }
 
     pub fn live(&self) -> crate::resources::live::LiveResource {

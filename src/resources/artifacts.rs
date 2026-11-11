@@ -26,6 +26,11 @@ impl ArtifactsResource {
         RetrieveRequestBuilder::new(self.client.clone(), artifact_id.into())
     }
 
+    /// Retrieve a signed asset URL
+    pub fn retrieve_asset_url(&self, asset_id: impl Into<String>) -> RetrieveAssetUrlRequestBuilder {
+        RetrieveAssetUrlRequestBuilder::new(self.client.clone(), asset_id.into())
+    }
+
     /// Delete an artifact
     pub fn delete(&self, artifact_id: impl Into<String>) -> DeleteRequestBuilder {
         DeleteRequestBuilder::new(self.client.clone(), artifact_id.into())
@@ -294,6 +299,75 @@ impl RetrieveRequestBuilder {
         };
         self.client
             .send::<crate::models::ArtifactsRetrieveResponse, _>(
+                http::Method::GET,
+                &path,
+                &query,
+                &headers,
+                body,
+                true,
+                overrides,
+            )
+            .await
+    }
+}
+/// Get a fresh signed download URL for an uploaded session asset by its asset ID.
+#[must_use = "a request builder does nothing until `.send().await` is called"]
+pub struct RetrieveAssetUrlRequestBuilder {
+    client: crate::client::Tembo,
+    asset_id: String,
+    timeout: Option<std::time::Duration>,
+    max_retries: Option<u32>,
+}
+
+impl RetrieveAssetUrlRequestBuilder {
+    fn new(client: crate::client::Tembo, asset_id: String) -> Self {
+        Self {
+            client,
+            asset_id,
+            timeout: None,
+            max_retries: None,
+        }
+    }
+
+    /// Overrides the client's request deadline for this request only.
+    /// It bounds each attempt up to response headers, then the buffered
+    /// body read, so total wall time can exceed the value set here. A
+    /// streamed body is never deadline-killed; see `ClientBuilder::timeout`.
+    pub fn timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.timeout = Some(timeout);
+        self
+    }
+
+    /// Overrides the client's maximum retry attempts for this request only.
+    pub fn max_retries(mut self, max_retries: u32) -> Self {
+        self.max_retries = Some(max_retries);
+        self
+    }
+
+    /// Sends the request and returns the decoded response.
+    ///
+    /// # Errors
+    ///
+    /// - [`Error::Api`](crate::error::Error::Api) — the server answered with a
+    ///   non-success status; the status, headers, request id, and decoded body are
+    ///   preserved on the [`ApiError`](crate::error::ApiError).
+    /// - [`Error::Transport`](crate::error::Error::Transport) — the request never
+    ///   produced a response (connection failure, or the deadline elapsed).
+    /// - [`Error::Config`](crate::error::Error::Config) — a parameter value could not
+    ///   be rendered into the request.
+    /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
+    ///   match the generated model.
+    pub async fn send(self) -> Result<crate::models::ArtifactsRetrieveAssetUrlResponse, crate::error::Error> {
+        let path = format!("/v1/artifacts/assets/{}", crate::http::path_param(&self.asset_id)?);
+        let query: Vec<(String, String)> = Vec::new();
+        let headers: Vec<(String, String)> = Vec::new();
+        let body: Option<&serde_json::Value> = None;
+        let overrides = crate::client::RequestOverrides {
+            timeout: self.timeout,
+            max_retries: self.max_retries,
+        };
+        self.client
+            .send::<crate::models::ArtifactsRetrieveAssetUrlResponse, _>(
                 http::Method::GET,
                 &path,
                 &query,

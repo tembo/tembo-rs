@@ -35,6 +35,12 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Retrieve an organization member](#retrieve-an-organization-member)
     - [Update an organization member](#update-an-organization-member)
     - [Remove an organization member](#remove-an-organization-member)
+  - [`Organizations Roles`](#organizations-roles)
+    - [List organization roles](#list-organization-roles)
+    - [Create a organization role](#create-a-organization-role)
+    - [Retrieve an organization role](#retrieve-an-organization-role)
+    - [Update a organization role](#update-a-organization-role)
+    - [Archive a role with an explicit replacement](#archive-a-role-with-an-explicit-replacement)
   - [`Organizations Secrets`](#organizations-secrets)
     - [List organization secrets](#list-organization-secrets)
     - [Create an organization secret](#create-an-organization-secret)
@@ -59,6 +65,7 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [List artifacts](#list-artifacts)
   - [Create an artifact](#create-an-artifact)
   - [Retrieve an artifact](#retrieve-an-artifact)
+  - [Retrieve a signed asset URL](#retrieve-a-signed-asset-url)
   - [Delete an artifact](#delete-an-artifact)
 - [`Messages`](#messages)
   - [List messages](#list-messages)
@@ -115,6 +122,7 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [List session commands](#list-session-commands)
 - [`Projects`](#projects)
   - [Update project defaults](#update-project-defaults)
+  - [Retrieve project defaults](#retrieve-project-defaults)
   - [List projects](#list-projects)
   - [Create a project](#create-a-project)
   - [Retrieve a project](#retrieve-a-project)
@@ -206,6 +214,11 @@ Complete reference of every operation, grouped by resource. See [the README](./R
 - [`Billing`](#billing)
   - [Retrieve billing](#retrieve-billing)
   - [List billing usage](#list-billing-usage)
+- [`Folders`](#folders)
+  - [List folders](#list-folders)
+  - [Create a folder](#create-a-folder)
+  - [Update a folder](#update-a-folder)
+  - [Delete a folder](#delete-a-folder)
 - [`Live`](#live)
   - [Authorize a live connection](#authorize-a-live-connection)
   - [Live resource subscriptions](#live-resource-subscriptions)
@@ -557,7 +570,10 @@ Invite or add a user to an organization with a role.
 let response = client
     .organizations()
     .members()
-    .create("example", MembersCreateBody::new("user@example.com".to_string()))
+    .create(
+        "example",
+        MembersCreateBody::new("user@example.com".to_string(), "x".to_string()),
+    )
     .send()
     .await?;
 ```
@@ -592,11 +608,7 @@ Update an organization member role.
 let response = client
     .organizations()
     .members()
-    .update(
-        "example",
-        "example",
-        MembersUpdateBody::new(MembersUpdateBodyRole::OrgAdmin),
-    )
+    .update("example", "example", MembersUpdateBody::new())
     .send()
     .await?;
 ```
@@ -614,6 +626,84 @@ let response = client
     .organizations()
     .members()
     .delete("example", "example")
+    .send()
+    .await?;
+```
+
+### `Organizations Roles`
+
+#### List organization roles
+
+| Direction | Type |
+| --- | --- |
+| Response | [`Vec<RolesListResponse>`](./src/models/roles.rs) |
+
+```rust
+let response = client.organizations().roles().list("example").send().await?;
+```
+
+#### Create a organization role
+
+| Direction | Type |
+| --- | --- |
+| Request | [`RolesCreateBody`](./src/models/roles.rs) |
+| Response | [`RolesCreateResponse`](./src/models/roles.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .roles()
+    .create(
+        "example",
+        RolesCreateBody::new("x".to_string(), vec![RolesCreateBodyPermission::OrganizationRead]),
+    )
+    .send()
+    .await?;
+```
+
+#### Retrieve an organization role
+
+| Direction | Type |
+| --- | --- |
+| Response | [`RolesRetrieveResponse`](./src/models/roles.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .roles()
+    .retrieve("example", "example")
+    .send()
+    .await?;
+```
+
+#### Update a organization role
+
+| Direction | Type |
+| --- | --- |
+| Request | [`RolesUpdateBody`](./src/models/roles.rs) |
+| Response | [`RolesUpdateResponse`](./src/models/roles.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .roles()
+    .update("example", "example", RolesUpdateBody::new())
+    .send()
+    .await?;
+```
+
+#### Archive a role with an explicit replacement
+
+| Direction | Type |
+| --- | --- |
+| Request | [`RolesDeleteBody`](./src/models/roles.rs) |
+| Response | [`RolesDeleteResponse`](./src/models/roles.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .roles()
+    .delete("example", "example", RolesDeleteBody::new("x".to_string()))
     .send()
     .await?;
 ```
@@ -897,6 +987,22 @@ Retrieve an organization artifact by ID.
 let response = client
     .artifacts()
     .retrieve("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+    .send()
+    .await?;
+```
+
+### Retrieve a signed asset URL
+
+Get a fresh signed download URL for an uploaded session asset by its asset ID.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`ArtifactsRetrieveAssetUrlResponse`](./src/models/artifacts.rs) |
+
+```rust
+let response = client
+    .artifacts()
+    .retrieve_asset_url("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
@@ -1366,7 +1472,7 @@ Create a private session from a chat in another coding agent app, such as Conduc
 let response = client
     .sessions()
     .import(SessionsImportBody::new(
-        "conductor".to_string(),
+        SessionsImportBodySource::Conductor,
         "x".to_string(),
         "x".to_string(),
         vec![SessionsImportBodyMessage::new(
@@ -1585,6 +1691,18 @@ let response = client
     ))
     .send()
     .await?;
+```
+
+### Retrieve project defaults
+
+Get the default sandbox size and the largest size the plan allows.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`ProjectsRetrieveDefaultsResponse`](./src/models/projects.rs) |
+
+```rust
+let response = client.projects().retrieve_defaults().send().await?;
 ```
 
 ### List projects
@@ -1946,7 +2064,7 @@ let response = client.pins().list().send().await?;
 
 ### Create a pin
 
-Pin a session, pull request, or project you have permission to access.
+Pin a session, pull request, or project you have permission to access, or one of your folders.
 
 | Direction | Type |
 | --- | --- |
@@ -1966,7 +2084,7 @@ let response = client
 
 ### Update a pin
 
-Reorder a pinned session, pull request, or project before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
+Reorder a pinned session, pull request, project, or folder before or after another pin for the authenticated user. Use createPin to pin a resource and deletePin to unpin it.
 
 | Direction | Type |
 | --- | --- |
@@ -1993,7 +2111,7 @@ let response = client
 
 ### Delete a pin
 
-Unpin a session, pull request, or project for the authenticated user without deleting or archiving the resource.
+Unpin a session, pull request, project, or folder for the authenticated user without deleting or archiving the resource.
 
 | Direction | Type |
 | --- | --- |
@@ -2364,7 +2482,7 @@ let response = client
 
 #### Create an agent run
 
-Queue an agent run. The entire JSON object body is passed to the agent as event input; no eventPayload wrapper is needed. Omit the body to run without event input. The response confirms queuing, not completed execution.
+Queue an agent run. The entire JSON object body is passed to the agent as event input; no eventPayload wrapper is needed. Omit the body to run without event input. The response confirms queuing, not completed execution, and includes the run ID to poll for its status and session.
 
 | Direction | Type |
 | --- | --- |
@@ -2802,6 +2920,70 @@ List session usage by default, or include warm pool compute with the type filter
 
 ```rust
 let response = client.billing().list_usage().send().await?;
+```
+
+## `Folders`
+
+### List folders
+
+List the sidebar folders you use to organize sessions. Use listSessions with folderId to list the sessions in a folder.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`FoldersListResponse`](./src/models/folders.rs) |
+
+```rust
+let response = client.folders().list().send().await?;
+```
+
+### Create a folder
+
+Create a sidebar folder for organizing sessions. New folders go first in your folder list; use createPin to pin one.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`FoldersCreateBody`](./src/models/folders.rs) |
+| Response | [`FoldersCreateResponse`](./src/models/folders.rs) |
+
+```rust
+let response = client
+    .folders()
+    .create(FoldersCreateBody::new("x".to_string()))
+    .send()
+    .await?;
+```
+
+### Update a folder
+
+Rename one of your sidebar folders, change its icon color, move it in your folder list, or add, reorder, or remove its sessions. Use updatePin to move a pinned folder among your pins.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`FoldersUpdateBody`](./src/models/folders.rs) |
+| Response | [`FoldersUpdateResponse`](./src/models/folders.rs) |
+
+```rust
+let response = client
+    .folders()
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", FoldersUpdateBody::new())
+    .send()
+    .await?;
+```
+
+### Delete a folder
+
+Delete one of your sidebar folders. Its sessions are kept and return to your recent sessions.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`FoldersDeleteResponse`](./src/models/folders.rs) |
+
+```rust
+let response = client
+    .folders()
+    .delete("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+    .send()
+    .await?;
 ```
 
 ## `Live`
