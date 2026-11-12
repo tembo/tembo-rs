@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/tembo/tembo-rs/compare/v0.11.0...v0.11.1) (2026-11-12)
+
+
+### Chores
+
+* **api:** update generated SDK content ([5a9ef34](https://github.com/tembo/tembo-rs/commit/5a9ef346822b132c2db6bd4c9cbeb5ac51957a91))
+
 ## [0.11.0](https://github.com/tembo/tembo-rs/compare/v0.10.1...v0.11.0) (2026-11-11)
 
 
