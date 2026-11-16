@@ -2607,8 +2607,6 @@ pub enum SessionsCreateBodySandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -2630,7 +2628,6 @@ impl SessionsCreateBodySandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -2652,7 +2649,6 @@ impl From<&str> for SessionsCreateBodySandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -5519,8 +5515,6 @@ pub enum SessionsUpdateBodySandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -5542,7 +5536,6 @@ impl SessionsUpdateBodySandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -5564,7 +5557,6 @@ impl From<&str> for SessionsUpdateBodySandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,

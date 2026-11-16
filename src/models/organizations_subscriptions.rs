@@ -935,13 +935,24 @@ impl SubscriptionsRetrieveResponseClaude {
 pub struct SubscriptionsRetrieveResponseClaudeUsage {
     #[serde(rename = "rateLimits")]
     pub rate_limits: Vec<SubscriptionsRetrieveResponseClaudeUsageRateLimit>,
+    #[serde(rename = "rateLimitResetCredits", default)]
+    pub rate_limit_reset_credits: Option<SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits>,
 }
 
 impl SubscriptionsRetrieveResponseClaudeUsage {
     /// Creates a new `SubscriptionsRetrieveResponseClaudeUsage` from its required fields, leaving every optional one
     /// unset.
-    pub fn new(rate_limits: Vec<SubscriptionsRetrieveResponseClaudeUsageRateLimit>) -> Self {
-        Self { rate_limits }
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        rate_limits: Vec<SubscriptionsRetrieveResponseClaudeUsageRateLimit>,
+        rate_limit_reset_credits: Option<SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits>,
+    ) -> Self {
+        Self {
+            rate_limits,
+            rate_limit_reset_credits,
+        }
     }
 }
 
@@ -1205,6 +1216,24 @@ impl SubscriptionsRetrieveResponseClaudeUsageRateLimitVariant6 {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits {
+    #[serde(rename = "availableCount")]
+    pub available_count: i64,
+}
+
+impl SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits {
+    /// Creates a new `SubscriptionsRetrieveResponseClaudeUsageRateLimitResetCredits` from its required fields, leaving
+    /// every optional one unset.
+    pub fn new(available_count: i64) -> Self {
+        Self { available_count }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SubscriptionsRetrieveResponseClaudeUsageError::new` and the `with_*` setters rather than a struct literal. Fields
 /// stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1289,12 +1318,262 @@ impl From<&str> for SubscriptionsRetrieveResponseClaudeUsageErrorCode {
 #[non_exhaustive]
 pub struct SubscriptionsRetrieveResponseSupergrok {
     pub connected: bool,
+    #[serde(default)]
+    pub usage: Option<SubscriptionsRetrieveResponseSupergrokUsage>,
+    #[serde(rename = "usageError", default)]
+    pub usage_error: Option<SubscriptionsRetrieveResponseSupergrokUsageError>,
 }
 
 impl SubscriptionsRetrieveResponseSupergrok {
     /// Creates a new `SubscriptionsRetrieveResponseSupergrok` from its required fields, leaving every optional one
     /// unset.
-    pub fn new(connected: bool) -> Self {
-        Self { connected }
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        connected: bool,
+        usage: Option<SubscriptionsRetrieveResponseSupergrokUsage>,
+        usage_error: Option<SubscriptionsRetrieveResponseSupergrokUsageError>,
+    ) -> Self {
+        Self {
+            connected,
+            usage,
+            usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseSupergrokUsage::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseSupergrokUsage {
+    #[serde(rename = "rateLimits")]
+    pub rate_limits: Vec<SubscriptionsRetrieveResponseSupergrokUsageRateLimit>,
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsage {
+    /// Creates a new `SubscriptionsRetrieveResponseSupergrokUsage` from its required fields, leaving every optional one
+    /// unset.
+    pub fn new(rate_limits: Vec<SubscriptionsRetrieveResponseSupergrokUsageRateLimit>) -> Self {
+        Self { rate_limits }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponseSupergrokUsageRateLimit {
+    SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1(
+        SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1,
+    ),
+    SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2(
+        SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2,
+    ),
+    SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3(
+        SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3,
+    ),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1 {
+    /// Creates a new `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant1` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2 {
+    /// Creates a new `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant2` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3 {
+    /// Creates a new `SubscriptionsRetrieveResponseSupergrokUsageRateLimitVariant3` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponseSupergrokUsageError::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponseSupergrokUsageError {
+    pub code: SubscriptionsRetrieveResponseSupergrokUsageErrorCode,
+    pub message: String,
+    #[serde(rename = "retryAfter", default)]
+    pub retry_after: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsageError {
+    /// Creates a new `SubscriptionsRetrieveResponseSupergrokUsageError` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        code: SubscriptionsRetrieveResponseSupergrokUsageErrorCode,
+        message: impl Into<String>,
+        retry_after: Option<String>,
+    ) -> Self {
+        Self {
+            code,
+            message: message.into(),
+            retry_after,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponseSupergrokUsageErrorCode {
+    #[serde(rename = "reconnectRequired")]
+    ReconnectRequired,
+    #[serde(rename = "rateLimited")]
+    RateLimited,
+    #[serde(rename = "unavailable")]
+    Unavailable,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponseSupergrokUsageErrorCode {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::ReconnectRequired => "reconnectRequired",
+            Self::RateLimited => "rateLimited",
+            Self::Unavailable => "unavailable",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponseSupergrokUsageErrorCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponseSupergrokUsageErrorCode {
+    fn from(value: &str) -> Self {
+        match value {
+            "reconnectRequired" => Self::ReconnectRequired,
+            "rateLimited" => Self::RateLimited,
+            "unavailable" => Self::Unavailable,
+            other => Self::Unknown(other.to_owned()),
+        }
     }
 }

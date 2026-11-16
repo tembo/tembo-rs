@@ -192,7 +192,7 @@ impl UpdateRequestBuilder {
             .await
     }
 }
-/// Validate supplied inference provider credentials for an organization without saving them. The provider must be available on the organization’s plan.
+/// Validate supplied or stored inference provider credentials for an organization without returning them. The provider must be available on the organization’s plan.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ValidateCredentialsRequestBuilder {
     client: crate::client::Tembo,

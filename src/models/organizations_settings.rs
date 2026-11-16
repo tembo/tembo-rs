@@ -210,8 +210,6 @@ pub enum SettingsRetrieveResponseSettingsDefaultSandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -233,7 +231,6 @@ impl SettingsRetrieveResponseSettingsDefaultSandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -255,7 +252,6 @@ impl From<&str> for SettingsRetrieveResponseSettingsDefaultSandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -470,8 +466,6 @@ pub enum SettingsUpdateResponseSettingsDefaultSandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -493,7 +487,6 @@ impl SettingsUpdateResponseSettingsDefaultSandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -515,7 +508,6 @@ impl From<&str> for SettingsUpdateResponseSettingsDefaultSandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -997,8 +989,6 @@ pub enum SettingsUpdateBodyDefaultSandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -1020,7 +1010,6 @@ impl SettingsUpdateBodyDefaultSandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -1042,7 +1031,6 @@ impl From<&str> for SettingsUpdateBodyDefaultSandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -1080,6 +1068,7 @@ pub enum SettingsValidateCredentialsBody {
     SettingsValidateCredentialsBodyVariant2(SettingsValidateCredentialsBodyVariant2),
     SettingsValidateCredentialsBodyVariant3(SettingsValidateCredentialsBodyVariant3),
     SettingsValidateCredentialsBodyVariant4(SettingsValidateCredentialsBodyVariant4),
+    SettingsValidateCredentialsBodyVariant7(SettingsValidateCredentialsBodyVariant7),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -1270,6 +1259,86 @@ impl SettingsValidateCredentialsBodyVariant6 {
             service_account_json: service_account_json.into(),
             project: project.into(),
             location: location.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SettingsValidateCredentialsBodyVariant7::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SettingsValidateCredentialsBodyVariant7 {
+    pub provider: SettingsValidateCredentialsBodyVariant7Provider,
+    pub stored: bool,
+}
+
+impl SettingsValidateCredentialsBodyVariant7 {
+    /// Creates a new `SettingsValidateCredentialsBodyVariant7` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(provider: SettingsValidateCredentialsBodyVariant7Provider, stored: bool) -> Self {
+        Self { provider, stored }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SettingsValidateCredentialsBodyVariant7Provider {
+    #[serde(rename = "anthropic")]
+    Anthropic,
+    #[serde(rename = "openai")]
+    Openai,
+    #[serde(rename = "xai")]
+    Xai,
+    #[serde(rename = "openrouter")]
+    Openrouter,
+    #[serde(rename = "aws-bedrock")]
+    AwsBedrock,
+    #[serde(rename = "gcp-vertex-ai")]
+    GcpVertexAi,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SettingsValidateCredentialsBodyVariant7Provider {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Anthropic => "anthropic",
+            Self::Openai => "openai",
+            Self::Xai => "xai",
+            Self::Openrouter => "openrouter",
+            Self::AwsBedrock => "aws-bedrock",
+            Self::GcpVertexAi => "gcp-vertex-ai",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SettingsValidateCredentialsBodyVariant7Provider {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SettingsValidateCredentialsBodyVariant7Provider {
+    fn from(value: &str) -> Self {
+        match value {
+            "anthropic" => Self::Anthropic,
+            "openai" => Self::Openai,
+            "xai" => Self::Xai,
+            "openrouter" => Self::Openrouter,
+            "aws-bedrock" => Self::AwsBedrock,
+            "gcp-vertex-ai" => Self::GcpVertexAi,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }

@@ -13,6 +13,9 @@ pub struct RolesListResponse {
     pub id: String,
     pub name: String,
     pub description: String,
+    #[serde(default)]
+    pub icon: Option<String>,
+    pub color: String,
     #[serde(rename = "isDefault")]
     pub is_default: bool,
     pub permissions: Vec<RolesListResponsePermission>,
@@ -27,10 +30,13 @@ impl RolesListResponse {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: impl Into<String>,
         name: impl Into<String>,
         description: impl Into<String>,
+        icon: Option<String>,
+        color: impl Into<String>,
         is_default: bool,
         permissions: Vec<RolesListResponsePermission>,
         member_count: i64,
@@ -40,6 +46,8 @@ impl RolesListResponse {
             id: id.into(),
             name: name.into(),
             description: description.into(),
+            icon,
+            color: color.into(),
             is_default,
             permissions,
             member_count,
@@ -55,6 +63,10 @@ impl RolesListResponse {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum RolesListResponsePermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -540,6 +552,8 @@ impl RolesListResponsePermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -792,6 +806,8 @@ impl std::fmt::Display for RolesListResponsePermission {
 impl From<&str> for RolesListResponsePermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,
@@ -1058,6 +1074,14 @@ pub struct RolesCreateBody {
     pub name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub icon: Option<Option<RolesCreateBodyIcon>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub color: Option<RolesCreateBodyColor>,
     pub permissions: Vec<RolesCreateBodyPermission>,
 }
 
@@ -1073,6 +1097,8 @@ impl RolesCreateBody {
         Self {
             name: name.into(),
             description: None,
+            icon: None,
+            color: None,
             permissions,
         }
     }
@@ -1080,6 +1106,20 @@ impl RolesCreateBody {
     /// Sets `description`, which `new` leaves unset.
     pub fn with_description(mut self, value: impl Into<String>) -> Self {
         self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `icon`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `icon = Some(None)` on the built value.
+    pub fn with_icon(mut self, value: RolesCreateBodyIcon) -> Self {
+        self.icon = Some(Some(value));
+        self
+    }
+
+    /// Sets `color`, which `new` leaves unset.
+    pub fn with_color(mut self, value: RolesCreateBodyColor) -> Self {
+        self.color = Some(value);
         self
     }
 }
@@ -1090,7 +1130,189 @@ impl RolesCreateBody {
 /// adds the real variant.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
+pub enum RolesCreateBodyIcon {
+    #[serde(rename = "key")]
+    Key,
+    #[serde(rename = "crown")]
+    Crown,
+    #[serde(rename = "shield")]
+    Shield,
+    #[serde(rename = "star")]
+    Star,
+    #[serde(rename = "rocket")]
+    Rocket,
+    #[serde(rename = "user")]
+    User,
+    #[serde(rename = "people")]
+    People,
+    #[serde(rename = "eye")]
+    Eye,
+    #[serde(rename = "code")]
+    Code,
+    #[serde(rename = "bug")]
+    Bug,
+    #[serde(rename = "tools")]
+    Tools,
+    #[serde(rename = "megaphone")]
+    Megaphone,
+    #[serde(rename = "graduate")]
+    Graduate,
+    #[serde(rename = "heart")]
+    Heart,
+    #[serde(rename = "fire")]
+    Fire,
+    #[serde(rename = "diamond")]
+    Diamond,
+    #[serde(rename = "magic")]
+    Magic,
+    #[serde(rename = "robot")]
+    Robot,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl RolesCreateBodyIcon {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Key => "key",
+            Self::Crown => "crown",
+            Self::Shield => "shield",
+            Self::Star => "star",
+            Self::Rocket => "rocket",
+            Self::User => "user",
+            Self::People => "people",
+            Self::Eye => "eye",
+            Self::Code => "code",
+            Self::Bug => "bug",
+            Self::Tools => "tools",
+            Self::Megaphone => "megaphone",
+            Self::Graduate => "graduate",
+            Self::Heart => "heart",
+            Self::Fire => "fire",
+            Self::Diamond => "diamond",
+            Self::Magic => "magic",
+            Self::Robot => "robot",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for RolesCreateBodyIcon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for RolesCreateBodyIcon {
+    fn from(value: &str) -> Self {
+        match value {
+            "key" => Self::Key,
+            "crown" => Self::Crown,
+            "shield" => Self::Shield,
+            "star" => Self::Star,
+            "rocket" => Self::Rocket,
+            "user" => Self::User,
+            "people" => Self::People,
+            "eye" => Self::Eye,
+            "code" => Self::Code,
+            "bug" => Self::Bug,
+            "tools" => Self::Tools,
+            "megaphone" => Self::Megaphone,
+            "graduate" => Self::Graduate,
+            "heart" => Self::Heart,
+            "fire" => Self::Fire,
+            "diamond" => Self::Diamond,
+            "magic" => Self::Magic,
+            "robot" => Self::Robot,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum RolesCreateBodyColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl RolesCreateBodyColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for RolesCreateBodyColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for RolesCreateBodyColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub enum RolesCreateBodyPermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -1576,6 +1798,8 @@ impl RolesCreateBodyPermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -1828,6 +2052,8 @@ impl std::fmt::Display for RolesCreateBodyPermission {
 impl From<&str> for RolesCreateBodyPermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,
@@ -2079,6 +2305,9 @@ pub struct RolesRetrieveResponse {
     pub id: String,
     pub name: String,
     pub description: String,
+    #[serde(default)]
+    pub icon: Option<String>,
+    pub color: String,
     #[serde(rename = "isDefault")]
     pub is_default: bool,
     pub permissions: Vec<RolesRetrieveResponsePermission>,
@@ -2093,10 +2322,13 @@ impl RolesRetrieveResponse {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: impl Into<String>,
         name: impl Into<String>,
         description: impl Into<String>,
+        icon: Option<String>,
+        color: impl Into<String>,
         is_default: bool,
         permissions: Vec<RolesRetrieveResponsePermission>,
         member_count: i64,
@@ -2106,6 +2338,8 @@ impl RolesRetrieveResponse {
             id: id.into(),
             name: name.into(),
             description: description.into(),
+            icon,
+            color: color.into(),
             is_default,
             permissions,
             member_count,
@@ -2121,6 +2355,10 @@ impl RolesRetrieveResponse {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum RolesRetrieveResponsePermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -2606,6 +2844,8 @@ impl RolesRetrieveResponsePermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -2858,6 +3098,8 @@ impl std::fmt::Display for RolesRetrieveResponsePermission {
 impl From<&str> for RolesRetrieveResponsePermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,
@@ -3128,6 +3370,14 @@ pub struct RolesUpdateBody {
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub icon: Option<Option<RolesUpdateBodyIcon>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub color: Option<RolesUpdateBodyColor>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permissions: Option<Vec<RolesUpdateBodyPermission>>,
     #[serde(rename = "isDefault", default, skip_serializing_if = "Option::is_none")]
@@ -3143,6 +3393,8 @@ impl RolesUpdateBody {
         Self {
             name: None,
             description: None,
+            icon: None,
+            color: None,
             permissions: None,
             is_default: None,
         }
@@ -3157,6 +3409,20 @@ impl RolesUpdateBody {
     /// Sets `description`, which `new` leaves unset.
     pub fn with_description(mut self, value: impl Into<String>) -> Self {
         self.description = Some(value.into());
+        self
+    }
+
+    /// Sets `icon`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `icon = Some(None)` on the built value.
+    pub fn with_icon(mut self, value: RolesUpdateBodyIcon) -> Self {
+        self.icon = Some(Some(value));
+        self
+    }
+
+    /// Sets `color`, which `new` leaves unset.
+    pub fn with_color(mut self, value: RolesUpdateBodyColor) -> Self {
+        self.color = Some(value);
         self
     }
 
@@ -3179,7 +3445,189 @@ impl RolesUpdateBody {
 /// adds the real variant.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
+pub enum RolesUpdateBodyIcon {
+    #[serde(rename = "key")]
+    Key,
+    #[serde(rename = "crown")]
+    Crown,
+    #[serde(rename = "shield")]
+    Shield,
+    #[serde(rename = "star")]
+    Star,
+    #[serde(rename = "rocket")]
+    Rocket,
+    #[serde(rename = "user")]
+    User,
+    #[serde(rename = "people")]
+    People,
+    #[serde(rename = "eye")]
+    Eye,
+    #[serde(rename = "code")]
+    Code,
+    #[serde(rename = "bug")]
+    Bug,
+    #[serde(rename = "tools")]
+    Tools,
+    #[serde(rename = "megaphone")]
+    Megaphone,
+    #[serde(rename = "graduate")]
+    Graduate,
+    #[serde(rename = "heart")]
+    Heart,
+    #[serde(rename = "fire")]
+    Fire,
+    #[serde(rename = "diamond")]
+    Diamond,
+    #[serde(rename = "magic")]
+    Magic,
+    #[serde(rename = "robot")]
+    Robot,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl RolesUpdateBodyIcon {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Key => "key",
+            Self::Crown => "crown",
+            Self::Shield => "shield",
+            Self::Star => "star",
+            Self::Rocket => "rocket",
+            Self::User => "user",
+            Self::People => "people",
+            Self::Eye => "eye",
+            Self::Code => "code",
+            Self::Bug => "bug",
+            Self::Tools => "tools",
+            Self::Megaphone => "megaphone",
+            Self::Graduate => "graduate",
+            Self::Heart => "heart",
+            Self::Fire => "fire",
+            Self::Diamond => "diamond",
+            Self::Magic => "magic",
+            Self::Robot => "robot",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for RolesUpdateBodyIcon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for RolesUpdateBodyIcon {
+    fn from(value: &str) -> Self {
+        match value {
+            "key" => Self::Key,
+            "crown" => Self::Crown,
+            "shield" => Self::Shield,
+            "star" => Self::Star,
+            "rocket" => Self::Rocket,
+            "user" => Self::User,
+            "people" => Self::People,
+            "eye" => Self::Eye,
+            "code" => Self::Code,
+            "bug" => Self::Bug,
+            "tools" => Self::Tools,
+            "megaphone" => Self::Megaphone,
+            "graduate" => Self::Graduate,
+            "heart" => Self::Heart,
+            "fire" => Self::Fire,
+            "diamond" => Self::Diamond,
+            "magic" => Self::Magic,
+            "robot" => Self::Robot,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum RolesUpdateBodyColor {
+    #[serde(rename = "neutral")]
+    Neutral,
+    #[serde(rename = "red")]
+    Red,
+    #[serde(rename = "orange")]
+    Orange,
+    #[serde(rename = "yellow")]
+    Yellow,
+    #[serde(rename = "green")]
+    Green,
+    #[serde(rename = "teal")]
+    Teal,
+    #[serde(rename = "blue")]
+    Blue,
+    #[serde(rename = "purple")]
+    Purple,
+    #[serde(rename = "pink")]
+    Pink,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl RolesUpdateBodyColor {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Neutral => "neutral",
+            Self::Red => "red",
+            Self::Orange => "orange",
+            Self::Yellow => "yellow",
+            Self::Green => "green",
+            Self::Teal => "teal",
+            Self::Blue => "blue",
+            Self::Purple => "purple",
+            Self::Pink => "pink",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for RolesUpdateBodyColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for RolesUpdateBodyColor {
+    fn from(value: &str) -> Self {
+        match value {
+            "neutral" => Self::Neutral,
+            "red" => Self::Red,
+            "orange" => Self::Orange,
+            "yellow" => Self::Yellow,
+            "green" => Self::Green,
+            "teal" => Self::Teal,
+            "blue" => Self::Blue,
+            "purple" => Self::Purple,
+            "pink" => Self::Pink,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub enum RolesUpdateBodyPermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -3665,6 +4113,8 @@ impl RolesUpdateBodyPermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -3917,6 +4367,8 @@ impl std::fmt::Display for RolesUpdateBodyPermission {
 impl From<&str> for RolesUpdateBodyPermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,

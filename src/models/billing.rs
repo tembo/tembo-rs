@@ -198,6 +198,20 @@ pub struct BillingRetrieveResponseTrial {
     #[serde(rename = "purchasedCredits", serialize_with = "crate::number::serialize")]
     pub purchased_credits: f64,
     pub exhausted: bool,
+    #[serde(
+        rename = "managedInferenceAllowance",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub managed_inference_allowance: Option<f64>,
+    #[serde(
+        rename = "remainingManagedInference",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub remaining_managed_inference: Option<f64>,
+    #[serde(rename = "managedInferenceExhausted")]
+    pub managed_inference_exhausted: bool,
 }
 
 impl BillingRetrieveResponseTrial {
@@ -205,6 +219,7 @@ impl BillingRetrieveResponseTrial {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         status: impl Into<String>,
         started_at: chrono::DateTime<chrono::FixedOffset>,
@@ -213,6 +228,9 @@ impl BillingRetrieveResponseTrial {
         remaining_allowance: f64,
         purchased_credits: f64,
         exhausted: bool,
+        managed_inference_allowance: Option<f64>,
+        remaining_managed_inference: Option<f64>,
+        managed_inference_exhausted: bool,
     ) -> Self {
         Self {
             status: status.into(),
@@ -222,6 +240,9 @@ impl BillingRetrieveResponseTrial {
             remaining_allowance,
             purchased_credits,
             exhausted,
+            managed_inference_allowance,
+            remaining_managed_inference,
+            managed_inference_exhausted,
         }
     }
 }
