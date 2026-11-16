@@ -196,6 +196,10 @@ impl OrganizationsRetrieveResponseVariant1CurrentMembership {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -681,6 +685,8 @@ impl OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -933,6 +939,8 @@ impl std::fmt::Display for OrganizationsRetrieveResponseVariant1CurrentMembershi
 impl From<&str> for OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,
@@ -1311,6 +1319,10 @@ impl OrganizationsRetrieveResponseVariant2CurrentMembership {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
+    #[serde(rename = "organization:audit_log:read")]
+    OrganizationAuditLogRead,
+    #[serde(rename = "organization:audit_log:write")]
+    OrganizationAuditLogWrite,
     #[serde(rename = "organization:read")]
     OrganizationRead,
     #[serde(rename = "organization:write")]
@@ -1796,6 +1808,8 @@ impl OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::OrganizationAuditLogRead => "organization:audit_log:read",
+            Self::OrganizationAuditLogWrite => "organization:audit_log:write",
             Self::OrganizationRead => "organization:read",
             Self::OrganizationWrite => "organization:write",
             Self::OrganizationMemberRead => "organization:member:read",
@@ -2048,6 +2062,8 @@ impl std::fmt::Display for OrganizationsRetrieveResponseVariant2CurrentMembershi
 impl From<&str> for OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
     fn from(value: &str) -> Self {
         match value {
+            "organization:audit_log:read" => Self::OrganizationAuditLogRead,
+            "organization:audit_log:write" => Self::OrganizationAuditLogWrite,
             "organization:read" => Self::OrganizationRead,
             "organization:write" => Self::OrganizationWrite,
             "organization:member:read" => Self::OrganizationMemberRead,

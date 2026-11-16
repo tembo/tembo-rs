@@ -46,15 +46,16 @@ pub enum TriggerFilters {
     SlackMessageReactionAddedFilters(SlackMessageReactionAddedFilters),
     GithubTemboPullRequestOpenedFilters(GithubTemboPullRequestOpenedFilters),
     GitlabBotMergeRequestCommentFilters(GitlabBotMergeRequestCommentFilters),
+    GitlabMergeRequestReadyForReviewFilters(GitlabMergeRequestReadyForReviewFilters),
     GitlabPipelineFailedFilters(GitlabPipelineFailedFilters),
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant40(serde_json::Value),
     Variant41(serde_json::Value),
     Variant42(serde_json::Value),
     Variant43(serde_json::Value),
     Variant44(serde_json::Value),
+    Variant45(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -1491,6 +1492,49 @@ impl GitlabMergeRequestUpdatedFilters {
     /// Sets `draft_mrs`, which `new` leaves unset.
     pub fn with_draft_mrs(mut self, value: bool) -> Self {
         self.draft_mrs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_mrs`, which `new` leaves unset.
+    pub fn with_tembo_mrs(mut self, value: bool) -> Self {
+        self.tembo_mrs = Some(value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GitlabMergeRequestReadyForReviewFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GitlabMergeRequestReadyForReviewFilters {
+    /// Only trigger if the merge request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Enable agent for Tembo-created merge requests (disabled by default)
+    #[serde(rename = "temboMrs", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_mrs: Option<bool>,
+}
+
+impl GitlabMergeRequestReadyForReviewFilters {
+    /// Creates a new `GitlabMergeRequestReadyForReviewFilters` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GitlabMergeRequestReadyForReviewFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            tembo_mrs: None,
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
         self
     }
 

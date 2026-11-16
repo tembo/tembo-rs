@@ -135,6 +135,22 @@ List insight repositories
 - Response body: `application/json`
 - Errors: `400, 409, 500`
 
+### client.audit_logs().list()
+
+List organization audit logs
+
+- HTTP: `GET /v1/audit-logs`
+- Response body: `application/json`
+- Errors: `403`
+
+### client.audit_logs().list_filters()
+
+List audit log filter options
+
+- HTTP: `GET /v1/audit-logs/filters`
+- Response body: `application/json`
+- Errors: `403`
+
 ### client.organizations().create(…)
 
 Create an organization
@@ -1474,6 +1490,7 @@ Live resource subscriptions
 - `GitlabMergeRequestMergedFilters`
 - `GitlabMergeRequestOpenedFilters`
 - `GitlabMergeRequestUpdatedFilters`
+- `GitlabMergeRequestReadyForReviewFilters`
 - `GitlabPipelineFailedFilters`
 - `GitlabRefCreatedFilters`
 - `LinearIssueCreateFilters`

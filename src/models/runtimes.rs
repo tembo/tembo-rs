@@ -498,6 +498,8 @@ pub enum RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code {
     ModelDisabled,
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -519,6 +521,7 @@ impl RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code {
         match self {
             Self::ModelDisabled => "model_disabled",
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -540,6 +543,7 @@ impl From<&str> for RuntimesListResponseItemCompatibleModelAvailabilityVariant2C
         match value {
             "model_disabled" => Self::ModelDisabled,
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
