@@ -461,6 +461,8 @@ impl ModelsListResponseItemInferenceProviderAccessTemboManagedInferenceVariant2 
 pub enum ModelsListResponseItemInferenceProviderAccessTemboManagedInferenceVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -481,6 +483,7 @@ impl ModelsListResponseItemInferenceProviderAccessTemboManagedInferenceVariant2U
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -501,6 +504,7 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessTemboManagedInf
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -599,6 +603,8 @@ impl ModelsListResponseItemInferenceProviderAccessByokVariant2 {
 pub enum ModelsListResponseItemInferenceProviderAccessByokVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -619,6 +625,7 @@ impl ModelsListResponseItemInferenceProviderAccessByokVariant2UnavailableCode {
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -639,6 +646,7 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessByokVariant2Una
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -737,6 +745,8 @@ impl ModelsListResponseItemInferenceProviderAccessAwsBedrockVariant2 {
 pub enum ModelsListResponseItemInferenceProviderAccessAwsBedrockVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -757,6 +767,7 @@ impl ModelsListResponseItemInferenceProviderAccessAwsBedrockVariant2UnavailableC
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -777,6 +788,7 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessAwsBedrockVaria
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -875,6 +887,8 @@ impl ModelsListResponseItemInferenceProviderAccessGcpVertexAiVariant2 {
 pub enum ModelsListResponseItemInferenceProviderAccessGcpVertexAiVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -895,6 +909,7 @@ impl ModelsListResponseItemInferenceProviderAccessGcpVertexAiVariant2Unavailable
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -915,6 +930,7 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessGcpVertexAiVari
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -1013,6 +1029,8 @@ impl ModelsListResponseItemInferenceProviderAccessOpenRouterVariant2 {
 pub enum ModelsListResponseItemInferenceProviderAccessOpenRouterVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -1033,6 +1051,7 @@ impl ModelsListResponseItemInferenceProviderAccessOpenRouterVariant2UnavailableC
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -1053,6 +1072,7 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessOpenRouterVaria
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -1499,6 +1519,8 @@ impl ModelsUpdateResponseInferenceProviderAccessTemboManagedInferenceVariant2 {
 pub enum ModelsUpdateResponseInferenceProviderAccessTemboManagedInferenceVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -1519,6 +1541,7 @@ impl ModelsUpdateResponseInferenceProviderAccessTemboManagedInferenceVariant2Una
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -1539,6 +1562,7 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessTemboManagedInfer
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -1633,6 +1657,8 @@ impl ModelsUpdateResponseInferenceProviderAccessByokVariant2 {
 pub enum ModelsUpdateResponseInferenceProviderAccessByokVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -1653,6 +1679,7 @@ impl ModelsUpdateResponseInferenceProviderAccessByokVariant2UnavailableCode {
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -1673,6 +1700,7 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessByokVariant2Unava
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -1771,6 +1799,8 @@ impl ModelsUpdateResponseInferenceProviderAccessAwsBedrockVariant2 {
 pub enum ModelsUpdateResponseInferenceProviderAccessAwsBedrockVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -1791,6 +1821,7 @@ impl ModelsUpdateResponseInferenceProviderAccessAwsBedrockVariant2UnavailableCod
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -1811,6 +1842,7 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessAwsBedrockVariant
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -1909,6 +1941,8 @@ impl ModelsUpdateResponseInferenceProviderAccessGcpVertexAiVariant2 {
 pub enum ModelsUpdateResponseInferenceProviderAccessGcpVertexAiVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -1929,6 +1963,7 @@ impl ModelsUpdateResponseInferenceProviderAccessGcpVertexAiVariant2UnavailableCo
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -1949,6 +1984,7 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessGcpVertexAiVarian
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,
@@ -2047,6 +2083,8 @@ impl ModelsUpdateResponseInferenceProviderAccessOpenRouterVariant2 {
 pub enum ModelsUpdateResponseInferenceProviderAccessOpenRouterVariant2UnavailableCode {
     #[serde(rename = "plan_required")]
     PlanRequired,
+    #[serde(rename = "trial_inference_exhausted")]
+    TrialInferenceExhausted,
     #[serde(rename = "missing_credentials")]
     MissingCredentials,
     #[serde(rename = "unsupported_provider")]
@@ -2067,6 +2105,7 @@ impl ModelsUpdateResponseInferenceProviderAccessOpenRouterVariant2UnavailableCod
     pub fn as_str(&self) -> &str {
         match self {
             Self::PlanRequired => "plan_required",
+            Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
             Self::UnsupportedProvider => "unsupported_provider",
             Self::ChatgptNotConnected => "chatgpt_not_connected",
@@ -2087,6 +2126,7 @@ impl From<&str> for ModelsUpdateResponseInferenceProviderAccessOpenRouterVariant
     fn from(value: &str) -> Self {
         match value {
             "plan_required" => Self::PlanRequired,
+            "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
             "unsupported_provider" => Self::UnsupportedProvider,
             "chatgpt_not_connected" => Self::ChatgptNotConnected,

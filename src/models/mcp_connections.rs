@@ -214,6 +214,8 @@ pub struct McpConnectionsCreateResponseConnection {
     pub env_keys: Vec<String>,
     #[serde(rename = "headerKeys")]
     pub header_keys: Vec<String>,
+    /// public servers are reached directly. tailnet servers are reached only from sessions, through the organization's Tailscale integration; Tembo's API never contacts them, so they authenticate with the tailnet ACL and optional static headers. Set at creation and cannot be changed.
+    pub network: McpConnectionsCreateResponseConnectionNetwork,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
@@ -238,6 +240,7 @@ impl McpConnectionsCreateResponseConnection {
         created_at: chrono::DateTime<chrono::FixedOffset>,
         env_keys: Vec<String>,
         header_keys: Vec<String>,
+        network: McpConnectionsCreateResponseConnectionNetwork,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
     ) -> Self {
         Self {
@@ -253,6 +256,7 @@ impl McpConnectionsCreateResponseConnection {
             created_at,
             env_keys,
             header_keys,
+            network,
             updated_at,
         }
     }
@@ -386,6 +390,49 @@ impl From<&str> for McpConnectionsCreateResponseConnectionAuthType {
             "oauth" => Self::Oauth,
             "client_credentials" => Self::ClientCredentials,
             "static_headers" => Self::StaticHeaders,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum McpConnectionsCreateResponseConnectionNetwork {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "tailnet")]
+    Tailnet,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl McpConnectionsCreateResponseConnectionNetwork {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Tailnet => "tailnet",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for McpConnectionsCreateResponseConnectionNetwork {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for McpConnectionsCreateResponseConnectionNetwork {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "tailnet" => Self::Tailnet,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -533,6 +580,9 @@ pub struct McpConnectionsCreateBodyVariant2 {
     /// Request headers for static-header or automatic OAuth authentication. Values are write-only.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::BTreeMap<String, String>>,
+    /// public servers are reached directly. tailnet servers are reached only from sessions, through the organization's Tailscale integration; Tembo's API never contacts them, so they authenticate with the tailnet ACL and optional static headers. Set at creation and cannot be changed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub network: Option<McpConnectionsCreateBodyVariant2Network>,
     /// Register an OAuth client automatically or use pre-registered clientId and optional clientSecret.
     #[serde(rename = "oauthRegistration", default, skip_serializing_if = "Option::is_none")]
     pub oauth_registration: Option<McpConnectionsCreateBodyVariant2OauthRegistration>,
@@ -563,6 +613,7 @@ impl McpConnectionsCreateBodyVariant2 {
             client_id: None,
             client_secret: None,
             headers: None,
+            network: None,
             oauth_registration: None,
             scope: None,
             r#type: None,
@@ -591,6 +642,12 @@ impl McpConnectionsCreateBodyVariant2 {
     /// Sets `headers`, which `new` leaves unset.
     pub fn with_headers(mut self, value: std::collections::BTreeMap<String, String>) -> Self {
         self.headers = Some(value);
+        self
+    }
+
+    /// Sets `network`, which `new` leaves unset.
+    pub fn with_network(mut self, value: McpConnectionsCreateBodyVariant2Network) -> Self {
+        self.network = Some(value);
         self
     }
 
@@ -661,6 +718,49 @@ impl From<&str> for McpConnectionsCreateBodyVariant2AuthType {
             "oauth" => Self::Oauth,
             "client_credentials" => Self::ClientCredentials,
             "static_headers" => Self::StaticHeaders,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum McpConnectionsCreateBodyVariant2Network {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "tailnet")]
+    Tailnet,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl McpConnectionsCreateBodyVariant2Network {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Tailnet => "tailnet",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for McpConnectionsCreateBodyVariant2Network {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for McpConnectionsCreateBodyVariant2Network {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "tailnet" => Self::Tailnet,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -785,6 +885,8 @@ pub struct McpConnectionsRetrieveResponse {
     pub env_keys: Vec<String>,
     #[serde(rename = "headerKeys")]
     pub header_keys: Vec<String>,
+    /// public servers are reached directly. tailnet servers are reached only from sessions, through the organization's Tailscale integration; Tembo's API never contacts them, so they authenticate with the tailnet ACL and optional static headers. Set at creation and cannot be changed.
+    pub network: McpConnectionsRetrieveResponseNetwork,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
@@ -808,6 +910,7 @@ impl McpConnectionsRetrieveResponse {
         created_at: chrono::DateTime<chrono::FixedOffset>,
         env_keys: Vec<String>,
         header_keys: Vec<String>,
+        network: McpConnectionsRetrieveResponseNetwork,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
     ) -> Self {
         Self {
@@ -823,6 +926,7 @@ impl McpConnectionsRetrieveResponse {
             created_at,
             env_keys,
             header_keys,
+            network,
             updated_at,
         }
     }
@@ -961,6 +1065,49 @@ impl From<&str> for McpConnectionsRetrieveResponseAuthType {
     }
 }
 
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum McpConnectionsRetrieveResponseNetwork {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "tailnet")]
+    Tailnet,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl McpConnectionsRetrieveResponseNetwork {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Tailnet => "tailnet",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for McpConnectionsRetrieveResponseNetwork {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for McpConnectionsRetrieveResponseNetwork {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "tailnet" => Self::Tailnet,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `McpConnectionsUpdateResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
@@ -994,6 +1141,8 @@ pub struct McpConnectionsUpdateResponse {
     pub env_keys: Vec<String>,
     #[serde(rename = "headerKeys")]
     pub header_keys: Vec<String>,
+    /// public servers are reached directly. tailnet servers are reached only from sessions, through the organization's Tailscale integration; Tembo's API never contacts them, so they authenticate with the tailnet ACL and optional static headers. Set at creation and cannot be changed.
+    pub network: McpConnectionsUpdateResponseNetwork,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
@@ -1017,6 +1166,7 @@ impl McpConnectionsUpdateResponse {
         created_at: chrono::DateTime<chrono::FixedOffset>,
         env_keys: Vec<String>,
         header_keys: Vec<String>,
+        network: McpConnectionsUpdateResponseNetwork,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
     ) -> Self {
         Self {
@@ -1032,6 +1182,7 @@ impl McpConnectionsUpdateResponse {
             created_at,
             env_keys,
             header_keys,
+            network,
             updated_at,
         }
     }
@@ -1165,6 +1316,49 @@ impl From<&str> for McpConnectionsUpdateResponseAuthType {
             "oauth" => Self::Oauth,
             "client_credentials" => Self::ClientCredentials,
             "static_headers" => Self::StaticHeaders,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum McpConnectionsUpdateResponseNetwork {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "tailnet")]
+    Tailnet,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl McpConnectionsUpdateResponseNetwork {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Tailnet => "tailnet",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for McpConnectionsUpdateResponseNetwork {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for McpConnectionsUpdateResponseNetwork {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "tailnet" => Self::Tailnet,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -1534,6 +1728,8 @@ pub struct McpConnectionsAuthorizeResponseConnection {
     pub env_keys: Vec<String>,
     #[serde(rename = "headerKeys")]
     pub header_keys: Vec<String>,
+    /// public servers are reached directly. tailnet servers are reached only from sessions, through the organization's Tailscale integration; Tembo's API never contacts them, so they authenticate with the tailnet ACL and optional static headers. Set at creation and cannot be changed.
+    pub network: McpConnectionsAuthorizeResponseConnectionNetwork,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
 }
@@ -1558,6 +1754,7 @@ impl McpConnectionsAuthorizeResponseConnection {
         created_at: chrono::DateTime<chrono::FixedOffset>,
         env_keys: Vec<String>,
         header_keys: Vec<String>,
+        network: McpConnectionsAuthorizeResponseConnectionNetwork,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
     ) -> Self {
         Self {
@@ -1573,6 +1770,7 @@ impl McpConnectionsAuthorizeResponseConnection {
             created_at,
             env_keys,
             header_keys,
+            network,
             updated_at,
         }
     }
@@ -1706,6 +1904,49 @@ impl From<&str> for McpConnectionsAuthorizeResponseConnectionAuthType {
             "oauth" => Self::Oauth,
             "client_credentials" => Self::ClientCredentials,
             "static_headers" => Self::StaticHeaders,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum McpConnectionsAuthorizeResponseConnectionNetwork {
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "tailnet")]
+    Tailnet,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl McpConnectionsAuthorizeResponseConnectionNetwork {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Public => "public",
+            Self::Tailnet => "tailnet",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for McpConnectionsAuthorizeResponseConnectionNetwork {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for McpConnectionsAuthorizeResponseConnectionNetwork {
+    fn from(value: &str) -> Self {
+        match value {
+            "public" => Self::Public,
+            "tailnet" => Self::Tailnet,
             other => Self::Unknown(other.to_owned()),
         }
     }

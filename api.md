@@ -24,6 +24,9 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [Update insights](#update-insights)
   - [List insight members](#list-insight-members)
   - [List insight repositories](#list-insight-repositories)
+- [`AuditLogs`](#auditlogs)
+  - [List organization audit logs](#list-organization-audit-logs)
+  - [List audit log filter options](#list-audit-log-filter-options)
 - [`Organizations`](#organizations)
   - [Create an organization](#create-an-organization)
   - [Retrieve an organization](#retrieve-an-organization)
@@ -483,6 +486,32 @@ List repositories included in pull request insights for the current organization
 let response = client.insights().list_repositories().send().await?;
 ```
 
+## `AuditLogs`
+
+### List organization audit logs
+
+Read retained mutation history for the authenticated organization. Requires organization:audit_log:read.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`AuditLogsListResponse`](./src/models/audit_logs.rs) |
+
+```rust
+let response = client.audit_logs().list().send().await?;
+```
+
+### List audit log filter options
+
+Resource and operation pairs recorded for the authenticated organization. Requires organization:audit_log:read.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`AuditLogsListFiltersResponse`](./src/models/audit_logs.rs) |
+
+```rust
+let response = client.audit_logs().list_filters().send().await?;
+```
+
 ## `Organizations`
 
 ### Create an organization
@@ -655,7 +684,10 @@ let response = client
     .roles()
     .create(
         "example",
-        RolesCreateBody::new("x".to_string(), vec![RolesCreateBodyPermission::OrganizationRead]),
+        RolesCreateBody::new(
+            "x".to_string(),
+            vec![RolesCreateBodyPermission::OrganizationAuditLogRead],
+        ),
     )
     .send()
     .await?;
@@ -830,7 +862,7 @@ let response = client
 
 #### Validate organization provider credentials
 
-Validate supplied inference provider credentials for an organization without saving them. The provider must be available on the organization’s plan.
+Validate supplied or stored inference provider credentials for an organization without returning them. The provider must be available on the organization’s plan.
 
 | Direction | Type |
 | --- | --- |

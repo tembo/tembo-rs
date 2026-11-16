@@ -6,6 +6,7 @@ pub mod agents_schedules;
 pub mod agents_triggers;
 pub mod api_keys;
 pub mod artifacts;
+pub mod audit_logs;
 pub mod billing;
 pub mod builds;
 pub mod commands;
@@ -60,6 +61,10 @@ impl crate::client::Tembo {
 
     pub fn insights(&self) -> crate::resources::insights::InsightsResource {
         crate::resources::insights::InsightsResource::new(self.clone())
+    }
+
+    pub fn audit_logs(&self) -> crate::resources::audit_logs::AuditLogsResource {
+        crate::resources::audit_logs::AuditLogsResource::new(self.clone())
     }
 
     pub fn organizations(&self) -> crate::resources::organizations::OrganizationsResource {

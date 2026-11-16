@@ -43,8 +43,6 @@ pub enum ProjectsUpdateDefaultsResponseSandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -66,7 +64,6 @@ impl ProjectsUpdateDefaultsResponseSandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -88,7 +85,6 @@ impl From<&str> for ProjectsUpdateDefaultsResponseSandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -137,8 +133,6 @@ pub enum ProjectsUpdateDefaultsBodySandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
-    #[serde(rename = "small")]
-    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -160,7 +154,6 @@ impl ProjectsUpdateDefaultsBodySandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
-            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -182,7 +175,6 @@ impl From<&str> for ProjectsUpdateDefaultsBodySandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
-            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
