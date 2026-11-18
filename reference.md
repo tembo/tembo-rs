@@ -10,7 +10,7 @@ List API keys
 - Response body: `application/json`
 - Errors: `400, 404, 500`
 
-### client.api_keys().create(…)
+### client.api_keys().create()
 
 Create an API key
 
@@ -267,6 +267,65 @@ Archive a role with an explicit replacement
 
 - HTTP: `DELETE /v1/organizations/{organizationId}/roles/{roleId}`
 - Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().list(…)
+
+List teams
+
+- HTTP: `GET /v1/organizations/{organizationId}/teams`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().create(…)
+
+Create a team
+
+- HTTP: `POST /v1/organizations/{organizationId}/teams`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().retrieve(…)
+
+Retrieve a team
+
+- HTTP: `GET /v1/organizations/{organizationId}/teams/{teamId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().update(…)
+
+Rename a team or change its icon
+
+- HTTP: `PATCH /v1/organizations/{organizationId}/teams/{teamId}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().delete(…)
+
+Delete a team, its memberships and its shares
+
+- HTTP: `DELETE /v1/organizations/{organizationId}/teams/{teamId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().add_member(…)
+
+Add a member to a team
+
+- HTTP: `POST /v1/organizations/{organizationId}/teams/{teamId}/members`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.organizations().teams().remove_member(…)
+
+Remove a member from a team
+
+- HTTP: `DELETE /v1/organizations/{organizationId}/teams/{teamId}/members/{userId}`
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409`
 
@@ -759,6 +818,31 @@ List session commands
 - HTTP: `GET /v1/sessions/{sessionId}/commands`
 - Response body: `application/json`
 - Errors: `400, 401, 403, 404, 409, 500, 502`
+
+### client.sessions().shares().list(…)
+
+List shares
+
+- HTTP: `GET /v1/sessions/{sessionId}/sharing`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.sessions().shares().create(…)
+
+Share
+
+- HTTP: `POST /v1/sessions/{sessionId}/sharing`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.sessions().shares().delete(…)
+
+Remove a share
+
+- HTTP: `DELETE /v1/sessions/{sessionId}/sharing/{shareId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
 
 ### client.projects().update_defaults(…)
 
@@ -1294,7 +1378,7 @@ Sync an integration
 - Response body: `application/json`
 - Errors: `400, 401, 403, 404, 409, 500, 502, 503, 504`
 
-### client.integrations().sync_all(…)
+### client.integrations().sync_all()
 
 Sync eligible integrations
 
@@ -1443,23 +1527,27 @@ Live resource subscriptions
 
 ## Models
 
-- `TipTapDocument`
-- `TipTapNode`
+- `RuntimeAgentOptions`
+- `AgentOptionsInput`
 - `TipTapLinkMark`
-- `TipTapMark`
 - `TipTapExtensionAttributes`
+- `TipTapMark`
 - `TipTapImageAttributes`
 - `TipTapMentionAttributes`
+- `TipTapNode`
+- `TipTapImageNode`
+- `TipTapMentionNode`
+- `TipTapHeadingNode`
+- `TipTapOrderedListNode`
+- `TipTapTaskItemNode`
+- `TipTapCodeBlockNode`
 - `TipTapContentNode`
 - `CustomDocument`
-- `AgentOptionsInput`
+- `TipTapDocument`
 - `AgentOptions`
-- `RuntimeAgentOptions`
-- `SessionTipTapDocument`
 - `SessionDocumentNode`
+- `SessionTipTapDocument`
 - `SessionEventData`
-- `AgentState`
-- `TriggerFilters`
 - `AtlassianIssueAddedToBoardFilters`
 - `AtlassianIssueAssignedToUserFilters`
 - `AtlassianIssueCommentCreatedFilters`
@@ -1501,10 +1589,12 @@ Live resource subscriptions
 - `SlackMessageReactionAddedFilters`
 - `SlackMessageSentInChannelFilters`
 - `EmptyTriggerFilters`
+- `TriggerFilters`
+- `GithubPullRequestClosedFiltersOutput`
+- `GithubPullRequestMergedFiltersOutput`
+- `GithubPullRequestOpenedFiltersOutput`
+- `GithubPullRequestReadyForReviewFiltersOutput`
+- `GithubPullRequestSynchronizeFiltersOutput`
+- `TriggerFiltersOutput`
+- `AgentState`
 - `AgentRunEventPayload`
-- `TipTapImageNode`
-- `TipTapMentionNode`
-- `TipTapHeadingNode`
-- `TipTapOrderedListNode`
-- `TipTapTaskItemNode`
-- `TipTapCodeBlockNode`

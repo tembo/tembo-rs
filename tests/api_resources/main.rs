@@ -58,9 +58,11 @@ mod resources {
     mod runtimes;
     mod secrets;
     mod sessions;
+    mod shares;
     mod skills;
     mod snapshots;
     mod sources;
+    mod teams;
     mod templates;
     mod users;
     mod users_environment_variables;
@@ -78,7 +80,7 @@ use ::tembo_rs::*;
 /// Fingerprint of the case list the generator's smoke runner checks this suite
 /// against (written only for generator tooling). The runner refuses a list whose
 /// digest differs, so a list left by an earlier generation is never trusted.
-const SMOKE_CASE_LIST_DIGEST: &str = "bf8776c0b8ff2a98";
+const SMOKE_CASE_LIST_DIGEST: &str = "53c0f3b42d1d7b3f";
 
 /// The variable naming the server the smoke tests call.
 const TEST_BASE_URL_ENV: &str = "TEST_API_BASE_URL";

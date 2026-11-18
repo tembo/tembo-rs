@@ -138,36 +138,15 @@ async fn test() {
 }
 
 #[tokio::test]
-async fn sync_required_params() {
+async fn sync() {
     crate::smoke_case(
-        "integrations.sync:required",
+        "integrations.sync:single",
         "sync",
         "/v1/integrations/{integrationId}/sync",
         |client| async move {
             let _ = client
                 .integrations()
-                .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7", IntegrationsSyncBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn sync_all_params() {
-    crate::smoke_case(
-        "integrations.sync:all",
-        "sync",
-        "/v1/integrations/{integrationId}/sync",
-        |client| async move {
-            let _ = client
-                .integrations()
-                .sync(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    IntegrationsSyncBody::new().with_mode(IntegrationsSyncBodyMode::Queued),
-                )
+                .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .send()
                 .await?;
             Ok(())
@@ -183,11 +162,7 @@ async fn sync_all() {
         "syncAll",
         "/v1/integrations/sync",
         |client| async move {
-            let _ = client
-                .integrations()
-                .sync_all(IntegrationsSyncAllBody::new())
-                .send()
-                .await?;
+            let _ = client.integrations().sync_all().send().await?;
             Ok(())
         },
     )

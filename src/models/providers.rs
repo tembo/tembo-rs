@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 pub struct ProvidersListResponse {
     #[serde(rename = "installedCounts")]
-    pub installed_counts: ProvidersListResponseInstalledCounts,
+    pub installed_counts: std::collections::BTreeMap<String, i64>,
     pub items: Vec<ProvidersListResponseItem>,
     #[serde(rename = "nextCursor", default)]
     pub next_cursor: Option<String>,
@@ -23,7 +23,7 @@ impl ProvidersListResponse {
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
     pub fn new(
-        installed_counts: ProvidersListResponseInstalledCounts,
+        installed_counts: std::collections::BTreeMap<String, i64>,
         items: Vec<ProvidersListResponseItem>,
         next_cursor: Option<String>,
     ) -> Self {
@@ -32,190 +32,6 @@ impl ProvidersListResponse {
             items,
             next_cursor,
         }
-    }
-}
-
-/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `ProvidersListResponseInstalledCounts::new` and the `with_*` setters rather than a struct literal. Fields stay
-/// public for reading.
-///
-/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
-/// breaks callers through `new` as well.
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub struct ProvidersListResponseInstalledCounts {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub github: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub gitlab: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub bitbucket: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub atlassian: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub linear: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub slack: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sentry: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub aws: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub agent: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub notion: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub postgres: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub bigquery: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub azure: Option<i64>,
-    #[serde(rename = "ms-teams", default, skip_serializing_if = "Option::is_none")]
-    pub ms_teams: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub snyk: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub hubspot: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub openconnect: Option<i64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tailscale: Option<i64>,
-}
-
-impl ProvidersListResponseInstalledCounts {
-    /// Creates a new `ProvidersListResponseInstalledCounts` from its required fields, leaving every optional one unset.
-    ///
-    /// Set an optional field with its `with_*` setter:
-    /// `ProvidersListResponseInstalledCounts::new().with_github(…)`.
-    pub fn new() -> Self {
-        Self {
-            github: None,
-            gitlab: None,
-            bitbucket: None,
-            atlassian: None,
-            linear: None,
-            slack: None,
-            sentry: None,
-            aws: None,
-            agent: None,
-            notion: None,
-            postgres: None,
-            bigquery: None,
-            azure: None,
-            ms_teams: None,
-            snyk: None,
-            hubspot: None,
-            openconnect: None,
-            tailscale: None,
-        }
-    }
-
-    /// Sets `github`, which `new` leaves unset.
-    pub fn with_github(mut self, value: i64) -> Self {
-        self.github = Some(value);
-        self
-    }
-
-    /// Sets `gitlab`, which `new` leaves unset.
-    pub fn with_gitlab(mut self, value: i64) -> Self {
-        self.gitlab = Some(value);
-        self
-    }
-
-    /// Sets `bitbucket`, which `new` leaves unset.
-    pub fn with_bitbucket(mut self, value: i64) -> Self {
-        self.bitbucket = Some(value);
-        self
-    }
-
-    /// Sets `atlassian`, which `new` leaves unset.
-    pub fn with_atlassian(mut self, value: i64) -> Self {
-        self.atlassian = Some(value);
-        self
-    }
-
-    /// Sets `linear`, which `new` leaves unset.
-    pub fn with_linear(mut self, value: i64) -> Self {
-        self.linear = Some(value);
-        self
-    }
-
-    /// Sets `slack`, which `new` leaves unset.
-    pub fn with_slack(mut self, value: i64) -> Self {
-        self.slack = Some(value);
-        self
-    }
-
-    /// Sets `sentry`, which `new` leaves unset.
-    pub fn with_sentry(mut self, value: i64) -> Self {
-        self.sentry = Some(value);
-        self
-    }
-
-    /// Sets `aws`, which `new` leaves unset.
-    pub fn with_aws(mut self, value: i64) -> Self {
-        self.aws = Some(value);
-        self
-    }
-
-    /// Sets `agent`, which `new` leaves unset.
-    pub fn with_agent(mut self, value: i64) -> Self {
-        self.agent = Some(value);
-        self
-    }
-
-    /// Sets `notion`, which `new` leaves unset.
-    pub fn with_notion(mut self, value: i64) -> Self {
-        self.notion = Some(value);
-        self
-    }
-
-    /// Sets `postgres`, which `new` leaves unset.
-    pub fn with_postgres(mut self, value: i64) -> Self {
-        self.postgres = Some(value);
-        self
-    }
-
-    /// Sets `bigquery`, which `new` leaves unset.
-    pub fn with_bigquery(mut self, value: i64) -> Self {
-        self.bigquery = Some(value);
-        self
-    }
-
-    /// Sets `azure`, which `new` leaves unset.
-    pub fn with_azure(mut self, value: i64) -> Self {
-        self.azure = Some(value);
-        self
-    }
-
-    /// Sets `ms_teams`, which `new` leaves unset.
-    pub fn with_ms_teams(mut self, value: i64) -> Self {
-        self.ms_teams = Some(value);
-        self
-    }
-
-    /// Sets `snyk`, which `new` leaves unset.
-    pub fn with_snyk(mut self, value: i64) -> Self {
-        self.snyk = Some(value);
-        self
-    }
-
-    /// Sets `hubspot`, which `new` leaves unset.
-    pub fn with_hubspot(mut self, value: i64) -> Self {
-        self.hubspot = Some(value);
-        self
-    }
-
-    /// Sets `openconnect`, which `new` leaves unset.
-    pub fn with_openconnect(mut self, value: i64) -> Self {
-        self.openconnect = Some(value);
-        self
-    }
-
-    /// Sets `tailscale`, which `new` leaves unset.
-    pub fn with_tailscale(mut self, value: i64) -> Self {
-        self.tailscale = Some(value);
-        self
     }
 }
 

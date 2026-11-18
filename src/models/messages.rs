@@ -5,47 +5,8 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-/// Rich-text document containing text, formatting, images, and mentions. A document typically has a "doc" root with nested content nodes.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(untagged)]
-#[non_exhaustive]
-pub enum TipTapDocument {
-    TipTapImageNode(TipTapImageNode),
-    TipTapMentionNode(TipTapMentionNode),
-    TipTapHeadingNode(TipTapHeadingNode),
-    TipTapOrderedListNode(TipTapOrderedListNode),
-    TipTapTaskItemNode(TipTapTaskItemNode),
-    TipTapCodeBlockNode(TipTapCodeBlockNode),
-    TipTapContentNode(TipTapContentNode),
-    CustomDocument(std::collections::BTreeMap<String, serde_json::Value>),
-    /// A variant not recognized by this version of the SDK, preserved verbatim.
-    ///
-    /// Match the specific variants first. Matching this one directly is an
-    /// anti-pattern: that arm silently stops matching once a future SDK
-    /// release adds the real variant.
-    #[serde(untagged)]
-    Unknown(serde_json::Value),
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(untagged)]
-#[non_exhaustive]
-pub enum TipTapNode {
-    TipTapImageNode(TipTapImageNode),
-    TipTapMentionNode(TipTapMentionNode),
-    TipTapHeadingNode(TipTapHeadingNode),
-    TipTapOrderedListNode(TipTapOrderedListNode),
-    TipTapTaskItemNode(TipTapTaskItemNode),
-    TipTapCodeBlockNode(TipTapCodeBlockNode),
-    TipTapContentNode(TipTapContentNode),
-    /// A variant not recognized by this version of the SDK, preserved verbatim.
-    ///
-    /// Match the specific variants first. Matching this one directly is an
-    /// anti-pattern: that arm silently stops matching once a future SDK
-    /// release adds the real variant.
-    #[serde(untagged)]
-    Unknown(serde_json::Value),
-}
+/// Runtime-specific execution settings and provider extensions.
+pub type RuntimeAgentOptions = std::collections::BTreeMap<String, serde_json::Value>;
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `TipTapLinkMark::new`
 /// and the `with_*` setters rather than a struct literal. Fields stay public for reading.
@@ -86,6 +47,8 @@ impl TipTapLinkMark {
     }
 }
 
+pub type TipTapExtensionAttributes = std::collections::BTreeMap<String, serde_json::Value>;
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with `TipTapMark::new` and
 /// the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -124,8 +87,6 @@ impl TipTapMark {
         self
     }
 }
-
-pub type TipTapExtensionAttributes = std::collections::BTreeMap<String, serde_json::Value>;
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `TipTapImageAttributes::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
@@ -374,87 +335,25 @@ impl TipTapMentionAttributes {
     }
 }
 
-/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `TipTapContentNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
-///
-/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
-/// breaks callers through `new` as well.
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 #[non_exhaustive]
-pub struct TipTapContentNode {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub text: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub marks: Option<Vec<TipTapContentNodeMark>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub r#type: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub content: Option<Vec<TipTapNode>>,
-    /// Additional properties not captured by the named fields.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-
-impl TipTapContentNode {
-    /// Creates a new `TipTapContentNode` from its required fields, leaving every optional one unset.
+pub enum TipTapNode {
+    TipTapImageNode(TipTapImageNode),
+    TipTapMentionNode(TipTapMentionNode),
+    TipTapHeadingNode(TipTapHeadingNode),
+    TipTapOrderedListNode(TipTapOrderedListNode),
+    TipTapTaskItemNode(TipTapTaskItemNode),
+    TipTapCodeBlockNode(TipTapCodeBlockNode),
+    TipTapContentNode(TipTapContentNode),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
-    /// Set an optional field with its `with_*` setter:
-    /// `TipTapContentNode::new().with_text(…)`.
-    pub fn new() -> Self {
-        Self {
-            text: None,
-            marks: None,
-            r#type: None,
-            attrs: None,
-            content: None,
-            additional_properties: std::collections::BTreeMap::new(),
-        }
-    }
-
-    /// Sets `text`, which `new` leaves unset.
-    pub fn with_text(mut self, value: impl Into<String>) -> Self {
-        self.text = Some(value.into());
-        self
-    }
-
-    /// Sets `marks`, which `new` leaves unset.
-    pub fn with_marks(mut self, value: Vec<TipTapContentNodeMark>) -> Self {
-        self.marks = Some(value);
-        self
-    }
-
-    /// Sets `type`, which `new` leaves unset.
-    pub fn with_type(mut self, value: impl Into<String>) -> Self {
-        self.r#type = Some(value.into());
-        self
-    }
-
-    /// Sets `attrs`, which `new` leaves unset.
-    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
-        self.attrs = Some(value);
-        self
-    }
-
-    /// Sets `content`, which `new` leaves unset.
-    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
-        self.content = Some(value);
-        self
-    }
-
-    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
-    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
-        self.additional_properties.insert(key.into(), value);
-        self
-    }
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
 }
-
-/// Rich-text content with custom document properties and node attributes.
-pub type CustomDocument = std::collections::BTreeMap<String, serde_json::Value>;
-
-/// Runtime-specific execution settings and provider extensions.
-pub type RuntimeAgentOptions = std::collections::BTreeMap<String, serde_json::Value>;
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `TipTapImageNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
@@ -850,6 +749,107 @@ impl TipTapCodeBlockNode {
         self.additional_properties.insert(key.into(), value);
         self
     }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `TipTapContentNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct TipTapContentNode {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub marks: Option<Vec<TipTapContentNodeMark>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub r#type: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<std::collections::BTreeMap<String, serde_json::Value>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content: Option<Vec<TipTapNode>>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl TipTapContentNode {
+    /// Creates a new `TipTapContentNode` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `TipTapContentNode::new().with_text(…)`.
+    pub fn new() -> Self {
+        Self {
+            text: None,
+            marks: None,
+            r#type: None,
+            attrs: None,
+            content: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `text`, which `new` leaves unset.
+    pub fn with_text(mut self, value: impl Into<String>) -> Self {
+        self.text = Some(value.into());
+        self
+    }
+
+    /// Sets `marks`, which `new` leaves unset.
+    pub fn with_marks(mut self, value: Vec<TipTapContentNodeMark>) -> Self {
+        self.marks = Some(value);
+        self
+    }
+
+    /// Sets `type`, which `new` leaves unset.
+    pub fn with_type(mut self, value: impl Into<String>) -> Self {
+        self.r#type = Some(value.into());
+        self
+    }
+
+    /// Sets `attrs`, which `new` leaves unset.
+    pub fn with_attrs(mut self, value: std::collections::BTreeMap<String, serde_json::Value>) -> Self {
+        self.attrs = Some(value);
+        self
+    }
+
+    /// Sets `content`, which `new` leaves unset.
+    pub fn with_content(mut self, value: Vec<TipTapNode>) -> Self {
+        self.content = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Rich-text content with custom document properties and node attributes.
+pub type CustomDocument = std::collections::BTreeMap<String, serde_json::Value>;
+
+/// Rich-text document containing text, formatting, images, and mentions. A document typically has a "doc" root with nested content nodes.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum TipTapDocument {
+    TipTapImageNode(TipTapImageNode),
+    TipTapMentionNode(TipTapMentionNode),
+    TipTapHeadingNode(TipTapHeadingNode),
+    TipTapOrderedListNode(TipTapOrderedListNode),
+    TipTapTaskItemNode(TipTapTaskItemNode),
+    TipTapCodeBlockNode(TipTapCodeBlockNode),
+    TipTapContentNode(TipTapContentNode),
+    CustomDocument(std::collections::BTreeMap<String, serde_json::Value>),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
@@ -2156,21 +2156,6 @@ impl TipTapMentionAttributesMetadata {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]
-pub enum TipTapContentNodeMark {
-    TipTapLinkMark(TipTapLinkMark),
-    TipTapMark(TipTapMark),
-    /// A variant not recognized by this version of the SDK, preserved verbatim.
-    ///
-    /// Match the specific variants first. Matching this one directly is an
-    /// anti-pattern: that arm silently stops matching once a future SDK
-    /// release adds the real variant.
-    #[serde(untagged)]
-    Unknown(serde_json::Value),
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(untagged)]
-#[non_exhaustive]
 pub enum TipTapImageNodeMark {
     TipTapLinkMark(TipTapLinkMark),
     TipTapMark(TipTapMark),
@@ -2440,4 +2425,19 @@ impl TipTapCodeBlockNodeAttrs {
         self.additional_properties.insert(key.into(), value);
         self
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum TipTapContentNodeMark {
+    TipTapLinkMark(TipTapLinkMark),
+    TipTapMark(TipTapMark),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
 }

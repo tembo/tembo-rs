@@ -41,9 +41,9 @@ async fn list_all_params() {
 }
 
 #[tokio::test]
-async fn create() {
+async fn create_required_params() {
     crate::smoke_case(
-        "organizations.members.create:single",
+        "organizations.members.create:required",
         "create",
         "/v1/organizations/{organizationId}/members",
         |client| async move {
@@ -53,6 +53,29 @@ async fn create() {
                 .create(
                     "example",
                     MembersCreateBody::new("user@example.com".to_string(), "x".to_string()),
+                )
+                .send()
+                .await?;
+            Ok(())
+        },
+    )
+    .await;
+}
+
+#[tokio::test]
+async fn create_all_params() {
+    crate::smoke_case(
+        "organizations.members.create:all",
+        "create",
+        "/v1/organizations/{organizationId}/members",
+        |client| async move {
+            let _ = client
+                .organizations()
+                .members()
+                .create(
+                    "example",
+                    MembersCreateBody::new("user@example.com".to_string(), "x".to_string())
+                        .with_team_ids(vec!["x".to_string()]),
                 )
                 .send()
                 .await?;
@@ -82,39 +105,16 @@ async fn retrieve() {
 }
 
 #[tokio::test]
-async fn update_required_params() {
+async fn update() {
     crate::smoke_case(
-        "organizations.members.update:required",
+        "organizations.members.update:single",
         "update",
         "/v1/organizations/{organizationId}/members/{memberId}",
         |client| async move {
             let _ = client
                 .organizations()
                 .members()
-                .update("example", "example", MembersUpdateBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn update_all_params() {
-    crate::smoke_case(
-        "organizations.members.update:all",
-        "update",
-        "/v1/organizations/{organizationId}/members/{memberId}",
-        |client| async move {
-            let _ = client
-                .organizations()
-                .members()
-                .update(
-                    "example",
-                    "example",
-                    MembersUpdateBody::new().with_role_id("".to_string()),
-                )
+                .update("example", "example")
                 .send()
                 .await?;
             Ok(())

@@ -44,6 +44,14 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Retrieve an organization role](#retrieve-an-organization-role)
     - [Update a organization role](#update-a-organization-role)
     - [Archive a role with an explicit replacement](#archive-a-role-with-an-explicit-replacement)
+  - [`Organizations Teams`](#organizations-teams)
+    - [List teams](#list-teams)
+    - [Create a team](#create-a-team)
+    - [Retrieve a team](#retrieve-a-team)
+    - [Rename a team or change its icon](#rename-a-team-or-change-its-icon)
+    - [Delete a team, its memberships and its shares](#delete-a-team-its-memberships-and-its-shares)
+    - [Add a member to a team](#add-a-member-to-a-team)
+    - [Remove a member from a team](#remove-a-member-from-a-team)
   - [`Organizations Secrets`](#organizations-secrets)
     - [List organization secrets](#list-organization-secrets)
     - [Create an organization secret](#create-an-organization-secret)
@@ -123,6 +131,10 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [Update a session queue](#update-a-session-queue)
   - [`Sessions Commands`](#sessions-commands)
     - [List session commands](#list-session-commands)
+  - [`Sessions Shares`](#sessions-shares)
+    - [List shares](#list-shares)
+    - [Share](#share)
+    - [Remove a share](#remove-a-share)
 - [`Projects`](#projects)
   - [Update project defaults](#update-project-defaults)
   - [Retrieve project defaults](#retrieve-project-defaults)
@@ -265,7 +277,7 @@ Create an API key for the current organization. Optionally set `expiresAt` to a 
 | Response | [`ApiKeysCreateResponse`](./src/models/api_keys.rs) |
 
 ```rust
-let response = client.api_keys().create(ApiKeysCreateBody::new()).send().await?;
+let response = client.api_keys().create().send().await?;
 ```
 
 ### Retrieve an API key
@@ -383,7 +395,7 @@ Update an organization skill. When files are provided, they replace the complete
 ```rust
 let response = client
     .skills()
-    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SkillsUpdateBody::new())
+    .update("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
@@ -637,7 +649,7 @@ Update an organization member role.
 let response = client
     .organizations()
     .members()
-    .update("example", "example", MembersUpdateBody::new())
+    .update("example", "example")
     .send()
     .await?;
 ```
@@ -719,7 +731,7 @@ let response = client
 let response = client
     .organizations()
     .roles()
-    .update("example", "example", RolesUpdateBody::new())
+    .update("example", "example")
     .send()
     .await?;
 ```
@@ -736,6 +748,111 @@ let response = client
     .organizations()
     .roles()
     .delete("example", "example", RolesDeleteBody::new("x".to_string()))
+    .send()
+    .await?;
+```
+
+### `Organizations Teams`
+
+#### List teams
+
+| Direction | Type |
+| --- | --- |
+| Response | [`TeamsListResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client.organizations().teams().list("example").send().await?;
+```
+
+#### Create a team
+
+| Direction | Type |
+| --- | --- |
+| Request | [`TeamsCreateBody`](./src/models/teams.rs) |
+| Response | [`TeamsCreateResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .create("example", TeamsCreateBody::new("x".to_string()))
+    .send()
+    .await?;
+```
+
+#### Retrieve a team
+
+| Direction | Type |
+| --- | --- |
+| Response | [`TeamsRetrieveResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .retrieve("example", "example")
+    .send()
+    .await?;
+```
+
+#### Rename a team or change its icon
+
+| Direction | Type |
+| --- | --- |
+| Request | [`TeamsUpdateBody`](./src/models/teams.rs) |
+| Response | [`TeamsUpdateResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .update("example", "example")
+    .send()
+    .await?;
+```
+
+#### Delete a team, its memberships and its shares
+
+| Direction | Type |
+| --- | --- |
+| Response | [`TeamsDeleteResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .delete("example", "example")
+    .send()
+    .await?;
+```
+
+#### Add a member to a team
+
+| Direction | Type |
+| --- | --- |
+| Request | [`TeamsAddMemberBody`](./src/models/teams.rs) |
+| Response | [`TeamsAddMemberResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .add_member("example", "example", TeamsAddMemberBody::new("x".to_string()))
+    .send()
+    .await?;
+```
+
+#### Remove a member from a team
+
+| Direction | Type |
+| --- | --- |
+| Response | [`TeamsRemoveMemberResponse`](./src/models/teams.rs) |
+
+```rust
+let response = client
+    .organizations()
+    .teams()
+    .remove_member("example", "example", "example")
     .send()
     .await?;
 ```
@@ -1233,12 +1350,7 @@ Configure personal agent/model and project defaults, system instructions, follow
 | Response | [`SettingsUpdateResponse2`](./src/models/users_settings.rs) |
 
 ```rust
-let response = client
-    .users()
-    .settings()
-    .update("example", SettingsUpdateBody2::new())
-    .send()
-    .await?;
+let response = client.users().settings().update("example").send().await?;
 ```
 
 ### `Users ConnectedAccounts`
@@ -1401,7 +1513,7 @@ let response = client.sessions().list().send().await?;
 
 ### Create a session
 
-Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, Build (normal) or Plan (planning) mode, and private or workspace visibility.
+Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, and Build (normal) or Plan (planning) mode. New sessions are private to their creator until shared through grants.
 
 | Direction | Type |
 | --- | --- |
@@ -1418,8 +1530,8 @@ let response = client
             .with_mcp_servers(vec![])
             .with_project_id("your-project-id".to_string())
             .with_target_branch("main".to_string())
-            .with_visibility(SessionsCreateBodyVisibility::Private)
-            .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
+            .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()])
+            .with_visibility(SessionsCreateBodyVisibility::Private),
     )
     .send()
     .await?;
@@ -1443,7 +1555,7 @@ let response = client
 
 ### Update a session
 
-Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions. Submit memoryMb alone to request asynchronous memory growth for a running adaptive sandbox within project limits; sandbox metrics report progress.
+Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, or configure its workspace and branches. Share it through its sharing subresource; the deprecated visibility field remains for older clients. Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions. Submit memoryMb alone to request asynchronous memory growth for a running adaptive sandbox within project limits; sandbox metrics report progress.
 
 | Direction | Type |
 | --- | --- |
@@ -1486,7 +1598,7 @@ Create an independent session from a fresh workspace snapshot, or the latest sav
 ```rust
 let response = client
     .sessions()
-    .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsForkBody::new())
+    .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
@@ -1701,6 +1813,41 @@ let response = client
     .list("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
+```
+
+### `Sessions Shares`
+
+#### List shares
+
+List the people, teams and organization this is shared with. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesListResponse`](./src/models/shares.rs) |
+
+```rust
+let response = client.sessions().shares().list("example").send().await?;
+```
+
+#### Share
+
+Share with a person, a team or the whole organization. Each member then acts only as far as their role allows. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`SharesCreateBody`](./src/models/shares.rs) |
+| Response | [`SharesCreateResponse`](./src/models/shares.rs) |
+
+#### Remove a share
+
+Stop sharing with one person, team or the organization. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesDeleteResponse`](./src/models/shares.rs) |
+
+```rust
+let response = client.sessions().shares().delete("example", "example").send().await?;
 ```
 
 ## `Projects`
@@ -1964,12 +2111,7 @@ Build selected project sizes or rebuild one snapshot.
 | Response | [`BuildsCreateResponse`](./src/models/builds.rs) |
 
 ```rust
-let response = client
-    .projects()
-    .builds()
-    .create("example", BuildsCreateBody::new())
-    .send()
-    .await?;
+let response = client.projects().builds().create("example").send().await?;
 ```
 
 #### Retrieve a project build
@@ -2763,7 +2905,7 @@ Queue or immediately perform an integration sync.
 ```rust
 let response = client
     .integrations()
-    .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7", IntegrationsSyncBody::new())
+    .sync("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
 ```
@@ -2778,11 +2920,7 @@ Queue integration and pull-request sync jobs for integrations with enabled repos
 | Response | [`IntegrationsSyncAllResponse`](./src/models/integrations.rs) |
 
 ```rust
-let response = client
-    .integrations()
-    .sync_all(IntegrationsSyncAllBody::new())
-    .send()
-    .await?;
+let response = client.integrations().sync_all().send().await?;
 ```
 
 ### Retrieve integration sync status

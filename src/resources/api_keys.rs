@@ -17,8 +17,8 @@ impl ApiKeysResource {
     }
 
     /// Create an API key
-    pub fn create(&self, body: crate::models::ApiKeysCreateBody) -> CreateRequestBuilder {
-        CreateRequestBuilder::new(self.client.clone(), body)
+    pub fn create(&self) -> CreateRequestBuilder {
+        CreateRequestBuilder::new(self.client.clone())
     }
 
     /// Retrieve an API key
@@ -134,21 +134,26 @@ impl ListRequestBuilder {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
-    body: crate::models::ApiKeysCreateBody,
+    body: Option<crate::models::ApiKeysCreateBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl CreateRequestBuilder {
-    fn new(client: crate::client::Tembo, body: crate::models::ApiKeysCreateBody) -> Self {
+    fn new(client: crate::client::Tembo) -> Self {
         Self {
             client,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::ApiKeysCreateBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -192,7 +197,7 @@ impl CreateRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

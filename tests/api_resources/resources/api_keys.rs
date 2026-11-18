@@ -28,31 +28,9 @@ async fn list_all_params() {
 }
 
 #[tokio::test]
-async fn create_required_params() {
-    crate::smoke_case(
-        "apiKeys.create:required",
-        "create",
-        "/v1/api-keys",
-        |client| async move {
-            let _ = client.api_keys().create(ApiKeysCreateBody::new()).send().await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn create_all_params() {
-    crate::smoke_case("apiKeys.create:all", "create", "/v1/api-keys", |client| async move {
-        let _ = client
-            .api_keys()
-            .create(
-                ApiKeysCreateBody::new()
-                    .with_expires_at(chrono::Utc::now().fixed_offset())
-                    .with_name("x".to_string()),
-            )
-            .send()
-            .await?;
+async fn create() {
+    crate::smoke_case("apiKeys.create:single", "create", "/v1/api-keys", |client| async move {
+        let _ = client.api_keys().create().send().await?;
         Ok(())
     })
     .await;

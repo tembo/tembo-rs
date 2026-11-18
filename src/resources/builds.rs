@@ -17,8 +17,8 @@ impl BuildsResource {
     }
 
     /// Create a project build
-    pub fn create(&self, project_id: impl Into<String>, body: crate::models::BuildsCreateBody) -> CreateRequestBuilder {
-        CreateRequestBuilder::new(self.client.clone(), project_id.into(), body)
+    pub fn create(&self, project_id: impl Into<String>) -> CreateRequestBuilder {
+        CreateRequestBuilder::new(self.client.clone(), project_id.into())
     }
 
     /// Retrieve a project build
@@ -128,22 +128,27 @@ impl ListRequestBuilder {
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
     project_id: String,
-    body: crate::models::BuildsCreateBody,
+    body: Option<crate::models::BuildsCreateBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl CreateRequestBuilder {
-    fn new(client: crate::client::Tembo, project_id: String, body: crate::models::BuildsCreateBody) -> Self {
+    fn new(client: crate::client::Tembo, project_id: String) -> Self {
         Self {
             client,
             project_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::BuildsCreateBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -187,7 +192,7 @@ impl CreateRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

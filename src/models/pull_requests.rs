@@ -625,8 +625,6 @@ pub struct PullRequestsListResponseItemSession {
     pub kind: String,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub visibility: Option<PullRequestsListResponseItemSessionVisibility>,
 }
 
 impl PullRequestsListResponseItemSession {
@@ -634,9 +632,6 @@ impl PullRequestsListResponseItemSession {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    ///
-    /// Set an optional field with its `with_*` setter:
-    /// `PullRequestsListResponseItemSession::new(id, title, kind, html_url).with_visibility(…)`.
     pub fn new(
         id: impl Into<String>,
         title: impl Into<String>,
@@ -648,56 +643,6 @@ impl PullRequestsListResponseItemSession {
             title: title.into(),
             kind: kind.into(),
             html_url: html_url.into(),
-            visibility: None,
-        }
-    }
-
-    /// Sets `visibility`, which `new` leaves unset.
-    pub fn with_visibility(mut self, value: PullRequestsListResponseItemSessionVisibility) -> Self {
-        self.visibility = Some(value);
-        self
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum PullRequestsListResponseItemSessionVisibility {
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl PullRequestsListResponseItemSessionVisibility {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Private => "private",
-            Self::Public => "public",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for PullRequestsListResponseItemSessionVisibility {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for PullRequestsListResponseItemSessionVisibility {
-    fn from(value: &str) -> Self {
-        match value {
-            "private" => Self::Private,
-            "public" => Self::Public,
-            other => Self::Unknown(other.to_owned()),
         }
     }
 }
@@ -1264,8 +1209,6 @@ pub struct PullRequestsRetrieveResponseSession {
     pub kind: String,
     #[serde(rename = "htmlUrl")]
     pub html_url: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub visibility: Option<PullRequestsRetrieveResponseSessionVisibility>,
 }
 
 impl PullRequestsRetrieveResponseSession {
@@ -1273,9 +1216,6 @@ impl PullRequestsRetrieveResponseSession {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
-    ///
-    /// Set an optional field with its `with_*` setter:
-    /// `PullRequestsRetrieveResponseSession::new(id, title, kind, html_url).with_visibility(…)`.
     pub fn new(
         id: impl Into<String>,
         title: impl Into<String>,
@@ -1287,56 +1227,6 @@ impl PullRequestsRetrieveResponseSession {
             title: title.into(),
             kind: kind.into(),
             html_url: html_url.into(),
-            visibility: None,
-        }
-    }
-
-    /// Sets `visibility`, which `new` leaves unset.
-    pub fn with_visibility(mut self, value: PullRequestsRetrieveResponseSessionVisibility) -> Self {
-        self.visibility = Some(value);
-        self
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum PullRequestsRetrieveResponseSessionVisibility {
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl PullRequestsRetrieveResponseSessionVisibility {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Private => "private",
-            Self::Public => "public",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for PullRequestsRetrieveResponseSessionVisibility {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for PullRequestsRetrieveResponseSessionVisibility {
-    fn from(value: &str) -> Self {
-        match value {
-            "private" => Self::Private,
-            "public" => Self::Public,
-            other => Self::Unknown(other.to_owned()),
         }
     }
 }

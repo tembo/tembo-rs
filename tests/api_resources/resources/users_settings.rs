@@ -18,62 +18,13 @@ async fn retrieve() {
 }
 
 #[tokio::test]
-async fn update_required_params() {
+async fn update() {
     crate::smoke_case(
-        "users.settings.update:required",
+        "users.settings.update:single",
         "update",
         "/v1/users/{userId}/settings",
         |client| async move {
-            let _ = client
-                .users()
-                .settings()
-                .update("example", SettingsUpdateBody2::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn update_all_params() {
-    crate::smoke_case(
-        "users.settings.update:all",
-        "update",
-        "/v1/users/{userId}/settings",
-        |client| async move {
-            let _ = client
-                .users()
-                .settings()
-                .update(
-                    "example",
-                    SettingsUpdateBody2::new()
-                        .with_default_session_visibility_by_workspace(std::collections::BTreeMap::new())
-                        .with_auto_restart_vm(false)
-                        .with_default_project_id("x".to_string())
-                        .with_gpg_key("".to_string())
-                        .with_include_tembo_commit_attribution(false)
-                        .with_open_pull_requests_as_bot(false)
-                        .with_desktop_notifications_enabled(false)
-                        .with_desktop_notification_preferences(SettingsUpdateBody2DesktopNotificationPreferences::new())
-                        .with_has_desktop_app(false)
-                        .with_open_links_in_desktop_app(false)
-                        .with_appearance_preferences(SettingsUpdateBody2AppearancePreferences::new())
-                        .with_app_sidebar_preferences(SettingsUpdateBody2AppSidebarPreferences::new())
-                        .with_diff_preferences(SettingsUpdateBody2DiffPreferences::new())
-                        .with_dashboard_preferences(SettingsUpdateBody2DashboardPreferences::new())
-                        .with_composer_preferences(SettingsUpdateBody2ComposerPreferences::new())
-                        .with_review_preferences(SettingsUpdateBody2ReviewPreferences::new())
-                        .with_diff_light_theme("".to_string())
-                        .with_diff_dark_theme("".to_string())
-                        .with_default_agent("".to_string())
-                        .with_default_fast_mode(false)
-                        .with_follow_up_behavior(SettingsUpdateBody2FollowUpBehavior::Queue)
-                        .with_custom_system_prompt("".to_string()),
-                )
-                .send()
-                .await?;
+            let _ = client.users().settings().update("example").send().await?;
             Ok(())
         },
     )

@@ -51,17 +51,13 @@ impl IntegrationsResource {
     }
 
     /// Sync an integration
-    pub fn sync(
-        &self,
-        integration_id: impl Into<String>,
-        body: crate::models::IntegrationsSyncBody,
-    ) -> SyncRequestBuilder {
-        SyncRequestBuilder::new(self.client.clone(), integration_id.into(), body)
+    pub fn sync(&self, integration_id: impl Into<String>) -> SyncRequestBuilder {
+        SyncRequestBuilder::new(self.client.clone(), integration_id.into())
     }
 
     /// Sync eligible integrations
-    pub fn sync_all(&self, body: crate::models::IntegrationsSyncAllBody) -> SyncAllRequestBuilder {
-        SyncAllRequestBuilder::new(self.client.clone(), body)
+    pub fn sync_all(&self) -> SyncAllRequestBuilder {
+        SyncAllRequestBuilder::new(self.client.clone())
     }
 
     /// Retrieve integration sync status
@@ -778,22 +774,27 @@ impl TestRequestBuilder {
 pub struct SyncRequestBuilder {
     client: crate::client::Tembo,
     integration_id: String,
-    body: crate::models::IntegrationsSyncBody,
+    body: Option<crate::models::IntegrationsSyncBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl SyncRequestBuilder {
-    fn new(client: crate::client::Tembo, integration_id: String, body: crate::models::IntegrationsSyncBody) -> Self {
+    fn new(client: crate::client::Tembo, integration_id: String) -> Self {
         Self {
             client,
             integration_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::IntegrationsSyncBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -840,7 +841,7 @@ impl SyncRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,
@@ -862,21 +863,26 @@ impl SyncRequestBuilder {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct SyncAllRequestBuilder {
     client: crate::client::Tembo,
-    body: crate::models::IntegrationsSyncAllBody,
+    body: Option<crate::models::IntegrationsSyncAllBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl SyncAllRequestBuilder {
-    fn new(client: crate::client::Tembo, body: crate::models::IntegrationsSyncAllBody) -> Self {
+    fn new(client: crate::client::Tembo) -> Self {
         Self {
             client,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::IntegrationsSyncAllBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -920,7 +926,7 @@ impl SyncAllRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

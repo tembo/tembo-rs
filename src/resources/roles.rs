@@ -31,13 +31,8 @@ impl RolesResource {
     }
 
     /// Update a organization role
-    pub fn update(
-        &self,
-        organization_id: impl Into<String>,
-        role_id: impl Into<String>,
-        body: crate::models::RolesUpdateBody,
-    ) -> UpdateRequestBuilder {
-        UpdateRequestBuilder::new(self.client.clone(), organization_id.into(), role_id.into(), body)
+    pub fn update(&self, organization_id: impl Into<String>, role_id: impl Into<String>) -> UpdateRequestBuilder {
+        UpdateRequestBuilder::new(self.client.clone(), organization_id.into(), role_id.into())
     }
 
     /// Archive a role with an explicit replacement
@@ -289,28 +284,28 @@ pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
     organization_id: String,
     role_id: String,
-    body: crate::models::RolesUpdateBody,
+    body: Option<crate::models::RolesUpdateBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl UpdateRequestBuilder {
-    fn new(
-        client: crate::client::Tembo,
-        organization_id: String,
-        role_id: String,
-        body: crate::models::RolesUpdateBody,
-    ) -> Self {
+    fn new(client: crate::client::Tembo, organization_id: String, role_id: String) -> Self {
         Self {
             client,
             organization_id,
             role_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::RolesUpdateBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -358,7 +353,7 @@ impl UpdateRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

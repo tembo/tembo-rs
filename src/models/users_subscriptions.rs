@@ -41,6 +41,7 @@ impl SubscriptionsRetrieveResponse2 {
 #[non_exhaustive]
 pub struct SubscriptionsRetrieveResponse2Chatgpt {
     pub connected: bool,
+    pub accounts: Vec<SubscriptionsRetrieveResponse2ChatgptAccount>,
     #[serde(default)]
     pub usage: Option<SubscriptionsRetrieveResponse2ChatgptUsage>,
     #[serde(rename = "usageError", default)]
@@ -55,13 +56,880 @@ impl SubscriptionsRetrieveResponse2Chatgpt {
     /// argument, which is a breaking change either way.
     pub fn new(
         connected: bool,
+        accounts: Vec<SubscriptionsRetrieveResponse2ChatgptAccount>,
         usage: Option<SubscriptionsRetrieveResponse2ChatgptUsage>,
         usage_error: Option<SubscriptionsRetrieveResponse2ChatgptUsageError>,
     ) -> Self {
         Self {
             connected,
+            accounts,
             usage,
             usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccount::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccount {
+    /// Connected account, when an owner has several for one provider.
+    pub slot: i64,
+    /// Email of the provider account, when the provider shares it.
+    #[serde(default)]
+    pub email: Option<String>,
+    #[serde(default)]
+    pub usage: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsage>,
+    #[serde(rename = "usageError", default)]
+    pub usage_error: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageError>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccount {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccount` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        slot: i64,
+        email: Option<String>,
+        usage: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsage>,
+        usage_error: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageError>,
+    ) -> Self {
+        Self {
+            slot,
+            email,
+            usage,
+            usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsage::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsage {
+    #[serde(rename = "planType")]
+    pub plan_type: SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType,
+    #[serde(rename = "rateLimits")]
+    pub rate_limits: Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit>,
+    #[serde(rename = "rateLimitResetCredits", default)]
+    pub rate_limit_reset_credits: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits>,
+    #[serde(rename = "tokenUsage")]
+    pub token_usage: SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage,
+    #[serde(rename = "fetchedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub fetched_at: chrono::DateTime<chrono::FixedOffset>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsage {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsage` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        plan_type: SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType,
+        rate_limits: Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit>,
+        rate_limit_reset_credits: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits>,
+        token_usage: SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage,
+        fetched_at: chrono::DateTime<chrono::FixedOffset>,
+    ) -> Self {
+        Self {
+            plan_type,
+            rate_limits,
+            rate_limit_reset_credits,
+            token_usage,
+            fetched_at,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType {
+    #[serde(rename = "free")]
+    Free,
+    #[serde(rename = "go")]
+    Go,
+    #[serde(rename = "plus")]
+    Plus,
+    #[serde(rename = "pro")]
+    Pro,
+    #[serde(rename = "prolite")]
+    Prolite,
+    #[serde(rename = "promax")]
+    Promax,
+    #[serde(rename = "team")]
+    Team,
+    #[serde(rename = "self_serve_business_prolite")]
+    SelfServeBusinessProlite,
+    #[serde(rename = "self_serve_business_usage_based")]
+    SelfServeBusinessUsageBased,
+    #[serde(rename = "business")]
+    Business,
+    #[serde(rename = "ent26")]
+    Ent26,
+    #[serde(rename = "enterprise_cbp_automation")]
+    EnterpriseCbpAutomation,
+    #[serde(rename = "enterprise_cbp_usage_based")]
+    EnterpriseCbpUsageBased,
+    #[serde(rename = "enterprise")]
+    Enterprise,
+    #[serde(rename = "edu")]
+    Edu,
+    #[serde(rename = "edu_plus")]
+    EduPlus,
+    #[serde(rename = "edu_pro")]
+    EduPro,
+    #[serde(rename = "unknown")]
+    Unknown_,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Free => "free",
+            Self::Go => "go",
+            Self::Plus => "plus",
+            Self::Pro => "pro",
+            Self::Prolite => "prolite",
+            Self::Promax => "promax",
+            Self::Team => "team",
+            Self::SelfServeBusinessProlite => "self_serve_business_prolite",
+            Self::SelfServeBusinessUsageBased => "self_serve_business_usage_based",
+            Self::Business => "business",
+            Self::Ent26 => "ent26",
+            Self::EnterpriseCbpAutomation => "enterprise_cbp_automation",
+            Self::EnterpriseCbpUsageBased => "enterprise_cbp_usage_based",
+            Self::Enterprise => "enterprise",
+            Self::Edu => "edu",
+            Self::EduPlus => "edu_plus",
+            Self::EduPro => "edu_pro",
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsagePlanType {
+    fn from(value: &str) -> Self {
+        match value {
+            "free" => Self::Free,
+            "go" => Self::Go,
+            "plus" => Self::Plus,
+            "pro" => Self::Pro,
+            "prolite" => Self::Prolite,
+            "promax" => Self::Promax,
+            "team" => Self::Team,
+            "self_serve_business_prolite" => Self::SelfServeBusinessProlite,
+            "self_serve_business_usage_based" => Self::SelfServeBusinessUsageBased,
+            "business" => Self::Business,
+            "ent26" => Self::Ent26,
+            "enterprise_cbp_automation" => Self::EnterpriseCbpAutomation,
+            "enterprise_cbp_usage_based" => Self::EnterpriseCbpUsageBased,
+            "enterprise" => Self::Enterprise,
+            "edu" => Self::Edu,
+            "edu_plus" => Self::EduPlus,
+            "edu_pro" => Self::EduPro,
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit {
+    #[serde(rename = "limitId", default)]
+    pub limit_id: Option<String>,
+    #[serde(rename = "limitName", default)]
+    pub limit_name: Option<String>,
+    #[serde(rename = "planType", default)]
+    pub plan_type: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType>,
+    #[serde(default)]
+    pub primary: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary>,
+    #[serde(default)]
+    pub secondary: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary>,
+    #[serde(default)]
+    pub credits: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits>,
+    #[serde(rename = "individualLimit", default)]
+    pub individual_limit: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit>,
+    #[serde(rename = "spendControlReached", default)]
+    pub spend_control_reached: Option<bool>,
+    #[serde(rename = "rateLimitReachedType", default)]
+    pub rate_limit_reached_type: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimit` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        limit_id: Option<String>,
+        limit_name: Option<String>,
+        plan_type: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType>,
+        primary: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary>,
+        secondary: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary>,
+        credits: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits>,
+        individual_limit: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit>,
+        spend_control_reached: Option<bool>,
+        rate_limit_reached_type: Option<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType>,
+    ) -> Self {
+        Self {
+            limit_id,
+            limit_name,
+            plan_type,
+            primary,
+            secondary,
+            credits,
+            individual_limit,
+            spend_control_reached,
+            rate_limit_reached_type,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType {
+    #[serde(rename = "free")]
+    Free,
+    #[serde(rename = "go")]
+    Go,
+    #[serde(rename = "plus")]
+    Plus,
+    #[serde(rename = "pro")]
+    Pro,
+    #[serde(rename = "prolite")]
+    Prolite,
+    #[serde(rename = "promax")]
+    Promax,
+    #[serde(rename = "team")]
+    Team,
+    #[serde(rename = "self_serve_business_prolite")]
+    SelfServeBusinessProlite,
+    #[serde(rename = "self_serve_business_usage_based")]
+    SelfServeBusinessUsageBased,
+    #[serde(rename = "business")]
+    Business,
+    #[serde(rename = "ent26")]
+    Ent26,
+    #[serde(rename = "enterprise_cbp_automation")]
+    EnterpriseCbpAutomation,
+    #[serde(rename = "enterprise_cbp_usage_based")]
+    EnterpriseCbpUsageBased,
+    #[serde(rename = "enterprise")]
+    Enterprise,
+    #[serde(rename = "edu")]
+    Edu,
+    #[serde(rename = "edu_plus")]
+    EduPlus,
+    #[serde(rename = "edu_pro")]
+    EduPro,
+    #[serde(rename = "unknown")]
+    Unknown_,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Free => "free",
+            Self::Go => "go",
+            Self::Plus => "plus",
+            Self::Pro => "pro",
+            Self::Prolite => "prolite",
+            Self::Promax => "promax",
+            Self::Team => "team",
+            Self::SelfServeBusinessProlite => "self_serve_business_prolite",
+            Self::SelfServeBusinessUsageBased => "self_serve_business_usage_based",
+            Self::Business => "business",
+            Self::Ent26 => "ent26",
+            Self::EnterpriseCbpAutomation => "enterprise_cbp_automation",
+            Self::EnterpriseCbpUsageBased => "enterprise_cbp_usage_based",
+            Self::Enterprise => "enterprise",
+            Self::Edu => "edu",
+            Self::EduPlus => "edu_plus",
+            Self::EduPro => "edu_pro",
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPlanType {
+    fn from(value: &str) -> Self {
+        match value {
+            "free" => Self::Free,
+            "go" => Self::Go,
+            "plus" => Self::Plus,
+            "pro" => Self::Pro,
+            "prolite" => Self::Prolite,
+            "promax" => Self::Promax,
+            "team" => Self::Team,
+            "self_serve_business_prolite" => Self::SelfServeBusinessProlite,
+            "self_serve_business_usage_based" => Self::SelfServeBusinessUsageBased,
+            "business" => Self::Business,
+            "ent26" => Self::Ent26,
+            "enterprise_cbp_automation" => Self::EnterpriseCbpAutomation,
+            "enterprise_cbp_usage_based" => Self::EnterpriseCbpUsageBased,
+            "enterprise" => Self::Enterprise,
+            "edu" => Self::Edu,
+            "edu_plus" => Self::EduPlus,
+            "edu_pro" => Self::EduPro,
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary {
+    #[serde(rename = "usedPercent", serialize_with = "crate::number::serialize")]
+    pub used_percent: f64,
+    #[serde(rename = "windowDurationMins", default)]
+    pub window_duration_mins: Option<i64>,
+    #[serde(rename = "resetsAt", default)]
+    pub resets_at: Option<i64>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitPrimary` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(used_percent: f64, window_duration_mins: Option<i64>, resets_at: Option<i64>) -> Self {
+        Self {
+            used_percent,
+            window_duration_mins,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary {
+    #[serde(rename = "usedPercent", serialize_with = "crate::number::serialize")]
+    pub used_percent: f64,
+    #[serde(rename = "windowDurationMins", default)]
+    pub window_duration_mins: Option<i64>,
+    #[serde(rename = "resetsAt", default)]
+    pub resets_at: Option<i64>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitSecondary` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(used_percent: f64, window_duration_mins: Option<i64>, resets_at: Option<i64>) -> Self {
+        Self {
+            used_percent,
+            window_duration_mins,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits {
+    #[serde(rename = "hasCredits")]
+    pub has_credits: bool,
+    pub unlimited: bool,
+    #[serde(default)]
+    pub balance: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitCredits` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(has_credits: bool, unlimited: bool, balance: Option<String>) -> Self {
+        Self {
+            has_credits,
+            unlimited,
+            balance,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit::new` and the `with_*` setters rather
+/// than a struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit {
+    pub limit: String,
+    pub used: String,
+    #[serde(rename = "remainingPercent", serialize_with = "crate::number::serialize")]
+    pub remaining_percent: f64,
+    #[serde(rename = "resetsAt")]
+    pub resets_at: i64,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitIndividualLimit` from its required
+    /// fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(limit: impl Into<String>, used: impl Into<String>, remaining_percent: f64, resets_at: i64) -> Self {
+        Self {
+            limit: limit.into(),
+            used: used.into(),
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType {
+    #[serde(rename = "rate_limit_reached")]
+    RateLimitReached,
+    #[serde(rename = "workspace_owner_credits_depleted")]
+    WorkspaceOwnerCreditsDepleted,
+    #[serde(rename = "workspace_member_credits_depleted")]
+    WorkspaceMemberCreditsDepleted,
+    #[serde(rename = "workspace_owner_usage_limit_reached")]
+    WorkspaceOwnerUsageLimitReached,
+    #[serde(rename = "workspace_member_usage_limit_reached")]
+    WorkspaceMemberUsageLimitReached,
+    #[serde(rename = "unknown")]
+    Unknown_,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::RateLimitReached => "rate_limit_reached",
+            Self::WorkspaceOwnerCreditsDepleted => "workspace_owner_credits_depleted",
+            Self::WorkspaceMemberCreditsDepleted => "workspace_member_credits_depleted",
+            Self::WorkspaceOwnerUsageLimitReached => "workspace_owner_usage_limit_reached",
+            Self::WorkspaceMemberUsageLimitReached => "workspace_member_usage_limit_reached",
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitRateLimitReachedType {
+    fn from(value: &str) -> Self {
+        match value {
+            "rate_limit_reached" => Self::RateLimitReached,
+            "workspace_owner_credits_depleted" => Self::WorkspaceOwnerCreditsDepleted,
+            "workspace_member_credits_depleted" => Self::WorkspaceMemberCreditsDepleted,
+            "workspace_owner_usage_limit_reached" => Self::WorkspaceOwnerUsageLimitReached,
+            "workspace_member_usage_limit_reached" => Self::WorkspaceMemberUsageLimitReached,
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits {
+    #[serde(rename = "availableCount")]
+    pub available_count: i64,
+    #[serde(default)]
+    pub credits: Option<Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit>>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCredits` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        available_count: i64,
+        credits: Option<Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit>>,
+    ) -> Self {
+        Self {
+            available_count,
+            credits,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit::new` and the `with_*` setters rather
+/// than a struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit {
+    pub id: String,
+    #[serde(rename = "resetType")]
+    pub reset_type: SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType,
+    pub status: SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus,
+    #[serde(rename = "grantedAt")]
+    pub granted_at: i64,
+    #[serde(rename = "expiresAt", default)]
+    pub expires_at: Option<i64>,
+    #[serde(default)]
+    pub title: Option<String>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCredit` from its required
+    /// fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        id: impl Into<String>,
+        reset_type: SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType,
+        status: SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus,
+        granted_at: i64,
+        expires_at: Option<i64>,
+        title: Option<String>,
+        description: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            reset_type,
+            status,
+            granted_at,
+            expires_at,
+            title,
+            description,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType {
+    #[serde(rename = "codexRateLimits")]
+    CodexRateLimits,
+    #[serde(rename = "unknown")]
+    Unknown_,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::CodexRateLimits => "codexRateLimits",
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditResetType {
+    fn from(value: &str) -> Self {
+        match value {
+            "codexRateLimits" => Self::CodexRateLimits,
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus {
+    #[serde(rename = "available")]
+    Available,
+    #[serde(rename = "redeeming")]
+    Redeeming,
+    #[serde(rename = "redeemed")]
+    Redeemed,
+    #[serde(rename = "unknown")]
+    Unknown_,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Available => "available",
+            Self::Redeeming => "redeeming",
+            Self::Redeemed => "redeemed",
+            Self::Unknown_ => "unknown",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsageRateLimitResetCreditsCreditStatus {
+    fn from(value: &str) -> Self {
+        match value {
+            "available" => Self::Available,
+            "redeeming" => Self::Redeeming,
+            "redeemed" => Self::Redeemed,
+            "unknown" => Self::Unknown_,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage {
+    pub summary: SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary,
+    #[serde(rename = "dailyUsageBuckets", default)]
+    pub daily_usage_buckets: Option<Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket>>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsage` from its required fields, leaving
+    /// every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        summary: SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary,
+        daily_usage_buckets: Option<Vec<SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket>>,
+    ) -> Self {
+        Self {
+            summary,
+            daily_usage_buckets,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary {
+    #[serde(rename = "lifetimeTokens", default)]
+    pub lifetime_tokens: Option<i64>,
+    #[serde(rename = "peakDailyTokens", default)]
+    pub peak_daily_tokens: Option<i64>,
+    #[serde(rename = "longestRunningTurnSec", default)]
+    pub longest_running_turn_sec: Option<i64>,
+    #[serde(rename = "currentStreakDays", default)]
+    pub current_streak_days: Option<i64>,
+    #[serde(rename = "longestStreakDays", default)]
+    pub longest_streak_days: Option<i64>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageSummary` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        lifetime_tokens: Option<i64>,
+        peak_daily_tokens: Option<i64>,
+        longest_running_turn_sec: Option<i64>,
+        current_streak_days: Option<i64>,
+        longest_streak_days: Option<i64>,
+    ) -> Self {
+        Self {
+            lifetime_tokens,
+            peak_daily_tokens,
+            longest_running_turn_sec,
+            current_streak_days,
+            longest_streak_days,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket::new` and the `with_*` setters rather
+/// than a struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket {
+    #[serde(rename = "startDate")]
+    pub start_date: chrono::NaiveDate,
+    pub tokens: i64,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageTokenUsageDailyUsageBucket` from its required
+    /// fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(start_date: chrono::NaiveDate, tokens: i64) -> Self {
+        Self { start_date, tokens }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ChatgptAccountUsageError::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ChatgptAccountUsageError {
+    pub code: SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode,
+    pub message: String,
+    #[serde(rename = "retryAfter", default)]
+    pub retry_after: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageError {
+    /// Creates a new `SubscriptionsRetrieveResponse2ChatgptAccountUsageError` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        code: SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode,
+        message: impl Into<String>,
+        retry_after: Option<String>,
+    ) -> Self {
+        Self {
+            code,
+            message: message.into(),
+            retry_after,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode {
+    #[serde(rename = "reconnectRequired")]
+    ReconnectRequired,
+    #[serde(rename = "rateLimited")]
+    RateLimited,
+    #[serde(rename = "unavailable")]
+    Unavailable,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::ReconnectRequired => "reconnectRequired",
+            Self::RateLimited => "rateLimited",
+            Self::Unavailable => "unavailable",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ChatgptAccountUsageErrorCode {
+    fn from(value: &str) -> Self {
+        match value {
+            "reconnectRequired" => Self::ReconnectRequired,
+            "rateLimited" => Self::RateLimited,
+            "unavailable" => Self::Unavailable,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }
@@ -902,6 +1770,7 @@ pub struct SubscriptionsRetrieveResponse2Claude {
     pub connected: bool,
     #[serde(rename = "reconnectRequired")]
     pub reconnect_required: bool,
+    pub accounts: Vec<SubscriptionsRetrieveResponse2ClaudeAccount>,
     #[serde(default)]
     pub usage: Option<SubscriptionsRetrieveResponse2ClaudeUsage>,
     #[serde(rename = "usageError", default)]
@@ -916,14 +1785,445 @@ impl SubscriptionsRetrieveResponse2Claude {
     pub fn new(
         connected: bool,
         reconnect_required: bool,
+        accounts: Vec<SubscriptionsRetrieveResponse2ClaudeAccount>,
         usage: Option<SubscriptionsRetrieveResponse2ClaudeUsage>,
         usage_error: Option<SubscriptionsRetrieveResponse2ClaudeUsageError>,
     ) -> Self {
         Self {
             connected,
             reconnect_required,
+            accounts,
             usage,
             usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccount::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccount {
+    /// Connected account, when an owner has several for one provider.
+    pub slot: i64,
+    /// Email of the provider account, when the provider shares it.
+    #[serde(default)]
+    pub email: Option<String>,
+    pub connected: bool,
+    #[serde(rename = "reconnectRequired")]
+    pub reconnect_required: bool,
+    #[serde(default)]
+    pub usage: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsage>,
+    #[serde(rename = "usageError", default)]
+    pub usage_error: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsageError>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccount {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccount` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        slot: i64,
+        email: Option<String>,
+        connected: bool,
+        reconnect_required: bool,
+        usage: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsage>,
+        usage_error: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsageError>,
+    ) -> Self {
+        Self {
+            slot,
+            email,
+            connected,
+            reconnect_required,
+            usage,
+            usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsage::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsage {
+    #[serde(rename = "rateLimits")]
+    pub rate_limits: Vec<SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimit>,
+    #[serde(rename = "rateLimitResetCredits", default)]
+    pub rate_limit_reset_credits: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsage {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsage` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        rate_limits: Vec<SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimit>,
+        rate_limit_reset_credits: Option<SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits>,
+    ) -> Self {
+        Self {
+            rate_limits,
+            rate_limit_reset_credits,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimit {
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1,
+    ),
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2,
+    ),
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3,
+    ),
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4,
+    ),
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5,
+    ),
+    SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6(
+        SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6,
+    ),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant1` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant2` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant3` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant4` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant5` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6 {
+    pub key: String,
+    pub label: String,
+    pub detail: serde_json::Value,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6 {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitVariant6` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: serde_json::Value,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits {
+    #[serde(rename = "availableCount")]
+    pub available_count: i64,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageRateLimitResetCredits` from its required fields,
+    /// leaving every optional one unset.
+    pub fn new(available_count: i64) -> Self {
+        Self { available_count }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2ClaudeAccountUsageError::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2ClaudeAccountUsageError {
+    pub code: SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode,
+    pub message: String,
+    #[serde(rename = "retryAfter", default)]
+    pub retry_after: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageError {
+    /// Creates a new `SubscriptionsRetrieveResponse2ClaudeAccountUsageError` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        code: SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode,
+        message: impl Into<String>,
+        retry_after: Option<String>,
+    ) -> Self {
+        Self {
+            code,
+            message: message.into(),
+            retry_after,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode {
+    #[serde(rename = "reconnectRequired")]
+    ReconnectRequired,
+    #[serde(rename = "rateLimited")]
+    RateLimited,
+    #[serde(rename = "unavailable")]
+    Unavailable,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::ReconnectRequired => "reconnectRequired",
+            Self::RateLimited => "rateLimited",
+            Self::Unavailable => "unavailable",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2ClaudeAccountUsageErrorCode {
+    fn from(value: &str) -> Self {
+        match value {
+            "reconnectRequired" => Self::ReconnectRequired,
+            "rateLimited" => Self::RateLimited,
+            "unavailable" => Self::Unavailable,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }
@@ -1319,6 +2619,7 @@ impl From<&str> for SubscriptionsRetrieveResponse2ClaudeUsageErrorCode {
 #[non_exhaustive]
 pub struct SubscriptionsRetrieveResponse2Supergrok {
     pub connected: bool,
+    pub accounts: Vec<SubscriptionsRetrieveResponse2SupergrokAccount>,
     #[serde(default)]
     pub usage: Option<SubscriptionsRetrieveResponse2SupergrokUsage>,
     #[serde(rename = "usageError", default)]
@@ -1333,13 +2634,288 @@ impl SubscriptionsRetrieveResponse2Supergrok {
     /// argument, which is a breaking change either way.
     pub fn new(
         connected: bool,
+        accounts: Vec<SubscriptionsRetrieveResponse2SupergrokAccount>,
         usage: Option<SubscriptionsRetrieveResponse2SupergrokUsage>,
         usage_error: Option<SubscriptionsRetrieveResponse2SupergrokUsageError>,
     ) -> Self {
         Self {
             connected,
+            accounts,
             usage,
             usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccount::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccount {
+    /// Connected account, when an owner has several for one provider.
+    pub slot: i64,
+    /// Email of the provider account, when the provider shares it.
+    #[serde(default)]
+    pub email: Option<String>,
+    #[serde(default)]
+    pub usage: Option<SubscriptionsRetrieveResponse2SupergrokAccountUsage>,
+    #[serde(rename = "usageError", default)]
+    pub usage_error: Option<SubscriptionsRetrieveResponse2SupergrokAccountUsageError>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccount {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccount` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        slot: i64,
+        email: Option<String>,
+        usage: Option<SubscriptionsRetrieveResponse2SupergrokAccountUsage>,
+        usage_error: Option<SubscriptionsRetrieveResponse2SupergrokAccountUsageError>,
+    ) -> Self {
+        Self {
+            slot,
+            email,
+            usage,
+            usage_error,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccountUsage::new` and the `with_*` setters rather than a struct literal.
+/// Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccountUsage {
+    #[serde(rename = "rateLimits")]
+    pub rate_limits: Vec<SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimit>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsage {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccountUsage` from its required fields, leaving every
+    /// optional one unset.
+    pub fn new(rate_limits: Vec<SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimit>) -> Self {
+        Self { rate_limits }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimit {
+    SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1(
+        SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1,
+    ),
+    SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2(
+        SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2,
+    ),
+    SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3(
+        SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3,
+    ),
+    /// A variant not recognized by this version of the SDK, preserved verbatim.
+    ///
+    /// Match the specific variants first. Matching this one directly is an
+    /// anti-pattern: that arm silently stops matching once a future SDK
+    /// release adds the real variant.
+    #[serde(untagged)]
+    Unknown(serde_json::Value),
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1 {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant1` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2 {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant2` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3::new` and the `with_*` setters rather than a
+/// struct literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3 {
+    pub key: String,
+    pub label: String,
+    #[serde(default)]
+    pub detail: Option<String>,
+    #[serde(rename = "remainingPercent")]
+    pub remaining_percent: i64,
+    #[serde(rename = "resetsAt", default, serialize_with = "crate::number::option::serialize")]
+    pub resets_at: Option<f64>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3 {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccountUsageRateLimitVariant3` from its required fields,
+    /// leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        key: impl Into<String>,
+        label: impl Into<String>,
+        detail: Option<String>,
+        remaining_percent: i64,
+        resets_at: Option<f64>,
+    ) -> Self {
+        Self {
+            key: key.into(),
+            label: label.into(),
+            detail,
+            remaining_percent,
+            resets_at,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SubscriptionsRetrieveResponse2SupergrokAccountUsageError::new` and the `with_*` setters rather than a struct
+/// literal. Fields stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SubscriptionsRetrieveResponse2SupergrokAccountUsageError {
+    pub code: SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode,
+    pub message: String,
+    #[serde(rename = "retryAfter", default)]
+    pub retry_after: Option<String>,
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsageError {
+    /// Creates a new `SubscriptionsRetrieveResponse2SupergrokAccountUsageError` from its required fields, leaving every
+    /// optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(
+        code: SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode,
+        message: impl Into<String>,
+        retry_after: Option<String>,
+    ) -> Self {
+        Self {
+            code,
+            message: message.into(),
+            retry_after,
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode {
+    #[serde(rename = "reconnectRequired")]
+    ReconnectRequired,
+    #[serde(rename = "rateLimited")]
+    RateLimited,
+    #[serde(rename = "unavailable")]
+    Unavailable,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::ReconnectRequired => "reconnectRequired",
+            Self::RateLimited => "rateLimited",
+            Self::Unavailable => "unavailable",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SubscriptionsRetrieveResponse2SupergrokAccountUsageErrorCode {
+    fn from(value: &str) -> Self {
+        match value {
+            "reconnectRequired" => Self::ReconnectRequired,
+            "rateLimited" => Self::RateLimited,
+            "unavailable" => Self::Unavailable,
+            other => Self::Unknown(other.to_owned()),
         }
     }
 }

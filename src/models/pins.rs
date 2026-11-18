@@ -95,6 +95,7 @@ pub struct PinsListResponseResourceVariant1Resource {
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     pub level: i64,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: PinsListResponseResourceVariant1ResourceVisibility,
     #[serde(default)]
     pub vm: Option<PinsListResponseResourceVariant1ResourceVm>,
@@ -180,10 +181,10 @@ impl PinsListResponseResourceVariant1Resource {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum PinsListResponseResourceVariant1ResourceVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -193,8 +194,8 @@ impl PinsListResponseResourceVariant1ResourceVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -209,8 +210,8 @@ impl std::fmt::Display for PinsListResponseResourceVariant1ResourceVisibility {
 impl From<&str> for PinsListResponseResourceVariant1ResourceVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -1350,6 +1351,7 @@ pub struct PinsCreateResponseVariant1Resource {
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     pub level: i64,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: PinsCreateResponseVariant1ResourceVisibility,
     #[serde(default)]
     pub vm: Option<PinsCreateResponseVariant1ResourceVm>,
@@ -1434,10 +1436,10 @@ impl PinsCreateResponseVariant1Resource {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum PinsCreateResponseVariant1ResourceVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -1447,8 +1449,8 @@ impl PinsCreateResponseVariant1ResourceVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -1463,8 +1465,8 @@ impl std::fmt::Display for PinsCreateResponseVariant1ResourceVisibility {
 impl From<&str> for PinsCreateResponseVariant1ResourceVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
