@@ -39,42 +39,13 @@ async fn list_all_params() {
 }
 
 #[tokio::test]
-async fn create_required_params() {
+async fn create() {
     crate::smoke_case(
-        "projects.builds.create:required",
+        "projects.builds.create:single",
         "create",
         "/v1/projects/{projectId}/builds",
         |client| async move {
-            let _ = client
-                .projects()
-                .builds()
-                .create("example", BuildsCreateBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn create_all_params() {
-    crate::smoke_case(
-        "projects.builds.create:all",
-        "create",
-        "/v1/projects/{projectId}/builds",
-        |client| async move {
-            let _ = client
-                .projects()
-                .builds()
-                .create(
-                    "example",
-                    BuildsCreateBody::new()
-                        .with_sizes(vec![BuildsCreateBodySiz::Nano])
-                        .with_snapshot_id("x".to_string()),
-                )
-                .send()
-                .await?;
+            let _ = client.projects().builds().create("example").send().await?;
             Ok(())
         },
     )

@@ -41,8 +41,8 @@ impl SessionsResource {
     }
 
     /// Fork a session
-    pub fn fork(&self, session_id: impl Into<String>, body: crate::models::SessionsForkBody) -> ForkRequestBuilder {
-        ForkRequestBuilder::new(self.client.clone(), session_id.into(), body)
+    pub fn fork(&self, session_id: impl Into<String>) -> ForkRequestBuilder {
+        ForkRequestBuilder::new(self.client.clone(), session_id.into())
     }
 
     /// Import a chat as a session
@@ -79,6 +79,10 @@ impl SessionsResource {
     pub fn commands(&self) -> crate::resources::commands::CommandsResource {
         crate::resources::commands::CommandsResource::new(self.client.clone())
     }
+
+    pub fn shares(&self) -> crate::resources::shares::SharesResource {
+        crate::resources::shares::SharesResource::new(self.client.clone())
+    }
 }
 
 /// List and search sessions, including active or archived sessions, with repository, project, creator, and source filters and cursor pagination.
@@ -91,6 +95,7 @@ pub struct ListRequestBuilder {
     cursor: Option<String>,
     limit: Option<i64>,
     exclude_pinned: Option<bool>,
+    exclude_team_id: Option<String>,
     external_ids: Option<Vec<String>>,
     folder_id: Option<String>,
     has_project: Option<bool>,
@@ -108,6 +113,7 @@ pub struct ListRequestBuilder {
     source_ids: Option<Vec<String>>,
     source_types: Option<Vec<String>>,
     state: Option<String>,
+    team_id: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -122,6 +128,7 @@ impl ListRequestBuilder {
             cursor: None,
             limit: None,
             exclude_pinned: None,
+            exclude_team_id: None,
             external_ids: None,
             folder_id: None,
             has_project: None,
@@ -139,6 +146,7 @@ impl ListRequestBuilder {
             source_ids: None,
             source_types: None,
             state: None,
+            team_id: None,
             timeout: None,
             max_retries: None,
         }
@@ -177,6 +185,12 @@ impl ListRequestBuilder {
     /// Exclude sessions pinned by the authenticated user.
     pub fn exclude_pinned(mut self, value: bool) -> Self {
         self.exclude_pinned = Some(value);
+        self
+    }
+
+    /// Exclude sessions shared with this team. Requires organization:team:read.
+    pub fn exclude_team_id(mut self, value: impl Into<String>) -> Self {
+        self.exclude_team_id = Some(value.into());
         self
     }
 
@@ -282,6 +296,12 @@ impl ListRequestBuilder {
         self
     }
 
+    /// Only sessions shared with this team. Requires organization:team:read.
+    pub fn team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
+        self
+    }
+
     /// Overrides the client's request deadline for this request only.
     /// It bounds each attempt up to response headers, then the buffered
     /// body read, so total wall time can exceed the value set here. A
@@ -332,6 +352,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.exclude_pinned {
             query.push(("excludePinned".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.exclude_team_id {
+            query.push(("excludeTeamId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.external_ids {
             for item in values {
@@ -400,6 +423,9 @@ impl ListRequestBuilder {
         if let Some(value) = &self.state {
             query.push(("state".to_string(), crate::http::scalar_value(value)));
         }
+        if let Some(value) = &self.team_id {
+            query.push(("teamId".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {
@@ -419,7 +445,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, Build (normal) or Plan (planning) mode, and private or workspace visibility.
+/// Create a session for a task. Provide the initial prompt in description and optionally configure its repositories, agent, and Build (normal) or Plan (planning) mode. New sessions are private to their creator until shared through grants.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
@@ -568,7 +594,7 @@ impl RetrieveRequestBuilder {
             .await
     }
 }
-/// Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, configure its workspace and branches, or change visibility between private and visible to workspace (public). Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions. Submit memoryMb alone to request asynchronous memory growth for a running adaptive sandbox within project limits; sandbox metrics report progress.
+/// Update a session: archive or restore it, set priority, rename it, change agent/model, switch between Build (normal) and Plan (planning) modes, or configure its workspace and branches. Share it through its sharing subresource; the deprecated visibility field remains for older clients. Archiving uses level=0; restoring archived sessions uses level=1 and does not restart work. Use pins to pin or unpin sessions. Submit memoryMb alone to request asynchronous memory growth for a running adaptive sandbox within project limits; sandbox metrics report progress.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
@@ -735,22 +761,27 @@ impl DeleteRequestBuilder {
 pub struct ForkRequestBuilder {
     client: crate::client::Tembo,
     session_id: String,
-    body: crate::models::SessionsForkBody,
+    body: Option<crate::models::SessionsForkBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl ForkRequestBuilder {
-    fn new(client: crate::client::Tembo, session_id: String, body: crate::models::SessionsForkBody) -> Self {
+    fn new(client: crate::client::Tembo, session_id: String) -> Self {
         Self {
             client,
             session_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::SessionsForkBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -794,7 +825,7 @@ impl ForkRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

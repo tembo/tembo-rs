@@ -24,6 +24,7 @@ async fn list_all_params() {
             .cursor("example")
             .limit(50)
             .exclude_pinned(true)
+            .exclude_team_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .external_ids(vec!["externalId".to_string()])
             .folder_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .has_project(true)
@@ -41,6 +42,7 @@ async fn list_all_params() {
             .source_ids(vec!["sourceId".to_string()])
             .source_types(vec!["sourceType".to_string()])
             .state("all".to_string())
+            .team_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .send()
             .await?;
         Ok(())
@@ -64,8 +66,8 @@ async fn create_required_params() {
                         .with_mcp_servers(vec![])
                         .with_project_id("your-project-id".to_string())
                         .with_target_branch("main".to_string())
-                        .with_visibility(SessionsCreateBodyVisibility::Private)
-                        .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()]),
+                        .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()])
+                        .with_visibility(SessionsCreateBodyVisibility::Private),
                 )
                 .send()
                 .await?;
@@ -88,7 +90,6 @@ async fn create_all_params() {
                     .with_project_id("your-project-id".to_string())
                     .with_sandbox_size(SessionsCreateBodySandboxSize::Nano)
                     .with_target_branch("main".to_string())
-                    .with_visibility(SessionsCreateBodyVisibility::Private)
                     .with_agent_options(AgentOptions::new())
                     .with_branch_name("x".to_string())
                     .with_code_repository_ids(vec!["123e4567-e89b-12d3-a456-426614174000".to_string()])
@@ -97,7 +98,9 @@ async fn create_all_params() {
                     .with_queue_right_away(false)
                     .with_automatic_sizing(false)
                     .with_session_mode(SessionsCreateBodySessionMode::Chat)
-                    .with_startup_agent(SessionsCreateBodyStartupAgent::ClaudeCode),
+                    .with_startup_agent(SessionsCreateBodyStartupAgent::ClaudeCode)
+                    .with_visibility(SessionsCreateBodyVisibility::Private)
+                    .with_team_id("7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()),
             )
             .send()
             .await?;
@@ -154,6 +157,7 @@ async fn update_all_params() {
                 .update(
                     "7c9e6679-7425-40de-944b-e07fc1f90ae7",
                     SessionsUpdateBody::new()
+                        .with_visibility(SessionsUpdateBodyVisibility::Private)
                         .with_memory_mb(1024)
                         .with_agent("x".to_string())
                         .with_agent_options(AgentOptions::new())
@@ -166,8 +170,7 @@ async fn update_all_params() {
                         .with_project_id("".to_string())
                         .with_sandbox_size(SessionsUpdateBodySandboxSize::Nano)
                         .with_target_branch("x".to_string())
-                        .with_title("x".to_string())
-                        .with_visibility(SessionsUpdateBodyVisibility::Private),
+                        .with_title("x".to_string()),
                 )
                 .send()
                 .await?;
@@ -196,39 +199,15 @@ async fn delete() {
 }
 
 #[tokio::test]
-async fn fork_required_params() {
+async fn fork() {
     crate::smoke_case(
-        "sessions.fork:required",
+        "sessions.fork:single",
         "fork",
         "/v1/sessions/{sessionId}/fork",
         |client| async move {
             let _ = client
                 .sessions()
-                .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7", SessionsForkBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn fork_all_params() {
-    crate::smoke_case(
-        "sessions.fork:all",
-        "fork",
-        "/v1/sessions/{sessionId}/fork",
-        |client| async move {
-            let _ = client
-                .sessions()
-                .fork(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SessionsForkBody::new()
-                        .with_prompt("x".to_string())
-                        .with_title("x".to_string())
-                        .with_queue_right_away(true),
-                )
+                .fork("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .send()
                 .await?;
             Ok(())

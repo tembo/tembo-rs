@@ -43,6 +43,10 @@ impl OrganizationsResource {
         crate::resources::roles::RolesResource::new(self.client.clone())
     }
 
+    pub fn teams(&self) -> crate::resources::teams::TeamsResource {
+        crate::resources::teams::TeamsResource::new(self.client.clone())
+    }
+
     pub fn secrets(&self) -> crate::resources::secrets::SecretsResource {
         crate::resources::secrets::SecretsResource::new(self.client.clone())
     }

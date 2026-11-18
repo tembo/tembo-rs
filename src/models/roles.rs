@@ -83,6 +83,10 @@ pub enum RolesListResponsePermission {
     OrganizationRoleRead,
     #[serde(rename = "organization:role:write")]
     OrganizationRoleWrite,
+    #[serde(rename = "organization:team:read")]
+    OrganizationTeamRead,
+    #[serde(rename = "organization:team:write")]
+    OrganizationTeamWrite,
     #[serde(rename = "organization:secret:read")]
     OrganizationSecretRead,
     #[serde(rename = "organization:secret:write")]
@@ -562,6 +566,8 @@ impl RolesListResponsePermission {
             Self::OrganizationInvitationWrite => "organization:invitation:write",
             Self::OrganizationRoleRead => "organization:role:read",
             Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationTeamRead => "organization:team:read",
+            Self::OrganizationTeamWrite => "organization:team:write",
             Self::OrganizationSecretRead => "organization:secret:read",
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
@@ -816,6 +822,8 @@ impl From<&str> for RolesListResponsePermission {
             "organization:invitation:write" => Self::OrganizationInvitationWrite,
             "organization:role:read" => Self::OrganizationRoleRead,
             "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:team:read" => Self::OrganizationTeamRead,
+            "organization:team:write" => Self::OrganizationTeamWrite,
             "organization:secret:read" => Self::OrganizationSecretRead,
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
@@ -1329,6 +1337,10 @@ pub enum RolesCreateBodyPermission {
     OrganizationRoleRead,
     #[serde(rename = "organization:role:write")]
     OrganizationRoleWrite,
+    #[serde(rename = "organization:team:read")]
+    OrganizationTeamRead,
+    #[serde(rename = "organization:team:write")]
+    OrganizationTeamWrite,
     #[serde(rename = "organization:secret:read")]
     OrganizationSecretRead,
     #[serde(rename = "organization:secret:write")]
@@ -1808,6 +1820,8 @@ impl RolesCreateBodyPermission {
             Self::OrganizationInvitationWrite => "organization:invitation:write",
             Self::OrganizationRoleRead => "organization:role:read",
             Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationTeamRead => "organization:team:read",
+            Self::OrganizationTeamWrite => "organization:team:write",
             Self::OrganizationSecretRead => "organization:secret:read",
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
@@ -2062,6 +2076,8 @@ impl From<&str> for RolesCreateBodyPermission {
             "organization:invitation:write" => Self::OrganizationInvitationWrite,
             "organization:role:read" => Self::OrganizationRoleRead,
             "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:team:read" => Self::OrganizationTeamRead,
+            "organization:team:write" => Self::OrganizationTeamWrite,
             "organization:secret:read" => Self::OrganizationSecretRead,
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
@@ -2375,6 +2391,10 @@ pub enum RolesRetrieveResponsePermission {
     OrganizationRoleRead,
     #[serde(rename = "organization:role:write")]
     OrganizationRoleWrite,
+    #[serde(rename = "organization:team:read")]
+    OrganizationTeamRead,
+    #[serde(rename = "organization:team:write")]
+    OrganizationTeamWrite,
     #[serde(rename = "organization:secret:read")]
     OrganizationSecretRead,
     #[serde(rename = "organization:secret:write")]
@@ -2854,6 +2874,8 @@ impl RolesRetrieveResponsePermission {
             Self::OrganizationInvitationWrite => "organization:invitation:write",
             Self::OrganizationRoleRead => "organization:role:read",
             Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationTeamRead => "organization:team:read",
+            Self::OrganizationTeamWrite => "organization:team:write",
             Self::OrganizationSecretRead => "organization:secret:read",
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
@@ -3108,6 +3130,8 @@ impl From<&str> for RolesRetrieveResponsePermission {
             "organization:invitation:write" => Self::OrganizationInvitationWrite,
             "organization:role:read" => Self::OrganizationRoleRead,
             "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:team:read" => Self::OrganizationTeamRead,
+            "organization:team:write" => Self::OrganizationTeamWrite,
             "organization:secret:read" => Self::OrganizationSecretRead,
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
@@ -3644,6 +3668,10 @@ pub enum RolesUpdateBodyPermission {
     OrganizationRoleRead,
     #[serde(rename = "organization:role:write")]
     OrganizationRoleWrite,
+    #[serde(rename = "organization:team:read")]
+    OrganizationTeamRead,
+    #[serde(rename = "organization:team:write")]
+    OrganizationTeamWrite,
     #[serde(rename = "organization:secret:read")]
     OrganizationSecretRead,
     #[serde(rename = "organization:secret:write")]
@@ -4123,6 +4151,8 @@ impl RolesUpdateBodyPermission {
             Self::OrganizationInvitationWrite => "organization:invitation:write",
             Self::OrganizationRoleRead => "organization:role:read",
             Self::OrganizationRoleWrite => "organization:role:write",
+            Self::OrganizationTeamRead => "organization:team:read",
+            Self::OrganizationTeamWrite => "organization:team:write",
             Self::OrganizationSecretRead => "organization:secret:read",
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
@@ -4377,6 +4407,8 @@ impl From<&str> for RolesUpdateBodyPermission {
             "organization:invitation:write" => Self::OrganizationInvitationWrite,
             "organization:role:read" => Self::OrganizationRoleRead,
             "organization:role:write" => Self::OrganizationRoleWrite,
+            "organization:team:read" => Self::OrganizationTeamRead,
+            "organization:team:write" => Self::OrganizationTeamWrite,
             "organization:secret:read" => Self::OrganizationSecretRead,
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
