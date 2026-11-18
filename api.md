@@ -1864,10 +1864,7 @@ Choose the default project and sandbox size for the organization.
 ```rust
 let response = client
     .projects()
-    .update_defaults(ProjectsUpdateDefaultsBody::new(
-        None,
-        ProjectsUpdateDefaultsBodySandboxSize::Nano,
-    ))
+    .update_defaults(ProjectsUpdateDefaultsBody::new(None))
     .send()
     .await?;
 ```

@@ -339,7 +339,7 @@ impl BuildsCreateResponse {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BuildsCreateBody {
-    /// VM sizes to build. Omit to use the project sizes. Cannot be combined with snapshotId.
+    /// Deprecated and ignored. Projects build one automatically sized snapshot. Cannot be combined with snapshotId.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<BuildsCreateBodySiz>>,
     /// Rebuild one existing snapshot instead of building project sizes. Cannot be combined with sizes.

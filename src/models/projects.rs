@@ -14,21 +14,27 @@ pub struct ProjectsUpdateDefaultsResponse {
     /// Project to make the organization default, or null to clear the default.
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
-    /// Default workspace VM size for the organization.
-    #[serde(rename = "sandboxSize")]
-    pub sandbox_size: ProjectsUpdateDefaultsResponseSandboxSize,
+    /// Deprecated and ignored. Projects always use automatic sizing.
+    #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
+    pub sandbox_size: Option<ProjectsUpdateDefaultsResponseSandboxSize>,
 }
 
 impl ProjectsUpdateDefaultsResponse {
     /// Creates a new `ProjectsUpdateDefaultsResponse` from its required fields, leaving every optional one unset.
     ///
-    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
-    /// argument, which is a breaking change either way.
-    pub fn new(project_id: Option<String>, sandbox_size: ProjectsUpdateDefaultsResponseSandboxSize) -> Self {
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateDefaultsResponse::new(project_id).with_sandbox_size(…)`.
+    pub fn new(project_id: Option<String>) -> Self {
         Self {
             project_id,
-            sandbox_size,
+            sandbox_size: None,
         }
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    pub fn with_sandbox_size(mut self, value: ProjectsUpdateDefaultsResponseSandboxSize) -> Self {
+        self.sandbox_size = Some(value);
+        self
     }
 }
 
@@ -43,6 +49,8 @@ pub enum ProjectsUpdateDefaultsResponseSandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
+    #[serde(rename = "small")]
+    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -64,6 +72,7 @@ impl ProjectsUpdateDefaultsResponseSandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
+            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -85,6 +94,7 @@ impl From<&str> for ProjectsUpdateDefaultsResponseSandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
+            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -104,21 +114,27 @@ pub struct ProjectsUpdateDefaultsBody {
     /// Project to make the organization default, or null to clear the default.
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
-    /// Default workspace VM size for the organization.
-    #[serde(rename = "sandboxSize")]
-    pub sandbox_size: ProjectsUpdateDefaultsBodySandboxSize,
+    /// Deprecated and ignored. Projects always use automatic sizing.
+    #[serde(rename = "sandboxSize", default, skip_serializing_if = "Option::is_none")]
+    pub sandbox_size: Option<ProjectsUpdateDefaultsBodySandboxSize>,
 }
 
 impl ProjectsUpdateDefaultsBody {
     /// Creates a new `ProjectsUpdateDefaultsBody` from its required fields, leaving every optional one unset.
     ///
-    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
-    /// argument, which is a breaking change either way.
-    pub fn new(project_id: Option<String>, sandbox_size: ProjectsUpdateDefaultsBodySandboxSize) -> Self {
+    /// Set an optional field with its `with_*` setter:
+    /// `ProjectsUpdateDefaultsBody::new(project_id).with_sandbox_size(…)`.
+    pub fn new(project_id: Option<String>) -> Self {
         Self {
             project_id,
-            sandbox_size,
+            sandbox_size: None,
         }
+    }
+
+    /// Sets `sandbox_size`, which `new` leaves unset.
+    pub fn with_sandbox_size(mut self, value: ProjectsUpdateDefaultsBodySandboxSize) -> Self {
+        self.sandbox_size = Some(value);
+        self
     }
 }
 
@@ -133,6 +149,8 @@ pub enum ProjectsUpdateDefaultsBodySandboxSize {
     Nano,
     #[serde(rename = "micro")]
     Micro,
+    #[serde(rename = "small")]
+    Small,
     #[serde(rename = "medium")]
     Medium,
     #[serde(rename = "large")]
@@ -154,6 +172,7 @@ impl ProjectsUpdateDefaultsBodySandboxSize {
         match self {
             Self::Nano => "nano",
             Self::Micro => "micro",
+            Self::Small => "small",
             Self::Medium => "medium",
             Self::Large => "large",
             Self::Xl => "xl",
@@ -175,6 +194,7 @@ impl From<&str> for ProjectsUpdateDefaultsBodySandboxSize {
         match value {
             "nano" => Self::Nano,
             "micro" => Self::Micro,
+            "small" => Self::Small,
             "medium" => Self::Medium,
             "large" => Self::Large,
             "xl" => Self::Xl,
@@ -1896,9 +1916,10 @@ pub struct ProjectsCreateBody {
     /// Recurring schedule for rebuilding the project environment.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsCreateBodySchedule>,
-    /// Workspace VM sizes to build for this project.
+    /// Deprecated and ignored. Projects always use automatic sizing.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsCreateBodySiz>>,
+    /// Custom resource limits for automatic sizing. Omit to use the organization defaults.
     #[serde(rename = "resourceSettings", default, skip_serializing_if = "Option::is_none")]
     pub resource_settings: Option<ProjectsCreateBodyResourceSettings>,
 }
@@ -3978,7 +3999,7 @@ pub struct ProjectsUpdateBody {
     pub include_skills: Option<bool>,
     #[serde(rename = "resourceSettings", default, skip_serializing_if = "Option::is_none")]
     pub resource_settings: Option<ProjectsUpdateBodyResourceSettings>,
-    /// VM sizes for which this project is the organization default. An empty array removes its default assignments.
+    /// Make this project the organization default with any size, or remove its default with an empty array. Sizes are otherwise ignored.
     #[serde(rename = "defaultForSizes", default, skip_serializing_if = "Option::is_none")]
     pub default_for_sizes: Option<Vec<ProjectsUpdateBodyDefaultForSiz>>,
     /// Replace the complete environment-variable map. Use createProjectEnvironmentVariables to add or replace individual keys instead.
@@ -3987,7 +4008,7 @@ pub struct ProjectsUpdateBody {
     /// Change the project build schedule, including enabling or pausing it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub schedule: Option<ProjectsUpdateBodySchedule>,
-    /// Replace the workspace VM sizes built for this project.
+    /// Deprecated and ignored. Projects always use automatic sizing.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sizes: Option<Vec<ProjectsUpdateBodySiz>>,
     /// Weekly availability for prewarmed VMs. Null means always on; days use 0=Sunday. Overnight windows end the following day.

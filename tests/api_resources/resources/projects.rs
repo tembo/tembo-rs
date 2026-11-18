@@ -12,10 +12,7 @@ async fn update_defaults_required_params() {
         |client| async move {
             let _ = client
                 .projects()
-                .update_defaults(ProjectsUpdateDefaultsBody::new(
-                    None,
-                    ProjectsUpdateDefaultsBodySandboxSize::Nano,
-                ))
+                .update_defaults(ProjectsUpdateDefaultsBody::new(None))
                 .send()
                 .await?;
             Ok(())
@@ -33,10 +30,10 @@ async fn update_defaults_all_params() {
         |client| async move {
             let _ = client
                 .projects()
-                .update_defaults(ProjectsUpdateDefaultsBody::new(
-                    Some("x".to_string()),
-                    ProjectsUpdateDefaultsBodySandboxSize::Nano,
-                ))
+                .update_defaults(
+                    ProjectsUpdateDefaultsBody::new(Some("x".to_string()))
+                        .with_sandbox_size(ProjectsUpdateDefaultsBodySandboxSize::Nano),
+                )
                 .send()
                 .await?;
             Ok(())
@@ -121,7 +118,7 @@ async fn create_all_params() {
                     .with_onboarding_default(false)
                     .with_run_now(false)
                     .with_schedule(ProjectsCreateBodySchedule::new("x".to_string()))
-                    .with_sizes(vec![ProjectsCreateBodySiz::Medium]),
+                    .with_sizes(vec![ProjectsCreateBodySiz::Nano]),
             )
             .send()
             .await?;

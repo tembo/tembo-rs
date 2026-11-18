@@ -2445,7 +2445,7 @@ pub struct SessionsCreateBody {
     /// Whether to queue the initial task immediately instead of only creating the session.
     #[serde(rename = "queueRightAway", default, skip_serializing_if = "Option::is_none")]
     pub queue_right_away: Option<bool>,
-    /// Size the VM automatically. Only for sessions created without a project (projectId "tembo").
+    /// Size the VM automatically. Sessions are sized automatically by default, and project sessions always are.
     #[serde(rename = "automaticSizing", default, skip_serializing_if = "Option::is_none")]
     pub automatic_sizing: Option<bool>,
     /// Whether to create a chat session or a terminal session.
