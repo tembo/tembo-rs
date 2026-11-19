@@ -74,8 +74,6 @@ impl AgentOptions {
     }
 }
 
-pub type SessionTipTapDocument = serde_json::Value;
-
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SessionDocumentNode::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 ///
@@ -141,6 +139,8 @@ impl SessionDocumentNode {
         self
     }
 }
+
+pub type SessionTipTapDocument = serde_json::Value;
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SessionEventData::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
@@ -362,6 +362,7 @@ pub struct SessionsListResponseItem {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsListResponseItemVisibility,
     pub artifacts: Vec<SessionsListResponseItemArtifact>,
     #[serde(rename = "diffSummary", default)]
@@ -442,10 +443,10 @@ impl SessionsListResponseItem {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsListResponseItemVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -455,8 +456,8 @@ impl SessionsListResponseItemVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -471,8 +472,8 @@ impl std::fmt::Display for SessionsListResponseItemVisibility {
 impl From<&str> for SessionsListResponseItemVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -1206,6 +1207,7 @@ pub struct SessionsCreateResponse {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsCreateResponseVisibility,
     pub artifacts: Vec<SessionsCreateResponseArtifact>,
     /// Whether the session VM is sized automatically.
@@ -1524,10 +1526,10 @@ impl From<&str> for SessionsCreateResponseSessionType {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsCreateResponseVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -1537,8 +1539,8 @@ impl SessionsCreateResponseVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -1553,8 +1555,8 @@ impl std::fmt::Display for SessionsCreateResponseVisibility {
 impl From<&str> for SessionsCreateResponseVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -2415,9 +2417,6 @@ pub struct SessionsCreateBody {
         with = "crate::explicit_null::double_option"
     )]
     pub target_branch: Option<Option<String>>,
-    /// Session visibility: private or visible to workspace (public).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub visibility: Option<SessionsCreateBodyVisibility>,
     /// Agent-specific runtime options, such as reasoning effort.
     #[serde(rename = "agentOptions", default, skip_serializing_if = "Option::is_none")]
     pub agent_options: Option<AgentOptions>,
@@ -2446,7 +2445,7 @@ pub struct SessionsCreateBody {
     /// Whether to queue the initial task immediately instead of only creating the session.
     #[serde(rename = "queueRightAway", default, skip_serializing_if = "Option::is_none")]
     pub queue_right_away: Option<bool>,
-    /// Size the VM automatically. Only for sessions created without a project (projectId "tembo").
+    /// Size the VM automatically. Sessions are sized automatically by default, and project sessions always are.
     #[serde(rename = "automaticSizing", default, skip_serializing_if = "Option::is_none")]
     pub automatic_sizing: Option<bool>,
     /// Whether to create a chat session or a terminal session.
@@ -2455,6 +2454,12 @@ pub struct SessionsCreateBody {
     /// Coding agent to start in a terminal session.
     #[serde(rename = "startupAgent", default, skip_serializing_if = "Option::is_none")]
     pub startup_agent: Option<SessionsCreateBodyStartupAgent>,
+    /// Who starts with access: private, or shared with the workspace (public). Defaults by session source; change it later by sharing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub visibility: Option<SessionsCreateBodyVisibility>,
+    /// Also share the new session with this team, in the same transaction that creates it.
+    #[serde(rename = "teamId", default, skip_serializing_if = "Option::is_none")]
+    pub team_id: Option<String>,
 }
 
 impl SessionsCreateBody {
@@ -2470,7 +2475,6 @@ impl SessionsCreateBody {
             project_id: None,
             sandbox_size: None,
             target_branch: None,
-            visibility: None,
             agent_options: None,
             branch_name: None,
             code_repository_ids: None,
@@ -2482,6 +2486,8 @@ impl SessionsCreateBody {
             automatic_sizing: None,
             session_mode: None,
             startup_agent: None,
+            visibility: None,
+            team_id: None,
         }
     }
 
@@ -2524,12 +2530,6 @@ impl SessionsCreateBody {
     /// To send an explicit `null` instead, assign `target_branch = Some(None)` on the built value.
     pub fn with_target_branch(mut self, value: impl Into<String>) -> Self {
         self.target_branch = Some(Some(value.into()));
-        self
-    }
-
-    /// Sets `visibility`, which `new` leaves unset.
-    pub fn with_visibility(mut self, value: SessionsCreateBodyVisibility) -> Self {
-        self.visibility = Some(value);
         self
     }
 
@@ -2594,6 +2594,18 @@ impl SessionsCreateBody {
         self.startup_agent = Some(value);
         self
     }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: SessionsCreateBodyVisibility) -> Self {
+        self.visibility = Some(value);
+        self
+    }
+
+    /// Sets `team_id`, which `new` leaves unset.
+    pub fn with_team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
+        self
+    }
 }
 
 /// Match on `as_str()` (or build one with `From<&str>`) when you need a value
@@ -2654,49 +2666,6 @@ impl From<&str> for SessionsCreateBodySandboxSize {
             "xl" => Self::Xl,
             "xxl" => Self::Xxl,
             "ultra" => Self::Ultra,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum SessionsCreateBodyVisibility {
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl SessionsCreateBodyVisibility {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Private => "private",
-            Self::Public => "public",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for SessionsCreateBodyVisibility {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for SessionsCreateBodyVisibility {
-    fn from(value: &str) -> Self {
-        match value {
-            "private" => Self::Private,
-            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -2804,6 +2773,49 @@ impl From<&str> for SessionsCreateBodyStartupAgent {
     }
 }
 
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsCreateBodyVisibility {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsCreateBodyVisibility {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Private => "private",
+            Self::Public => "public",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsCreateBodyVisibility {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsCreateBodyVisibility {
+    fn from(value: &str) -> Self {
+        match value {
+            "private" => Self::Private,
+            "public" => Self::Public,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SessionsRetrieveResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
@@ -2852,6 +2864,7 @@ pub struct SessionsRetrieveResponse {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsRetrieveResponseVisibility,
     pub artifacts: Vec<SessionsRetrieveResponseArtifact>,
     /// Whether the session VM is sized automatically.
@@ -3170,10 +3183,10 @@ impl From<&str> for SessionsRetrieveResponseSessionType {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsRetrieveResponseVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -3183,8 +3196,8 @@ impl SessionsRetrieveResponseVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -3199,8 +3212,8 @@ impl std::fmt::Display for SessionsRetrieveResponseVisibility {
 impl From<&str> for SessionsRetrieveResponseVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -4071,6 +4084,7 @@ pub struct SessionsUpdateResponse {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsUpdateResponseVisibility,
     pub artifacts: Vec<SessionsUpdateResponseArtifact>,
     /// Whether the session VM is sized automatically.
@@ -4389,10 +4403,10 @@ impl From<&str> for SessionsUpdateResponseSessionType {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsUpdateResponseVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -4402,8 +4416,8 @@ impl SessionsUpdateResponseVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -4418,8 +4432,8 @@ impl std::fmt::Display for SessionsUpdateResponseVisibility {
 impl From<&str> for SessionsUpdateResponseVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -5250,6 +5264,9 @@ impl From<&str> for SessionsUpdateResponseStateCurrent {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SessionsUpdateBody {
+    /// Deprecated, kept until older clients update; share the session instead. `public` shares it with the workspace; `private` removes every share so only the creator reaches it. Only the session creator can change it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub visibility: Option<SessionsUpdateBodyVisibility>,
     /// Request in-place memory growth for a running adaptive sandbox, within project limits. Submit separately from other session changes. Returns the session while the resize runs asynchronously; sandbox metrics report its progress.
     #[serde(rename = "memoryMb", default, skip_serializing_if = "Option::is_none")]
     pub memory_mb: Option<i64>,
@@ -5326,18 +5343,16 @@ pub struct SessionsUpdateBody {
     /// Rename the session.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
-    /// Change session visibility: private or visible to workspace (public). Only the session creator can change it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub visibility: Option<SessionsUpdateBodyVisibility>,
 }
 
 impl SessionsUpdateBody {
     /// Creates a new `SessionsUpdateBody` from its required fields, leaving every optional one unset.
     ///
     /// Set an optional field with its `with_*` setter:
-    /// `SessionsUpdateBody::new().with_memory_mb(…)`.
+    /// `SessionsUpdateBody::new().with_visibility(…)`.
     pub fn new() -> Self {
         Self {
+            visibility: None,
             memory_mb: None,
             agent: None,
             agent_options: None,
@@ -5352,8 +5367,13 @@ impl SessionsUpdateBody {
             sandbox_size: None,
             target_branch: None,
             title: None,
-            visibility: None,
         }
+    }
+
+    /// Sets `visibility`, which `new` leaves unset.
+    pub fn with_visibility(mut self, value: SessionsUpdateBodyVisibility) -> Self {
+        self.visibility = Some(value);
+        self
     }
 
     /// Sets `memory_mb`, which `new` leaves unset.
@@ -5453,11 +5473,48 @@ impl SessionsUpdateBody {
         self.title = Some(value.into());
         self
     }
+}
 
-    /// Sets `visibility`, which `new` leaves unset.
-    pub fn with_visibility(mut self, value: SessionsUpdateBodyVisibility) -> Self {
-        self.visibility = Some(value);
-        self
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SessionsUpdateBodyVisibility {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SessionsUpdateBodyVisibility {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Private => "private",
+            Self::Public => "public",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SessionsUpdateBodyVisibility {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SessionsUpdateBodyVisibility {
+    fn from(value: &str) -> Self {
+        match value {
+            "private" => Self::Private,
+            "public" => Self::Public,
+            other => Self::Unknown(other.to_owned()),
+        }
     }
 }
 
@@ -5567,49 +5624,6 @@ impl From<&str> for SessionsUpdateBodySandboxSize {
     }
 }
 
-/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
-/// this SDK version does not know. Matching `Unknown(_)` directly is an
-/// anti-pattern: that arm silently stops matching once a future SDK release
-/// adds the real variant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum SessionsUpdateBodyVisibility {
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-    /// A value not known to this version of the SDK, preserved verbatim.
-    #[serde(untagged)]
-    Unknown(String),
-}
-
-impl SessionsUpdateBodyVisibility {
-    /// The wire value this variant serializes to.
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Private => "private",
-            Self::Public => "public",
-            Self::Unknown(value) => value,
-        }
-    }
-}
-
-impl std::fmt::Display for SessionsUpdateBodyVisibility {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
-impl From<&str> for SessionsUpdateBodyVisibility {
-    fn from(value: &str) -> Self {
-        match value {
-            "private" => Self::Private,
-            "public" => Self::Public,
-            other => Self::Unknown(other.to_owned()),
-        }
-    }
-}
-
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SessionsDeleteResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -5676,6 +5690,7 @@ pub struct SessionsForkResponse {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsForkResponseVisibility,
     pub artifacts: Vec<SessionsForkResponseArtifact>,
     /// Whether the session VM is sized automatically.
@@ -5994,10 +6009,10 @@ impl From<&str> for SessionsForkResponseSessionType {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsForkResponseVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -6007,8 +6022,8 @@ impl SessionsForkResponseVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -6023,8 +6038,8 @@ impl std::fmt::Display for SessionsForkResponseVisibility {
 impl From<&str> for SessionsForkResponseVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -6945,6 +6960,7 @@ pub struct SessionsImportResponse {
     pub title: String,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
+    /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsImportResponseVisibility,
     pub artifacts: Vec<SessionsImportResponseArtifact>,
     /// Whether the session VM is sized automatically.
@@ -7263,10 +7279,10 @@ impl From<&str> for SessionsImportResponseSessionType {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SessionsImportResponseVisibility {
-    #[serde(rename = "public")]
-    Public,
     #[serde(rename = "private")]
     Private,
+    #[serde(rename = "public")]
+    Public,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -7276,8 +7292,8 @@ impl SessionsImportResponseVisibility {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Public => "public",
             Self::Private => "private",
+            Self::Public => "public",
             Self::Unknown(value) => value,
         }
     }
@@ -7292,8 +7308,8 @@ impl std::fmt::Display for SessionsImportResponseVisibility {
 impl From<&str> for SessionsImportResponseVisibility {
     fn from(value: &str) -> Self {
         match value {
-            "public" => Self::Public,
             "private" => Self::Private,
+            "public" => Self::Public,
             other => Self::Unknown(other.to_owned()),
         }
     }

@@ -31,13 +31,8 @@ impl MembersResource {
     }
 
     /// Update an organization member
-    pub fn update(
-        &self,
-        organization_id: impl Into<String>,
-        member_id: impl Into<String>,
-        body: crate::models::MembersUpdateBody,
-    ) -> UpdateRequestBuilder {
-        UpdateRequestBuilder::new(self.client.clone(), organization_id.into(), member_id.into(), body)
+    pub fn update(&self, organization_id: impl Into<String>, member_id: impl Into<String>) -> UpdateRequestBuilder {
+        UpdateRequestBuilder::new(self.client.clone(), organization_id.into(), member_id.into())
     }
 
     /// Remove an organization member
@@ -328,28 +323,28 @@ pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
     organization_id: String,
     member_id: String,
-    body: crate::models::MembersUpdateBody,
+    body: Option<crate::models::MembersUpdateBody>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl UpdateRequestBuilder {
-    fn new(
-        client: crate::client::Tembo,
-        organization_id: String,
-        member_id: String,
-        body: crate::models::MembersUpdateBody,
-    ) -> Self {
+    fn new(client: crate::client::Tembo, organization_id: String, member_id: String) -> Self {
         Self {
             client,
             organization_id,
             member_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::MembersUpdateBody) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -397,7 +392,7 @@ impl UpdateRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

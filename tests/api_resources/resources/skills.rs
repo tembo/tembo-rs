@@ -69,39 +69,15 @@ async fn retrieve() {
 }
 
 #[tokio::test]
-async fn update_required_params() {
+async fn update() {
     crate::smoke_case(
-        "skills.update:required",
+        "skills.update:single",
         "update",
         "/v1/skills/{skillId}",
         |client| async move {
             let _ = client
                 .skills()
-                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7", SkillsUpdateBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn update_all_params() {
-    crate::smoke_case(
-        "skills.update:all",
-        "update",
-        "/v1/skills/{skillId}",
-        |client| async move {
-            let _ = client
-                .skills()
-                .update(
-                    "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                    SkillsUpdateBody::new()
-                        .with_description("".to_string())
-                        .with_name("x".to_string())
-                        .with_files(vec![SkillsUpdateBodyFile::new("".to_string(), "x".to_string())]),
-                )
+                .update("7c9e6679-7425-40de-944b-e07fc1f90ae7")
                 .send()
                 .await?;
             Ok(())

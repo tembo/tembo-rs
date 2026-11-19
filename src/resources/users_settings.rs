@@ -17,8 +17,8 @@ impl UsersSettingsResource {
     }
 
     /// Update user settings
-    pub fn update(&self, user_id: impl Into<String>, body: crate::models::SettingsUpdateBody2) -> UpdateRequestBuilder {
-        UpdateRequestBuilder::new(self.client.clone(), user_id.into(), body)
+    pub fn update(&self, user_id: impl Into<String>) -> UpdateRequestBuilder {
+        UpdateRequestBuilder::new(self.client.clone(), user_id.into())
     }
 }
 
@@ -96,22 +96,27 @@ impl RetrieveRequestBuilder {
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,
     user_id: String,
-    body: crate::models::SettingsUpdateBody2,
+    body: Option<crate::models::SettingsUpdateBody2>,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl UpdateRequestBuilder {
-    fn new(client: crate::client::Tembo, user_id: String, body: crate::models::SettingsUpdateBody2) -> Self {
+    fn new(client: crate::client::Tembo, user_id: String) -> Self {
         Self {
             client,
             user_id,
-            body,
+            body: None,
             idempotency_key: None,
             timeout: None,
             max_retries: None,
         }
+    }
+
+    pub fn body(mut self, value: crate::models::SettingsUpdateBody2) -> Self {
+        self.body = Some(value);
+        self
     }
 
     /// Sets an idempotency key so this request can be safely retried.
@@ -155,7 +160,7 @@ impl UpdateRequestBuilder {
         if let Some(key) = self.idempotency_key {
             headers.push(("Idempotency-Key".to_string(), key));
         }
-        let body = Some(&self.body);
+        let body = self.body.as_ref();
         let overrides = crate::client::RequestOverrides {
             timeout: self.timeout,
             max_retries: self.max_retries,

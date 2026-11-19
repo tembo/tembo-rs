@@ -145,6 +145,9 @@ pub struct MembersListResponseItemVariant2 {
     #[serde(default)]
     pub role: Option<MembersListResponseItemVariant2Role>,
     pub status: String,
+    /// Teams the invitee joins on accepting; empty for none. Null when the invitation was not created through Tembo.
+    #[serde(rename = "teamIds", default)]
+    pub team_ids: Option<Vec<String>>,
 }
 
 impl MembersListResponseItemVariant2 {
@@ -164,6 +167,7 @@ impl MembersListResponseItemVariant2 {
         last_name: Option<String>,
         role: Option<MembersListResponseItemVariant2Role>,
         status: impl Into<String>,
+        team_ids: Option<Vec<String>>,
     ) -> Self {
         Self {
             created_at,
@@ -176,6 +180,7 @@ impl MembersListResponseItemVariant2 {
             last_name,
             role,
             status: status.into(),
+            team_ids,
         }
     }
 }
@@ -323,6 +328,9 @@ pub struct MembersCreateResponseVariant2 {
     #[serde(default)]
     pub role: Option<MembersCreateResponseVariant2Role>,
     pub status: String,
+    /// Teams the invitee joins on accepting; empty for none. Null when the invitation was not created through Tembo.
+    #[serde(rename = "teamIds", default)]
+    pub team_ids: Option<Vec<String>>,
 }
 
 impl MembersCreateResponseVariant2 {
@@ -342,6 +350,7 @@ impl MembersCreateResponseVariant2 {
         last_name: Option<String>,
         role: Option<MembersCreateResponseVariant2Role>,
         status: impl Into<String>,
+        team_ids: Option<Vec<String>>,
     ) -> Self {
         Self {
             created_at,
@@ -354,6 +363,7 @@ impl MembersCreateResponseVariant2 {
             last_name,
             role,
             status: status.into(),
+            team_ids,
         }
     }
 }
@@ -391,6 +401,9 @@ pub struct MembersCreateBody {
     pub email_address: String,
     #[serde(rename = "roleId")]
     pub role_id: String,
+    /// Teams the member joins on accepting. Omit to add them to the default team.
+    #[serde(rename = "teamIds", default, skip_serializing_if = "Option::is_none")]
+    pub team_ids: Option<Vec<String>>,
 }
 
 impl MembersCreateBody {
@@ -398,11 +411,21 @@ impl MembersCreateBody {
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `MembersCreateBody::new(email_address, role_id).with_team_ids(…)`.
     pub fn new(email_address: impl Into<String>, role_id: impl Into<String>) -> Self {
         Self {
             email_address: email_address.into(),
             role_id: role_id.into(),
+            team_ids: None,
         }
+    }
+
+    /// Sets `team_ids`, which `new` leaves unset.
+    pub fn with_team_ids(mut self, value: Vec<String>) -> Self {
+        self.team_ids = Some(value);
+        self
     }
 }
 
@@ -526,6 +549,9 @@ pub struct MembersRetrieveResponseVariant2 {
     #[serde(default)]
     pub role: Option<MembersRetrieveResponseVariant2Role>,
     pub status: String,
+    /// Teams the invitee joins on accepting; empty for none. Null when the invitation was not created through Tembo.
+    #[serde(rename = "teamIds", default)]
+    pub team_ids: Option<Vec<String>>,
 }
 
 impl MembersRetrieveResponseVariant2 {
@@ -545,6 +571,7 @@ impl MembersRetrieveResponseVariant2 {
         last_name: Option<String>,
         role: Option<MembersRetrieveResponseVariant2Role>,
         status: impl Into<String>,
+        team_ids: Option<Vec<String>>,
     ) -> Self {
         Self {
             created_at,
@@ -557,6 +584,7 @@ impl MembersRetrieveResponseVariant2 {
             last_name,
             role,
             status: status.into(),
+            team_ids,
         }
     }
 }
@@ -704,6 +732,9 @@ pub struct MembersUpdateResponseVariant2 {
     #[serde(default)]
     pub role: Option<MembersUpdateResponseVariant2Role>,
     pub status: String,
+    /// Teams the invitee joins on accepting; empty for none. Null when the invitation was not created through Tembo.
+    #[serde(rename = "teamIds", default)]
+    pub team_ids: Option<Vec<String>>,
 }
 
 impl MembersUpdateResponseVariant2 {
@@ -723,6 +754,7 @@ impl MembersUpdateResponseVariant2 {
         last_name: Option<String>,
         role: Option<MembersUpdateResponseVariant2Role>,
         status: impl Into<String>,
+        team_ids: Option<Vec<String>>,
     ) -> Self {
         Self {
             created_at,
@@ -735,6 +767,7 @@ impl MembersUpdateResponseVariant2 {
             last_name,
             role,
             status: status.into(),
+            team_ids,
         }
     }
 }

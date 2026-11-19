@@ -90,45 +90,16 @@ async fn retrieve() {
 }
 
 #[tokio::test]
-async fn update_required_params() {
+async fn update() {
     crate::smoke_case(
-        "organizations.roles.update:required",
+        "organizations.roles.update:single",
         "update",
         "/v1/organizations/{organizationId}/roles/{roleId}",
         |client| async move {
             let _ = client
                 .organizations()
                 .roles()
-                .update("example", "example", RolesUpdateBody::new())
-                .send()
-                .await?;
-            Ok(())
-        },
-    )
-    .await;
-}
-
-#[tokio::test]
-async fn update_all_params() {
-    crate::smoke_case(
-        "organizations.roles.update:all",
-        "update",
-        "/v1/organizations/{organizationId}/roles/{roleId}",
-        |client| async move {
-            let _ = client
-                .organizations()
-                .roles()
-                .update(
-                    "example",
-                    "example",
-                    RolesUpdateBody::new()
-                        .with_name("x".to_string())
-                        .with_description("".to_string())
-                        .with_icon(RolesUpdateBodyIcon::Key)
-                        .with_color(RolesUpdateBodyColor::Neutral)
-                        .with_permissions(vec![RolesUpdateBodyPermission::OrganizationAuditLogRead])
-                        .with_is_default(false),
-                )
+                .update("example", "example")
                 .send()
                 .await?;
             Ok(())
