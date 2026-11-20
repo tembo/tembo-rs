@@ -1564,6 +1564,9 @@ Live resource subscriptions
 - `GithubPullRequestMergedFilters`
 - `GithubPullRequestOpenedFilters`
 - `GithubPullRequestReadyForReviewFilters`
+- `GithubPullRequestLabeledFilters`
+- `GithubPullRequestReviewRequestedFilters`
+- `GithubPullRequestReviewSubmittedFilters`
 - `GithubReleasePublishedFilters`
 - `GithubPullRequestSynchronizeFilters`
 - `GithubTemboPullRequestOpenedFilters`
@@ -1594,6 +1597,9 @@ Live resource subscriptions
 - `GithubPullRequestMergedFiltersOutput`
 - `GithubPullRequestOpenedFiltersOutput`
 - `GithubPullRequestReadyForReviewFiltersOutput`
+- `GithubPullRequestLabeledFiltersOutput`
+- `GithubPullRequestReviewRequestedFiltersOutput`
+- `GithubPullRequestReviewSubmittedFiltersOutput`
 - `GithubPullRequestSynchronizeFiltersOutput`
 - `TriggerFiltersOutput`
 - `AgentState`

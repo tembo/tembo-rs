@@ -78,6 +78,224 @@ impl AtlassianIssueCommentCreatedFilters {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestLabeledFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestLabeledFilters {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger when one of these labels is added
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labels: Option<Vec<String>>,
+    /// Only trigger if the label was added by one of the specified users
+    #[serde(rename = "labeledBy", default, skip_serializing_if = "Option::is_none")]
+    pub labeled_by: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_prs: Option<bool>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestLabeledFilters {
+    /// Creates a new `GithubPullRequestLabeledFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestLabeledFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            labels: None,
+            labeled_by: None,
+            tembo_prs: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `labeled_by`, which `new` leaves unset.
+    pub fn with_labeled_by(mut self, value: Vec<String>) -> Self {
+        self.labeled_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestReviewRequestedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestReviewRequestedFilters {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger when one of these users or team slugs is requested as a reviewer
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reviewers: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_prs: Option<bool>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestReviewRequestedFilters {
+    /// Creates a new `GithubPullRequestReviewRequestedFilters` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestReviewRequestedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            reviewers: None,
+            tembo_prs: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `reviewers`, which `new` leaves unset.
+    pub fn with_reviewers(mut self, value: Vec<String>) -> Self {
+        self.reviewers = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestReviewSubmittedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestReviewSubmittedFilters {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger for reviews with one of these states
+    #[serde(rename = "reviewStates", default, skip_serializing_if = "Option::is_none")]
+    pub review_states: Option<Vec<GithubPullRequestReviewSubmittedFiltersReviewState>>,
+    /// Only trigger if the review was submitted by one of the specified users
+    #[serde(rename = "reviewedBy", default, skip_serializing_if = "Option::is_none")]
+    pub reviewed_by: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_prs: Option<bool>,
+    /// Trigger also for reviews submitted by Tembo (disabled by default). Replies Tembo posts to review threads never trigger.
+    #[serde(rename = "temboReviews", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_reviews: Option<bool>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestReviewSubmittedFilters {
+    /// Creates a new `GithubPullRequestReviewSubmittedFilters` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestReviewSubmittedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            review_states: None,
+            reviewed_by: None,
+            tembo_prs: None,
+            tembo_reviews: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `review_states`, which `new` leaves unset.
+    pub fn with_review_states(mut self, value: Vec<GithubPullRequestReviewSubmittedFiltersReviewState>) -> Self {
+        self.review_states = Some(value);
+        self
+    }
+
+    /// Sets `reviewed_by`, which `new` leaves unset.
+    pub fn with_reviewed_by(mut self, value: Vec<String>) -> Self {
+        self.reviewed_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_prs`, which `new` leaves unset.
+    pub fn with_tembo_prs(mut self, value: bool) -> Self {
+        self.tembo_prs = Some(value);
+        self
+    }
+
+    /// Sets `tembo_reviews`, which `new` leaves unset.
+    pub fn with_tembo_reviews(mut self, value: bool) -> Self {
+        self.tembo_reviews = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `GithubReleasePublishedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 ///
@@ -569,6 +787,198 @@ impl GithubPullRequestReadyForReviewFiltersOutput {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestLabeledFiltersOutput::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestLabeledFiltersOutput {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger when one of these labels is added
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labels: Option<Vec<String>>,
+    /// Only trigger if the label was added by one of the specified users
+    #[serde(rename = "labeledBy", default, skip_serializing_if = "Option::is_none")]
+    pub labeled_by: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs")]
+    pub tembo_prs: bool,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestLabeledFiltersOutput {
+    /// Creates a new `GithubPullRequestLabeledFiltersOutput` from its required fields, leaving every optional one
+    /// unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestLabeledFiltersOutput::new(tembo_prs).with_repositories(…)`.
+    pub fn new(tembo_prs: bool) -> Self {
+        Self {
+            repositories: None,
+            labels: None,
+            labeled_by: None,
+            tembo_prs,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `labels`, which `new` leaves unset.
+    pub fn with_labels(mut self, value: Vec<String>) -> Self {
+        self.labels = Some(value);
+        self
+    }
+
+    /// Sets `labeled_by`, which `new` leaves unset.
+    pub fn with_labeled_by(mut self, value: Vec<String>) -> Self {
+        self.labeled_by = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestReviewRequestedFiltersOutput::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestReviewRequestedFiltersOutput {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger when one of these users or team slugs is requested as a reviewer
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reviewers: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs")]
+    pub tembo_prs: bool,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestReviewRequestedFiltersOutput {
+    /// Creates a new `GithubPullRequestReviewRequestedFiltersOutput` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestReviewRequestedFiltersOutput::new(tembo_prs).with_repositories(…)`.
+    pub fn new(tembo_prs: bool) -> Self {
+        Self {
+            repositories: None,
+            reviewers: None,
+            tembo_prs,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `reviewers`, which `new` leaves unset.
+    pub fn with_reviewers(mut self, value: Vec<String>) -> Self {
+        self.reviewers = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubPullRequestReviewSubmittedFiltersOutput::new` and the `with_*` setters rather than a struct literal. Fields
+/// stay public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubPullRequestReviewSubmittedFiltersOutput {
+    /// Only trigger if the pull request is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger for reviews with one of these states
+    #[serde(rename = "reviewStates", default, skip_serializing_if = "Option::is_none")]
+    pub review_states: Option<Vec<GithubPullRequestReviewSubmittedFiltersOutputReviewState>>,
+    /// Only trigger if the review was submitted by one of the specified users
+    #[serde(rename = "reviewedBy", default, skip_serializing_if = "Option::is_none")]
+    pub reviewed_by: Option<Vec<String>>,
+    /// Enable agent for Tembo-created pull requests (enabled by default)
+    #[serde(rename = "temboPrs")]
+    pub tembo_prs: bool,
+    /// Trigger also for reviews submitted by Tembo (disabled by default). Replies Tembo posts to review threads never trigger.
+    #[serde(rename = "temboReviews", default, skip_serializing_if = "Option::is_none")]
+    pub tembo_reviews: Option<bool>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubPullRequestReviewSubmittedFiltersOutput {
+    /// Creates a new `GithubPullRequestReviewSubmittedFiltersOutput` from its required fields, leaving every optional
+    /// one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubPullRequestReviewSubmittedFiltersOutput::new(tembo_prs).with_repositories(…)`.
+    pub fn new(tembo_prs: bool) -> Self {
+        Self {
+            repositories: None,
+            review_states: None,
+            reviewed_by: None,
+            tembo_prs,
+            tembo_reviews: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `review_states`, which `new` leaves unset.
+    pub fn with_review_states(mut self, value: Vec<GithubPullRequestReviewSubmittedFiltersOutputReviewState>) -> Self {
+        self.review_states = Some(value);
+        self
+    }
+
+    /// Sets `reviewed_by`, which `new` leaves unset.
+    pub fn with_reviewed_by(mut self, value: Vec<String>) -> Self {
+        self.reviewed_by = Some(value);
+        self
+    }
+
+    /// Sets `tembo_reviews`, which `new` leaves unset.
+    pub fn with_tembo_reviews(mut self, value: bool) -> Self {
+        self.tembo_reviews = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `GithubPullRequestSynchronizeFiltersOutput::new` and the `with_*` setters rather than a struct literal. Fields stay
 /// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -638,10 +1048,13 @@ impl GithubPullRequestSynchronizeFiltersOutput {
 #[non_exhaustive]
 pub enum TriggerFiltersOutput {
     GithubPullRequestOpenedFiltersOutput(GithubPullRequestOpenedFiltersOutput),
+    GithubPullRequestReviewSubmittedFiltersOutput(GithubPullRequestReviewSubmittedFiltersOutput),
+    GithubPullRequestLabeledFiltersOutput(GithubPullRequestLabeledFiltersOutput),
     GithubPullRequestSynchronizeFiltersOutput(GithubPullRequestSynchronizeFiltersOutput),
     GithubPullRequestClosedFiltersOutput(GithubPullRequestClosedFiltersOutput),
     GithubPullRequestMergedFiltersOutput(GithubPullRequestMergedFiltersOutput),
     GithubPullRequestReadyForReviewFiltersOutput(GithubPullRequestReadyForReviewFiltersOutput),
+    GithubPullRequestReviewRequestedFiltersOutput(GithubPullRequestReviewRequestedFiltersOutput),
     LinearIssueCreateFilters(LinearIssueCreateFilters),
     AtlassianIssueAddedToBoardFilters(AtlassianIssueAddedToBoardFilters),
     AtlassianIssueStatusChangedFilters(AtlassianIssueStatusChangedFilters),
@@ -678,11 +1091,11 @@ pub enum TriggerFiltersOutput {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant41(serde_json::Value),
-    Variant42(serde_json::Value),
-    Variant43(serde_json::Value),
     Variant44(serde_json::Value),
     Variant45(serde_json::Value),
+    Variant46(serde_json::Value),
+    Variant47(serde_json::Value),
+    Variant48(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -1169,6 +1582,53 @@ impl From<&str> for GithubIssueCommentCreatedFiltersCommentOn {
 /// adds the real variant.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
+pub enum GithubPullRequestReviewSubmittedFiltersReviewState {
+    #[serde(rename = "approved")]
+    Approved,
+    #[serde(rename = "changes_requested")]
+    ChangesRequested,
+    #[serde(rename = "commented")]
+    Commented,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl GithubPullRequestReviewSubmittedFiltersReviewState {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Approved => "approved",
+            Self::ChangesRequested => "changes_requested",
+            Self::Commented => "commented",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for GithubPullRequestReviewSubmittedFiltersReviewState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for GithubPullRequestReviewSubmittedFiltersReviewState {
+    fn from(value: &str) -> Self {
+        match value {
+            "approved" => Self::Approved,
+            "changes_requested" => Self::ChangesRequested,
+            "commented" => Self::Commented,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
 pub enum GithubWorkflowRunCompletedFiltersConclusion {
     #[serde(rename = "success")]
     Success,
@@ -1315,6 +1775,53 @@ impl From<&str> for SentryIssueCreatedFiltersPriority {
             "high" => Self::High,
             "medium" => Self::Medium,
             "low" => Self::Low,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum GithubPullRequestReviewSubmittedFiltersOutputReviewState {
+    #[serde(rename = "approved")]
+    Approved,
+    #[serde(rename = "changes_requested")]
+    ChangesRequested,
+    #[serde(rename = "commented")]
+    Commented,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl GithubPullRequestReviewSubmittedFiltersOutputReviewState {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Approved => "approved",
+            Self::ChangesRequested => "changes_requested",
+            Self::Commented => "commented",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for GithubPullRequestReviewSubmittedFiltersOutputReviewState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for GithubPullRequestReviewSubmittedFiltersOutputReviewState {
+    fn from(value: &str) -> Self {
+        match value {
+            "approved" => Self::Approved,
+            "changes_requested" => Self::ChangesRequested,
+            "commented" => Self::Commented,
             other => Self::Unknown(other.to_owned()),
         }
     }
