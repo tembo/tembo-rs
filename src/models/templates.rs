@@ -2391,6 +2391,7 @@ pub enum TriggerFilters {
     AtlassianIssueAddedToBoardFilters(AtlassianIssueAddedToBoardFilters),
     AtlassianIssueStatusChangedFilters(AtlassianIssueStatusChangedFilters),
     GithubPullRequestOpenedFilters(GithubPullRequestOpenedFilters),
+    GithubPullRequestReviewSubmittedFilters(GithubPullRequestReviewSubmittedFilters),
     GithubWorkflowRunCompletedFilters(GithubWorkflowRunCompletedFilters),
     LinearIssueStatusChangedFilters(LinearIssueStatusChangedFilters),
     LinearIssueUpdatedFilters(LinearIssueUpdatedFilters),
@@ -2400,6 +2401,7 @@ pub enum TriggerFilters {
     AtlassianIssueUpdatedFilters(AtlassianIssueUpdatedFilters),
     GithubCreateFilters(GithubCreateFilters),
     GithubIssueCommentCreatedFilters(GithubIssueCommentCreatedFilters),
+    GithubPullRequestLabeledFilters(GithubPullRequestLabeledFilters),
     GithubPullRequestSynchronizeFilters(GithubPullRequestSynchronizeFilters),
     GitlabMergeRequestUpdatedFilters(GitlabMergeRequestUpdatedFilters),
     GitlabRefCreatedFilters(GitlabRefCreatedFilters),
@@ -2411,6 +2413,7 @@ pub enum TriggerFilters {
     GithubPullRequestClosedFilters(GithubPullRequestClosedFilters),
     GithubPullRequestMergedFilters(GithubPullRequestMergedFilters),
     GithubPullRequestReadyForReviewFilters(GithubPullRequestReadyForReviewFilters),
+    GithubPullRequestReviewRequestedFilters(GithubPullRequestReviewRequestedFilters),
     GithubWorkflowRunFailedFilters(GithubWorkflowRunFailedFilters),
     GitlabIssueClosedFilters(GitlabIssueClosedFilters),
     GitlabIssueOpenedFilters(GitlabIssueOpenedFilters),
@@ -2428,11 +2431,11 @@ pub enum TriggerFilters {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant41(serde_json::Value),
-    Variant42(serde_json::Value),
-    Variant43(serde_json::Value),
     Variant44(serde_json::Value),
     Variant45(serde_json::Value),
+    Variant46(serde_json::Value),
+    Variant47(serde_json::Value),
+    Variant48(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
