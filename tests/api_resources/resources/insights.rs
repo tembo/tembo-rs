@@ -114,3 +114,39 @@ async fn list_repositories_all_params() {
     )
     .await;
 }
+
+#[tokio::test]
+async fn list_teams_required_params() {
+    crate::smoke_case(
+        "insights.listTeams:required",
+        "listTeams",
+        "/v1/insights/teams",
+        |client| async move {
+            let _ = client.insights().list_teams().send().await?;
+            Ok(())
+        },
+    )
+    .await;
+}
+
+#[tokio::test]
+async fn list_teams_all_params() {
+    crate::smoke_case(
+        "insights.listTeams:all",
+        "listTeams",
+        "/v1/insights/teams",
+        |client| async move {
+            let _ = client
+                .insights()
+                .list_teams()
+                .range("1y".to_string())
+                .team_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+                .limit(50)
+                .send()
+                .await?;
+            Ok(())
+        },
+    )
+    .await;
+}

@@ -109,6 +109,8 @@ impl From<&str> for SkillsListResponseItemSource {
 pub struct SkillsCreateResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "createdBy", default)]
+    pub created_by: Option<String>,
     pub description: String,
     pub id: String,
     pub name: String,
@@ -124,6 +126,7 @@ impl SkillsCreateResponse {
     /// argument, which is a breaking change either way.
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
         description: impl Into<String>,
         id: impl Into<String>,
         name: impl Into<String>,
@@ -132,6 +135,7 @@ impl SkillsCreateResponse {
     ) -> Self {
         Self {
             created_at,
+            created_by,
             description: description.into(),
             id: id.into(),
             name: name.into(),
@@ -330,6 +334,8 @@ impl From<&str> for SkillsCreateBodyFileEncoding {
 pub struct SkillsRetrieveResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "createdBy", default)]
+    pub created_by: Option<String>,
     pub description: String,
     pub id: String,
     pub name: String,
@@ -345,6 +351,7 @@ impl SkillsRetrieveResponse {
     /// argument, which is a breaking change either way.
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
         description: impl Into<String>,
         id: impl Into<String>,
         name: impl Into<String>,
@@ -353,6 +360,7 @@ impl SkillsRetrieveResponse {
     ) -> Self {
         Self {
             created_at,
+            created_by,
             description: description.into(),
             id: id.into(),
             name: name.into(),
@@ -444,6 +452,8 @@ impl From<&str> for SkillsRetrieveResponseFileEncoding {
 pub struct SkillsUpdateResponse {
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(rename = "createdBy", default)]
+    pub created_by: Option<String>,
     pub description: String,
     pub id: String,
     pub name: String,
@@ -459,6 +469,7 @@ impl SkillsUpdateResponse {
     /// argument, which is a breaking change either way.
     pub fn new(
         created_at: chrono::DateTime<chrono::FixedOffset>,
+        created_by: Option<String>,
         description: impl Into<String>,
         id: impl Into<String>,
         name: impl Into<String>,
@@ -467,6 +478,7 @@ impl SkillsUpdateResponse {
     ) -> Self {
         Self {
             created_at,
+            created_by,
             description: description.into(),
             id: id.into(),
             name: name.into(),

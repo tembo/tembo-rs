@@ -20,6 +20,10 @@ impl ModelsResource {
     pub fn update(&self, model_name: impl Into<String>, body: crate::models::ModelsUpdateBody) -> UpdateRequestBuilder {
         UpdateRequestBuilder::new(self.client.clone(), model_name.into(), body)
     }
+
+    pub fn shares(&self) -> crate::resources::models_shares::ModelsSharesResource {
+        crate::resources::models_shares::ModelsSharesResource::new(self.client.clone())
+    }
 }
 
 /// List the models available to the current organization, including enablement and inference-provider access.
@@ -28,6 +32,7 @@ pub struct ListRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    team_id: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
@@ -38,6 +43,7 @@ impl ListRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            team_id: None,
             timeout: None,
             max_retries: None,
         }
@@ -52,6 +58,11 @@ impl ListRequestBuilder {
     /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
+        self
+    }
+
+    pub fn team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
         self
     }
 
@@ -92,6 +103,9 @@ impl ListRequestBuilder {
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
         }
+        if let Some(value) = &self.team_id {
+            query.push(("teamId".to_string(), crate::http::scalar_value(value)));
+        }
         let headers: Vec<(String, String)> = Vec::new();
         let body: Option<&serde_json::Value> = None;
         let overrides = crate::client::RequestOverrides {
@@ -111,7 +125,7 @@ impl ListRequestBuilder {
             .await
     }
 }
-/// Enable or disable an organization model, or select its inference provider.
+/// Manage workspace model access and provider.
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct UpdateRequestBuilder {
     client: crate::client::Tembo,

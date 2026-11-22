@@ -75,6 +75,12 @@ pub struct SettingsRetrieveResponse2 {
     pub follow_up_behavior: Option<SettingsRetrieveResponse2FollowUpBehavior>,
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
+    #[serde(
+        rename = "fallbackToApiOnSubscriptionLimit",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub fallback_to_api_on_subscription_limit: Option<bool>,
 }
 
 impl SettingsRetrieveResponse2 {
@@ -106,6 +112,7 @@ impl SettingsRetrieveResponse2 {
             default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
+            fallback_to_api_on_subscription_limit: None,
         }
     }
 
@@ -244,6 +251,12 @@ impl SettingsRetrieveResponse2 {
     /// Sets `custom_system_prompt`, which `new` leaves unset.
     pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
         self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `fallback_to_api_on_subscription_limit`, which `new` leaves unset.
+    pub fn with_fallback_to_api_on_subscription_limit(mut self, value: bool) -> Self {
+        self.fallback_to_api_on_subscription_limit = Some(value);
         self
     }
 }
@@ -674,6 +687,8 @@ impl From<&str> for SettingsRetrieveResponse2AppSidebarPreferencesSessionOwnerSc
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SettingsRetrieveResponse2AppSidebarPreferencesSessionSortBy {
+    #[serde(rename = "manual")]
+    Manual,
     #[serde(rename = "createdAt")]
     CreatedAt,
     #[serde(rename = "updatedAt")]
@@ -687,6 +702,7 @@ impl SettingsRetrieveResponse2AppSidebarPreferencesSessionSortBy {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::Manual => "manual",
             Self::CreatedAt => "createdAt",
             Self::UpdatedAt => "updatedAt",
             Self::Unknown(value) => value,
@@ -703,6 +719,7 @@ impl std::fmt::Display for SettingsRetrieveResponse2AppSidebarPreferencesSession
 impl From<&str> for SettingsRetrieveResponse2AppSidebarPreferencesSessionSortBy {
     fn from(value: &str) -> Self {
         match value {
+            "manual" => Self::Manual,
             "createdAt" => Self::CreatedAt,
             "updatedAt" => Self::UpdatedAt,
             other => Self::Unknown(other.to_owned()),
@@ -1737,6 +1754,12 @@ pub struct SettingsUpdateResponse2 {
     pub follow_up_behavior: Option<SettingsUpdateResponse2FollowUpBehavior>,
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
+    #[serde(
+        rename = "fallbackToApiOnSubscriptionLimit",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub fallback_to_api_on_subscription_limit: Option<bool>,
 }
 
 impl SettingsUpdateResponse2 {
@@ -1768,6 +1791,7 @@ impl SettingsUpdateResponse2 {
             default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
+            fallback_to_api_on_subscription_limit: None,
         }
     }
 
@@ -1906,6 +1930,12 @@ impl SettingsUpdateResponse2 {
     /// Sets `custom_system_prompt`, which `new` leaves unset.
     pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
         self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `fallback_to_api_on_subscription_limit`, which `new` leaves unset.
+    pub fn with_fallback_to_api_on_subscription_limit(mut self, value: bool) -> Self {
+        self.fallback_to_api_on_subscription_limit = Some(value);
         self
     }
 }
@@ -2336,6 +2366,8 @@ impl From<&str> for SettingsUpdateResponse2AppSidebarPreferencesSessionOwnerScop
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SettingsUpdateResponse2AppSidebarPreferencesSessionSortBy {
+    #[serde(rename = "manual")]
+    Manual,
     #[serde(rename = "createdAt")]
     CreatedAt,
     #[serde(rename = "updatedAt")]
@@ -2349,6 +2381,7 @@ impl SettingsUpdateResponse2AppSidebarPreferencesSessionSortBy {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::Manual => "manual",
             Self::CreatedAt => "createdAt",
             Self::UpdatedAt => "updatedAt",
             Self::Unknown(value) => value,
@@ -2365,6 +2398,7 @@ impl std::fmt::Display for SettingsUpdateResponse2AppSidebarPreferencesSessionSo
 impl From<&str> for SettingsUpdateResponse2AppSidebarPreferencesSessionSortBy {
     fn from(value: &str) -> Self {
         match value {
+            "manual" => Self::Manual,
             "createdAt" => Self::CreatedAt,
             "updatedAt" => Self::UpdatedAt,
             other => Self::Unknown(other.to_owned()),
@@ -3430,6 +3464,14 @@ pub struct SettingsUpdateBody2 {
     /// Personal system instructions supplied to agents.
     #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
     pub custom_system_prompt: Option<String>,
+    /// Use the API key or Tembo inference when your subscriptions run out. Overrides the organization setting; null uses the organization setting.
+    #[serde(
+        rename = "fallbackToApiOnSubscriptionLimit",
+        default,
+        skip_serializing_if = "Option::is_none",
+        with = "crate::explicit_null::double_option"
+    )]
+    pub fallback_to_api_on_subscription_limit: Option<Option<bool>>,
 }
 
 impl SettingsUpdateBody2 {
@@ -3461,6 +3503,7 @@ impl SettingsUpdateBody2 {
             default_fast_mode: None,
             follow_up_behavior: None,
             custom_system_prompt: None,
+            fallback_to_api_on_subscription_limit: None,
         }
     }
 
@@ -3603,6 +3646,15 @@ impl SettingsUpdateBody2 {
     /// Sets `custom_system_prompt`, which `new` leaves unset.
     pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
         self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `fallback_to_api_on_subscription_limit`, which `new` leaves unset.
+    ///
+    /// To send an explicit `null` instead, assign `fallback_to_api_on_subscription_limit = Some(None)` on the built
+    /// value.
+    pub fn with_fallback_to_api_on_subscription_limit(mut self, value: bool) -> Self {
+        self.fallback_to_api_on_subscription_limit = Some(Some(value));
         self
     }
 }
@@ -4046,6 +4098,8 @@ impl From<&str> for SettingsUpdateBody2AppSidebarPreferencesSessionOwnerScope {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SettingsUpdateBody2AppSidebarPreferencesSessionSortBy {
+    #[serde(rename = "manual")]
+    Manual,
     #[serde(rename = "createdAt")]
     CreatedAt,
     #[serde(rename = "updatedAt")]
@@ -4059,6 +4113,7 @@ impl SettingsUpdateBody2AppSidebarPreferencesSessionSortBy {
     /// The wire value this variant serializes to.
     pub fn as_str(&self) -> &str {
         match self {
+            Self::Manual => "manual",
             Self::CreatedAt => "createdAt",
             Self::UpdatedAt => "updatedAt",
             Self::Unknown(value) => value,
@@ -4075,6 +4130,7 @@ impl std::fmt::Display for SettingsUpdateBody2AppSidebarPreferencesSessionSortBy
 impl From<&str> for SettingsUpdateBody2AppSidebarPreferencesSessionSortBy {
     fn from(value: &str) -> Self {
         match value {
+            "manual" => Self::Manual,
             "createdAt" => Self::CreatedAt,
             "updatedAt" => Self::UpdatedAt,
             other => Self::Unknown(other.to_owned()),

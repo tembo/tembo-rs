@@ -30,6 +30,11 @@ impl InsightsResource {
     pub fn list_repositories(&self) -> ListRepositoriesRequestBuilder {
         ListRepositoriesRequestBuilder::new(self.client.clone())
     }
+
+    /// List team usage insights
+    pub fn list_teams(&self) -> ListTeamsRequestBuilder {
+        ListTeamsRequestBuilder::new(self.client.clone())
+    }
 }
 
 /// Retrieve pull request contribution insights and their collection status for the current organization.
@@ -379,6 +384,117 @@ impl ListRepositoriesRequestBuilder {
         };
         self.client
             .send::<crate::models::InsightsListRepositoriesResponse, _>(
+                http::Method::GET,
+                &path,
+                &query,
+                &headers,
+                body,
+                true,
+                overrides,
+            )
+            .await
+    }
+}
+/// Compare sessions, turns, tokens, Tembo pull requests, and model cost by current active team membership. Team totals can overlap.
+#[must_use = "a request builder does nothing until `.send().await` is called"]
+pub struct ListTeamsRequestBuilder {
+    client: crate::client::Tembo,
+    range: Option<String>,
+    team_id: Option<String>,
+    cursor: Option<String>,
+    limit: Option<i64>,
+    timeout: Option<std::time::Duration>,
+    max_retries: Option<u32>,
+}
+
+impl ListTeamsRequestBuilder {
+    fn new(client: crate::client::Tembo) -> Self {
+        Self {
+            client,
+            range: None,
+            team_id: None,
+            cursor: None,
+            limit: None,
+            timeout: None,
+            max_retries: None,
+        }
+    }
+
+    /// Time range to aggregate: last day, 7 days, 30 days, or year. Defaults to 1y.
+    pub fn range(mut self, value: impl Into<String>) -> Self {
+        self.range = Some(value.into());
+        self
+    }
+
+    /// Filter activity to current active team members.
+    pub fn team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
+        self
+    }
+
+    /// Continuation cursor from the previous response nextCursor. Omit for the first page; null nextCursor means there are no more pages.
+    pub fn cursor(mut self, value: impl Into<String>) -> Self {
+        self.cursor = Some(value.into());
+        self
+    }
+
+    /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
+    pub fn limit(mut self, value: i64) -> Self {
+        self.limit = Some(value);
+        self
+    }
+
+    /// Overrides the client's request deadline for this request only.
+    /// It bounds each attempt up to response headers, then the buffered
+    /// body read, so total wall time can exceed the value set here. A
+    /// streamed body is never deadline-killed; see `ClientBuilder::timeout`.
+    pub fn timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.timeout = Some(timeout);
+        self
+    }
+
+    /// Overrides the client's maximum retry attempts for this request only.
+    pub fn max_retries(mut self, max_retries: u32) -> Self {
+        self.max_retries = Some(max_retries);
+        self
+    }
+
+    /// Sends the request and returns the decoded response.
+    ///
+    /// # Errors
+    ///
+    /// - [`Error::Api`](crate::error::Error::Api) — the server answered with a
+    ///   non-success status; the status, headers, request id, and decoded body are
+    ///   preserved on the [`ApiError`](crate::error::ApiError).
+    /// - [`Error::Transport`](crate::error::Error::Transport) — the request never
+    ///   produced a response (connection failure, or the deadline elapsed).
+    /// - [`Error::Config`](crate::error::Error::Config) — a parameter value could not
+    ///   be rendered into the request.
+    /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
+    ///   match the generated model.
+    pub async fn send(self) -> Result<crate::models::InsightsListTeamsResponse, crate::error::Error> {
+        let path = "/v1/insights/teams".to_string();
+        let mut query: Vec<(String, String)> = Vec::new();
+        if let Some(value) = &self.range {
+            query.push(("range".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.team_id {
+            query.push(("teamId".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.cursor {
+            query.push(("cursor".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.limit {
+            query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
+        let headers: Vec<(String, String)> = Vec::new();
+        let body: Option<&serde_json::Value> = None;
+        let overrides = crate::client::RequestOverrides {
+            timeout: self.timeout,
+            max_retries: self.max_retries,
+        };
+        self.client
+            .send::<crate::models::InsightsListTeamsResponse, _>(
                 http::Method::GET,
                 &path,
                 &query,

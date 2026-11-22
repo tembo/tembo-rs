@@ -496,6 +496,8 @@ impl RuntimesListResponseItemCompatibleModelAvailabilityVariant2 {
 pub enum RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code {
     #[serde(rename = "model_disabled")]
     ModelDisabled,
+    #[serde(rename = "model_not_shared")]
+    ModelNotShared,
     #[serde(rename = "plan_required")]
     PlanRequired,
     #[serde(rename = "trial_inference_exhausted")]
@@ -520,6 +522,7 @@ impl RuntimesListResponseItemCompatibleModelAvailabilityVariant2Code {
     pub fn as_str(&self) -> &str {
         match self {
             Self::ModelDisabled => "model_disabled",
+            Self::ModelNotShared => "model_not_shared",
             Self::PlanRequired => "plan_required",
             Self::TrialInferenceExhausted => "trial_inference_exhausted",
             Self::MissingCredentials => "missing_credentials",
@@ -542,6 +545,7 @@ impl From<&str> for RuntimesListResponseItemCompatibleModelAvailabilityVariant2C
     fn from(value: &str) -> Self {
         match value {
             "model_disabled" => Self::ModelDisabled,
+            "model_not_shared" => Self::ModelNotShared,
             "plan_required" => Self::PlanRequired,
             "trial_inference_exhausted" => Self::TrialInferenceExhausted,
             "missing_credentials" => Self::MissingCredentials,
