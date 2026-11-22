@@ -80,8 +80,8 @@ impl SessionsResource {
         crate::resources::commands::CommandsResource::new(self.client.clone())
     }
 
-    pub fn shares(&self) -> crate::resources::shares::SharesResource {
-        crate::resources::shares::SharesResource::new(self.client.clone())
+    pub fn shares(&self) -> crate::resources::sessions_shares::SessionsSharesResource {
+        crate::resources::sessions_shares::SessionsSharesResource::new(self.client.clone())
     }
 }
 

@@ -20,6 +20,7 @@ async fn list_all_params() {
             .list()
             .cursor("example")
             .limit(50)
+            .team_id("example")
             .ids("example")
             .search("example")
             .archived(true)

@@ -2,28 +2,28 @@
 //! The `shares` resource.
 
 #[derive(Clone)]
-pub struct SharesResource {
+pub struct ModelsSharesResource {
     client: crate::client::Tembo,
 }
 
-impl SharesResource {
+impl ModelsSharesResource {
     pub(crate) fn new(client: crate::client::Tembo) -> Self {
         Self { client }
     }
 
     /// List shares
-    pub fn list(&self, session_id: impl Into<String>) -> ListRequestBuilder {
-        ListRequestBuilder::new(self.client.clone(), session_id.into())
+    pub fn list(&self, model_id: impl Into<String>) -> ListRequestBuilder {
+        ListRequestBuilder::new(self.client.clone(), model_id.into())
     }
 
     /// Share
-    pub fn create(&self, session_id: impl Into<String>, body: crate::models::SharesCreateBody) -> CreateRequestBuilder {
-        CreateRequestBuilder::new(self.client.clone(), session_id.into(), body)
+    pub fn create(&self, model_id: impl Into<String>, body: crate::models::SharesCreateBody2) -> CreateRequestBuilder {
+        CreateRequestBuilder::new(self.client.clone(), model_id.into(), body)
     }
 
     /// Remove a share
-    pub fn delete(&self, session_id: impl Into<String>, share_id: impl Into<String>) -> DeleteRequestBuilder {
-        DeleteRequestBuilder::new(self.client.clone(), session_id.into(), share_id.into())
+    pub fn delete(&self, model_id: impl Into<String>, share_id: impl Into<String>) -> DeleteRequestBuilder {
+        DeleteRequestBuilder::new(self.client.clone(), model_id.into(), share_id.into())
     }
 }
 
@@ -31,7 +31,7 @@ impl SharesResource {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct ListRequestBuilder {
     client: crate::client::Tembo,
-    session_id: String,
+    model_id: String,
     cursor: Option<String>,
     limit: Option<i64>,
     timeout: Option<std::time::Duration>,
@@ -39,10 +39,10 @@ pub struct ListRequestBuilder {
 }
 
 impl ListRequestBuilder {
-    fn new(client: crate::client::Tembo, session_id: String) -> Self {
+    fn new(client: crate::client::Tembo, model_id: String) -> Self {
         Self {
             client,
-            session_id,
+            model_id,
             cursor: None,
             limit: None,
             timeout: None,
@@ -90,8 +90,8 @@ impl ListRequestBuilder {
     ///   be rendered into the request.
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
-    pub async fn send(self) -> Result<crate::models::SharesListResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}/sharing", crate::http::path_param(&self.session_id)?);
+    pub async fn send(self) -> Result<crate::models::SharesListResponse2, crate::error::Error> {
+        let path = format!("/v1/models/{}/sharing", crate::http::path_param(&self.model_id)?);
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.cursor {
             query.push(("cursor".to_string(), crate::http::scalar_value(value)));
@@ -106,7 +106,7 @@ impl ListRequestBuilder {
             max_retries: self.max_retries,
         };
         self.client
-            .send::<crate::models::SharesListResponse, _>(
+            .send::<crate::models::SharesListResponse2, _>(
                 http::Method::GET,
                 &path,
                 &query,
@@ -122,18 +122,18 @@ impl ListRequestBuilder {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct CreateRequestBuilder {
     client: crate::client::Tembo,
-    session_id: String,
-    body: crate::models::SharesCreateBody,
+    model_id: String,
+    body: crate::models::SharesCreateBody2,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
 }
 
 impl CreateRequestBuilder {
-    fn new(client: crate::client::Tembo, session_id: String, body: crate::models::SharesCreateBody) -> Self {
+    fn new(client: crate::client::Tembo, model_id: String, body: crate::models::SharesCreateBody2) -> Self {
         Self {
             client,
-            session_id,
+            model_id,
             body,
             idempotency_key: None,
             timeout: None,
@@ -175,8 +175,8 @@ impl CreateRequestBuilder {
     ///   be rendered into the request.
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
-    pub async fn send(self) -> Result<crate::models::SharesCreateResponse, crate::error::Error> {
-        let path = format!("/v1/sessions/{}/sharing", crate::http::path_param(&self.session_id)?);
+    pub async fn send(self) -> Result<crate::models::SharesCreateResponse2, crate::error::Error> {
+        let path = format!("/v1/models/{}/sharing", crate::http::path_param(&self.model_id)?);
         let query: Vec<(String, String)> = Vec::new();
         let mut headers: Vec<(String, String)> = Vec::new();
         if let Some(key) = self.idempotency_key {
@@ -188,7 +188,7 @@ impl CreateRequestBuilder {
             max_retries: self.max_retries,
         };
         self.client
-            .send::<crate::models::SharesCreateResponse, _>(
+            .send::<crate::models::SharesCreateResponse2, _>(
                 http::Method::POST,
                 &path,
                 &query,
@@ -204,7 +204,7 @@ impl CreateRequestBuilder {
 #[must_use = "a request builder does nothing until `.send().await` is called"]
 pub struct DeleteRequestBuilder {
     client: crate::client::Tembo,
-    session_id: String,
+    model_id: String,
     share_id: String,
     idempotency_key: Option<String>,
     timeout: Option<std::time::Duration>,
@@ -212,10 +212,10 @@ pub struct DeleteRequestBuilder {
 }
 
 impl DeleteRequestBuilder {
-    fn new(client: crate::client::Tembo, session_id: String, share_id: String) -> Self {
+    fn new(client: crate::client::Tembo, model_id: String, share_id: String) -> Self {
         Self {
             client,
-            session_id,
+            model_id,
             share_id,
             idempotency_key: None,
             timeout: None,
@@ -257,10 +257,10 @@ impl DeleteRequestBuilder {
     ///   be rendered into the request.
     /// - [`Error::Serde`](crate::error::Error::Serde) — the response body did not
     ///   match the generated model.
-    pub async fn send(self) -> Result<crate::models::SharesDeleteResponse, crate::error::Error> {
+    pub async fn send(self) -> Result<crate::models::SharesDeleteResponse2, crate::error::Error> {
         let path = format!(
-            "/v1/sessions/{}/sharing/{}",
-            crate::http::path_param(&self.session_id)?,
+            "/v1/models/{}/sharing/{}",
+            crate::http::path_param(&self.model_id)?,
             crate::http::path_param(&self.share_id)?
         );
         let query: Vec<(String, String)> = Vec::new();
@@ -274,7 +274,7 @@ impl DeleteRequestBuilder {
             max_retries: self.max_retries,
         };
         self.client
-            .send::<crate::models::SharesDeleteResponse, _>(
+            .send::<crate::models::SharesDeleteResponse2, _>(
                 http::Method::DELETE,
                 &path,
                 &query,

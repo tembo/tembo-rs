@@ -55,6 +55,10 @@ impl AgentsResource {
     pub fn content_revisions(&self) -> crate::resources::content_revisions::ContentRevisionsResource {
         crate::resources::content_revisions::ContentRevisionsResource::new(self.client.clone())
     }
+
+    pub fn shares(&self) -> crate::resources::agents_shares::AgentsSharesResource {
+        crate::resources::agents_shares::AgentsSharesResource::new(self.client.clone())
+    }
 }
 
 /// List agents available in your organization, with optional search, status, integration, and author filters.
@@ -63,6 +67,7 @@ pub struct ListRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    team_id: Option<String>,
     ids: Option<String>,
     search: Option<String>,
     archived: Option<bool>,
@@ -80,6 +85,7 @@ impl ListRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            team_id: None,
             ids: None,
             search: None,
             archived: None,
@@ -101,6 +107,12 @@ impl ListRequestBuilder {
     /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
+        self
+    }
+
+    /// Only agents shared with this team that the caller can reach.
+    pub fn team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
         self
     }
 
@@ -182,6 +194,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.team_id {
+            query.push(("teamId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(value) = &self.ids {
             query.push(("ids".to_string(), crate::http::scalar_value(value)));

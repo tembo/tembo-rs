@@ -136,7 +136,7 @@ impl ListUsageRequestBuilder {
         self
     }
 
-    /// Usage types to include. Defaults to sessions for backwards compatibility.
+    /// Usage types to include. Defaults to sessions for backwards compatibility. `cloud-devices` lists the cloud devices (macOS VMs) behind session compute charges and is never combined with other types.
     pub fn r#type(mut self, value: impl Into<String>) -> Self {
         self.r#type = Some(value.into());
         self

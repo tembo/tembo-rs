@@ -102,6 +102,31 @@ Retrieve a marketplace skill
 - Response body: `application/json`
 - Errors: `400, 404, 500, 502`
 
+### client.skills().shares().list(…)
+
+List shares
+
+- HTTP: `GET /v1/skills/{skillId}/sharing`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.skills().shares().create(…)
+
+Share
+
+- HTTP: `POST /v1/skills/{skillId}/sharing`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.skills().shares().delete(…)
+
+Remove a share
+
+- HTTP: `DELETE /v1/skills/{skillId}/sharing/{shareId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
 ### client.insights().retrieve()
 
 Retrieve insights
@@ -132,6 +157,14 @@ List insight members
 List insight repositories
 
 - HTTP: `GET /v1/insights/repositories`
+- Response body: `application/json`
+- Errors: `400, 409, 500`
+
+### client.insights().list_teams()
+
+List team usage insights
+
+- HTTP: `GET /v1/insights/teams`
 - Response body: `application/json`
 - Errors: `400, 409, 500`
 
@@ -562,6 +595,31 @@ Update a model
 - Request body: `application/json`
 - Response body: `application/json`
 - Errors: `400, 403, 404, 500`
+
+### client.models().shares().list(…)
+
+List shares
+
+- HTTP: `GET /v1/models/{modelId}/sharing`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.models().shares().create(…)
+
+Share
+
+- HTTP: `POST /v1/models/{modelId}/sharing`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.models().shares().delete(…)
+
+Remove a share
+
+- HTTP: `DELETE /v1/models/{modelId}/sharing/{shareId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
 
 ### client.runtimes().list()
 
@@ -1285,6 +1343,31 @@ Restore agent instructions
 - Request body: `application/json`
 - Response body: `application/json`
 - Errors: `400, 404, 409, 500`
+
+### client.agents().shares().list(…)
+
+List shares
+
+- HTTP: `GET /v1/agents/{agentId}/sharing`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.agents().shares().create(…)
+
+Share
+
+- HTTP: `POST /v1/agents/{agentId}/sharing`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
+
+### client.agents().shares().delete(…)
+
+Remove a share
+
+- HTTP: `DELETE /v1/agents/{agentId}/sharing/{shareId}`
+- Response body: `application/json`
+- Errors: `400, 403, 404, 409`
 
 ### client.repositories().list()
 

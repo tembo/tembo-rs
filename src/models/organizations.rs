@@ -228,6 +228,22 @@ pub enum OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
     OrganizationSettingRead,
     #[serde(rename = "organization:setting:write")]
     OrganizationSettingWrite,
+    #[serde(rename = "organization:credential:read")]
+    OrganizationCredentialRead,
+    #[serde(rename = "organization:credential:write")]
+    OrganizationCredentialWrite,
+    #[serde(rename = "organization:instruction:read")]
+    OrganizationInstructionRead,
+    #[serde(rename = "organization:instruction:write")]
+    OrganizationInstructionWrite,
+    #[serde(rename = "organization:sandbox_default:read")]
+    OrganizationSandboxDefaultRead,
+    #[serde(rename = "organization:sandbox_default:write")]
+    OrganizationSandboxDefaultWrite,
+    #[serde(rename = "organization:policy:read")]
+    OrganizationPolicyRead,
+    #[serde(rename = "organization:policy:write")]
+    OrganizationPolicyWrite,
     #[serde(rename = "organization:configuration:read")]
     OrganizationConfigurationRead,
     #[serde(rename = "organization:configuration:write")]
@@ -705,6 +721,14 @@ impl OrganizationsRetrieveResponseVariant1CurrentMembershipPermission {
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
             Self::OrganizationSettingWrite => "organization:setting:write",
+            Self::OrganizationCredentialRead => "organization:credential:read",
+            Self::OrganizationCredentialWrite => "organization:credential:write",
+            Self::OrganizationInstructionRead => "organization:instruction:read",
+            Self::OrganizationInstructionWrite => "organization:instruction:write",
+            Self::OrganizationSandboxDefaultRead => "organization:sandbox_default:read",
+            Self::OrganizationSandboxDefaultWrite => "organization:sandbox_default:write",
+            Self::OrganizationPolicyRead => "organization:policy:read",
+            Self::OrganizationPolicyWrite => "organization:policy:write",
             Self::OrganizationConfigurationRead => "organization:configuration:read",
             Self::OrganizationConfigurationWrite => "organization:configuration:write",
             Self::OrganizationSubscriptionRead => "organization:subscription:read",
@@ -961,6 +985,14 @@ impl From<&str> for OrganizationsRetrieveResponseVariant1CurrentMembershipPermis
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
             "organization:setting:write" => Self::OrganizationSettingWrite,
+            "organization:credential:read" => Self::OrganizationCredentialRead,
+            "organization:credential:write" => Self::OrganizationCredentialWrite,
+            "organization:instruction:read" => Self::OrganizationInstructionRead,
+            "organization:instruction:write" => Self::OrganizationInstructionWrite,
+            "organization:sandbox_default:read" => Self::OrganizationSandboxDefaultRead,
+            "organization:sandbox_default:write" => Self::OrganizationSandboxDefaultWrite,
+            "organization:policy:read" => Self::OrganizationPolicyRead,
+            "organization:policy:write" => Self::OrganizationPolicyWrite,
             "organization:configuration:read" => Self::OrganizationConfigurationRead,
             "organization:configuration:write" => Self::OrganizationConfigurationWrite,
             "organization:subscription:read" => Self::OrganizationSubscriptionRead,
@@ -1359,6 +1391,22 @@ pub enum OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
     OrganizationSettingRead,
     #[serde(rename = "organization:setting:write")]
     OrganizationSettingWrite,
+    #[serde(rename = "organization:credential:read")]
+    OrganizationCredentialRead,
+    #[serde(rename = "organization:credential:write")]
+    OrganizationCredentialWrite,
+    #[serde(rename = "organization:instruction:read")]
+    OrganizationInstructionRead,
+    #[serde(rename = "organization:instruction:write")]
+    OrganizationInstructionWrite,
+    #[serde(rename = "organization:sandbox_default:read")]
+    OrganizationSandboxDefaultRead,
+    #[serde(rename = "organization:sandbox_default:write")]
+    OrganizationSandboxDefaultWrite,
+    #[serde(rename = "organization:policy:read")]
+    OrganizationPolicyRead,
+    #[serde(rename = "organization:policy:write")]
+    OrganizationPolicyWrite,
     #[serde(rename = "organization:configuration:read")]
     OrganizationConfigurationRead,
     #[serde(rename = "organization:configuration:write")]
@@ -1836,6 +1884,14 @@ impl OrganizationsRetrieveResponseVariant2CurrentMembershipPermission {
             Self::OrganizationSecretWrite => "organization:secret:write",
             Self::OrganizationSettingRead => "organization:setting:read",
             Self::OrganizationSettingWrite => "organization:setting:write",
+            Self::OrganizationCredentialRead => "organization:credential:read",
+            Self::OrganizationCredentialWrite => "organization:credential:write",
+            Self::OrganizationInstructionRead => "organization:instruction:read",
+            Self::OrganizationInstructionWrite => "organization:instruction:write",
+            Self::OrganizationSandboxDefaultRead => "organization:sandbox_default:read",
+            Self::OrganizationSandboxDefaultWrite => "organization:sandbox_default:write",
+            Self::OrganizationPolicyRead => "organization:policy:read",
+            Self::OrganizationPolicyWrite => "organization:policy:write",
             Self::OrganizationConfigurationRead => "organization:configuration:read",
             Self::OrganizationConfigurationWrite => "organization:configuration:write",
             Self::OrganizationSubscriptionRead => "organization:subscription:read",
@@ -2092,6 +2148,14 @@ impl From<&str> for OrganizationsRetrieveResponseVariant2CurrentMembershipPermis
             "organization:secret:write" => Self::OrganizationSecretWrite,
             "organization:setting:read" => Self::OrganizationSettingRead,
             "organization:setting:write" => Self::OrganizationSettingWrite,
+            "organization:credential:read" => Self::OrganizationCredentialRead,
+            "organization:credential:write" => Self::OrganizationCredentialWrite,
+            "organization:instruction:read" => Self::OrganizationInstructionRead,
+            "organization:instruction:write" => Self::OrganizationInstructionWrite,
+            "organization:sandbox_default:read" => Self::OrganizationSandboxDefaultRead,
+            "organization:sandbox_default:write" => Self::OrganizationSandboxDefaultWrite,
+            "organization:policy:read" => Self::OrganizationPolicyRead,
+            "organization:policy:write" => Self::OrganizationPolicyWrite,
             "organization:configuration:read" => Self::OrganizationConfigurationRead,
             "organization:configuration:write" => Self::OrganizationConfigurationWrite,
             "organization:subscription:read" => Self::OrganizationSubscriptionRead,
