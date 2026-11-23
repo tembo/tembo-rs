@@ -78,6 +78,58 @@ impl AtlassianIssueCommentCreatedFilters {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `GithubDependabotAlertAssignedFilters::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct GithubDependabotAlertAssignedFilters {
+    /// Only trigger if the alert is in one of the repositories
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repositories: Option<Vec<String>>,
+    /// Only trigger when the alert is assigned to one of the specified users
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assignees: Option<Vec<String>>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl GithubDependabotAlertAssignedFilters {
+    /// Creates a new `GithubDependabotAlertAssignedFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `GithubDependabotAlertAssignedFilters::new().with_repositories(…)`.
+    pub fn new() -> Self {
+        Self {
+            repositories: None,
+            assignees: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `repositories`, which `new` leaves unset.
+    pub fn with_repositories(mut self, value: Vec<String>) -> Self {
+        self.repositories = Some(value);
+        self
+    }
+
+    /// Sets `assignees`, which `new` leaves unset.
+    pub fn with_assignees(mut self, value: Vec<String>) -> Self {
+        self.assignees = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `GithubPullRequestLabeledFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 ///
@@ -1084,6 +1136,7 @@ pub enum TriggerFiltersOutput {
     GitlabMergeRequestOpenedFilters(GitlabMergeRequestOpenedFilters),
     LinearIssueLabelAddedFilters(LinearIssueLabelAddedFilters),
     SlackMessageReactionAddedFilters(SlackMessageReactionAddedFilters),
+    GithubDependabotAlertAssignedFilters(GithubDependabotAlertAssignedFilters),
     GithubTemboPullRequestOpenedFilters(GithubTemboPullRequestOpenedFilters),
     GitlabBotMergeRequestCommentFilters(GitlabBotMergeRequestCommentFilters),
     GitlabMergeRequestReadyForReviewFilters(GitlabMergeRequestReadyForReviewFilters),
@@ -1091,11 +1144,11 @@ pub enum TriggerFiltersOutput {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant44(serde_json::Value),
     Variant45(serde_json::Value),
     Variant46(serde_json::Value),
     Variant47(serde_json::Value),
     Variant48(serde_json::Value),
+    Variant49(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an

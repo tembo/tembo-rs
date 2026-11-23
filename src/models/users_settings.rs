@@ -51,6 +51,12 @@ pub struct SettingsRetrieveResponse2 {
     pub has_desktop_app: Option<bool>,
     #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
     pub open_links_in_desktop_app: Option<bool>,
+    #[serde(
+        rename = "openPullRequestLinksInTembo",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub open_pull_request_links_in_tembo: Option<bool>,
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsRetrieveResponse2AppearancePreferences>,
     #[serde(rename = "appSidebarPreferences", default, skip_serializing_if = "Option::is_none")]
@@ -100,6 +106,7 @@ impl SettingsRetrieveResponse2 {
             desktop_notification_preferences: None,
             has_desktop_app: None,
             open_links_in_desktop_app: None,
+            open_pull_request_links_in_tembo: None,
             appearance_preferences: None,
             app_sidebar_preferences: None,
             diff_preferences: None,
@@ -179,6 +186,12 @@ impl SettingsRetrieveResponse2 {
     /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
     pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
         self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_request_links_in_tembo`, which `new` leaves unset.
+    pub fn with_open_pull_request_links_in_tembo(mut self, value: bool) -> Self {
+        self.open_pull_request_links_in_tembo = Some(value);
         self
     }
 
@@ -1730,6 +1743,12 @@ pub struct SettingsUpdateResponse2 {
     pub has_desktop_app: Option<bool>,
     #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
     pub open_links_in_desktop_app: Option<bool>,
+    #[serde(
+        rename = "openPullRequestLinksInTembo",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub open_pull_request_links_in_tembo: Option<bool>,
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsUpdateResponse2AppearancePreferences>,
     #[serde(rename = "appSidebarPreferences", default, skip_serializing_if = "Option::is_none")]
@@ -1779,6 +1798,7 @@ impl SettingsUpdateResponse2 {
             desktop_notification_preferences: None,
             has_desktop_app: None,
             open_links_in_desktop_app: None,
+            open_pull_request_links_in_tembo: None,
             appearance_preferences: None,
             app_sidebar_preferences: None,
             diff_preferences: None,
@@ -1858,6 +1878,12 @@ impl SettingsUpdateResponse2 {
     /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
     pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
         self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_request_links_in_tembo`, which `new` leaves unset.
+    pub fn with_open_pull_request_links_in_tembo(mut self, value: bool) -> Self {
+        self.open_pull_request_links_in_tembo = Some(value);
         self
     }
 
@@ -3423,6 +3449,13 @@ pub struct SettingsUpdateBody2 {
     /// Open Tembo links from the browser in the desktop app when it is installed.
     #[serde(rename = "openLinksInDesktopApp", default, skip_serializing_if = "Option::is_none")]
     pub open_links_in_desktop_app: Option<bool>,
+    /// Open pull request links in Tembo Review. When false, they open on GitHub, GitLab, or Bitbucket.
+    #[serde(
+        rename = "openPullRequestLinksInTembo",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub open_pull_request_links_in_tembo: Option<bool>,
     /// Theme, accent, and appearance preferences. Nested updates preserve unrelated preferences.
     #[serde(rename = "appearancePreferences", default, skip_serializing_if = "Option::is_none")]
     pub appearance_preferences: Option<SettingsUpdateBody2AppearancePreferences>,
@@ -3491,6 +3524,7 @@ impl SettingsUpdateBody2 {
             desktop_notification_preferences: None,
             has_desktop_app: None,
             open_links_in_desktop_app: None,
+            open_pull_request_links_in_tembo: None,
             appearance_preferences: None,
             app_sidebar_preferences: None,
             diff_preferences: None,
@@ -3572,6 +3606,12 @@ impl SettingsUpdateBody2 {
     /// Sets `open_links_in_desktop_app`, which `new` leaves unset.
     pub fn with_open_links_in_desktop_app(mut self, value: bool) -> Self {
         self.open_links_in_desktop_app = Some(value);
+        self
+    }
+
+    /// Sets `open_pull_request_links_in_tembo`, which `new` leaves unset.
+    pub fn with_open_pull_request_links_in_tembo(mut self, value: bool) -> Self {
+        self.open_pull_request_links_in_tembo = Some(value);
         self
     }
 
