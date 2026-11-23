@@ -39,6 +39,10 @@ impl SkillsResource {
     pub fn marketplace(&self) -> crate::resources::marketplace::MarketplaceResource {
         crate::resources::marketplace::MarketplaceResource::new(self.client.clone())
     }
+
+    pub fn shares(&self) -> crate::resources::skills_shares::SkillsSharesResource {
+        crate::resources::skills_shares::SkillsSharesResource::new(self.client.clone())
+    }
 }
 
 /// List organization skills or skills checked into a repository.
@@ -47,6 +51,7 @@ pub struct ListRequestBuilder {
     client: crate::client::Tembo,
     cursor: Option<String>,
     limit: Option<i64>,
+    team_id: Option<String>,
     names: Option<Vec<String>>,
     repository_ids: Option<Vec<String>>,
     project_id: Option<String>,
@@ -63,6 +68,7 @@ impl ListRequestBuilder {
             client,
             cursor: None,
             limit: None,
+            team_id: None,
             names: None,
             repository_ids: None,
             project_id: None,
@@ -83,6 +89,12 @@ impl ListRequestBuilder {
     /// Maximum number of items to return in one page. Use nextCursor from the response to fetch more items.
     pub fn limit(mut self, value: i64) -> Self {
         self.limit = Some(value);
+        self
+    }
+
+    /// Saved skills shared with this team that the caller can read.
+    pub fn team_id(mut self, value: impl Into<String>) -> Self {
+        self.team_id = Some(value.into());
         self
     }
 
@@ -158,6 +170,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.limit {
             query.push(("limit".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.team_id {
+            query.push(("teamId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.names {
             for item in values {

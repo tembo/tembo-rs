@@ -802,3 +802,95 @@ impl InsightsListRepositoriesResponseItem {
         }
     }
 }
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListTeamsResponse::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct InsightsListTeamsResponse {
+    pub items: Vec<InsightsListTeamsResponseItem>,
+    #[serde(rename = "nextCursor", default)]
+    pub next_cursor: Option<String>,
+}
+
+impl InsightsListTeamsResponse {
+    /// Creates a new `InsightsListTeamsResponse` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(items: Vec<InsightsListTeamsResponseItem>, next_cursor: Option<String>) -> Self {
+        Self { items, next_cursor }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `InsightsListTeamsResponseItem::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct InsightsListTeamsResponseItem {
+    pub id: String,
+    pub name: String,
+    #[serde(serialize_with = "crate::number::serialize")]
+    pub members: f64,
+    #[serde(rename = "activeMembers", serialize_with = "crate::number::serialize")]
+    pub active_members: f64,
+    #[serde(rename = "turnsByPeriod", serialize_with = "crate::number::vec::serialize")]
+    pub turns_by_period: Vec<f64>,
+    /// Messages the user sent to agents.
+    #[serde(serialize_with = "crate::number::serialize")]
+    pub turns: f64,
+    /// Sessions the user started.
+    #[serde(serialize_with = "crate::number::serialize")]
+    pub sessions: f64,
+    #[serde(rename = "totalTokens", serialize_with = "crate::number::serialize")]
+    pub total_tokens: f64,
+    /// Pull requests Tembo opened from the user's sessions.
+    #[serde(rename = "prsCreated", serialize_with = "crate::number::serialize")]
+    pub prs_created: f64,
+    /// Pull requests from the user's sessions that were merged.
+    #[serde(rename = "prsMerged", serialize_with = "crate::number::serialize")]
+    pub prs_merged: f64,
+    #[serde(
+        rename = "modelCostUsd",
+        default,
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub model_cost_usd: Option<f64>,
+}
+
+impl InsightsListTeamsResponseItem {
+    /// Creates a new `InsightsListTeamsResponseItem` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        members: f64,
+        active_members: f64,
+        turns_by_period: Vec<f64>,
+        turns: f64,
+        sessions: f64,
+        total_tokens: f64,
+        prs_created: f64,
+        prs_merged: f64,
+        model_cost_usd: Option<f64>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            members,
+            active_members,
+            turns_by_period,
+            turns,
+            sessions,
+            total_tokens,
+            prs_created,
+            prs_merged,
+            model_cost_usd,
+        }
+    }
+}

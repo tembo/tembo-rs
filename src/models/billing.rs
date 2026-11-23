@@ -617,6 +617,7 @@ impl BillingListUsageResponse {
 pub enum BillingListUsageResponseItem {
     BillingListUsageResponseItemVariant1(BillingListUsageResponseItemVariant1),
     BillingListUsageResponseItemVariant2(BillingListUsageResponseItemVariant2),
+    BillingListUsageResponseItemVariant3(BillingListUsageResponseItemVariant3),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -641,6 +642,8 @@ pub struct BillingListUsageResponseItemVariant1 {
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "managedInferenceCredits", serialize_with = "crate::number::serialize")]
     pub managed_inference_credits: f64,
+    #[serde(rename = "cloudDeviceCredits", serialize_with = "crate::number::serialize")]
+    pub cloud_device_credits: f64,
     #[serde(rename = "computeCredits", serialize_with = "crate::number::serialize")]
     pub compute_credits: f64,
     #[serde(rename = "totalCredits", serialize_with = "crate::number::serialize")]
@@ -661,6 +664,7 @@ impl BillingListUsageResponseItemVariant1 {
         kind: impl Into<String>,
         created_at: chrono::DateTime<chrono::FixedOffset>,
         managed_inference_credits: f64,
+        cloud_device_credits: f64,
         compute_credits: f64,
         total_credits: f64,
         r#type: impl Into<String>,
@@ -672,6 +676,7 @@ impl BillingListUsageResponseItemVariant1 {
             kind: kind.into(),
             created_at,
             managed_inference_credits,
+            cloud_device_credits,
             compute_credits,
             total_credits,
             r#type: r#type.into(),
@@ -685,6 +690,119 @@ impl BillingListUsageResponseItemVariant1 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct BillingListUsageResponseItemVariant2 {
+    pub id: String,
+    #[serde(rename = "sessionId")]
+    pub session_id: String,
+    #[serde(rename = "sessionTitle")]
+    pub session_title: String,
+    pub platform: BillingListUsageResponseItemVariant2Platform,
+    #[serde(default)]
+    pub model: Option<String>,
+    #[serde(rename = "osVersion", default)]
+    pub os_version: Option<String>,
+    #[serde(rename = "startedAt", deserialize_with = "crate::datetime::deserialize")]
+    pub started_at: chrono::DateTime<chrono::FixedOffset>,
+    #[serde(
+        rename = "endedAt",
+        default,
+        deserialize_with = "crate::datetime::option::deserialize"
+    )]
+    pub ended_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+    #[serde(rename = "billedSeconds")]
+    pub billed_seconds: i64,
+    #[serde(rename = "computeCredits", serialize_with = "crate::number::serialize")]
+    pub compute_credits: f64,
+    pub r#type: String,
+}
+
+impl BillingListUsageResponseItemVariant2 {
+    /// Creates a new `BillingListUsageResponseItemVariant2` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: impl Into<String>,
+        session_id: impl Into<String>,
+        session_title: impl Into<String>,
+        platform: BillingListUsageResponseItemVariant2Platform,
+        model: Option<String>,
+        os_version: Option<String>,
+        started_at: chrono::DateTime<chrono::FixedOffset>,
+        ended_at: Option<chrono::DateTime<chrono::FixedOffset>>,
+        billed_seconds: i64,
+        compute_credits: f64,
+        r#type: impl Into<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            session_id: session_id.into(),
+            session_title: session_title.into(),
+            platform,
+            model,
+            os_version,
+            started_at,
+            ended_at,
+            billed_seconds,
+            compute_credits,
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum BillingListUsageResponseItemVariant2Platform {
+    #[serde(rename = "ios")]
+    Ios,
+    #[serde(rename = "android")]
+    Android,
+    #[serde(rename = "macos")]
+    Macos,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl BillingListUsageResponseItemVariant2Platform {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Ios => "ios",
+            Self::Android => "android",
+            Self::Macos => "macos",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for BillingListUsageResponseItemVariant2Platform {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for BillingListUsageResponseItemVariant2Platform {
+    fn from(value: &str) -> Self {
+        match value {
+            "ios" => Self::Ios,
+            "android" => Self::Android,
+            "macos" => Self::Macos,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `BillingListUsageResponseItemVariant3::new` and the `with_*` setters rather than a struct literal. Fields stay
+/// public for reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct BillingListUsageResponseItemVariant3 {
     pub id: String,
     #[serde(rename = "virtualMachineId")]
     pub virtual_machine_id: String,
@@ -707,8 +825,8 @@ pub struct BillingListUsageResponseItemVariant2 {
     pub r#type: String,
 }
 
-impl BillingListUsageResponseItemVariant2 {
-    /// Creates a new `BillingListUsageResponseItemVariant2` from its required fields, leaving every optional one unset.
+impl BillingListUsageResponseItemVariant3 {
+    /// Creates a new `BillingListUsageResponseItemVariant3` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.

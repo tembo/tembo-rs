@@ -3,6 +3,7 @@
 
 pub mod agents;
 pub mod agents_schedules;
+pub mod agents_shares;
 pub mod agents_triggers;
 pub mod api_keys;
 pub mod artifacts;
@@ -24,6 +25,7 @@ pub mod mcp_connections;
 pub mod members;
 pub mod messages;
 pub mod models;
+pub mod models_shares;
 pub mod organizations;
 pub mod organizations_settings;
 pub mod organizations_subscriptions;
@@ -41,8 +43,9 @@ pub mod runs;
 pub mod runtimes;
 pub mod secrets;
 pub mod sessions;
-pub mod shares;
+pub mod sessions_shares;
 pub mod skills;
+pub mod skills_shares;
 pub mod snapshots;
 pub mod sources;
 pub mod teams;

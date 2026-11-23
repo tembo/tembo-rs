@@ -20,6 +20,7 @@ async fn list_all_params() {
             .list()
             .cursor("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .limit(50)
+            .team_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .names(vec!["name".to_string()])
             .repository_ids(vec!["7c9e6679-7425-40de-944b-e07fc1f90ae7".to_string()])
             .project_id("example")

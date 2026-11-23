@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.15.0](https://github.com/tembo/tembo-rs/compare/v0.14.0...v0.15.0) (2026-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** 187 breaking changes to the SDK surface.
+    - types resources::shares::CreateRequestBuilder — struct only in before (breaking: the new snapshot no longer has it)
+    - types resources::shares::DeleteRequestBuilder — struct only in before (breaking: the new snapshot no longer has it)
+    - types resources::shares::ListRequestBuilder — struct only in before (breaking: the new snapshot no longer has it)
+    - types resources::shares::SharesResource — struct only in before (breaking: the new snapshot no longer has it)
+    - params models::BillingListUsageResponseItemVariant1.new/#8 — argument total_credits retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant1.new/#9 — new required argument r#type in after; existing calls lack it (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant1.new — positional arguments moved (compute_credits, total_credits, r#type); existing calls pass each value in another slot (breaking: changed in a way existing callers can observe)
+    - fields models::BillingListUsageResponseItemVariant2.cpu — field only in before (breaking: removed; model, platform, os_version (and 3 more) appeared in its place, likely a rename)
+    - fields models::BillingListUsageResponseItemVariant2.memory_mb — field only in before (breaking: removed; os_version, platform, session_id (and 3 more) appeared in its place, likely a rename)
+    - fields models::BillingListUsageResponseItemVariant2.runtime_ms — field only in before (breaking: removed; os_version, session_id, billed_seconds (and 3 more) appeared in its place, likely a rename)
+    - fields models::BillingListUsageResponseItemVariant2.virtual_machine_id — field only in before (breaking: removed; session_id, billed_seconds, session_title (and 3 more) appeared in its place, likely a rename)
+    - params models::BillingListUsageResponseItemVariant2.new/#2 — argument session_title retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#3 — argument platform retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#4 — argument model retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#5 — argument os_version retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#6 — argument started_at retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#7 — argument ended_at retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#8 — argument billed_seconds retyped (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#9 — new required argument compute_credits in after; existing calls lack it (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new/#10 — new required argument r#type in after; existing calls lack it (breaking: changed in a way existing callers can observe)
+    - params models::BillingListUsageResponseItemVariant2.new — positional arguments moved (started_at, ended_at, compute_credits, r#type); existing calls pass each value in another slot (breaking: changed in a way existing callers can observe)
+    - params models::ModelsListResponseItem.new/#3 — argument provider retyped (breaking: changed in a way existing call…
+
+### Features
+
+* **api:** update SDK surface (432 changes) ([f80ec97](https://github.com/tembo/tembo-rs/commit/f80ec97b7b5920f7a39902ef642c194ce7811dc9))
+
 ## [0.14.0](https://github.com/tembo/tembo-rs/compare/v0.13.0...v0.14.0) (2026-11-20)
 
 

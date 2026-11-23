@@ -19,11 +19,16 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [`Skills Marketplace`](#skills-marketplace)
     - [List marketplace skills](#list-marketplace-skills)
     - [Retrieve a marketplace skill](#retrieve-a-marketplace-skill)
+  - [`Skills Shares`](#skills-shares)
+    - [List shares](#list-shares)
+    - [Share](#share)
+    - [Remove a share](#remove-a-share)
 - [`Insights`](#insights)
   - [Retrieve insights](#retrieve-insights)
   - [Update insights](#update-insights)
   - [List insight members](#list-insight-members)
   - [List insight repositories](#list-insight-repositories)
+  - [List team usage insights](#list-team-usage-insights)
 - [`AuditLogs`](#auditlogs)
   - [List organization audit logs](#list-organization-audit-logs)
   - [List audit log filter options](#list-audit-log-filter-options)
@@ -87,6 +92,10 @@ Complete reference of every operation, grouped by resource. See [the README](./R
 - [`Models`](#models)
   - [List models](#list-models)
   - [Update a model](#update-a-model)
+  - [`Models Shares`](#models-shares)
+    - [List shares](#list-shares-1)
+    - [Share](#share-1)
+    - [Remove a share](#remove-a-share-1)
 - [`Runtimes`](#runtimes)
   - [List runtimes](#list-runtimes)
 - [`Users`](#users)
@@ -132,9 +141,9 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [`Sessions Commands`](#sessions-commands)
     - [List session commands](#list-session-commands)
   - [`Sessions Shares`](#sessions-shares)
-    - [List shares](#list-shares)
-    - [Share](#share)
-    - [Remove a share](#remove-a-share)
+    - [List shares](#list-shares-2)
+    - [Share](#share-2)
+    - [Remove a share](#remove-a-share-2)
 - [`Projects`](#projects)
   - [Update project defaults](#update-project-defaults)
   - [Retrieve project defaults](#retrieve-project-defaults)
@@ -201,6 +210,10 @@ Complete reference of every operation, grouped by resource. See [the README](./R
     - [List agent instruction revisions](#list-agent-instruction-revisions)
     - [Retrieve an agent instruction revision](#retrieve-an-agent-instruction-revision)
     - [Restore agent instructions](#restore-agent-instructions)
+  - [`Agents Shares`](#agents-shares)
+    - [List shares](#list-shares-3)
+    - [Share](#share-3)
+    - [Remove a share](#remove-a-share-3)
 - [`Repositories`](#repositories)
   - [List repositories](#list-repositories)
   - [Retrieve a repository](#retrieve-a-repository)
@@ -447,6 +460,41 @@ let response = client
     .await?;
 ```
 
+### `Skills Shares`
+
+#### List shares
+
+List the people, teams and organization this is shared with. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesListResponse`](./src/models/skills_shares.rs) |
+
+```rust
+let response = client.skills().shares().list("example").send().await?;
+```
+
+#### Share
+
+Share with a person, a team or the whole organization. Each member then acts only as far as their role allows. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`SharesCreateBody`](./src/models/skills_shares.rs) |
+| Response | [`SharesCreateResponse`](./src/models/skills_shares.rs) |
+
+#### Remove a share
+
+Stop sharing with one person, team or the organization. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesDeleteResponse`](./src/models/skills_shares.rs) |
+
+```rust
+let response = client.skills().shares().delete("example", "example").send().await?;
+```
+
 ## `Insights`
 
 ### Retrieve insights
@@ -496,6 +544,18 @@ List repositories included in pull request insights for the current organization
 
 ```rust
 let response = client.insights().list_repositories().send().await?;
+```
+
+### List team usage insights
+
+Compare sessions, turns, tokens, Tembo pull requests, and model cost by current active team membership. Team totals can overlap.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`InsightsListTeamsResponse`](./src/models/insights.rs) |
+
+```rust
+let response = client.insights().list_teams().send().await?;
 ```
 
 ## `AuditLogs`
@@ -1271,7 +1331,7 @@ let response = client.models().list().send().await?;
 
 ### Update a model
 
-Enable or disable an organization model, or select its inference provider.
+Manage workspace model access and provider.
 
 | Direction | Type |
 | --- | --- |
@@ -1284,6 +1344,41 @@ let response = client
     .update("example", ModelsUpdateBody::new())
     .send()
     .await?;
+```
+
+### `Models Shares`
+
+#### List shares
+
+List the people, teams and organization this is shared with. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesListResponse2`](./src/models/models_shares.rs) |
+
+```rust
+let response = client.models().shares().list("example").send().await?;
+```
+
+#### Share
+
+Share with a person, a team or the whole organization. Each member then acts only as far as their role allows. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`SharesCreateBody2`](./src/models/models_shares.rs) |
+| Response | [`SharesCreateResponse2`](./src/models/models_shares.rs) |
+
+#### Remove a share
+
+Stop sharing with one person, team or the organization. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesDeleteResponse2`](./src/models/models_shares.rs) |
+
+```rust
+let response = client.models().shares().delete("example", "example").send().await?;
 ```
 
 ## `Runtimes`
@@ -1823,7 +1918,7 @@ List the people, teams and organization this is shared with. Requires Write on i
 
 | Direction | Type |
 | --- | --- |
-| Response | [`SharesListResponse`](./src/models/shares.rs) |
+| Response | [`SharesListResponse3`](./src/models/sessions_shares.rs) |
 
 ```rust
 let response = client.sessions().shares().list("example").send().await?;
@@ -1835,8 +1930,8 @@ Share with a person, a team or the whole organization. Each member then acts onl
 
 | Direction | Type |
 | --- | --- |
-| Request | [`SharesCreateBody`](./src/models/shares.rs) |
-| Response | [`SharesCreateResponse`](./src/models/shares.rs) |
+| Request | [`SharesCreateBody3`](./src/models/sessions_shares.rs) |
+| Response | [`SharesCreateResponse3`](./src/models/sessions_shares.rs) |
 
 #### Remove a share
 
@@ -1844,7 +1939,7 @@ Stop sharing with one person, team or the organization. Requires Write on it.
 
 | Direction | Type |
 | --- | --- |
-| Response | [`SharesDeleteResponse`](./src/models/shares.rs) |
+| Response | [`SharesDeleteResponse3`](./src/models/sessions_shares.rs) |
 
 ```rust
 let response = client.sessions().shares().delete("example", "example").send().await?;
@@ -2745,6 +2840,41 @@ let response = client
     )
     .send()
     .await?;
+```
+
+### `Agents Shares`
+
+#### List shares
+
+List the people, teams and organization this is shared with. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesListResponse4`](./src/models/agents_shares.rs) |
+
+```rust
+let response = client.agents().shares().list("example").send().await?;
+```
+
+#### Share
+
+Share with a person, a team or the whole organization. Each member then acts only as far as their role allows. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`SharesCreateBody4`](./src/models/agents_shares.rs) |
+| Response | [`SharesCreateResponse4`](./src/models/agents_shares.rs) |
+
+#### Remove a share
+
+Stop sharing with one person, team or the organization. Requires Write on it.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`SharesDeleteResponse4`](./src/models/agents_shares.rs) |
+
+```rust
+let response = client.agents().shares().delete("example", "example").send().await?;
 ```
 
 ## `Repositories`

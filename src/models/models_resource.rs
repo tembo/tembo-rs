@@ -31,9 +31,13 @@ impl ModelsListResponse {
 #[non_exhaustive]
 pub struct ModelsListResponseItem {
     pub name: String,
+    pub id: String,
     pub label: String,
     pub provider: String,
     pub enabled: bool,
+    #[serde(rename = "isDefault")]
+    pub is_default: bool,
+    pub access: ModelsListResponseItemAccess,
     pub available: bool,
     #[serde(rename = "unavailableReason", default)]
     pub unavailable_reason: Option<String>,
@@ -75,9 +79,12 @@ impl ModelsListResponseItem {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         name: impl Into<String>,
+        id: impl Into<String>,
         label: impl Into<String>,
         provider: impl Into<String>,
         enabled: bool,
+        is_default: bool,
+        access: ModelsListResponseItemAccess,
         available: bool,
         unavailable_reason: Option<String>,
         supported_inference_providers: Option<Vec<ModelsListResponseItemSupportedInferenceProvider>>,
@@ -97,9 +104,12 @@ impl ModelsListResponseItem {
     ) -> Self {
         Self {
             name: name.into(),
+            id: id.into(),
             label: label.into(),
             provider: provider.into(),
             enabled,
+            is_default,
+            access,
             available,
             unavailable_reason,
             supported_inference_providers,
@@ -116,6 +126,31 @@ impl ModelsListResponseItem {
             workspace_claude_subscription_available,
             supergrok_available,
             agent_inference_available,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ModelsListResponseItemAccess::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ModelsListResponseItemAccess {
+    #[serde(rename = "organizationWide")]
+    pub organization_wide: bool,
+    #[serde(rename = "audienceNames")]
+    pub audience_names: Vec<String>,
+}
+
+impl ModelsListResponseItemAccess {
+    /// Creates a new `ModelsListResponseItemAccess` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(organization_wide: bool, audience_names: Vec<String>) -> Self {
+        Self {
+            organization_wide,
+            audience_names,
         }
     }
 }
@@ -1089,9 +1124,13 @@ impl From<&str> for ModelsListResponseItemInferenceProviderAccessOpenRouterVaria
 #[non_exhaustive]
 pub struct ModelsUpdateResponse {
     pub name: String,
+    pub id: String,
     pub label: String,
     pub provider: String,
     pub enabled: bool,
+    #[serde(rename = "isDefault")]
+    pub is_default: bool,
+    pub access: ModelsUpdateResponseAccess,
     pub available: bool,
     #[serde(rename = "unavailableReason", default)]
     pub unavailable_reason: Option<String>,
@@ -1133,9 +1172,12 @@ impl ModelsUpdateResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         name: impl Into<String>,
+        id: impl Into<String>,
         label: impl Into<String>,
         provider: impl Into<String>,
         enabled: bool,
+        is_default: bool,
+        access: ModelsUpdateResponseAccess,
         available: bool,
         unavailable_reason: Option<String>,
         supported_inference_providers: Option<Vec<ModelsUpdateResponseSupportedInferenceProvider>>,
@@ -1155,9 +1197,12 @@ impl ModelsUpdateResponse {
     ) -> Self {
         Self {
             name: name.into(),
+            id: id.into(),
             label: label.into(),
             provider: provider.into(),
             enabled,
+            is_default,
+            access,
             available,
             unavailable_reason,
             supported_inference_providers,
@@ -1174,6 +1219,31 @@ impl ModelsUpdateResponse {
             workspace_claude_subscription_available,
             supergrok_available,
             agent_inference_available,
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `ModelsUpdateResponseAccess::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct ModelsUpdateResponseAccess {
+    #[serde(rename = "organizationWide")]
+    pub organization_wide: bool,
+    #[serde(rename = "audienceNames")]
+    pub audience_names: Vec<String>,
+}
+
+impl ModelsUpdateResponseAccess {
+    /// Creates a new `ModelsUpdateResponseAccess` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(organization_wide: bool, audience_names: Vec<String>) -> Self {
+        Self {
+            organization_wide,
+            audience_names,
         }
     }
 }

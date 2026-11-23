@@ -32,170 +32,351 @@ impl SettingsRetrieveResponse {
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SettingsRetrieveResponseSettings::new` and the `with_*` setters rather than a struct literal. Fields stay public
 /// for reading.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsRetrieveResponseSettings {
     /// Git clone history depth used for repositories.
-    #[serde(rename = "cloneDepth")]
-    pub clone_depth: i64,
+    #[serde(rename = "cloneDepth", default, skip_serializing_if = "Option::is_none")]
+    pub clone_depth: Option<i64>,
     /// Organization instructions for agent commit messages.
-    #[serde(rename = "commitInstructions")]
-    pub commit_instructions: String,
+    #[serde(rename = "commitInstructions", default, skip_serializing_if = "Option::is_none")]
+    pub commit_instructions: Option<String>,
     /// Additional GitHub bot logins Tembo responds to without an @tembo mention.
-    #[serde(rename = "customReviewBots")]
-    pub custom_review_bots: Vec<String>,
+    #[serde(rename = "customReviewBots", default, skip_serializing_if = "Option::is_none")]
+    pub custom_review_bots: Option<Vec<String>>,
     /// Custom system instructions supplied to organization agents.
-    #[serde(rename = "customSystemPrompt")]
-    pub custom_system_prompt: String,
+    #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
+    pub custom_system_prompt: Option<String>,
     /// Default coding agent and model key for the organization.
-    #[serde(rename = "defaultAgent")]
-    pub default_agent: String,
+    #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
+    pub default_agent: Option<String>,
     /// Default VM keep-alive duration in minutes. 0 preserves built-in per-source durations.
-    #[serde(rename = "defaultKeepAliveMinutes")]
-    pub default_keep_alive_minutes: i64,
+    #[serde(rename = "defaultKeepAliveMinutes", default, skip_serializing_if = "Option::is_none")]
+    pub default_keep_alive_minutes: Option<i64>,
     /// Default VM size for organization sessions.
-    #[serde(rename = "defaultSandboxSize")]
-    pub default_sandbox_size: SettingsRetrieveResponseSettingsDefaultSandboxSize,
+    #[serde(rename = "defaultSandboxSize", default, skip_serializing_if = "Option::is_none")]
+    pub default_sandbox_size: Option<SettingsRetrieveResponseSettingsDefaultSandboxSize>,
     /// Delete agent-created branches when their pull requests close.
-    #[serde(rename = "deleteBranchWhenPrClosed")]
-    pub delete_branch_when_pr_closed: bool,
+    #[serde(
+        rename = "deleteBranchWhenPrClosed",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub delete_branch_when_pr_closed: Option<bool>,
     /// Create agent pull requests as drafts by default.
-    #[serde(rename = "draftPrs")]
-    pub draft_prs: bool,
+    #[serde(rename = "draftPrs", default, skip_serializing_if = "Option::is_none")]
+    pub draft_prs: Option<bool>,
     /// Enable handling of CodeRabbit bot feedback.
-    #[serde(rename = "enableCoderabbitBot")]
-    pub enable_coderabbit_bot: bool,
+    #[serde(rename = "enableCoderabbitBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_coderabbit_bot: Option<bool>,
     /// Enable handling of Cursor bot feedback.
-    #[serde(rename = "enableCursorBot")]
-    pub enable_cursor_bot: bool,
+    #[serde(rename = "enableCursorBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_cursor_bot: Option<bool>,
     /// Enable handling of Gemini Code Assist bot feedback.
-    #[serde(rename = "enableGeminiCodeAssistBot")]
-    pub enable_gemini_code_assist_bot: bool,
+    #[serde(
+        rename = "enableGeminiCodeAssistBot",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub enable_gemini_code_assist_bot: Option<bool>,
     /// Enable handling of GitHub Actions bot feedback.
-    #[serde(rename = "enableGithubActionsBot")]
-    pub enable_github_actions_bot: bool,
+    #[serde(rename = "enableGithubActionsBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_github_actions_bot: Option<bool>,
     /// Enable handling of Graphite bot feedback.
-    #[serde(rename = "enableGraphiteBot")]
-    pub enable_graphite_bot: bool,
+    #[serde(rename = "enableGraphiteBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_graphite_bot: Option<bool>,
     /// Enable handling of Greptile bot feedback.
-    #[serde(rename = "enableGreptileBot")]
-    pub enable_greptile_bot: bool,
+    #[serde(rename = "enableGreptileBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_greptile_bot: Option<bool>,
     /// Enable experimental MCP features for the organization.
-    #[serde(rename = "experimentalMcp")]
-    pub experimental_mcp: bool,
+    #[serde(rename = "experimentalMcp", default, skip_serializing_if = "Option::is_none")]
+    pub experimental_mcp: Option<bool>,
     /// Use the API key or Tembo inference when every connected subscription is out of usage.
-    #[serde(rename = "fallbackToApiOnSubscriptionLimit")]
-    pub fallback_to_api_on_subscription_limit: bool,
+    #[serde(
+        rename = "fallbackToApiOnSubscriptionLimit",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub fallback_to_api_on_subscription_limit: Option<bool>,
     /// Enable mentioning the author in supported integration responses.
-    #[serde(rename = "featureMentionAuthor")]
-    pub feature_mention_author: bool,
+    #[serde(rename = "featureMentionAuthor", default, skip_serializing_if = "Option::is_none")]
+    pub feature_mention_author: Option<bool>,
     /// Maximum number of bot review iterations.
-    #[serde(rename = "maxBotReviews")]
-    pub max_bot_reviews: i64,
+    #[serde(rename = "maxBotReviews", default, skip_serializing_if = "Option::is_none")]
+    pub max_bot_reviews: Option<i64>,
     /// Maximum number of generated solutions.
-    #[serde(rename = "maxSolutions")]
-    pub max_solutions: i64,
-    #[serde(rename = "onDemandMaxCreditUsage", serialize_with = "crate::number::serialize")]
-    pub on_demand_max_credit_usage: f64,
+    #[serde(rename = "maxSolutions", default, skip_serializing_if = "Option::is_none")]
+    pub max_solutions: Option<i64>,
+    #[serde(
+        rename = "onDemandMaxCreditUsage",
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub on_demand_max_credit_usage: Option<f64>,
     /// Reset frequency for PostgreSQL pg_stat_statements collection.
-    #[serde(rename = "pgStatStatementsResetFrequency")]
-    pub pg_stat_statements_reset_frequency: String,
+    #[serde(
+        rename = "pgStatStatementsResetFrequency",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub pg_stat_statements_reset_frequency: Option<String>,
     /// Custom system instructions for the project-management agent.
-    #[serde(rename = "pmSystemPrompt")]
-    pub pm_system_prompt: String,
+    #[serde(rename = "pmSystemPrompt", default, skip_serializing_if = "Option::is_none")]
+    pub pm_system_prompt: Option<String>,
     /// Organization instructions for agent pull request titles.
-    #[serde(rename = "prTitleInstructions")]
-    pub pr_title_instructions: String,
+    #[serde(rename = "prTitleInstructions", default, skip_serializing_if = "Option::is_none")]
+    pub pr_title_instructions: Option<String>,
     /// Enable or disable pull request contribution insight collection.
-    #[serde(rename = "pullRequestInsightsEnabled")]
-    pub pull_request_insights_enabled: bool,
+    #[serde(
+        rename = "pullRequestInsightsEnabled",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub pull_request_insights_enabled: Option<bool>,
     /// Sign agent-created commits when signing credentials are configured.
-    #[serde(rename = "shouldSignCommits")]
-    pub should_sign_commits: bool,
+    #[serde(rename = "shouldSignCommits", default, skip_serializing_if = "Option::is_none")]
+    pub should_sign_commits: Option<bool>,
     /// Use Tembo review links in Slack review notifications.
-    #[serde(rename = "slackReviewOnTembo")]
-    pub slack_review_on_tembo: bool,
+    #[serde(rename = "slackReviewOnTembo", default, skip_serializing_if = "Option::is_none")]
+    pub slack_review_on_tembo: Option<bool>,
     /// Threshold in milliseconds for identifying slow database queries.
-    #[serde(rename = "slowQueryThresholdMs", serialize_with = "crate::number::serialize")]
-    pub slow_query_threshold_ms: f64,
+    #[serde(
+        rename = "slowQueryThresholdMs",
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub slow_query_threshold_ms: Option<f64>,
     /// SSH public keys authorized for organization workspace access.
-    #[serde(rename = "sshPublicKeys")]
-    pub ssh_public_keys: String,
+    #[serde(rename = "sshPublicKeys", default, skip_serializing_if = "Option::is_none")]
+    pub ssh_public_keys: Option<String>,
     /// Enable or disable the organization weekly report.
-    #[serde(rename = "weeklyReportEnabled")]
-    pub weekly_report_enabled: bool,
+    #[serde(rename = "weeklyReportEnabled", default, skip_serializing_if = "Option::is_none")]
+    pub weekly_report_enabled: Option<bool>,
 }
 
 impl SettingsRetrieveResponseSettings {
     /// Creates a new `SettingsRetrieveResponseSettings` from its required fields, leaving every optional one unset.
     ///
-    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
-    /// argument, which is a breaking change either way.
-    #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        clone_depth: i64,
-        commit_instructions: impl Into<String>,
-        custom_review_bots: Vec<String>,
-        custom_system_prompt: impl Into<String>,
-        default_agent: impl Into<String>,
-        default_keep_alive_minutes: i64,
-        default_sandbox_size: SettingsRetrieveResponseSettingsDefaultSandboxSize,
-        delete_branch_when_pr_closed: bool,
-        draft_prs: bool,
-        enable_coderabbit_bot: bool,
-        enable_cursor_bot: bool,
-        enable_gemini_code_assist_bot: bool,
-        enable_github_actions_bot: bool,
-        enable_graphite_bot: bool,
-        enable_greptile_bot: bool,
-        experimental_mcp: bool,
-        fallback_to_api_on_subscription_limit: bool,
-        feature_mention_author: bool,
-        max_bot_reviews: i64,
-        max_solutions: i64,
-        on_demand_max_credit_usage: f64,
-        pg_stat_statements_reset_frequency: impl Into<String>,
-        pm_system_prompt: impl Into<String>,
-        pr_title_instructions: impl Into<String>,
-        pull_request_insights_enabled: bool,
-        should_sign_commits: bool,
-        slack_review_on_tembo: bool,
-        slow_query_threshold_ms: f64,
-        ssh_public_keys: impl Into<String>,
-        weekly_report_enabled: bool,
-    ) -> Self {
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsRetrieveResponseSettings::new().with_clone_depth(…)`.
+    pub fn new() -> Self {
         Self {
-            clone_depth,
-            commit_instructions: commit_instructions.into(),
-            custom_review_bots,
-            custom_system_prompt: custom_system_prompt.into(),
-            default_agent: default_agent.into(),
-            default_keep_alive_minutes,
-            default_sandbox_size,
-            delete_branch_when_pr_closed,
-            draft_prs,
-            enable_coderabbit_bot,
-            enable_cursor_bot,
-            enable_gemini_code_assist_bot,
-            enable_github_actions_bot,
-            enable_graphite_bot,
-            enable_greptile_bot,
-            experimental_mcp,
-            fallback_to_api_on_subscription_limit,
-            feature_mention_author,
-            max_bot_reviews,
-            max_solutions,
-            on_demand_max_credit_usage,
-            pg_stat_statements_reset_frequency: pg_stat_statements_reset_frequency.into(),
-            pm_system_prompt: pm_system_prompt.into(),
-            pr_title_instructions: pr_title_instructions.into(),
-            pull_request_insights_enabled,
-            should_sign_commits,
-            slack_review_on_tembo,
-            slow_query_threshold_ms,
-            ssh_public_keys: ssh_public_keys.into(),
-            weekly_report_enabled,
+            clone_depth: None,
+            commit_instructions: None,
+            custom_review_bots: None,
+            custom_system_prompt: None,
+            default_agent: None,
+            default_keep_alive_minutes: None,
+            default_sandbox_size: None,
+            delete_branch_when_pr_closed: None,
+            draft_prs: None,
+            enable_coderabbit_bot: None,
+            enable_cursor_bot: None,
+            enable_gemini_code_assist_bot: None,
+            enable_github_actions_bot: None,
+            enable_graphite_bot: None,
+            enable_greptile_bot: None,
+            experimental_mcp: None,
+            fallback_to_api_on_subscription_limit: None,
+            feature_mention_author: None,
+            max_bot_reviews: None,
+            max_solutions: None,
+            on_demand_max_credit_usage: None,
+            pg_stat_statements_reset_frequency: None,
+            pm_system_prompt: None,
+            pr_title_instructions: None,
+            pull_request_insights_enabled: None,
+            should_sign_commits: None,
+            slack_review_on_tembo: None,
+            slow_query_threshold_ms: None,
+            ssh_public_keys: None,
+            weekly_report_enabled: None,
         }
+    }
+
+    /// Sets `clone_depth`, which `new` leaves unset.
+    pub fn with_clone_depth(mut self, value: i64) -> Self {
+        self.clone_depth = Some(value);
+        self
+    }
+
+    /// Sets `commit_instructions`, which `new` leaves unset.
+    pub fn with_commit_instructions(mut self, value: impl Into<String>) -> Self {
+        self.commit_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_review_bots`, which `new` leaves unset.
+    pub fn with_custom_review_bots(mut self, value: Vec<String>) -> Self {
+        self.custom_review_bots = Some(value);
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `default_keep_alive_minutes`, which `new` leaves unset.
+    pub fn with_default_keep_alive_minutes(mut self, value: i64) -> Self {
+        self.default_keep_alive_minutes = Some(value);
+        self
+    }
+
+    /// Sets `default_sandbox_size`, which `new` leaves unset.
+    pub fn with_default_sandbox_size(mut self, value: SettingsRetrieveResponseSettingsDefaultSandboxSize) -> Self {
+        self.default_sandbox_size = Some(value);
+        self
+    }
+
+    /// Sets `delete_branch_when_pr_closed`, which `new` leaves unset.
+    pub fn with_delete_branch_when_pr_closed(mut self, value: bool) -> Self {
+        self.delete_branch_when_pr_closed = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+
+    /// Sets `enable_coderabbit_bot`, which `new` leaves unset.
+    pub fn with_enable_coderabbit_bot(mut self, value: bool) -> Self {
+        self.enable_coderabbit_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_cursor_bot`, which `new` leaves unset.
+    pub fn with_enable_cursor_bot(mut self, value: bool) -> Self {
+        self.enable_cursor_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_gemini_code_assist_bot`, which `new` leaves unset.
+    pub fn with_enable_gemini_code_assist_bot(mut self, value: bool) -> Self {
+        self.enable_gemini_code_assist_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_github_actions_bot`, which `new` leaves unset.
+    pub fn with_enable_github_actions_bot(mut self, value: bool) -> Self {
+        self.enable_github_actions_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_graphite_bot`, which `new` leaves unset.
+    pub fn with_enable_graphite_bot(mut self, value: bool) -> Self {
+        self.enable_graphite_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_greptile_bot`, which `new` leaves unset.
+    pub fn with_enable_greptile_bot(mut self, value: bool) -> Self {
+        self.enable_greptile_bot = Some(value);
+        self
+    }
+
+    /// Sets `experimental_mcp`, which `new` leaves unset.
+    pub fn with_experimental_mcp(mut self, value: bool) -> Self {
+        self.experimental_mcp = Some(value);
+        self
+    }
+
+    /// Sets `fallback_to_api_on_subscription_limit`, which `new` leaves unset.
+    pub fn with_fallback_to_api_on_subscription_limit(mut self, value: bool) -> Self {
+        self.fallback_to_api_on_subscription_limit = Some(value);
+        self
+    }
+
+    /// Sets `feature_mention_author`, which `new` leaves unset.
+    pub fn with_feature_mention_author(mut self, value: bool) -> Self {
+        self.feature_mention_author = Some(value);
+        self
+    }
+
+    /// Sets `max_bot_reviews`, which `new` leaves unset.
+    pub fn with_max_bot_reviews(mut self, value: i64) -> Self {
+        self.max_bot_reviews = Some(value);
+        self
+    }
+
+    /// Sets `max_solutions`, which `new` leaves unset.
+    pub fn with_max_solutions(mut self, value: i64) -> Self {
+        self.max_solutions = Some(value);
+        self
+    }
+
+    /// Sets `on_demand_max_credit_usage`, which `new` leaves unset.
+    pub fn with_on_demand_max_credit_usage(mut self, value: f64) -> Self {
+        self.on_demand_max_credit_usage = Some(value);
+        self
+    }
+
+    /// Sets `pg_stat_statements_reset_frequency`, which `new` leaves unset.
+    pub fn with_pg_stat_statements_reset_frequency(mut self, value: impl Into<String>) -> Self {
+        self.pg_stat_statements_reset_frequency = Some(value.into());
+        self
+    }
+
+    /// Sets `pm_system_prompt`, which `new` leaves unset.
+    pub fn with_pm_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.pm_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `pr_title_instructions`, which `new` leaves unset.
+    pub fn with_pr_title_instructions(mut self, value: impl Into<String>) -> Self {
+        self.pr_title_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `pull_request_insights_enabled`, which `new` leaves unset.
+    pub fn with_pull_request_insights_enabled(mut self, value: bool) -> Self {
+        self.pull_request_insights_enabled = Some(value);
+        self
+    }
+
+    /// Sets `should_sign_commits`, which `new` leaves unset.
+    pub fn with_should_sign_commits(mut self, value: bool) -> Self {
+        self.should_sign_commits = Some(value);
+        self
+    }
+
+    /// Sets `slack_review_on_tembo`, which `new` leaves unset.
+    pub fn with_slack_review_on_tembo(mut self, value: bool) -> Self {
+        self.slack_review_on_tembo = Some(value);
+        self
+    }
+
+    /// Sets `slow_query_threshold_ms`, which `new` leaves unset.
+    pub fn with_slow_query_threshold_ms(mut self, value: f64) -> Self {
+        self.slow_query_threshold_ms = Some(value);
+        self
+    }
+
+    /// Sets `ssh_public_keys`, which `new` leaves unset.
+    pub fn with_ssh_public_keys(mut self, value: impl Into<String>) -> Self {
+        self.ssh_public_keys = Some(value.into());
+        self
+    }
+
+    /// Sets `weekly_report_enabled`, which `new` leaves unset.
+    pub fn with_weekly_report_enabled(mut self, value: bool) -> Self {
+        self.weekly_report_enabled = Some(value);
+        self
     }
 }
 
@@ -288,170 +469,351 @@ impl SettingsUpdateResponse {
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `SettingsUpdateResponseSettings::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct SettingsUpdateResponseSettings {
     /// Git clone history depth used for repositories.
-    #[serde(rename = "cloneDepth")]
-    pub clone_depth: i64,
+    #[serde(rename = "cloneDepth", default, skip_serializing_if = "Option::is_none")]
+    pub clone_depth: Option<i64>,
     /// Organization instructions for agent commit messages.
-    #[serde(rename = "commitInstructions")]
-    pub commit_instructions: String,
+    #[serde(rename = "commitInstructions", default, skip_serializing_if = "Option::is_none")]
+    pub commit_instructions: Option<String>,
     /// Additional GitHub bot logins Tembo responds to without an @tembo mention.
-    #[serde(rename = "customReviewBots")]
-    pub custom_review_bots: Vec<String>,
+    #[serde(rename = "customReviewBots", default, skip_serializing_if = "Option::is_none")]
+    pub custom_review_bots: Option<Vec<String>>,
     /// Custom system instructions supplied to organization agents.
-    #[serde(rename = "customSystemPrompt")]
-    pub custom_system_prompt: String,
+    #[serde(rename = "customSystemPrompt", default, skip_serializing_if = "Option::is_none")]
+    pub custom_system_prompt: Option<String>,
     /// Default coding agent and model key for the organization.
-    #[serde(rename = "defaultAgent")]
-    pub default_agent: String,
+    #[serde(rename = "defaultAgent", default, skip_serializing_if = "Option::is_none")]
+    pub default_agent: Option<String>,
     /// Default VM keep-alive duration in minutes. 0 preserves built-in per-source durations.
-    #[serde(rename = "defaultKeepAliveMinutes")]
-    pub default_keep_alive_minutes: i64,
+    #[serde(rename = "defaultKeepAliveMinutes", default, skip_serializing_if = "Option::is_none")]
+    pub default_keep_alive_minutes: Option<i64>,
     /// Default VM size for organization sessions.
-    #[serde(rename = "defaultSandboxSize")]
-    pub default_sandbox_size: SettingsUpdateResponseSettingsDefaultSandboxSize,
+    #[serde(rename = "defaultSandboxSize", default, skip_serializing_if = "Option::is_none")]
+    pub default_sandbox_size: Option<SettingsUpdateResponseSettingsDefaultSandboxSize>,
     /// Delete agent-created branches when their pull requests close.
-    #[serde(rename = "deleteBranchWhenPrClosed")]
-    pub delete_branch_when_pr_closed: bool,
+    #[serde(
+        rename = "deleteBranchWhenPrClosed",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub delete_branch_when_pr_closed: Option<bool>,
     /// Create agent pull requests as drafts by default.
-    #[serde(rename = "draftPrs")]
-    pub draft_prs: bool,
+    #[serde(rename = "draftPrs", default, skip_serializing_if = "Option::is_none")]
+    pub draft_prs: Option<bool>,
     /// Enable handling of CodeRabbit bot feedback.
-    #[serde(rename = "enableCoderabbitBot")]
-    pub enable_coderabbit_bot: bool,
+    #[serde(rename = "enableCoderabbitBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_coderabbit_bot: Option<bool>,
     /// Enable handling of Cursor bot feedback.
-    #[serde(rename = "enableCursorBot")]
-    pub enable_cursor_bot: bool,
+    #[serde(rename = "enableCursorBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_cursor_bot: Option<bool>,
     /// Enable handling of Gemini Code Assist bot feedback.
-    #[serde(rename = "enableGeminiCodeAssistBot")]
-    pub enable_gemini_code_assist_bot: bool,
+    #[serde(
+        rename = "enableGeminiCodeAssistBot",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub enable_gemini_code_assist_bot: Option<bool>,
     /// Enable handling of GitHub Actions bot feedback.
-    #[serde(rename = "enableGithubActionsBot")]
-    pub enable_github_actions_bot: bool,
+    #[serde(rename = "enableGithubActionsBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_github_actions_bot: Option<bool>,
     /// Enable handling of Graphite bot feedback.
-    #[serde(rename = "enableGraphiteBot")]
-    pub enable_graphite_bot: bool,
+    #[serde(rename = "enableGraphiteBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_graphite_bot: Option<bool>,
     /// Enable handling of Greptile bot feedback.
-    #[serde(rename = "enableGreptileBot")]
-    pub enable_greptile_bot: bool,
+    #[serde(rename = "enableGreptileBot", default, skip_serializing_if = "Option::is_none")]
+    pub enable_greptile_bot: Option<bool>,
     /// Enable experimental MCP features for the organization.
-    #[serde(rename = "experimentalMcp")]
-    pub experimental_mcp: bool,
+    #[serde(rename = "experimentalMcp", default, skip_serializing_if = "Option::is_none")]
+    pub experimental_mcp: Option<bool>,
     /// Use the API key or Tembo inference when every connected subscription is out of usage.
-    #[serde(rename = "fallbackToApiOnSubscriptionLimit")]
-    pub fallback_to_api_on_subscription_limit: bool,
+    #[serde(
+        rename = "fallbackToApiOnSubscriptionLimit",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub fallback_to_api_on_subscription_limit: Option<bool>,
     /// Enable mentioning the author in supported integration responses.
-    #[serde(rename = "featureMentionAuthor")]
-    pub feature_mention_author: bool,
+    #[serde(rename = "featureMentionAuthor", default, skip_serializing_if = "Option::is_none")]
+    pub feature_mention_author: Option<bool>,
     /// Maximum number of bot review iterations.
-    #[serde(rename = "maxBotReviews")]
-    pub max_bot_reviews: i64,
+    #[serde(rename = "maxBotReviews", default, skip_serializing_if = "Option::is_none")]
+    pub max_bot_reviews: Option<i64>,
     /// Maximum number of generated solutions.
-    #[serde(rename = "maxSolutions")]
-    pub max_solutions: i64,
-    #[serde(rename = "onDemandMaxCreditUsage", serialize_with = "crate::number::serialize")]
-    pub on_demand_max_credit_usage: f64,
+    #[serde(rename = "maxSolutions", default, skip_serializing_if = "Option::is_none")]
+    pub max_solutions: Option<i64>,
+    #[serde(
+        rename = "onDemandMaxCreditUsage",
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub on_demand_max_credit_usage: Option<f64>,
     /// Reset frequency for PostgreSQL pg_stat_statements collection.
-    #[serde(rename = "pgStatStatementsResetFrequency")]
-    pub pg_stat_statements_reset_frequency: String,
+    #[serde(
+        rename = "pgStatStatementsResetFrequency",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub pg_stat_statements_reset_frequency: Option<String>,
     /// Custom system instructions for the project-management agent.
-    #[serde(rename = "pmSystemPrompt")]
-    pub pm_system_prompt: String,
+    #[serde(rename = "pmSystemPrompt", default, skip_serializing_if = "Option::is_none")]
+    pub pm_system_prompt: Option<String>,
     /// Organization instructions for agent pull request titles.
-    #[serde(rename = "prTitleInstructions")]
-    pub pr_title_instructions: String,
+    #[serde(rename = "prTitleInstructions", default, skip_serializing_if = "Option::is_none")]
+    pub pr_title_instructions: Option<String>,
     /// Enable or disable pull request contribution insight collection.
-    #[serde(rename = "pullRequestInsightsEnabled")]
-    pub pull_request_insights_enabled: bool,
+    #[serde(
+        rename = "pullRequestInsightsEnabled",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub pull_request_insights_enabled: Option<bool>,
     /// Sign agent-created commits when signing credentials are configured.
-    #[serde(rename = "shouldSignCommits")]
-    pub should_sign_commits: bool,
+    #[serde(rename = "shouldSignCommits", default, skip_serializing_if = "Option::is_none")]
+    pub should_sign_commits: Option<bool>,
     /// Use Tembo review links in Slack review notifications.
-    #[serde(rename = "slackReviewOnTembo")]
-    pub slack_review_on_tembo: bool,
+    #[serde(rename = "slackReviewOnTembo", default, skip_serializing_if = "Option::is_none")]
+    pub slack_review_on_tembo: Option<bool>,
     /// Threshold in milliseconds for identifying slow database queries.
-    #[serde(rename = "slowQueryThresholdMs", serialize_with = "crate::number::serialize")]
-    pub slow_query_threshold_ms: f64,
+    #[serde(
+        rename = "slowQueryThresholdMs",
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "crate::number::option::serialize"
+    )]
+    pub slow_query_threshold_ms: Option<f64>,
     /// SSH public keys authorized for organization workspace access.
-    #[serde(rename = "sshPublicKeys")]
-    pub ssh_public_keys: String,
+    #[serde(rename = "sshPublicKeys", default, skip_serializing_if = "Option::is_none")]
+    pub ssh_public_keys: Option<String>,
     /// Enable or disable the organization weekly report.
-    #[serde(rename = "weeklyReportEnabled")]
-    pub weekly_report_enabled: bool,
+    #[serde(rename = "weeklyReportEnabled", default, skip_serializing_if = "Option::is_none")]
+    pub weekly_report_enabled: Option<bool>,
 }
 
 impl SettingsUpdateResponseSettings {
     /// Creates a new `SettingsUpdateResponseSettings` from its required fields, leaving every optional one unset.
     ///
-    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
-    /// argument, which is a breaking change either way.
-    #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        clone_depth: i64,
-        commit_instructions: impl Into<String>,
-        custom_review_bots: Vec<String>,
-        custom_system_prompt: impl Into<String>,
-        default_agent: impl Into<String>,
-        default_keep_alive_minutes: i64,
-        default_sandbox_size: SettingsUpdateResponseSettingsDefaultSandboxSize,
-        delete_branch_when_pr_closed: bool,
-        draft_prs: bool,
-        enable_coderabbit_bot: bool,
-        enable_cursor_bot: bool,
-        enable_gemini_code_assist_bot: bool,
-        enable_github_actions_bot: bool,
-        enable_graphite_bot: bool,
-        enable_greptile_bot: bool,
-        experimental_mcp: bool,
-        fallback_to_api_on_subscription_limit: bool,
-        feature_mention_author: bool,
-        max_bot_reviews: i64,
-        max_solutions: i64,
-        on_demand_max_credit_usage: f64,
-        pg_stat_statements_reset_frequency: impl Into<String>,
-        pm_system_prompt: impl Into<String>,
-        pr_title_instructions: impl Into<String>,
-        pull_request_insights_enabled: bool,
-        should_sign_commits: bool,
-        slack_review_on_tembo: bool,
-        slow_query_threshold_ms: f64,
-        ssh_public_keys: impl Into<String>,
-        weekly_report_enabled: bool,
-    ) -> Self {
+    /// Set an optional field with its `with_*` setter:
+    /// `SettingsUpdateResponseSettings::new().with_clone_depth(…)`.
+    pub fn new() -> Self {
         Self {
-            clone_depth,
-            commit_instructions: commit_instructions.into(),
-            custom_review_bots,
-            custom_system_prompt: custom_system_prompt.into(),
-            default_agent: default_agent.into(),
-            default_keep_alive_minutes,
-            default_sandbox_size,
-            delete_branch_when_pr_closed,
-            draft_prs,
-            enable_coderabbit_bot,
-            enable_cursor_bot,
-            enable_gemini_code_assist_bot,
-            enable_github_actions_bot,
-            enable_graphite_bot,
-            enable_greptile_bot,
-            experimental_mcp,
-            fallback_to_api_on_subscription_limit,
-            feature_mention_author,
-            max_bot_reviews,
-            max_solutions,
-            on_demand_max_credit_usage,
-            pg_stat_statements_reset_frequency: pg_stat_statements_reset_frequency.into(),
-            pm_system_prompt: pm_system_prompt.into(),
-            pr_title_instructions: pr_title_instructions.into(),
-            pull_request_insights_enabled,
-            should_sign_commits,
-            slack_review_on_tembo,
-            slow_query_threshold_ms,
-            ssh_public_keys: ssh_public_keys.into(),
-            weekly_report_enabled,
+            clone_depth: None,
+            commit_instructions: None,
+            custom_review_bots: None,
+            custom_system_prompt: None,
+            default_agent: None,
+            default_keep_alive_minutes: None,
+            default_sandbox_size: None,
+            delete_branch_when_pr_closed: None,
+            draft_prs: None,
+            enable_coderabbit_bot: None,
+            enable_cursor_bot: None,
+            enable_gemini_code_assist_bot: None,
+            enable_github_actions_bot: None,
+            enable_graphite_bot: None,
+            enable_greptile_bot: None,
+            experimental_mcp: None,
+            fallback_to_api_on_subscription_limit: None,
+            feature_mention_author: None,
+            max_bot_reviews: None,
+            max_solutions: None,
+            on_demand_max_credit_usage: None,
+            pg_stat_statements_reset_frequency: None,
+            pm_system_prompt: None,
+            pr_title_instructions: None,
+            pull_request_insights_enabled: None,
+            should_sign_commits: None,
+            slack_review_on_tembo: None,
+            slow_query_threshold_ms: None,
+            ssh_public_keys: None,
+            weekly_report_enabled: None,
         }
+    }
+
+    /// Sets `clone_depth`, which `new` leaves unset.
+    pub fn with_clone_depth(mut self, value: i64) -> Self {
+        self.clone_depth = Some(value);
+        self
+    }
+
+    /// Sets `commit_instructions`, which `new` leaves unset.
+    pub fn with_commit_instructions(mut self, value: impl Into<String>) -> Self {
+        self.commit_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `custom_review_bots`, which `new` leaves unset.
+    pub fn with_custom_review_bots(mut self, value: Vec<String>) -> Self {
+        self.custom_review_bots = Some(value);
+        self
+    }
+
+    /// Sets `custom_system_prompt`, which `new` leaves unset.
+    pub fn with_custom_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.custom_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `default_agent`, which `new` leaves unset.
+    pub fn with_default_agent(mut self, value: impl Into<String>) -> Self {
+        self.default_agent = Some(value.into());
+        self
+    }
+
+    /// Sets `default_keep_alive_minutes`, which `new` leaves unset.
+    pub fn with_default_keep_alive_minutes(mut self, value: i64) -> Self {
+        self.default_keep_alive_minutes = Some(value);
+        self
+    }
+
+    /// Sets `default_sandbox_size`, which `new` leaves unset.
+    pub fn with_default_sandbox_size(mut self, value: SettingsUpdateResponseSettingsDefaultSandboxSize) -> Self {
+        self.default_sandbox_size = Some(value);
+        self
+    }
+
+    /// Sets `delete_branch_when_pr_closed`, which `new` leaves unset.
+    pub fn with_delete_branch_when_pr_closed(mut self, value: bool) -> Self {
+        self.delete_branch_when_pr_closed = Some(value);
+        self
+    }
+
+    /// Sets `draft_prs`, which `new` leaves unset.
+    pub fn with_draft_prs(mut self, value: bool) -> Self {
+        self.draft_prs = Some(value);
+        self
+    }
+
+    /// Sets `enable_coderabbit_bot`, which `new` leaves unset.
+    pub fn with_enable_coderabbit_bot(mut self, value: bool) -> Self {
+        self.enable_coderabbit_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_cursor_bot`, which `new` leaves unset.
+    pub fn with_enable_cursor_bot(mut self, value: bool) -> Self {
+        self.enable_cursor_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_gemini_code_assist_bot`, which `new` leaves unset.
+    pub fn with_enable_gemini_code_assist_bot(mut self, value: bool) -> Self {
+        self.enable_gemini_code_assist_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_github_actions_bot`, which `new` leaves unset.
+    pub fn with_enable_github_actions_bot(mut self, value: bool) -> Self {
+        self.enable_github_actions_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_graphite_bot`, which `new` leaves unset.
+    pub fn with_enable_graphite_bot(mut self, value: bool) -> Self {
+        self.enable_graphite_bot = Some(value);
+        self
+    }
+
+    /// Sets `enable_greptile_bot`, which `new` leaves unset.
+    pub fn with_enable_greptile_bot(mut self, value: bool) -> Self {
+        self.enable_greptile_bot = Some(value);
+        self
+    }
+
+    /// Sets `experimental_mcp`, which `new` leaves unset.
+    pub fn with_experimental_mcp(mut self, value: bool) -> Self {
+        self.experimental_mcp = Some(value);
+        self
+    }
+
+    /// Sets `fallback_to_api_on_subscription_limit`, which `new` leaves unset.
+    pub fn with_fallback_to_api_on_subscription_limit(mut self, value: bool) -> Self {
+        self.fallback_to_api_on_subscription_limit = Some(value);
+        self
+    }
+
+    /// Sets `feature_mention_author`, which `new` leaves unset.
+    pub fn with_feature_mention_author(mut self, value: bool) -> Self {
+        self.feature_mention_author = Some(value);
+        self
+    }
+
+    /// Sets `max_bot_reviews`, which `new` leaves unset.
+    pub fn with_max_bot_reviews(mut self, value: i64) -> Self {
+        self.max_bot_reviews = Some(value);
+        self
+    }
+
+    /// Sets `max_solutions`, which `new` leaves unset.
+    pub fn with_max_solutions(mut self, value: i64) -> Self {
+        self.max_solutions = Some(value);
+        self
+    }
+
+    /// Sets `on_demand_max_credit_usage`, which `new` leaves unset.
+    pub fn with_on_demand_max_credit_usage(mut self, value: f64) -> Self {
+        self.on_demand_max_credit_usage = Some(value);
+        self
+    }
+
+    /// Sets `pg_stat_statements_reset_frequency`, which `new` leaves unset.
+    pub fn with_pg_stat_statements_reset_frequency(mut self, value: impl Into<String>) -> Self {
+        self.pg_stat_statements_reset_frequency = Some(value.into());
+        self
+    }
+
+    /// Sets `pm_system_prompt`, which `new` leaves unset.
+    pub fn with_pm_system_prompt(mut self, value: impl Into<String>) -> Self {
+        self.pm_system_prompt = Some(value.into());
+        self
+    }
+
+    /// Sets `pr_title_instructions`, which `new` leaves unset.
+    pub fn with_pr_title_instructions(mut self, value: impl Into<String>) -> Self {
+        self.pr_title_instructions = Some(value.into());
+        self
+    }
+
+    /// Sets `pull_request_insights_enabled`, which `new` leaves unset.
+    pub fn with_pull_request_insights_enabled(mut self, value: bool) -> Self {
+        self.pull_request_insights_enabled = Some(value);
+        self
+    }
+
+    /// Sets `should_sign_commits`, which `new` leaves unset.
+    pub fn with_should_sign_commits(mut self, value: bool) -> Self {
+        self.should_sign_commits = Some(value);
+        self
+    }
+
+    /// Sets `slack_review_on_tembo`, which `new` leaves unset.
+    pub fn with_slack_review_on_tembo(mut self, value: bool) -> Self {
+        self.slack_review_on_tembo = Some(value);
+        self
+    }
+
+    /// Sets `slow_query_threshold_ms`, which `new` leaves unset.
+    pub fn with_slow_query_threshold_ms(mut self, value: f64) -> Self {
+        self.slow_query_threshold_ms = Some(value);
+        self
+    }
+
+    /// Sets `ssh_public_keys`, which `new` leaves unset.
+    pub fn with_ssh_public_keys(mut self, value: impl Into<String>) -> Self {
+        self.ssh_public_keys = Some(value.into());
+        self
+    }
+
+    /// Sets `weekly_report_enabled`, which `new` leaves unset.
+    pub fn with_weekly_report_enabled(mut self, value: bool) -> Self {
+        self.weekly_report_enabled = Some(value);
+        self
     }
 }
 

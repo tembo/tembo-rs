@@ -15,7 +15,14 @@ async fn list_required_params() {
 #[tokio::test]
 async fn list_all_params() {
     crate::smoke_case("models.list:all", "list", "/v1/models", |client| async move {
-        let _ = client.models().list().cursor("example").limit(50).send().await?;
+        let _ = client
+            .models()
+            .list()
+            .cursor("example")
+            .limit(50)
+            .team_id("example")
+            .send()
+            .await?;
         Ok(())
     })
     .await;
