@@ -1640,6 +1640,7 @@ Live resource subscriptions
 - `AtlassianIssueUpdatedFilters`
 - `BitbucketPullRequestOpenedFilters`
 - `GithubCreateFilters`
+- `GithubDependabotAlertAssignedFilters`
 - `GithubIssueClosedFilters`
 - `GithubIssueCommentCreatedFilters`
 - `GithubIssueOpenedFilters`
