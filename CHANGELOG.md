@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0](https://github.com/tembo/tembo-rs/compare/v0.15.0...v0.16.0) (2026-11-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** 2 breaking changes to the SDK surface.
+    - variants models::TriggerFilters.Variant44 — variant only in before (breaking: removed; Variant49, GithubDependabotAlertAssignedFilters appeared in its place, likely a rename)
+    - variants models::TriggerFiltersOutput.Variant44 — variant only in before (breaking: removed; Variant49, GithubDependabotAlertAssignedFilters appeared in its place, likely a rename)
+
+### Features
+
+* **api:** update SDK surface (14 changes) ([cea578d](https://github.com/tembo/tembo-rs/commit/cea578dd8ebe5f828027f325665c358793ebc2db))
+
 ## [0.15.0](https://github.com/tembo/tembo-rs/compare/v0.14.0...v0.15.0) (2026-11-22)
 
 
