@@ -531,6 +531,10 @@ pub enum RolesListResponsePermission {
     FolderRead,
     #[serde(rename = "folder:write")]
     FolderWrite,
+    #[serde(rename = "memory:read")]
+    MemoryRead,
+    #[serde(rename = "memory:write")]
+    MemoryWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -806,6 +810,8 @@ impl RolesListResponsePermission {
             Self::PinWrite => "pin:write",
             Self::FolderRead => "folder:read",
             Self::FolderWrite => "folder:write",
+            Self::MemoryRead => "memory:read",
+            Self::MemoryWrite => "memory:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -1070,6 +1076,8 @@ impl From<&str> for RolesListResponsePermission {
             "pin:write" => Self::PinWrite,
             "folder:read" => Self::FolderRead,
             "folder:write" => Self::FolderWrite,
+            "memory:read" => Self::MemoryRead,
+            "memory:write" => Self::MemoryWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
@@ -1817,6 +1825,10 @@ pub enum RolesCreateBodyPermission {
     FolderRead,
     #[serde(rename = "folder:write")]
     FolderWrite,
+    #[serde(rename = "memory:read")]
+    MemoryRead,
+    #[serde(rename = "memory:write")]
+    MemoryWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -2092,6 +2104,8 @@ impl RolesCreateBodyPermission {
             Self::PinWrite => "pin:write",
             Self::FolderRead => "folder:read",
             Self::FolderWrite => "folder:write",
+            Self::MemoryRead => "memory:read",
+            Self::MemoryWrite => "memory:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -2356,6 +2370,8 @@ impl From<&str> for RolesCreateBodyPermission {
             "pin:write" => Self::PinWrite,
             "folder:read" => Self::FolderRead,
             "folder:write" => Self::FolderWrite,
+            "memory:read" => Self::MemoryRead,
+            "memory:write" => Self::MemoryWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
@@ -2903,6 +2919,10 @@ pub enum RolesRetrieveResponsePermission {
     FolderRead,
     #[serde(rename = "folder:write")]
     FolderWrite,
+    #[serde(rename = "memory:read")]
+    MemoryRead,
+    #[serde(rename = "memory:write")]
+    MemoryWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -3178,6 +3198,8 @@ impl RolesRetrieveResponsePermission {
             Self::PinWrite => "pin:write",
             Self::FolderRead => "folder:read",
             Self::FolderWrite => "folder:write",
+            Self::MemoryRead => "memory:read",
+            Self::MemoryWrite => "memory:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -3442,6 +3464,8 @@ impl From<&str> for RolesRetrieveResponsePermission {
             "pin:write" => Self::PinWrite,
             "folder:read" => Self::FolderRead,
             "folder:write" => Self::FolderWrite,
+            "memory:read" => Self::MemoryRead,
+            "memory:write" => Self::MemoryWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,
@@ -4212,6 +4236,10 @@ pub enum RolesUpdateBodyPermission {
     FolderRead,
     #[serde(rename = "folder:write")]
     FolderWrite,
+    #[serde(rename = "memory:read")]
+    MemoryRead,
+    #[serde(rename = "memory:write")]
+    MemoryWrite,
     #[serde(rename = "queue:job:read")]
     QueueJobRead,
     #[serde(rename = "queue:job:write")]
@@ -4487,6 +4515,8 @@ impl RolesUpdateBodyPermission {
             Self::PinWrite => "pin:write",
             Self::FolderRead => "folder:read",
             Self::FolderWrite => "folder:write",
+            Self::MemoryRead => "memory:read",
+            Self::MemoryWrite => "memory:write",
             Self::QueueJobRead => "queue:job:read",
             Self::QueueJobWrite => "queue:job:write",
             Self::QueueHostManagerJobRead => "queue:host_manager_job:read",
@@ -4751,6 +4781,8 @@ impl From<&str> for RolesUpdateBodyPermission {
             "pin:write" => Self::PinWrite,
             "folder:read" => Self::FolderRead,
             "folder:write" => Self::FolderWrite,
+            "memory:read" => Self::MemoryRead,
+            "memory:write" => Self::MemoryWrite,
             "queue:job:read" => Self::QueueJobRead,
             "queue:job:write" => Self::QueueJobWrite,
             "queue:host_manager_job:read" => Self::QueueHostManagerJobRead,

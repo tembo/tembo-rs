@@ -40,6 +40,7 @@ mod resources {
     mod marketplace;
     mod mcp_connections;
     mod members;
+    mod memories;
     mod messages;
     mod models;
     mod models_shares;
@@ -83,7 +84,7 @@ use ::tembo_rs::*;
 /// Fingerprint of the case list the generator's smoke runner checks this suite
 /// against (written only for generator tooling). The runner refuses a list whose
 /// digest differs, so a list left by an earlier generation is never trusted.
-const SMOKE_CASE_LIST_DIGEST: &str = "aa773cdfcb114dd3";
+const SMOKE_CASE_LIST_DIGEST: &str = "a68c7a529b018a03";
 
 /// The variable naming the server the smoke tests call.
 const TEST_BASE_URL_ENV: &str = "TEST_API_BASE_URL";

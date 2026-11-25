@@ -571,6 +571,8 @@ pub struct SettingsRetrieveResponse2AppSidebarPreferences {
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
     pub right_sidebar:
         Option<std::collections::BTreeMap<String, SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar>>,
+    #[serde(rename = "botOrder", default, skip_serializing_if = "Option::is_none")]
+    pub bot_order: Option<Vec<String>>,
 }
 
 impl SettingsRetrieveResponse2AppSidebarPreferences {
@@ -589,6 +591,7 @@ impl SettingsRetrieveResponse2AppSidebarPreferences {
             show_activity: None,
             width: None,
             right_sidebar: None,
+            bot_order: None,
         }
     }
 
@@ -646,6 +649,12 @@ impl SettingsRetrieveResponse2AppSidebarPreferences {
         value: std::collections::BTreeMap<String, SettingsRetrieveResponse2AppSidebarPreferencesRightSidebar>,
     ) -> Self {
         self.right_sidebar = Some(value);
+        self
+    }
+
+    /// Sets `bot_order`, which `new` leaves unset.
+    pub fn with_bot_order(mut self, value: Vec<String>) -> Self {
+        self.bot_order = Some(value);
         self
     }
 }
@@ -2263,6 +2272,8 @@ pub struct SettingsUpdateResponse2AppSidebarPreferences {
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
     pub right_sidebar:
         Option<std::collections::BTreeMap<String, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar>>,
+    #[serde(rename = "botOrder", default, skip_serializing_if = "Option::is_none")]
+    pub bot_order: Option<Vec<String>>,
 }
 
 impl SettingsUpdateResponse2AppSidebarPreferences {
@@ -2281,6 +2292,7 @@ impl SettingsUpdateResponse2AppSidebarPreferences {
             show_activity: None,
             width: None,
             right_sidebar: None,
+            bot_order: None,
         }
     }
 
@@ -2338,6 +2350,12 @@ impl SettingsUpdateResponse2AppSidebarPreferences {
         value: std::collections::BTreeMap<String, SettingsUpdateResponse2AppSidebarPreferencesRightSidebar>,
     ) -> Self {
         self.right_sidebar = Some(value);
+        self
+    }
+
+    /// Sets `bot_order`, which `new` leaves unset.
+    pub fn with_bot_order(mut self, value: Vec<String>) -> Self {
+        self.bot_order = Some(value);
         self
     }
 }
@@ -4009,6 +4027,8 @@ pub struct SettingsUpdateBody2AppSidebarPreferences {
     pub width: Option<f64>,
     #[serde(rename = "rightSidebar", default, skip_serializing_if = "Option::is_none")]
     pub right_sidebar: Option<std::collections::BTreeMap<String, SettingsUpdateBody2AppSidebarPreferencesRightSidebar>>,
+    #[serde(rename = "botOrder", default, skip_serializing_if = "Option::is_none")]
+    pub bot_order: Option<Vec<String>>,
 }
 
 impl SettingsUpdateBody2AppSidebarPreferences {
@@ -4027,6 +4047,7 @@ impl SettingsUpdateBody2AppSidebarPreferences {
             show_activity: None,
             width: None,
             right_sidebar: None,
+            bot_order: None,
         }
     }
 
@@ -4084,6 +4105,12 @@ impl SettingsUpdateBody2AppSidebarPreferences {
         value: std::collections::BTreeMap<String, SettingsUpdateBody2AppSidebarPreferencesRightSidebar>,
     ) -> Self {
         self.right_sidebar = Some(value);
+        self
+    }
+
+    /// Sets `bot_order`, which `new` leaves unset.
+    pub fn with_bot_order(mut self, value: Vec<String>) -> Self {
+        self.bot_order = Some(value);
         self
     }
 }
