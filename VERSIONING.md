@@ -90,6 +90,15 @@ different fixes:
   only if you use it. If the publish job is configured with a deployment environment,
   include that environment in the registration too.
 
+### Recovering a partially published release
+
+If GitHub creates a release but package publishing never runs, retrying release
+creation can fail because the release already exists. A manual `sdk-release.yml`
+retry requires its own trusted publisher registration. To use the existing
+`release-please.yml` publisher instead, request the next patch version with a
+`Release-As` commit on `scalar-next` as described above, then review and merge
+Scalar's new release PR. Regenerating the API surface is not required.
+
 ### Recommended, not required
 
 Releases work without this; it closes a window where one can go out at the wrong version.
