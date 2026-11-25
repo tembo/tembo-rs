@@ -496,6 +496,48 @@ Test an MCP connection
 - Response body: `application/json`
 - Errors: `400, 403, 404, 409, 500, 502`
 
+### client.memories().list()
+
+List memories
+
+- HTTP: `GET /v1/memories`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.memories().create(…)
+
+Create a memory
+
+- HTTP: `POST /v1/memories`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.memories().retrieve(…)
+
+Retrieve a memory
+
+- HTTP: `GET /v1/memories/{name}`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.memories().update(…)
+
+Update a memory
+
+- HTTP: `PATCH /v1/memories/{name}`
+- Request body: `application/json`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
+### client.memories().delete(…)
+
+Delete a memory
+
+- HTTP: `DELETE /v1/memories/{name}`
+- Response body: `application/json`
+- Errors: `400, 404, 409, 500`
+
 ### client.artifacts().list()
 
 List artifacts
@@ -1672,6 +1714,7 @@ Live resource subscriptions
 - `LinearIssueLabelAddedFilters`
 - `LinearIssueStatusChangedFilters`
 - `LinearIssueUpdatedFilters`
+- `SazabiIssueFilters`
 - `SentryIssueCreatedFilters`
 - `SlackMessageReactionAddedFilters`
 - `SlackMessageSentInChannelFilters`

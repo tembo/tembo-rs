@@ -78,8 +78,6 @@ pub struct PinsListResponseResourceVariant1Resource {
     pub kind: String,
     #[serde(rename = "externalId", default)]
     pub external_id: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
@@ -95,6 +93,8 @@ pub struct PinsListResponseResourceVariant1Resource {
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     pub level: i64,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: PinsListResponseResourceVariant1ResourceVisibility,
     #[serde(default)]
@@ -129,13 +129,13 @@ impl PinsListResponseResourceVariant1Resource {
         title: impl Into<String>,
         kind: impl Into<String>,
         external_id: Option<String>,
-        agent_id: Option<String>,
         created_at: chrono::DateTime<chrono::FixedOffset>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
         created_by: Option<String>,
         project_id: Option<String>,
         level: i64,
+        agent_id: Option<String>,
         visibility: PinsListResponseResourceVariant1ResourceVisibility,
         vm: Option<PinsListResponseResourceVariant1ResourceVm>,
         session_source: PinsListResponseResourceVariant1ResourceSessionSource,
@@ -149,13 +149,13 @@ impl PinsListResponseResourceVariant1Resource {
             title: title.into(),
             kind: kind.into(),
             external_id,
-            agent_id,
             created_at,
             updated_at,
             last_queued_at,
             created_by,
             project_id,
             level,
+            agent_id,
             visibility,
             vm,
             session_source,
@@ -1334,8 +1334,6 @@ pub struct PinsCreateResponseVariant1Resource {
     pub kind: String,
     #[serde(rename = "externalId", default)]
     pub external_id: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "updatedAt", deserialize_with = "crate::datetime::deserialize")]
@@ -1351,6 +1349,8 @@ pub struct PinsCreateResponseVariant1Resource {
     #[serde(rename = "projectId", default)]
     pub project_id: Option<String>,
     pub level: i64,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: PinsCreateResponseVariant1ResourceVisibility,
     #[serde(default)]
@@ -1384,13 +1384,13 @@ impl PinsCreateResponseVariant1Resource {
         title: impl Into<String>,
         kind: impl Into<String>,
         external_id: Option<String>,
-        agent_id: Option<String>,
         created_at: chrono::DateTime<chrono::FixedOffset>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         last_queued_at: Option<chrono::DateTime<chrono::FixedOffset>>,
         created_by: Option<String>,
         project_id: Option<String>,
         level: i64,
+        agent_id: Option<String>,
         visibility: PinsCreateResponseVariant1ResourceVisibility,
         vm: Option<PinsCreateResponseVariant1ResourceVm>,
         session_source: PinsCreateResponseVariant1ResourceSessionSource,
@@ -1404,13 +1404,13 @@ impl PinsCreateResponseVariant1Resource {
             title: title.into(),
             kind: kind.into(),
             external_id,
-            agent_id,
             created_at,
             updated_at,
             last_queued_at,
             created_by,
             project_id,
             level,
+            agent_id,
             visibility,
             vm,
             session_source,

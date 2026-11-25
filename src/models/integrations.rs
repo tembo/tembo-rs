@@ -197,12 +197,13 @@ impl IntegrationsCreateResponseIntegration {
 #[non_exhaustive]
 pub enum IntegrationsCreateBody {
     IntegrationsCreateBodyVariant4(IntegrationsCreateBodyVariant4),
+    IntegrationsCreateBodyVariant8(IntegrationsCreateBodyVariant8),
     IntegrationsCreateBodyVariant7(IntegrationsCreateBodyVariant7),
-    IntegrationsCreateBodyVariant6(IntegrationsCreateBodyVariant6),
     IntegrationsCreateBodyVariant5(IntegrationsCreateBodyVariant5),
     IntegrationsCreateBodyVariant1(IntegrationsCreateBodyVariant1),
     IntegrationsCreateBodyVariant2(IntegrationsCreateBodyVariant2),
     IntegrationsCreateBodyVariant3(IntegrationsCreateBodyVariant3),
+    IntegrationsCreateBodyVariant6(IntegrationsCreateBodyVariant6),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -450,6 +451,32 @@ impl IntegrationsCreateBodyVariant5 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct IntegrationsCreateBodyVariant6 {
+    /// Signing secret Sazabi shows when you create the webhook endpoint.
+    #[serde(rename = "signingSecret")]
+    pub signing_secret: String,
+    /// Create a Sazabi integration for automation triggers.
+    pub r#type: String,
+}
+
+impl IntegrationsCreateBodyVariant6 {
+    /// Creates a new `IntegrationsCreateBodyVariant6` from its required fields, leaving every optional one unset.
+    ///
+    /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
+    /// argument, which is a breaking change either way.
+    pub fn new(signing_secret: impl Into<String>, r#type: impl Into<String>) -> Self {
+        Self {
+            signing_secret: signing_secret.into(),
+            r#type: r#type.into(),
+        }
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `IntegrationsCreateBodyVariant7::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// reading.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct IntegrationsCreateBodyVariant7 {
     /// Snyk service-account client ID.
     #[serde(rename = "clientId")]
     pub client_id: String,
@@ -466,14 +493,14 @@ pub struct IntegrationsCreateBodyVariant6 {
     pub r#type: String,
 }
 
-impl IntegrationsCreateBodyVariant6 {
-    /// Creates a new `IntegrationsCreateBodyVariant6` from its required fields, leaving every optional one unset.
+impl IntegrationsCreateBodyVariant7 {
+    /// Creates a new `IntegrationsCreateBodyVariant7` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
     ///
     /// Set an optional field with its `with_*` setter:
-    /// `IntegrationsCreateBodyVariant6::new(…).with_organization_name(…)`.
+    /// `IntegrationsCreateBodyVariant7::new(…).with_organization_name(…)`.
     pub fn new(
         client_id: impl Into<String>,
         client_secret: impl Into<String>,
@@ -497,11 +524,11 @@ impl IntegrationsCreateBodyVariant6 {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
-/// `IntegrationsCreateBodyVariant7::new` and the `with_*` setters rather than a struct literal. Fields stay public for
+/// `IntegrationsCreateBodyVariant8::new` and the `with_*` setters rather than a struct literal. Fields stay public for
 /// reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
-pub struct IntegrationsCreateBodyVariant7 {
+pub struct IntegrationsCreateBodyVariant8 {
     /// Display name for the Tailscale connection.
     #[serde(rename = "instanceName")]
     pub instance_name: String,
@@ -520,14 +547,14 @@ pub struct IntegrationsCreateBodyVariant7 {
     pub r#type: String,
 }
 
-impl IntegrationsCreateBodyVariant7 {
-    /// Creates a new `IntegrationsCreateBodyVariant7` from its required fields, leaving every optional one unset.
+impl IntegrationsCreateBodyVariant8 {
+    /// Creates a new `IntegrationsCreateBodyVariant8` from its required fields, leaving every optional one unset.
     ///
     /// The arguments follow the order the API declares these fields in. A required field the API adds is a new
     /// argument, which is a breaking change either way.
     ///
     /// Set an optional field with its `with_*` setter:
-    /// `IntegrationsCreateBodyVariant7::new(…).with_tailnet(…)`.
+    /// `IntegrationsCreateBodyVariant8::new(…).with_tailnet(…)`.
     pub fn new(
         instance_name: impl Into<String>,
         oauth_client_id: impl Into<String>,

@@ -19,6 +19,7 @@ async fn list_all_params() {
             .sessions()
             .list()
             .agent_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
+            .bot_id("7c9e6679-7425-40de-944b-e07fc1f90ae7")
             .created_by(vec!["createdBy".to_string()])
             .created_after(chrono::Utc::now().fixed_offset())
             .cursor("example")

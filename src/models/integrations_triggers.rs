@@ -95,6 +95,8 @@ pub enum TriggersListResponse2ItemIntegrationType {
     Openconnect,
     #[serde(rename = "tailscale")]
     Tailscale,
+    #[serde(rename = "sazabi")]
+    Sazabi,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -122,6 +124,7 @@ impl TriggersListResponse2ItemIntegrationType {
             Self::Hubspot => "hubspot",
             Self::Openconnect => "openconnect",
             Self::Tailscale => "tailscale",
+            Self::Sazabi => "sazabi",
             Self::Unknown(value) => value,
         }
     }
@@ -154,6 +157,7 @@ impl From<&str> for TriggersListResponse2ItemIntegrationType {
             "hubspot" => Self::Hubspot,
             "openconnect" => Self::Openconnect,
             "tailscale" => Self::Tailscale,
+            "sazabi" => Self::Sazabi,
             other => Self::Unknown(other.to_owned()),
         }
     }
@@ -676,6 +680,8 @@ pub enum TriggersRetrieveResponse2IntegrationType {
     Openconnect,
     #[serde(rename = "tailscale")]
     Tailscale,
+    #[serde(rename = "sazabi")]
+    Sazabi,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -703,6 +709,7 @@ impl TriggersRetrieveResponse2IntegrationType {
             Self::Hubspot => "hubspot",
             Self::Openconnect => "openconnect",
             Self::Tailscale => "tailscale",
+            Self::Sazabi => "sazabi",
             Self::Unknown(value) => value,
         }
     }
@@ -735,6 +742,7 @@ impl From<&str> for TriggersRetrieveResponse2IntegrationType {
             "hubspot" => Self::Hubspot,
             "openconnect" => Self::Openconnect,
             "tailscale" => Self::Tailscale,
+            "sazabi" => Self::Sazabi,
             other => Self::Unknown(other.to_owned()),
         }
     }
