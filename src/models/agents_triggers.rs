@@ -596,6 +596,67 @@ impl GitlabIssueUpdatedFilters {
 }
 
 /// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
+/// `SazabiIssueFilters::new` and the `with_*` setters rather than a struct literal. Fields stay public for reading.
+///
+/// `Default` is the empty value, every field unset. It is withdrawn if the API ever makes a field required, which
+/// breaks callers through `new` as well.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct SazabiIssueFilters {
+    /// Only trigger if the issue has one of the specified severities
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub severities: Option<Vec<SazabiIssueFiltersSeverity>>,
+    /// Only trigger if the issue is in one of these Sazabi projects (name or ID)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub projects: Option<Vec<String>>,
+    /// Only trigger if the issue affects one of these components (name or ID)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub components: Option<Vec<String>>,
+    /// Additional properties not captured by the named fields.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl SazabiIssueFilters {
+    /// Creates a new `SazabiIssueFilters` from its required fields, leaving every optional one unset.
+    ///
+    /// Set an optional field with its `with_*` setter:
+    /// `SazabiIssueFilters::new().with_severities(…)`.
+    pub fn new() -> Self {
+        Self {
+            severities: None,
+            projects: None,
+            components: None,
+            additional_properties: std::collections::BTreeMap::new(),
+        }
+    }
+
+    /// Sets `severities`, which `new` leaves unset.
+    pub fn with_severities(mut self, value: Vec<SazabiIssueFiltersSeverity>) -> Self {
+        self.severities = Some(value);
+        self
+    }
+
+    /// Sets `projects`, which `new` leaves unset.
+    pub fn with_projects(mut self, value: Vec<String>) -> Self {
+        self.projects = Some(value);
+        self
+    }
+
+    /// Sets `components`, which `new` leaves unset.
+    pub fn with_components(mut self, value: Vec<String>) -> Self {
+        self.components = Some(value);
+        self
+    }
+
+    /// Adds one entry to `additional_properties`, the keys the named fields do not cover.
+    pub fn with_additional_property(mut self, key: impl Into<String>, value: serde_json::Value) -> Self {
+        self.additional_properties.insert(key.into(), value);
+        self
+    }
+}
+
+/// Marked `#[non_exhaustive]` so the API can add fields without a breaking release: build it with
 /// `GithubPullRequestClosedFiltersOutput::new` and the `with_*` setters rather than a struct literal. Fields stay
 /// public for reading.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1135,6 +1196,7 @@ pub enum TriggerFiltersOutput {
     GitlabMergeRequestMergedFilters(GitlabMergeRequestMergedFilters),
     GitlabMergeRequestOpenedFilters(GitlabMergeRequestOpenedFilters),
     LinearIssueLabelAddedFilters(LinearIssueLabelAddedFilters),
+    SazabiIssueFilters(SazabiIssueFilters),
     SlackMessageReactionAddedFilters(SlackMessageReactionAddedFilters),
     GithubDependabotAlertAssignedFilters(GithubDependabotAlertAssignedFilters),
     GithubTemboPullRequestOpenedFilters(GithubTemboPullRequestOpenedFilters),
@@ -1144,11 +1206,11 @@ pub enum TriggerFiltersOutput {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant45(serde_json::Value),
     Variant46(serde_json::Value),
     Variant47(serde_json::Value),
     Variant48(serde_json::Value),
     Variant49(serde_json::Value),
+    Variant50(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an
@@ -1781,6 +1843,57 @@ impl From<&str> for GitlabRefCreatedFiltersRefType {
         match value {
             "branch" => Self::Branch,
             "tag" => Self::Tag,
+            other => Self::Unknown(other.to_owned()),
+        }
+    }
+}
+
+/// Match on `as_str()` (or build one with `From<&str>`) when you need a value
+/// this SDK version does not know. Matching `Unknown(_)` directly is an
+/// anti-pattern: that arm silently stops matching once a future SDK release
+/// adds the real variant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SazabiIssueFiltersSeverity {
+    #[serde(rename = "critical")]
+    Critical,
+    #[serde(rename = "high")]
+    High,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "low")]
+    Low,
+    /// A value not known to this version of the SDK, preserved verbatim.
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl SazabiIssueFiltersSeverity {
+    /// The wire value this variant serializes to.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Critical => "critical",
+            Self::High => "high",
+            Self::Medium => "medium",
+            Self::Low => "low",
+            Self::Unknown(value) => value,
+        }
+    }
+}
+
+impl std::fmt::Display for SazabiIssueFiltersSeverity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl From<&str> for SazabiIssueFiltersSeverity {
+    fn from(value: &str) -> Self {
+        match value {
+            "critical" => Self::Critical,
+            "high" => Self::High,
+            "medium" => Self::Medium,
+            "low" => Self::Low,
             other => Self::Unknown(other.to_owned()),
         }
     }

@@ -61,6 +61,9 @@ pub struct ProvidersListResponseItem {
     pub redirect_url: Option<String>,
     #[serde(rename = "templateUrl", default, skip_serializing_if = "Option::is_none")]
     pub template_url: Option<String>,
+    /// URL the provider sends webhook events to, when it needs one.
+    #[serde(rename = "webhookUrl", default, skip_serializing_if = "Option::is_none")]
+    pub webhook_url: Option<String>,
 }
 
 impl ProvidersListResponseItem {
@@ -96,6 +99,7 @@ impl ProvidersListResponseItem {
             oidc_issuer_host: None,
             redirect_url: None,
             template_url: None,
+            webhook_url: None,
         }
     }
 
@@ -114,6 +118,12 @@ impl ProvidersListResponseItem {
     /// Sets `template_url`, which `new` leaves unset.
     pub fn with_template_url(mut self, value: impl Into<String>) -> Self {
         self.template_url = Some(value.into());
+        self
+    }
+
+    /// Sets `webhook_url`, which `new` leaves unset.
+    pub fn with_webhook_url(mut self, value: impl Into<String>) -> Self {
+        self.webhook_url = Some(value.into());
         self
     }
 }
@@ -161,6 +171,8 @@ pub enum ProvidersListResponseItemIntegrationType {
     Openconnect,
     #[serde(rename = "tailscale")]
     Tailscale,
+    #[serde(rename = "sazabi")]
+    Sazabi,
     /// A value not known to this version of the SDK, preserved verbatim.
     #[serde(untagged)]
     Unknown(String),
@@ -188,6 +200,7 @@ impl ProvidersListResponseItemIntegrationType {
             Self::Hubspot => "hubspot",
             Self::Openconnect => "openconnect",
             Self::Tailscale => "tailscale",
+            Self::Sazabi => "sazabi",
             Self::Unknown(value) => value,
         }
     }
@@ -220,6 +233,7 @@ impl From<&str> for ProvidersListResponseItemIntegrationType {
             "hubspot" => Self::Hubspot,
             "openconnect" => Self::Openconnect,
             "tailscale" => Self::Tailscale,
+            "sazabi" => Self::Sazabi,
             other => Self::Unknown(other.to_owned()),
         }
     }

@@ -90,6 +90,7 @@ impl SessionsResource {
 pub struct ListRequestBuilder {
     client: crate::client::Tembo,
     agent_id: Option<String>,
+    bot_id: Option<String>,
     created_by: Option<Vec<String>>,
     created_after: Option<chrono::DateTime<chrono::FixedOffset>>,
     cursor: Option<String>,
@@ -123,6 +124,7 @@ impl ListRequestBuilder {
         Self {
             client,
             agent_id: None,
+            bot_id: None,
             created_by: None,
             created_after: None,
             cursor: None,
@@ -155,6 +157,12 @@ impl ListRequestBuilder {
     /// Filter sessions created by this automation agent.
     pub fn agent_id(mut self, value: impl Into<String>) -> Self {
         self.agent_id = Some(value.into());
+        self
+    }
+
+    /// Filter sessions started by this Bot.
+    pub fn bot_id(mut self, value: impl Into<String>) -> Self {
+        self.bot_id = Some(value.into());
         self
     }
 
@@ -335,6 +343,9 @@ impl ListRequestBuilder {
         let mut query: Vec<(String, String)> = Vec::new();
         if let Some(value) = &self.agent_id {
             query.push(("agentId".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.bot_id {
+            query.push(("botId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.created_by {
             for item in values {

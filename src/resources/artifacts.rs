@@ -45,6 +45,7 @@ pub struct ListRequestBuilder {
     limit: Option<i64>,
     job_id: Option<String>,
     session_id: Option<String>,
+    bot_id: Option<String>,
     types: Option<Vec<String>>,
     timeout: Option<std::time::Duration>,
     max_retries: Option<u32>,
@@ -58,6 +59,7 @@ impl ListRequestBuilder {
             limit: None,
             job_id: None,
             session_id: None,
+            bot_id: None,
             types: None,
             timeout: None,
             max_retries: None,
@@ -85,6 +87,12 @@ impl ListRequestBuilder {
     /// Filter artifacts attached to this session.
     pub fn session_id(mut self, value: impl Into<String>) -> Self {
         self.session_id = Some(value.into());
+        self
+    }
+
+    /// Filter artifacts from sessions started by this Bot.
+    pub fn bot_id(mut self, value: impl Into<String>) -> Self {
+        self.bot_id = Some(value.into());
         self
     }
 
@@ -136,6 +144,9 @@ impl ListRequestBuilder {
         }
         if let Some(value) = &self.session_id {
             query.push(("sessionId".to_string(), crate::http::scalar_value(value)));
+        }
+        if let Some(value) = &self.bot_id {
+            query.push(("botId".to_string(), crate::http::scalar_value(value)));
         }
         if let Some(values) = &self.types {
             for item in values {

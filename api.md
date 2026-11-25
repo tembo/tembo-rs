@@ -77,6 +77,12 @@ Complete reference of every operation, grouped by resource. See [the README](./R
   - [Delete an MCP connection](#delete-an-mcp-connection)
   - [Authorize an MCP connection](#authorize-an-mcp-connection)
   - [Test an MCP connection](#test-an-mcp-connection)
+- [`Memories`](#memories)
+  - [List memories](#list-memories)
+  - [Create a memory](#create-a-memory)
+  - [Retrieve a memory](#retrieve-a-memory)
+  - [Update a memory](#update-a-memory)
+  - [Delete a memory](#delete-a-memory)
 - [`Artifacts`](#artifacts)
   - [List artifacts](#list-artifacts)
   - [Create an artifact](#create-an-artifact)
@@ -1159,6 +1165,83 @@ let response = client
     .test("7c9e6679-7425-40de-944b-e07fc1f90ae7")
     .send()
     .await?;
+```
+
+## `Memories`
+
+### List memories
+
+List your active persistent memories. Optionally search by query or filter by type.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`MemoriesListResponse`](./src/models/memories.rs) |
+
+```rust
+let response = client.memories().list().send().await?;
+```
+
+### Create a memory
+
+Save a persistent memory for yourself across sessions. Memory names are unique per user.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`MemoriesCreateBody`](./src/models/memories.rs) |
+| Response | [`MemoriesCreateResponse`](./src/models/memories.rs) |
+
+```rust
+let response = client
+    .memories()
+    .create(MemoriesCreateBody::new(
+        "x".to_string(),
+        MemoriesCreateBodyType::User,
+        "x".to_string(),
+        "".to_string(),
+    ))
+    .send()
+    .await?;
+```
+
+### Retrieve a memory
+
+Retrieve the full content and revision of one of your persistent memories.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`MemoriesRetrieveResponse`](./src/models/memories.rs) |
+
+```rust
+let response = client.memories().retrieve("example").send().await?;
+```
+
+### Update a memory
+
+Update content, description or type. Pass the revision last retrieved to prevent overwriting concurrent changes.
+
+| Direction | Type |
+| --- | --- |
+| Request | [`MemoriesUpdateBody`](./src/models/memories.rs) |
+| Response | [`MemoriesUpdateResponse`](./src/models/memories.rs) |
+
+```rust
+let response = client
+    .memories()
+    .update("example", MemoriesUpdateBody::new(1))
+    .send()
+    .await?;
+```
+
+### Delete a memory
+
+Archive one of your persistent memories, provided its revision has not changed.
+
+| Direction | Type |
+| --- | --- |
+| Response | [`MemoriesDeleteResponse`](./src/models/memories.rs) |
+
+```rust
+let response = client.memories().delete("example", 1).send().await?;
 ```
 
 ## `Artifacts`

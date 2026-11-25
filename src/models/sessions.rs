@@ -340,8 +340,6 @@ impl SessionsListResponse {
 pub struct SessionsListResponseItem {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "createdAt", deserialize_with = "crate::datetime::deserialize")]
     pub created_at: chrono::DateTime<chrono::FixedOffset>,
     #[serde(rename = "externalId", default)]
@@ -364,6 +362,8 @@ pub struct SessionsListResponseItem {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsListResponseItemVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsListResponseItemArtifact>,
     #[serde(rename = "diffSummary", default)]
     pub diff_summary: Option<SessionsListResponseItemDiffSummary>,
@@ -389,7 +389,6 @@ impl SessionsListResponseItem {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         created_at: chrono::DateTime<chrono::FixedOffset>,
         external_id: Option<String>,
         id: impl Into<String>,
@@ -401,6 +400,7 @@ impl SessionsListResponseItem {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsListResponseItemVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsListResponseItemArtifact>,
         diff_summary: Option<SessionsListResponseItemDiffSummary>,
         folder_id: Option<String>,
@@ -412,7 +412,6 @@ impl SessionsListResponseItem {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             created_at,
             external_id,
             id: id.into(),
@@ -424,6 +423,7 @@ impl SessionsListResponseItem {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             diff_summary,
             folder_id,
@@ -1167,8 +1167,6 @@ impl From<&str> for SessionsListResponseItemStateCurrent {
 pub struct SessionsCreateResponse {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "artifactType", default)]
     pub artifact_type: Option<SessionsCreateResponseArtifactType>,
     #[serde(rename = "baseBranch", default)]
@@ -1209,6 +1207,8 @@ pub struct SessionsCreateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsCreateResponseVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsCreateResponseArtifact>,
     /// Whether the session VM is sized automatically.
     #[serde(rename = "automaticSizing")]
@@ -1241,7 +1241,6 @@ impl SessionsCreateResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         artifact_type: Option<SessionsCreateResponseArtifactType>,
         base_branch: Option<String>,
         branch_name: Option<String>,
@@ -1262,6 +1261,7 @@ impl SessionsCreateResponse {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsCreateResponseVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsCreateResponseArtifact>,
         automatic_sizing: bool,
         description: Option<String>,
@@ -1276,7 +1276,6 @@ impl SessionsCreateResponse {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             artifact_type,
             base_branch,
             branch_name,
@@ -1297,6 +1296,7 @@ impl SessionsCreateResponse {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             automatic_sizing,
             description,
@@ -2824,8 +2824,6 @@ impl From<&str> for SessionsCreateBodyVisibility {
 pub struct SessionsRetrieveResponse {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "artifactType", default)]
     pub artifact_type: Option<SessionsRetrieveResponseArtifactType>,
     #[serde(rename = "baseBranch", default)]
@@ -2866,6 +2864,8 @@ pub struct SessionsRetrieveResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsRetrieveResponseVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsRetrieveResponseArtifact>,
     /// Whether the session VM is sized automatically.
     #[serde(rename = "automaticSizing")]
@@ -2898,7 +2898,6 @@ impl SessionsRetrieveResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         artifact_type: Option<SessionsRetrieveResponseArtifactType>,
         base_branch: Option<String>,
         branch_name: Option<String>,
@@ -2919,6 +2918,7 @@ impl SessionsRetrieveResponse {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsRetrieveResponseVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsRetrieveResponseArtifact>,
         automatic_sizing: bool,
         description: Option<String>,
@@ -2933,7 +2933,6 @@ impl SessionsRetrieveResponse {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             artifact_type,
             base_branch,
             branch_name,
@@ -2954,6 +2953,7 @@ impl SessionsRetrieveResponse {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             automatic_sizing,
             description,
@@ -4044,8 +4044,6 @@ impl From<&str> for SessionsRetrieveResponseStateCurrent {
 pub struct SessionsUpdateResponse {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "artifactType", default)]
     pub artifact_type: Option<SessionsUpdateResponseArtifactType>,
     #[serde(rename = "baseBranch", default)]
@@ -4086,6 +4084,8 @@ pub struct SessionsUpdateResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsUpdateResponseVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsUpdateResponseArtifact>,
     /// Whether the session VM is sized automatically.
     #[serde(rename = "automaticSizing")]
@@ -4118,7 +4118,6 @@ impl SessionsUpdateResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         artifact_type: Option<SessionsUpdateResponseArtifactType>,
         base_branch: Option<String>,
         branch_name: Option<String>,
@@ -4139,6 +4138,7 @@ impl SessionsUpdateResponse {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsUpdateResponseVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsUpdateResponseArtifact>,
         automatic_sizing: bool,
         description: Option<String>,
@@ -4153,7 +4153,6 @@ impl SessionsUpdateResponse {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             artifact_type,
             base_branch,
             branch_name,
@@ -4174,6 +4173,7 @@ impl SessionsUpdateResponse {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             automatic_sizing,
             description,
@@ -5650,8 +5650,6 @@ impl SessionsDeleteResponse {
 pub struct SessionsForkResponse {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "artifactType", default)]
     pub artifact_type: Option<SessionsForkResponseArtifactType>,
     #[serde(rename = "baseBranch", default)]
@@ -5692,6 +5690,8 @@ pub struct SessionsForkResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsForkResponseVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsForkResponseArtifact>,
     /// Whether the session VM is sized automatically.
     #[serde(rename = "automaticSizing")]
@@ -5724,7 +5724,6 @@ impl SessionsForkResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         artifact_type: Option<SessionsForkResponseArtifactType>,
         base_branch: Option<String>,
         branch_name: Option<String>,
@@ -5745,6 +5744,7 @@ impl SessionsForkResponse {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsForkResponseVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsForkResponseArtifact>,
         automatic_sizing: bool,
         description: Option<String>,
@@ -5759,7 +5759,6 @@ impl SessionsForkResponse {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             artifact_type,
             base_branch,
             branch_name,
@@ -5780,6 +5779,7 @@ impl SessionsForkResponse {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             automatic_sizing,
             description,
@@ -6920,8 +6920,6 @@ impl SessionsForkBody {
 pub struct SessionsImportResponse {
     #[serde(default)]
     pub agent: Option<String>,
-    #[serde(rename = "agentId", default)]
-    pub agent_id: Option<String>,
     #[serde(rename = "artifactType", default)]
     pub artifact_type: Option<SessionsImportResponseArtifactType>,
     #[serde(rename = "baseBranch", default)]
@@ -6962,6 +6960,8 @@ pub struct SessionsImportResponse {
     pub updated_at: chrono::DateTime<chrono::FixedOffset>,
     /// Deprecated: `private` when shared with no one, `public` when shared with anyone. List the session’s shares for its exact audiences.
     pub visibility: SessionsImportResponseVisibility,
+    #[serde(rename = "agentId", default)]
+    pub agent_id: Option<String>,
     pub artifacts: Vec<SessionsImportResponseArtifact>,
     /// Whether the session VM is sized automatically.
     #[serde(rename = "automaticSizing")]
@@ -6994,7 +6994,6 @@ impl SessionsImportResponse {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         agent: Option<String>,
-        agent_id: Option<String>,
         artifact_type: Option<SessionsImportResponseArtifactType>,
         base_branch: Option<String>,
         branch_name: Option<String>,
@@ -7015,6 +7014,7 @@ impl SessionsImportResponse {
         title: impl Into<String>,
         updated_at: chrono::DateTime<chrono::FixedOffset>,
         visibility: SessionsImportResponseVisibility,
+        agent_id: Option<String>,
         artifacts: Vec<SessionsImportResponseArtifact>,
         automatic_sizing: bool,
         description: Option<String>,
@@ -7029,7 +7029,6 @@ impl SessionsImportResponse {
     ) -> Self {
         Self {
             agent,
-            agent_id,
             artifact_type,
             base_branch,
             branch_name,
@@ -7050,6 +7049,7 @@ impl SessionsImportResponse {
             title: title.into(),
             updated_at,
             visibility,
+            agent_id,
             artifacts,
             automatic_sizing,
             description,

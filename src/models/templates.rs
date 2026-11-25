@@ -2423,6 +2423,7 @@ pub enum TriggerFilters {
     GitlabMergeRequestMergedFilters(GitlabMergeRequestMergedFilters),
     GitlabMergeRequestOpenedFilters(GitlabMergeRequestOpenedFilters),
     LinearIssueLabelAddedFilters(LinearIssueLabelAddedFilters),
+    SazabiIssueFilters(SazabiIssueFilters),
     SlackMessageReactionAddedFilters(SlackMessageReactionAddedFilters),
     GithubDependabotAlertAssignedFilters(GithubDependabotAlertAssignedFilters),
     GithubTemboPullRequestOpenedFilters(GithubTemboPullRequestOpenedFilters),
@@ -2432,11 +2433,11 @@ pub enum TriggerFilters {
     SentryIssueCreatedFilters(SentryIssueCreatedFilters),
     GithubReleasePublishedFilters(GithubReleasePublishedFilters),
     EmptyTriggerFilters(EmptyTriggerFilters),
-    Variant45(serde_json::Value),
     Variant46(serde_json::Value),
     Variant47(serde_json::Value),
     Variant48(serde_json::Value),
     Variant49(serde_json::Value),
+    Variant50(serde_json::Value),
     /// A variant not recognized by this version of the SDK, preserved verbatim.
     ///
     /// Match the specific variants first. Matching this one directly is an

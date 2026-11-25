@@ -23,6 +23,7 @@ pub mod live;
 pub mod marketplace;
 pub mod mcp_connections;
 pub mod members;
+pub mod memories;
 pub mod messages;
 pub mod models;
 pub mod models_shares;
@@ -78,6 +79,10 @@ impl crate::client::Tembo {
 
     pub fn mcp_connections(&self) -> crate::resources::mcp_connections::McpConnectionsResource {
         crate::resources::mcp_connections::McpConnectionsResource::new(self.clone())
+    }
+
+    pub fn memories(&self) -> crate::resources::memories::MemoriesResource {
+        crate::resources::memories::MemoriesResource::new(self.clone())
     }
 
     pub fn artifacts(&self) -> crate::resources::artifacts::ArtifactsResource {
